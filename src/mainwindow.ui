@@ -75,6 +75,7 @@
      <string>&amp;File</string>
     </property>
     <addaction name="action_Load_Disk_Image"/>
+    <addaction name="action_Unload_Disk_Image"/>
     <addaction name="separator"/>
     <addaction name="action_Quit"/>
    </widget>
@@ -100,6 +101,11 @@
   <action name="action_Quit">
    <property name="text">
     <string>&amp;Quit</string>
+   </property>
+  </action>
+  <action name="action_Unload_Disk_Image">
+   <property name="text">
+    <string>&amp;Unload Disk Image</string>
    </property>
   </action>
  </widget>

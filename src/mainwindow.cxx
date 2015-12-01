@@ -10,9 +10,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     m_disk = 0;
 
+    ui->action_Unload_Disk_Image->setEnabled(false);
+
     connect(ui->action_Quit, SIGNAL(triggered()), qApp, SLOT(quit()));
     connect(ui->action_Load_Disk_Image, SIGNAL(triggered()), SLOT(showLoadDialog()));
-
+    connect(ui->action_Unload_Disk_Image, SIGNAL(triggered()), SLOT(unloadDiskFile()));
     connect(this, SIGNAL(diskFileLoading(QString, DiskFile*)),
             ui->catalogWidget, SLOT(prepForNewDisk(QString,DiskFile*)));
     connect(this, SIGNAL(diskFileLoaded(QString,DiskFile*)),
@@ -35,6 +37,7 @@ void MainWindow::loadDiskFile(QString filename)
     m_disk = new DiskFile();
     emit diskFileLoading(filename,m_disk);
     if (m_disk->read(filename)) {
+        ui->action_Unload_Disk_Image->setEnabled(true);
         emit diskFileLoaded(filename,m_disk);
     } else {
         emit diskFileLoadFailed(filename,m_disk);
@@ -48,6 +51,7 @@ void MainWindow::unloadDiskFile()
     emit diskFileUnloading(m_disk);
     delete m_disk;
     m_disk = 0;
+    ui->action_Unload_Disk_Image->setEnabled(false);
     emit diskFileUnloaded();
 }
 
