@@ -6,37 +6,39 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = AppleSAWS
 TEMPLATE = app
 
-SOURCES += main.cpp \
-    diskfile.cxx \
-    sector.cxx \
-    vtoc.cxx \
-    catalogsector.cxx \
-    applestring.cxx \
-    tracksectorlist.cxx \
-    filedescriptiveentry.cxx \
-    applesoftfile.cxx \
-    genericfile.cxx \
-    disassembler.cxx \
-    binaryfile.cxx \
-    catalogwidget.cxx \
-    mainwindow.cxx
+INCLUDEPATH += src/
+
+SOURCES += src/main.cpp \
+    src/diskfile.cxx \
+    src/sector.cxx \
+    src/vtoc.cxx \
+    src/catalogsector.cxx \
+    src/applestring.cxx \
+    src/tracksectorlist.cxx \
+    src/filedescriptiveentry.cxx \
+    src/applesoftfile.cxx \
+    src/genericfile.cxx \
+    src/disassembler.cxx \
+    src/binaryfile.cxx \
+    src/catalogwidget.cxx \
+    src/mainwindow.cxx
 
 HEADERS += \
-    diskfile.h \
-    sector.h \
-    vtoc.h \
-    util.h \
-    catalogsector.h \
-    applestring.h \
-    tracksectorlist.h \
-    filedescriptiveentry.h \
-    applesoftfile.h \
-    genericfile.h \
-    disassembler.h \
-    binaryfile.h \
-    catalogwidget.h \
-    mainwindow.h
+    src/diskfile.h \
+    src/sector.h \
+    src/vtoc.h \
+    src/util.h \
+    src/catalogsector.h \
+    src/applestring.h \
+    src/tracksectorlist.h \
+    src/filedescriptiveentry.h \
+    src/applesoftfile.h \
+    src/genericfile.h \
+    src/disassembler.h \
+    src/binaryfile.h \
+    src/catalogwidget.h \
+    src/mainwindow.h
 
 FORMS += \
-    catalogwidget.ui \
-    mainwindow.ui
+    src/catalogwidget.ui \
+    src/mainwindow.ui
