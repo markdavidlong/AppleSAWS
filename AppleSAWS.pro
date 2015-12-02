@@ -21,7 +21,8 @@ SOURCES += src/main.cpp \
     src/disassembler.cxx \
     src/binaryfile.cxx \
     src/catalogwidget.cxx \
-    src/mainwindow.cxx
+    src/mainwindow.cxx \
+    src/hiresviewwidget.cxx
 
 HEADERS += \
     src/diskfile.h \
@@ -37,7 +38,8 @@ HEADERS += \
     src/disassembler.h \
     src/binaryfile.h \
     src/catalogwidget.h \
-    src/mainwindow.h
+    src/mainwindow.h \
+    src/hiresviewwidget.h
 
 FORMS += \
     src/catalogwidget.ui \

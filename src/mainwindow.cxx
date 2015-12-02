@@ -2,6 +2,8 @@
 #include "ui_mainwindow.h"
 
 #include <QFileDialog>
+#include "hiresviewwidget.h"
+#include <QMdiSubWindow>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -15,12 +17,17 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->action_Quit, SIGNAL(triggered()), qApp, SLOT(quit()));
     connect(ui->action_Load_Disk_Image, SIGNAL(triggered()), SLOT(showLoadDialog()));
     connect(ui->action_Unload_Disk_Image, SIGNAL(triggered()), SLOT(unloadDiskFile()));
+    connect(ui->catalogWidget,SIGNAL(itemSelected(DiskFile*,FileDescriptiveEntry)),
+            SLOT(handleDiskItemSelected(DiskFile*,FileDescriptiveEntry)));
+
+
     connect(this, SIGNAL(diskFileLoading(QString, DiskFile*)),
             ui->catalogWidget, SLOT(prepForNewDisk(QString,DiskFile*)));
     connect(this, SIGNAL(diskFileLoaded(QString,DiskFile*)),
             ui->catalogWidget, SLOT(processNewlyLoadedDisk(QString,DiskFile*)));
     connect(this, SIGNAL(diskFileUnloading(DiskFile*)),
             ui->catalogWidget, SLOT(unloadDisk(DiskFile*)));
+
 }
 
 MainWindow::~MainWindow()
@@ -64,4 +71,17 @@ void MainWindow::showLoadDialog()
     if (!filename.isEmpty()) {
         loadDiskFile(filename);
     }
+}
+
+void MainWindow::handleDiskItemSelected(DiskFile *disk, FileDescriptiveEntry fde)
+{
+    HiresViewWidget *hvwma = new HiresViewWidget(0);
+    hvwma->resize(280,192);
+    QString title = QString("Image: %1").arg(AppleString(fde.filename).printable().trimmed());
+    hvwma->setWindowTitle(title);
+    hvwma->show();
+
+    QByteArray data = disk->getFile(fde).mid(4);
+    hvwma->setData(data);
+
 }

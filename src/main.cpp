@@ -39,7 +39,8 @@ int main(int argc, char** argv)
 
     QApplication a(argc, argv);
     MainWindow w;
-    w.loadDiskFile("/home/mlong/Desktop/missing_ring_good.dsk");
+//    w.loadDiskFile("/home/mlong/Desktop/missing_ring_good.dsk");
+    w.loadDiskFile("/home/mlong/Desktop/dos.3.3.system.master.dsk");
     w.show();
 
     return a.exec();

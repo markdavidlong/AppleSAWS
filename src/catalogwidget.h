@@ -2,6 +2,8 @@
 #define CATALOGWIDGET_H
 
 #include <QWidget>
+#include <QListWidgetItem>
+
 
 #include "diskfile.h"
 
@@ -25,6 +27,10 @@ public slots:
 
 signals:
     void newFileSelected(FileDescriptiveEntry *entry);
+    void itemSelected(DiskFile *disk, FileDescriptiveEntry fde);
+
+private slots:
+    void itemClicked(QListWidgetItem *item);
 
 private:
 
