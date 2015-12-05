@@ -22,7 +22,8 @@ SOURCES += src/main.cpp \
     src/binaryfile.cxx \
     src/catalogwidget.cxx \
     src/mainwindow.cxx \
-    src/hiresviewwidget.cxx
+    src/hiresviewwidget.cxx \
+    src/applesoftfileviewer.cxx
 
 HEADERS += \
     src/diskfile.h \
@@ -39,8 +40,10 @@ HEADERS += \
     src/binaryfile.h \
     src/catalogwidget.h \
     src/mainwindow.h \
-    src/hiresviewwidget.h
+    src/hiresviewwidget.h \
+    src/applesoftfileviewer.h
 
 FORMS += \
     src/catalogwidget.ui \
-    src/mainwindow.ui
+    src/mainwindow.ui \
+    src/applesoftfileviewer.ui
