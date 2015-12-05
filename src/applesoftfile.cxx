@@ -29,25 +29,6 @@ QList<ApplesoftLine> ApplesoftFile::detokenize()
 {
     QList<ApplesoftLine> retval;
 
-/*
-    qDebug() << "Length: " << m_length;
-    for (int idx = 0; idx < m_length; idx += 8)
-    {
-        qDebug()
-                 << QString("%1 (%2): %3 %4 %5 %6 %7 %8 %9 %10")
-                .arg((quint16) idx + 0x801,4,16,QChar('0')).toUpper()
-                .arg((quint16) idx + 0x801,4,10,QChar('0'))
-                .arg((quint8) m_data[idx],2,16,QChar('0')).toUpper()
-                .arg((quint8) m_data[idx+1],2,16,QChar('0')).toUpper()
-                .arg((quint8) m_data[idx+2],2,16,QChar('0')).toUpper()
-                .arg((quint8) m_data[idx+3],2,16,QChar('0')).toUpper()
-                .arg((quint8) m_data[idx+4],2,16,QChar('0')).toUpper()
-                .arg((quint8) m_data[idx+5],2,16,QChar('0')).toUpper()
-                .arg((quint8) m_data[idx+6],2,16,QChar('0')).toUpper()
-                .arg((quint8) m_data[idx+7],2,16,QChar('0')).toUpper();
-
-    }
-*/
     int idx = 0;
     quint8 val = 0;
     while (idx < m_data.length()) {
@@ -65,7 +46,7 @@ QList<ApplesoftLine> ApplesoftFile::detokenize()
             val = m_data[idx++];
             line.tokens.append(val);
             if (val >= 0x80) {
-                line.detokenized_line.append(" " + m_tokens[val]);
+                line.detokenized_line.append(m_tokens[val]);
             } else {
                 if (val >= 0x20) {
                     line.detokenized_line.append(val);
@@ -73,7 +54,7 @@ QList<ApplesoftLine> ApplesoftFile::detokenize()
                     QChar ch = QChar(0x2401);
                     line.detokenized_line.append(ch);
                 }else if (val > 0x00) {
-                    QChar ch = QChar(0x00 + val);
+                    QChar ch = QChar(0x2400 + val);
                     line.detokenized_line.append(ch);
                 }
             }
@@ -157,13 +138,13 @@ void ApplesoftFile::makeTokens()
     m_tokens[0xB6] = " LOAD ";    m_tokens[0xB7] = " SAVE ";    m_tokens[0xB8] = " DEF ";
     m_tokens[0xB9] = " POKE ";    m_tokens[0xBA] = " PRINT ";   m_tokens[0xBB] = " CONT ";
     m_tokens[0xBC] = " LIST ";    m_tokens[0xBD] = " CLEAR ";   m_tokens[0xBE] = " GET ";
-    m_tokens[0xBF] = " NEW ";     m_tokens[0xC0] = " TAB ";     m_tokens[0xC1] = "  TO ";
-    m_tokens[0xC2] = " FN ";      m_tokens[0xC3] = " SPC( ";    m_tokens[0xC4] = "  THEN ";
-    m_tokens[0xC5] = " AT ";      m_tokens[0xC6] = "  NOT ";    m_tokens[0xC7] = "   STEP ";
-    m_tokens[0xC8] = " +";        m_tokens[0xC9] = " -";        m_tokens[0xCA] = " *";
-    m_tokens[0xCB] = " /";        m_tokens[0xCC] = " ^";        m_tokens[0xCD] = "  AND ";
-    m_tokens[0xCE] = "  OR ";     m_tokens[0xCF] = " >";        m_tokens[0xD0] = " =";
-    m_tokens[0xD1] = " <";        m_tokens[0xD2] = " SGN";      m_tokens[0xD3] = " INT";
+    m_tokens[0xBF] = " NEW ";     m_tokens[0xC0] = " TAB(";     m_tokens[0xC1] = " TO ";
+    m_tokens[0xC2] = " FN ";      m_tokens[0xC3] = " SPC( ";    m_tokens[0xC4] = " THEN ";
+    m_tokens[0xC5] = " AT ";      m_tokens[0xC6] = " NOT ";     m_tokens[0xC7] = " STEP ";
+    m_tokens[0xC8] = " + ";       m_tokens[0xC9] = " - ";       m_tokens[0xCA] = " * ";
+    m_tokens[0xCB] = " / ";       m_tokens[0xCC] = " ^ ";       m_tokens[0xCD] = " AND ";
+    m_tokens[0xCE] = "  OR ";     m_tokens[0xCF] = " > ";       m_tokens[0xD0] = " = ";
+    m_tokens[0xD1] = " < ";       m_tokens[0xD2] = " SGN";      m_tokens[0xD3] = " INT";
     m_tokens[0xD4] = " ABS";      m_tokens[0xD5] = " USR";      m_tokens[0xD6] = " FRE";
     m_tokens[0xD7] = " SCRN( ";   m_tokens[0xD8] = " PDL";      m_tokens[0xD9] = " POS";
     m_tokens[0xDA] = " SQR";      m_tokens[0xDB] = " RND";      m_tokens[0xDC] = " LOG";
