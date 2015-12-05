@@ -12,7 +12,6 @@ public:
     quint16 address() { return m_address; }
     quint16 length() { return m_length; }
 
-    QByteArray data() { return m_data; }
     void dump();
 
 protected:

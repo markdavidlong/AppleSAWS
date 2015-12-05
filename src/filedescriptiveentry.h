@@ -11,6 +11,10 @@ struct FileDescriptiveEntry {
     AppleString filename;
     quint16 lengthInSectors;
 
+    bool operator<(const FileDescriptiveEntry& f1) const {
+        return f1.filename < filename;
+    }
+
     QString fileType() {
         if (fileTypeAndFlags & IntegerBasicFile) { return "I"; }
         if (fileTypeAndFlags & ApplesoftBasicFile) { return "A"; }

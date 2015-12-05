@@ -5,12 +5,22 @@
 #include <QDebug>
 
 #include "tracksectorlist.h"
+#include "applesoftfile.h"
+#include "binaryfile.h"
 
 DiskFile::DiskFile(QString filename)
 {
     if (!filename.isEmpty())
     {
         read(filename);
+    }
+}
+
+DiskFile::~DiskFile()
+{
+    foreach (GenericFile *file, m_files)
+    {
+        delete file;
     }
 }
 
@@ -68,11 +78,33 @@ QList<CatalogSector> DiskFile::getCatalogSectors()
     return retval;
 }
 
-QByteArray DiskFile::getFile(FileDescriptiveEntry fde)
+GenericFile *DiskFile::getFile(FileDescriptiveEntry fde)
 {
-    QByteArray retval;
-    TrackSectorList tsl = getSector(fde.firstTSListSector).promoteToTrackSectorList();
-    return getDataFromTrackSectorList(tsl);
+    GenericFile *retval = 0;
+    if (m_files.contains(fde))
+    {
+        retval = m_files[fde];
+    }
+    else
+    {
+        TrackSectorList tsl = getSector(fde.firstTSListSector).promoteToTrackSectorList();
+        QByteArray data = getDataFromTrackSectorList(tsl);
+
+        if (fde.fileTypeAndFlags & ApplesoftBasicFile)
+        {
+            retval = new ApplesoftFile(data);
+        }
+        else if (fde.fileTypeAndFlags & RawBinaryFile)
+        {
+            retval = new BinaryFile(data);
+        }
+        else
+        {
+            retval = new GenericFile(data);
+        }
+        m_files[fde] = retval;
+    }
+    return retval;
 }
 
 

@@ -10,12 +10,13 @@
 #include "sector.h"
 #include "vtoc.h"
 
-
+#include "genericfile.h"
 
 class DiskFile
 {
 public:
     DiskFile(QString filename = "");
+    ~DiskFile();
 
     bool read(QString filename);
 
@@ -29,7 +30,7 @@ public:
 
     QList<CatalogSector> getCatalogSectors();
 
-    QByteArray getFile(FileDescriptiveEntry fde);
+    GenericFile *getFile(FileDescriptiveEntry fde);
 
     QByteArray getDataFromTrackSectorList(TrackSectorList tsl);
 
@@ -39,6 +40,7 @@ public:
 private:
 
     QMap< int, QMap< int, Sector> > m_contents;
+    QMap<FileDescriptiveEntry,GenericFile *> m_files;
 
 };
 

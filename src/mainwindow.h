@@ -24,7 +24,7 @@ public slots:
     void showLoadDialog();
 
 private slots:
-    void handleDiskItemSelected(DiskFile *disk, FileDescriptiveEntry fde);
+    void handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescriptiveEntry fde);
 
 signals:
     void diskFileLoading(QString filename, DiskFile *file);

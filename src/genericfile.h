@@ -7,7 +7,9 @@ class GenericFile
 {
 public:
     GenericFile(QByteArray data = QByteArray());
+    virtual ~GenericFile() { }
     virtual void setData(QByteArray data);
+    virtual QByteArray data() { return m_data; }
 
 protected:
     QByteArray m_data;
