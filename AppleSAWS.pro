@@ -7,45 +7,53 @@ TARGET = AppleSAWS
 TEMPLATE = app
 
 INCLUDEPATH += src/
+INCLUDEPATH += src/diskfiles
+INCLUDEPATH += src/diskfiles/dos33
+INCLUDEPATH += src/util
+INCLUDEPATH += src/applesoftfile
+INCLUDEPATH += src/binaryfile
+INCLUDEPATH += src/ui
+INCLUDEPATH += src/ui/viewers
 
-SOURCES += src/main.cpp \
-    src/diskfile.cxx \
-    src/sector.cxx \
-    src/vtoc.cxx \
-    src/catalogsector.cxx \
-    src/applestring.cxx \
-    src/tracksectorlist.cxx \
-    src/filedescriptiveentry.cxx \
-    src/applesoftfile.cxx \
-    src/genericfile.cxx \
-    src/disassembler.cxx \
-    src/binaryfile.cxx \
-    src/catalogwidget.cxx \
-    src/mainwindow.cxx \
-    src/hiresviewwidget.cxx \
-    src/applesoftfileviewer.cxx \
-    src/applesofttoken.cxx
+SOURCES += \
+    src/main.cpp \
+    src/diskfiles/dos33/diskfile.cxx \
+    src/diskfiles/dos33/sector.cxx \
+    src/diskfiles/dos33/vtoc.cxx \
+    src/diskfiles/dos33/catalogsector.cxx \
+    src/diskfiles/dos33/tracksectorlist.cxx \
+    src/diskfiles/dos33/filedescriptiveentry.cxx \
+    src/diskfiles/dos33/genericfile.cxx \
+    src/util/applestring.cxx \
+    src/applesoftfile/applesoftfile.cxx \
+    src/applesoftfile/applesofttoken.cxx \
+    src/binaryfile/disassembler.cxx \
+    src/binaryfile/binaryfile.cxx \
+    src/ui/catalogwidget.cxx \
+    src/ui/mainwindow.cxx \
+    src/ui/viewers/hiresviewwidget.cxx \
+    src/ui/viewers/applesoftfileviewer.cxx 
 
 HEADERS += \
-    src/diskfile.h \
-    src/sector.h \
-    src/vtoc.h \
-    src/util.h \
-    src/catalogsector.h \
-    src/applestring.h \
-    src/tracksectorlist.h \
-    src/filedescriptiveentry.h \
-    src/applesoftfile.h \
-    src/genericfile.h \
-    src/disassembler.h \
-    src/binaryfile.h \
-    src/catalogwidget.h \
-    src/mainwindow.h \
-    src/hiresviewwidget.h \
-    src/applesoftfileviewer.h \
-    src/applesofttoken.h
+    src/diskfiles/dos33/diskfile.h \
+    src/diskfiles/dos33/sector.h \
+    src/diskfiles/dos33/vtoc.h \
+    src/diskfiles/dos33/catalogsector.h \
+    src/diskfiles/dos33/tracksectorlist.h \
+    src/diskfiles/dos33/filedescriptiveentry.h \
+    src/diskfiles/dos33/genericfile.h \
+    src/util/util.h \
+    src/util/applestring.h \
+    src/applesoftfile/applesoftfile.h \
+    src/applesoftfile/applesofttoken.h \
+    src/binaryfile/disassembler.h \
+    src/binaryfile/binaryfile.h \
+    src/ui/catalogwidget.h \
+    src/ui/mainwindow.h \
+    src/ui/viewers/hiresviewwidget.h \
+    src/ui/viewers/applesoftfileviewer.h 
 
 FORMS += \
-    src/catalogwidget.ui \
-    src/mainwindow.ui \
-    src/applesoftfileviewer.ui
+    src/ui/catalogwidget.ui \
+    src/ui/mainwindow.ui \
+    src/ui/viewers/applesoftfileviewer.ui
