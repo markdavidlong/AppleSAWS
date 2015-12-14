@@ -105,9 +105,9 @@ void MainWindow::handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescripti
             strings.append(linestring);
         }
         QString fulltext = Qt::convertFromPlainText(strings.join("\n"));
-        fulltext.replace("POKE","<font color=\"purple\">POKE</font>");
-        fulltext.replace("PEEK","<font color=\"purple\">PEEK</font>");
-        fulltext.replace("CALL","<font color=\"blue\">CALL</font>");
+ //       fulltext.replace("{kwd}","<font color=\"red\">{kwd}</font>");
+  //      fulltext.replace("{num}","<font color=\"red\">{num}</font>");
+   //     fulltext.replace("{string}","<font color=\"red\">{string}</font>");
         fulltext.replace("GOTO","<b><font color=\"green\">GOTO</font></b>");
         fulltext.replace("GOSUB","<b><font color=\"green\">GOSUB</font></b>");
 //        fulltext.replace("0","<font color=\"orange\">0</font>");

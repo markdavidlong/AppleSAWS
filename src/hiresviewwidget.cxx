@@ -80,6 +80,11 @@ int HiresViewWidget::findRowCol(int offset) {
 void HiresViewWidget::makeOffsetTable() {
     m_rowTable = new QMap<int,int>();
 
+    for (int idx = 0; idx < 8192; idx++)
+    {
+        (*m_rowTable)[idx] = -1; // Fill the memory holes.  Brute force, but it works.
+    }
+
     int count = 0;
 
     int outer = 0x0000;
@@ -121,6 +126,7 @@ void HiresViewWidget::makeOffsetTable() {
         }
         outer += 0x0080;
     }
+
 
 }
 
