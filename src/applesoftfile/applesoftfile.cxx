@@ -3,8 +3,6 @@
 
 ApplesoftFile::ApplesoftFile(QByteArray data) : GenericFile(data)
 {
-
-
     if (!data.isEmpty())
     {
         setData(data);
@@ -19,12 +17,13 @@ void ApplesoftFile::setData(QByteArray data)
     quint8 addhi = m_data.at(1);
     m_length = addlo + (addhi * 256);
     m_data.remove(0,2);
-    m_detokenized = detokenize();
+    parse();
+ //   m_detokenized = detokenize();
 }
 
-QList<ApplesoftLine> ApplesoftFile::detokenize(quint16 start_address)
+void ApplesoftFile::parse(quint16 start_address)
 {
-    QList<ApplesoftLine> retval;
+//    QList<ApplesoftLine> retval;
 
     int idx = 0;
     quint8 val = 0;
@@ -44,50 +43,10 @@ QList<ApplesoftLine> ApplesoftFile::detokenize(quint16 start_address)
             val = m_data[idx++];
             ApplesoftToken token(val);
             line.tokens.append(token);
-   //         line.raw_tokens.append(val);
-
-//            if (val >= 0x80) {
-//            //    line.detokenized_line.append("~");
-//               line.detokenized_line.append(m_tokens[val]);
-//            } else {
-//                if (val >= 0x20) {
-//                    line.detokenized_line.append(val);
-//                } else if (val == 0x7F) {
-//                    QChar ch = QChar(0x2401);
-//                    line.detokenized_line.append(ch);
-//                }else if (val > 0x00) {
-//                    QChar ch = QChar(0x2400 + val);
-//                    line.detokenized_line.append(ch);
-//                }
-//            }
         } while (val != 0x00);
 
-        Retokenizer::retokenize(line);
-
-        //Make Detokenized line
-        foreach (ApplesoftToken token, line.tokens) {
-            quint16 tokenval = token.getTokenId();
-            line.detokenized_line.append(token.getRawPrintableString());
-//            if (tokenval >= 0x80 && tokenval < 0xFE) {
-//                line.detokenized_line.append("{kwd}");
-//            } else if (tokenval >= 0xF0) {
-//               line.detokenized_line.append(ApplesoftToken::getStringForToken(tokenval));
-//            } else {
-//                if (tokenval >= 0x20) {
-//                    line.detokenized_line.append(tokenval);
-//                } else if (tokenval == 0x7F) {
-//                    QChar ch = QChar(0x2401);
-//                    line.detokenized_line.append(ch);
-//                }else if (tokenval > 0x00) {
-//                    QChar ch = QChar(0x2400 + tokenval);
-//                    line.detokenized_line.append(ch);
-//                }
-//            }
-        }
-
-
         current_address = line.next_address;
-        retval.append(line);
+        m_lines.append(line);
     }
 
     m_data_end = idx;
@@ -95,25 +54,6 @@ QList<ApplesoftLine> ApplesoftFile::detokenize(quint16 start_address)
     if (idx < m_data.length()) {
         qDebug() << QString("%1 byte(s) unaccounted for.").arg(m_data.length() - idx);
     }
-
-    return retval;
-}
-
-void ApplesoftFile::list() {
-    foreach (ApplesoftLine line,detokenized()) {
-        QString debugline = QString("%1  %2  %3").arg(line.next_address,4,16,QChar('0')).arg(line.linenum).arg(line.detokenized_line);
-        qDebug() << debugline;
-/*
-        debugline = "";
-        foreach (quint8 val, line.tokens) {
-            debugline.append(QString("%1 ").arg(val,2,16,QChar('0')));
-        }
-        qDebug() << "  " << debugline;
-        qDebug() << "\n";
-*/
-    }
-
-    qDebug() << extraDataHexValues().join("\n");
 }
 
 QStringList ApplesoftFile::extraDataHexValues() {

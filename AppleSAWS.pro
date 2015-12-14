@@ -32,7 +32,8 @@ SOURCES += \
     src/ui/catalogwidget.cxx \
     src/ui/mainwindow.cxx \
     src/ui/viewers/hiresviewwidget.cxx \
-    src/ui/viewers/applesoftfileviewer.cxx 
+    src/ui/viewers/applesoftfileviewer.cxx \ 
+    src/applesoftfile/applesoftformatter.cxx
 
 HEADERS += \
     src/diskfiles/dos33/diskfile.h \
@@ -51,7 +52,8 @@ HEADERS += \
     src/ui/catalogwidget.h \
     src/ui/mainwindow.h \
     src/ui/viewers/hiresviewwidget.h \
-    src/ui/viewers/applesoftfileviewer.h 
+    src/ui/viewers/applesoftfileviewer.h \ 
+    src/applesoftfile/applesoftformatter.h
 
 FORMS += \
     src/ui/catalogwidget.ui \

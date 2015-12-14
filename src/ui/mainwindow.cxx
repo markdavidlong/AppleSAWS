@@ -32,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this, SIGNAL(diskFileUnloading(DiskFile*)),
             ui->catalogWidget, SLOT(unloadDisk(DiskFile*)));
 
+
 }
 
 MainWindow::~MainWindow()
@@ -95,34 +96,10 @@ void MainWindow::handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescripti
     else if (dynamic_cast<ApplesoftFile *>(file))
     {
         ApplesoftFile *abf = dynamic_cast<ApplesoftFile *>(file);
-        ApplesoftFileViewer *afv = new ApplesoftFileViewer(0);
-        QString title = QString("AppleSoft Viewer: %1").arg(AppleString(fde.filename).printable().trimmed());
-        afv->setWindowTitle(title);
-        QStringList strings;
-        foreach (ApplesoftLine line, abf->detokenized())
-        {
-            QString linestring = QString("%1  %2").arg(line.linenum,5,10,QChar(' ')).arg(line.detokenized_line);
-            strings.append(linestring);
-        }
-        QString fulltext = Qt::convertFromPlainText(strings.join("\n"));
- //       fulltext.replace("{kwd}","<font color=\"red\">{kwd}</font>");
-  //      fulltext.replace("{num}","<font color=\"red\">{num}</font>");
-   //     fulltext.replace("{string}","<font color=\"red\">{string}</font>");
-        fulltext.replace("GOTO","<b><font color=\"green\">GOTO</font></b>");
-        fulltext.replace("GOSUB","<b><font color=\"green\">GOSUB</font></b>");
-//        fulltext.replace("0","<font color=\"orange\">0</font>");
-//        fulltext.replace("1","<font color=\"orange\">1</font>");
-//        fulltext.replace("2","<font color=\"orange\">2</font>");
-//        fulltext.replace("3","<font color=\"orange\">3</font>");
-//        fulltext.replace("4","<font color=\"orange\">4</font>");
-//        fulltext.replace("5","<font color=\"orange\">5</font>");
-//        fulltext.replace("6","<font color=\"orange\">6</font>");
-//        fulltext.replace("7","<font color=\"orange\">7</font>");
-//        fulltext.replace("8","<font color=\"orange\">8</font>");
-//        fulltext.replace("9","<font color=\"orange\">9</font>");
-        fulltext.replace("RETURN","RETURN<p>");
+        abf->setFilename(AppleString(fde.filename).printable().trimmed());
 
-        afv->setText(fulltext);
+        ApplesoftFileViewer *afv = new ApplesoftFileViewer(0);
+        afv->setFile(abf);
         afv->show();
     }
 
