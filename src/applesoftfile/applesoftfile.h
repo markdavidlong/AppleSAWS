@@ -6,16 +6,9 @@
 #include <QMap>
 #include <QVector>
 
+#include "applesoftline.h"
 #include "genericfile.h"
 #include "applesofttoken.h"
-
-struct ApplesoftLine {
-    qint16 address;
-    quint16 next_address;
-    quint16 linenum;
-    QVector<ApplesoftToken> tokens;
-   // QString detokenized_line;
-};
 
 
 class ApplesoftFile : public GenericFile
@@ -39,7 +32,6 @@ private:
     int m_data_end;
     quint16 m_length;
     QString m_filename;
-  //  QList<ApplesoftLine> m_detokenized;
 
     friend class Retokenizer;
 };

@@ -86,7 +86,7 @@ void MainWindow::handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescripti
         if (fde.lengthInSectors == 34)
         {
             HiresViewWidget *hvwma = new HiresViewWidget(0);
-            hvwma->resize(280,192);
+
             QString title = QString("Image: %1").arg(AppleString(fde.filename).printable().trimmed());
             hvwma->setWindowTitle(title);
             hvwma->show();

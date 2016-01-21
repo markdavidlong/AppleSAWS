@@ -10,6 +10,12 @@
     <height>560</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>Courier 10 Pitch</family>
+    <pointsize>10</pointsize>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>

@@ -1,7 +1,6 @@
 #ifndef APPLESOFTTOKEN_H
 #define APPLESOFTTOKEN_H
 
-
 #include <QString>
 #include <QVariant>
 #include <QMap>
@@ -48,7 +47,6 @@ public:
         FUNCTION,
         UNDEFINED_COMMAND
     } CommandType;
-
 
     ApplesoftToken();
     ApplesoftToken(quint16 id);
