@@ -7,6 +7,8 @@
 #include <QPair>
 #include <QMap>
 #include <QBitArray>
+#include <QAction>
+#include <QMenu>
 
 static const QColor blackColor = QColor(0,0,0);
 static const QColor brownColor = QColor();
@@ -44,12 +46,17 @@ public:
     void resizeEvent(QResizeEvent *event);
 
     static QBitArray byteToBits(quint8 byte);
+    void contextMenuEvent(QContextMenuEvent *);
 signals:
 
 public slots:
     void setData(QByteArray data);
     void setMode(ViewMode);
 
+protected slots:
+    void handleNtscAction(bool toggled);
+    void handleMonochromeAction(bool toggled);
+    void handleShowScanLinesAction(bool toggled);
 private:
     QPixmap m_pixmap;
     QByteArray m_data;
@@ -65,6 +72,15 @@ private:
     void drawMonoLine(QPainter &painter, int lineNum, QBitArray data);
 
     QColor getColorFromBits(QBitArray bits, quint8 phase);
+
+    QAction *monochromeAction;
+    QAction *ntscAction;
+    QAction *showScanLinesAction;
+    QActionGroup *formatGroup;
+
+    bool m_showScanLines;
+
+    void drawPixmap();
 };
 
 

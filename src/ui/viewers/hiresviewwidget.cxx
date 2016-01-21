@@ -14,6 +14,7 @@ HiresViewWidget::HiresViewWidget(QWidget *parent) :
 {
     resize(561,384);
     m_viewMode = Color2;
+    m_showScanLines = true;
 
     if (m_rowTable == 0) { makeOffsetTable(); }
 
@@ -23,6 +24,46 @@ HiresViewWidget::HiresViewWidget(QWidget *parent) :
     QPainter painter(&m_pixmap);
     painter.setBrush(Qt::black);
     painter.drawRect(0,0,this->width(),this->height());
+
+    formatGroup = new QActionGroup(this);
+
+    monochromeAction = new QAction("Monochrome Display",this);
+    monochromeAction->setCheckable(true);
+    monochromeAction->setChecked(false);
+    formatGroup->addAction(monochromeAction);
+
+    ntscAction = new QAction("NTSC Display",this);
+    ntscAction->setCheckable(true);
+    ntscAction->setChecked(true);
+    formatGroup->addAction(ntscAction);
+
+    showScanLinesAction = new QAction("Show Scan Lines",this);
+    showScanLinesAction->setCheckable(true);
+    showScanLinesAction->setChecked(true);
+
+    connect(ntscAction, SIGNAL(toggled(bool)), this, SLOT(handleNtscAction(bool)));
+    connect(monochromeAction, SIGNAL(toggled(bool)), this, SLOT(handleMonochromeAction(bool)));
+    connect(showScanLinesAction, SIGNAL(toggled(bool)), this, SLOT(handleShowScanLinesAction(bool)));
+
+}
+
+void HiresViewWidget::handleNtscAction(bool toggled) {
+    if (toggled) {
+        m_viewMode = Color2;
+        update();
+    }
+}
+
+void HiresViewWidget::handleMonochromeAction(bool toggled) {
+    if (toggled) {
+        m_viewMode = Monochrome;
+        update();
+    }
+}
+
+void HiresViewWidget::handleShowScanLinesAction(bool toggled) {
+    m_showScanLines = toggled;
+    update();
 }
 
 void HiresViewWidget::paintEvent(QPaintEvent *event)
@@ -33,6 +74,9 @@ void HiresViewWidget::paintEvent(QPaintEvent *event)
     //    if (m_pixmap.size() != this->size()) {
     //        m_pixmap = m_pixmap.scaled(this->size(),Qt::KeepAspectRatio);
     //    }
+
+    drawPixmap();
+
     QPainter painter(this);
 
     QPixmap tmppixmap = m_pixmap;
@@ -47,40 +91,64 @@ void HiresViewWidget::resizeEvent(QResizeEvent *)
 
 }
 
-void HiresViewWidget::setData(QByteArray data) {
-    qDebug() << "setData";
-    m_data = data;
+void HiresViewWidget::drawPixmap() {
+
     QPainter pmpainter(&m_pixmap);
+
+    pmpainter.setBrush(Qt::black);
+    pmpainter.setPen(Qt::black);
+    pmpainter.drawRect(0,0,m_pixmap.width(),m_pixmap.height());
 
     if (m_viewMode == Monochrome)
     {
         pmpainter.setPen(Qt::white);
         pmpainter.setBrush(Qt::white);
 
-        for (int idx = 0; idx <  m_data.size() ; idx++) {
+        quint8 chunkCount = 0;
+        //    for (int idx = 0; idx <  m_data.size() ; idx+=40) {
+        int idx = 0;
+        while (idx < m_data.size()) {
             int rowcol = findRowCol(idx);
+            //        int xoff = (rowcol / 10000) * 7;
+            int yoff = (rowcol % 10000);
 
-            quint8 byte = m_data[idx];
+            QBitArray bits(561,false);
+            int bitoffset = 0;
+            bool lastbit = false;
 
-            //     qDebug() << "idx: " << idx << (rowcol / 1000) << (rowcol % 1000);
-            int xoff = (rowcol / 10000) * 7 * 2;
-            int yoff = (rowcol % 10000) * 2;
+            for (int jdx = 0; jdx < 40; jdx++)
+            {
+                quint8 byte = m_data[idx++];
+                QBitArray dataBits = byteToBits(byte);
 
-            if (byte & 0x01) { pmpainter.drawRect(xoff+0,yoff,1,1); }
+                bool highBit = dataBits.at(0);
 
-            if (byte & 0x02) { pmpainter.drawRect(xoff+2,yoff,1,1); }
+                if (highBit) {
+                    bits[bitoffset++] = lastbit;
+                }
 
-            if (byte & 0x04) { pmpainter.drawRect(xoff+4,yoff,1,1); }
+                for (int xdx = 1; xdx < 7; xdx++) {
+                    bits[bitoffset++] = dataBits.at(xdx);
+                    bits[bitoffset++] = dataBits.at(xdx);
+                }
+                lastbit = dataBits.at(7);
+                bits[bitoffset++] = dataBits.at(7);
+                if (!highBit) {
+                    bits[bitoffset++] = dataBits.at(7);
+                }
+            }
 
-            if (byte & 0x08) { pmpainter.drawRect(xoff+6,yoff,1,1); }
 
-            if (byte & 0x10) { pmpainter.drawRect(xoff+8,yoff,1,1); }
+             drawMonoLine(pmpainter, yoff*2, bits);
+             if (!m_showScanLines) drawMonoLine(pmpainter, yoff*2+1, bits);
 
-            if (byte & 0x20) { pmpainter.drawRect(xoff+10,yoff,1,1); }
 
-            if (byte & 0x40) { pmpainter.drawRect(xoff+12,yoff,1,1); }
+            chunkCount++;
+            if (chunkCount == 3) {
+                chunkCount = 0;
+                idx+=8;
+            }
 
-            if (idx >= (280*192)) break;
         }
     } else if (m_viewMode == Color1) {
 
@@ -185,10 +253,9 @@ void HiresViewWidget::setData(QByteArray data) {
             }
 
             drawNtscLine(pmpainter, yoff*2, bits);
-           // drawMonoLine(pmpainter, yoff*2, bits);
-            //           for (int ddx = 0; ddx < bits.count(); ddx++) {
-            //               if (bits.at(ddx)) { pmpainter.drawRect(ddx,yoff*2,0,1); }
-            //           }
+            if (!m_showScanLines) {
+                drawNtscLine(pmpainter, yoff*2+1, bits);
+            }
 
             chunkCount++;
             if (chunkCount == 3) {
@@ -199,9 +266,25 @@ void HiresViewWidget::setData(QByteArray data) {
     }
 }
 
+void HiresViewWidget::setData(QByteArray data) {
+    qDebug() << "setData";
+    m_data = data;
+
+    drawPixmap();
+}
+
 void HiresViewWidget::drawMonoLine(QPainter &painter, int lineNum, QBitArray data) {
     for (int idx = 0; idx < data.count(); idx++) {
-        if (data.at(idx)) { painter.drawPoint(idx,lineNum); }
+
+        if (data.at(idx))
+        {
+            painter.setPen(Qt::white);
+        } else {
+            painter.setPen(Qt::black);
+        }
+
+
+        painter.drawPoint(idx,lineNum);
     }
 }
 
@@ -395,6 +478,15 @@ void HiresViewWidget::makeOffsetTable() {
     }
 
 
+}
+
+void HiresViewWidget::contextMenuEvent(QContextMenuEvent *event) {
+    QMenu menu(this);
+    menu.addAction(monochromeAction);
+    menu.addAction(ntscAction);
+    menu.addSeparator();
+    menu.addAction(showScanLinesAction);
+    menu.exec(event->globalPos());
 }
 
 QMap<int,int> *HiresViewWidget::m_rowTable = 0;
