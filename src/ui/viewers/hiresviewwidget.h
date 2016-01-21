@@ -68,6 +68,7 @@ private:
     void makeOffsetTable();
 
     ViewMode m_viewMode;
+
     void drawNtscLine(QPainter &painter,int linenum, QBitArray data);
     void drawMonoLine(QPainter &painter, int lineNum, QBitArray data);
 

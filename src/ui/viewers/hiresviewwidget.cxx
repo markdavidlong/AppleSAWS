@@ -6,8 +6,6 @@
 
 #include <math.h>
 
-#define CYCLESTART (M_PI * 4.0 / 16.0)
-
 
 HiresViewWidget::HiresViewWidget(QWidget *parent) :
     QWidget(parent)
