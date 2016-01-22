@@ -18,13 +18,10 @@ void ApplesoftFile::setData(QByteArray data)
     m_length = addlo + (addhi * 256);
     m_data.remove(0,2);
     parse();
- //   m_detokenized = detokenize();
 }
 
 void ApplesoftFile::parse(quint16 start_address)
 {
-//    QList<ApplesoftLine> retval;
-
     int idx = 0;
     quint8 val = 0;
 
@@ -82,9 +79,6 @@ QByteArray ApplesoftFile::extraData()
 {
     return m_data.mid(m_data_end);
 }
-
-
-
 
 void Retokenizer::retokenize(ApplesoftLine &line)
 {

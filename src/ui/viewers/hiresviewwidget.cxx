@@ -35,12 +35,19 @@ HiresViewWidget::HiresViewWidget(QWidget *parent) :
     ntscAction->setChecked(true);
     formatGroup->addAction(ntscAction);
 
+    perPixelColorAction= new QAction("Per Pixel Color Display",this);
+    perPixelColorAction->setCheckable(true);
+    perPixelColorAction->setChecked(false);
+    formatGroup->addAction(perPixelColorAction);
+
     showScanLinesAction = new QAction("Show Scan Lines",this);
     showScanLinesAction->setCheckable(true);
     showScanLinesAction->setChecked(true);
 
     connect(ntscAction, SIGNAL(toggled(bool)), this, SLOT(handleNtscAction(bool)));
     connect(monochromeAction, SIGNAL(toggled(bool)), this, SLOT(handleMonochromeAction(bool)));
+    connect(perPixelColorAction, SIGNAL(toggled(bool)), this, SLOT(handlePerPixelColorAction(bool)));
+
     connect(showScanLinesAction, SIGNAL(toggled(bool)), this, SLOT(handleShowScanLinesAction(bool)));
 
 }
@@ -55,6 +62,13 @@ void HiresViewWidget::handleNtscAction(bool toggled) {
 void HiresViewWidget::handleMonochromeAction(bool toggled) {
     if (toggled) {
         m_viewMode = Monochrome;
+        update();
+    }
+}
+
+void HiresViewWidget::handlePerPixelColorAction(bool toggled) {
+    if (toggled) {
+        m_viewMode = Color1;
         update();
     }
 }
@@ -376,7 +390,7 @@ QColor HiresViewWidget::getColorFromBits(QBitArray bits, quint8 phase)
 
 void HiresViewWidget::drawNtscLine(QPainter &painter, int lineNum, QBitArray data) {
     QVector<QColor> colors;
-    colors.resize(data.count()+4);
+    colors.resize(data.count()+3);
 
     for (int idx = 0; idx < data.count(); idx++) {
         QBitArray tmp(4);
@@ -474,14 +488,13 @@ void HiresViewWidget::makeOffsetTable() {
         }
         outer += 0x0080;
     }
-
-
 }
 
 void HiresViewWidget::contextMenuEvent(QContextMenuEvent *event) {
     QMenu menu(this);
     menu.addAction(monochromeAction);
     menu.addAction(ntscAction);
+    menu.addAction(perPixelColorAction);
     menu.addSeparator();
     menu.addAction(showScanLinesAction);
     menu.exec(event->globalPos());

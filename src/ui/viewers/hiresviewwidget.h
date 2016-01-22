@@ -56,6 +56,7 @@ public slots:
 protected slots:
     void handleNtscAction(bool toggled);
     void handleMonochromeAction(bool toggled);
+    void handlePerPixelColorAction(bool toggled);
     void handleShowScanLinesAction(bool toggled);
 private:
     QPixmap m_pixmap;
@@ -76,6 +77,7 @@ private:
 
     QAction *monochromeAction;
     QAction *ntscAction;
+    QAction *perPixelColorAction;
     QAction *showScanLinesAction;
     QActionGroup *formatGroup;
 

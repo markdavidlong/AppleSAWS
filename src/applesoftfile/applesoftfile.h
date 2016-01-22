@@ -18,7 +18,6 @@ public:
     void setData(QByteArray data);
     void setFilename(QString filename) { m_filename = filename; }
     QByteArray extraData();
- //   QList<ApplesoftLine> detokenized() { return m_detokenized; }
     QStringList extraDataHexValues();
 
     QVector<ApplesoftLine> getLines() const { return m_lines; }
