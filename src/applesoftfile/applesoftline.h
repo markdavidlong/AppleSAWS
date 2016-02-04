@@ -10,7 +10,6 @@ struct ApplesoftLine {
     quint16 next_address;
     quint16 linenum;
     QVector<ApplesoftToken> tokens;
-   // QString detokenized_line;
 };
 
 

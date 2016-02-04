@@ -58,7 +58,7 @@ HEADERS += \
     src/ui/viewers/hiresviewwidget.h \
     src/ui/viewers/applesoftfileviewer.h \ 
     src/applesoftfile/applesoftformatter.h \
-    src/applesoftfile/applesoftline.h 
+    src/applesoftfile/applesoftline.h  
 
 FORMS += \
     src/ui/catalogwidget.ui \

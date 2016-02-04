@@ -183,6 +183,10 @@ void HiresViewWidget::drawPixmap() {
             quint8 cOffset = 0;// highBit?1:0;
 
             quint8 doubleScan = 0;
+            if (!m_showScanLines)
+            {
+                doubleScan = 1;
+            }
 
             pmpainter.setPen(xoff & 0x01?oddColor:evenColor);
             pmpainter.setBrush(xoff & 0x01?oddColor:evenColor);
