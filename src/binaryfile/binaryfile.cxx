@@ -18,7 +18,7 @@ void BinaryFile::setData(QByteArray data)
         m_data = data.mid(4);
         m_address = (quint8) metadata[0] + ((quint8) metadata[1]*256);
         m_length =  (quint8) metadata[2] + ((quint8) metadata[3]*256);
-    }
+    }    
 }
 
 void BinaryFile::dump()

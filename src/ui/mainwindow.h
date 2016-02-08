@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 #include "diskfile.h"
+#include "binaryfile.h"
 
 namespace Ui {
 class MainWindow;
@@ -33,6 +34,8 @@ signals:
     void diskFileUnloading(DiskFile *file);
     void diskFileUnloaded();
 
+protected:
+    void openInHiresViewWidget(BinaryFile *file, QString filename);
 private:
     Ui::MainWindow *ui;
 

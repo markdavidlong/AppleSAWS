@@ -15,6 +15,7 @@ INCLUDEPATH += src/binaryfile
 INCLUDEPATH += src/ui
 INCLUDEPATH += src/ui/viewers
 INCLUDEPATH += src/imported
+INCLUDEPATH += src/internals
 
 DEFINES += WS_VIDEO
 
@@ -37,7 +38,9 @@ SOURCES += \
     src/ui/viewers/hiresviewwidget.cxx \
     src/ui/viewers/applesoftfileviewer.cxx \ 
     src/applesoftfile/applesoftformatter.cxx \
-    src/applesoftfile/applesoftline.cpp 
+    src/applesoftfile/applesoftline.cpp  \
+    src/internals/memory.cxx \
+    src/ui/viewers/disassemblerviewer.cpp
 
 HEADERS += \
     src/diskfiles/dos33/diskfile.h \
@@ -58,9 +61,12 @@ HEADERS += \
     src/ui/viewers/hiresviewwidget.h \
     src/ui/viewers/applesoftfileviewer.h \ 
     src/applesoftfile/applesoftformatter.h \
-    src/applesoftfile/applesoftline.h  
+    src/applesoftfile/applesoftline.h  \
+    src/internals/memory.h \
+    src/ui/viewers/disassemblerviewer.h
 
 FORMS += \
     src/ui/catalogwidget.ui \
     src/ui/mainwindow.ui \
-    src/ui/viewers/applesoftfileviewer.ui
+    src/ui/viewers/applesoftfileviewer.ui \
+    src/ui/viewers/disassemblerviewer.ui

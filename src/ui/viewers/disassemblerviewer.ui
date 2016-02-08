@@ -1,20 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ApplesoftFileViewer</class>
- <widget class="QWidget" name="ApplesoftFileViewer">
+ <class>DisassemblerViewer</class>
+ <widget class="QWidget" name="DisassemblerViewer">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>857</width>
-    <height>469</height>
+    <width>749</width>
+    <height>516</height>
    </rect>
-  </property>
-  <property name="font">
-   <font>
-    <family>Courier 10 Pitch</family>
-    <pointsize>10</pointsize>
-   </font>
   </property>
   <property name="windowTitle">
    <string>Form</string>
@@ -24,11 +18,11 @@
     <widget class="QTextBrowser" name="textArea">
      <property name="font">
       <font>
-       <family>Courier 10 Pitch</family>
-       <pointsize>10</pointsize>
+       <family>Courier</family>
+       <pointsize>12</pointsize>
       </font>
      </property>
-     <property name="acceptDrops">
+     <property name="acceptRichText">
       <bool>false</bool>
      </property>
     </widget>

@@ -21,7 +21,7 @@ enum AddressMode {
     AM_ZeroPageIndexedWithX,        // zp,x
     AM_ZeroPageIndexedWithY,        // zp,y
     AM_ZeroPageIndirect,            // (zp)
-    AM_ZeroPageIndectIndexedWithY   // (zp),y
+    AM_ZeroPageIndirectIndexedWithY // (zp),y
 };
 
 struct AssyInstruction {
@@ -32,6 +32,8 @@ public:
         m_mnemonic = mnemonic;
         m_addressMode = am;
     }
+
+    AddressMode addressMode() { return m_addressMode; }
 
     QString mnemonic() { return m_mnemonic; }
 
@@ -47,11 +49,12 @@ public:
             return 2;
         case AM_ProgramCounterRelative:
         case AM_ZeroPage:
-        case AM_ZeroPageIndectIndexedWithY:
+        case AM_ZeroPageIndirectIndexedWithY:
         case AM_ZeroPageIndexedIndirect:
         case AM_ZeroPageIndexedWithX:
         case AM_ZeroPageIndexedWithY:
         case AM_ZeroPageIndirect:
+        case AM_Immediate:
             return 1;
         case AM_InvalidOp:
         case AM_Implied:
@@ -79,10 +82,11 @@ public:
         P65C02
     };
 
-    QStringList disassemble(quint16 address);
-
+    QList<QStringList> disassemble(quint16 from, quint16 to);
 
 private:
+
+    QStringList disassembleOp(quint16 address, quint16 *nextAddress = 0);
     void makeOpcodeTable();
 
     QHash<quint8,AssyInstruction> m_opcodeinfo;

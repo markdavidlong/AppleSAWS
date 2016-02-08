@@ -5,8 +5,11 @@
 #include "hiresviewwidget.h"
 #include "applesoftfileviewer.h"
 #include <QMdiSubWindow>
-#include "binaryfile.h"
 #include "applesoftfile.h"
+#include "memory.h"
+#include "disassembler.h"
+#include "disassemblerviewer.h"
+
 #include <QTextDocument>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -78,19 +81,42 @@ void MainWindow::showLoadDialog()
     }
 }
 
+void MainWindow::openInHiresViewWidget(BinaryFile *file, QString filename) {
+    HiresViewWidget *hvwma = new HiresViewWidget(0);
+
+    QString title = QString("Image: %1").arg(filename);
+    hvwma->setWindowTitle(title);
+    hvwma->show();
+    hvwma->setData(file->data());
+}
+
 void MainWindow::handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescriptiveEntry fde)
 {
     GenericFile *file = disk->getFile(fde);
 
     if (dynamic_cast<BinaryFile*>(file)) {
-        if (fde.lengthInSectors == 34)
-        {
-            HiresViewWidget *hvwma = new HiresViewWidget(0);
+        BinaryFile *binfile = dynamic_cast<BinaryFile*>(file);
+        binfile->setFilename(AppleString(fde.filename).printable().trimmed());
 
-            QString title = QString("Image: %1").arg(AppleString(fde.filename).printable().trimmed());
-            hvwma->setWindowTitle(title);
+        if (fde.lengthInSectors == 34 && (binfile->address() == 0x2000 || binfile->address() == 0x4000))
+        {
+            openInHiresViewWidget(binfile, AppleString(fde.filename).printable().trimmed());
+        }
+        else
+        {
+            DisassemblerViewer *hvwma = new DisassemblerViewer(0);
+
+         //   QString title = QString("Image: %1").arg(AppleString(fde.filename).printable().trimmed());
+         //   hvwma->setWindowTitle(title);
+
             hvwma->show();
-            hvwma->setData(file->data());
+            hvwma->setFile(binfile);
+
+//            quint16 address = binfile->address();
+//            Memory mem;
+//            mem.addFile(binfile->data(), address);
+//            Disassembler dis(mem.values());
+//            dis.disassemble(binfile->address(), binfile->address()+binfile->length());
         }
     }
     else if (dynamic_cast<ApplesoftFile *>(file))
@@ -102,6 +128,5 @@ void MainWindow::handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescripti
         afv->setFile(abf);
         afv->show();
     }
-
 
 }
