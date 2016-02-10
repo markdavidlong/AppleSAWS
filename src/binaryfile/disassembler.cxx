@@ -7,16 +7,16 @@
 QList<QStringList> Disassembler::disassemble(quint16 from, quint16 to) {
     QList<QStringList> retval;
 
- //   qDebug() << "From: " << from << " To: " << to;
-
     quint16 next = 0;
     for (int idx = from; idx <= to; )
     {
         QStringList line = disassembleOp(quint16(idx), &next);
         retval.append(line);
-  //      qDebug() << idx << line.join("   ");
         idx = next ;
-        if (idx > 0xffff || (next < from)) { qDebug() << "Breaking." ; break; }
+        if (idx > 0xffff || (next < from)) {
+            qDebug() << "Breaking.";
+            break;
+        }
     }
 
     return retval;

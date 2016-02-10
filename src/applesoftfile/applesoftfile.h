@@ -21,6 +21,7 @@ public:
 
     QVector<ApplesoftLine> getLines() const { return m_lines; }
 
+    quint16 length() const { return m_length; }
 
 private:
     void parse(quint16 start_address = 0x0801);

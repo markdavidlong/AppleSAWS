@@ -17,6 +17,7 @@ void ApplesoftFile::setData(QByteArray data)
     quint8 addhi = m_data.at(1);
     m_length = addlo + (addhi * 256);
     m_data.remove(0,2);
+    m_data = m_data.left(m_length);
     parse();
 }
 
@@ -48,8 +49,11 @@ void ApplesoftFile::parse(quint16 start_address)
 
     m_data_end = idx;
 
-    if (idx < m_data.length()) {
-        qDebug() << QString("%1 byte(s) unaccounted for.").arg(m_data.length() - idx);
+//    if (idx < m_data.length()) {
+//        qDebug() << QString("%1 byte(s) unaccounted for.").arg(m_data.length() - idx);
+//    }
+    if (idx < m_length) {
+        qDebug() << QString("%1 byte(s) unaccounted for.").arg(m_length - idx);
     }
 }
 

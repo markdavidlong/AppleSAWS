@@ -36,6 +36,7 @@ signals:
 
 protected:
     void openInHiresViewWidget(BinaryFile *file, QString filename);
+    void openInDisassemblerViewer(BinaryFile *file);
 private:
     Ui::MainWindow *ui;
 

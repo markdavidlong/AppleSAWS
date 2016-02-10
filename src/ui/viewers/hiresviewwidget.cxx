@@ -1,4 +1,6 @@
 #include "hiresviewwidget.h"
+#include "binaryfile.h"
+
 #include <QPainter>
 #include <QMap>
 #include <QDebug>
@@ -282,8 +284,17 @@ void HiresViewWidget::drawPixmap() {
     }
 }
 
+void HiresViewWidget::setFile(BinaryFile *file) {
+    m_file = file;
+
+    QString title = QString("Image: %1").arg(m_file->filename());
+    setWindowTitle(title);
+
+    setData(file->data());
+
+}
+
 void HiresViewWidget::setData(QByteArray data) {
-    qDebug() << "setData";
     m_data = data;
 
     drawPixmap();

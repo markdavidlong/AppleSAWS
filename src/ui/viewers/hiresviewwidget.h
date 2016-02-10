@@ -1,6 +1,8 @@
 #ifndef HIRESVIEWWIDGET_H
 #define HIRESVIEWWIDGET_H
 
+#include "binaryfile.h"
+
 #include <QWidget>
 #include <QPixmap>
 #include <QByteArray>
@@ -47,9 +49,11 @@ public:
 
     static QBitArray byteToBits(quint8 byte);
     void contextMenuEvent(QContextMenuEvent *);
+
 signals:
 
 public slots:
+    void setFile(BinaryFile *file);
     void setData(QByteArray data);
     void setMode(ViewMode);
 
@@ -84,6 +88,8 @@ private:
     bool m_showScanLines;
 
     void drawPixmap();
+
+    BinaryFile *m_file;
 };
 
 

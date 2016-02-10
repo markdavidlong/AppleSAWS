@@ -25,10 +25,13 @@ public slots:
     void processNewlyLoadedDisk(QString filename, DiskFile *disk);
     void unloadDisk(DiskFile *disk);
 
+    void showContextMenuForWidget(const QPoint &);
 signals:
     void newFileSelected(FileDescriptiveEntry *entry);
     void itemSelected(DiskFile *disk, FileDescriptiveEntry fde);
 
+protected:
+    QString createToolTip(FileDescriptiveEntry &fde);
 private slots:
     void itemClicked(QListWidgetItem *item);
 

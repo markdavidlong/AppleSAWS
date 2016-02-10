@@ -40,7 +40,6 @@ void DisassemblerViewer::setFile(BinaryFile *file) {
 
     QByteArray joinedlines = qPrintable(formattedLines.join("\n"));
     setData(joinedlines);
-
 }
 
 void DisassemblerViewer::setData(QByteArray data)

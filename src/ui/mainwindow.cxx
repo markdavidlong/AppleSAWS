@@ -90,6 +90,14 @@ void MainWindow::openInHiresViewWidget(BinaryFile *file, QString filename) {
     hvwma->setData(file->data());
 }
 
+void MainWindow::openInDisassemblerViewer(BinaryFile *file) {
+    DisassemblerViewer *hvwma = new DisassemblerViewer(0);
+    hvwma->show();
+    hvwma->setFile(file);
+}
+
+
+
 void MainWindow::handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescriptiveEntry fde)
 {
     GenericFile *file = disk->getFile(fde);
@@ -104,19 +112,8 @@ void MainWindow::handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescripti
         }
         else
         {
-            DisassemblerViewer *hvwma = new DisassemblerViewer(0);
+            openInDisassemblerViewer(binfile);
 
-         //   QString title = QString("Image: %1").arg(AppleString(fde.filename).printable().trimmed());
-         //   hvwma->setWindowTitle(title);
-
-            hvwma->show();
-            hvwma->setFile(binfile);
-
-//            quint16 address = binfile->address();
-//            Memory mem;
-//            mem.addFile(binfile->data(), address);
-//            Disassembler dis(mem.values());
-//            dis.disassemble(binfile->address(), binfile->address()+binfile->length());
         }
     }
     else if (dynamic_cast<ApplesoftFile *>(file))

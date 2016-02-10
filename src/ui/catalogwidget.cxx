@@ -1,7 +1,13 @@
 #include "catalogwidget.h"
 #include "ui_catalogwidget.h"
 #include "filedescriptiveentry.h"
+#include "binaryfile.h"
+#include "applesoftfile.h"
+#include "genericfile.h"
 #include <QUrl>
+#include <QDebug>
+#include <QMenu>
+#include <QAction>
 
 CatalogWidget::CatalogWidget(QWidget *parent) :
     QWidget(parent),
@@ -13,6 +19,26 @@ CatalogWidget::CatalogWidget(QWidget *parent) :
     connect(ui->catalog_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
             SLOT(itemClicked(QListWidgetItem*)));
 
+    ui->catalog_list->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->catalog_list, SIGNAL(customContextMenuRequested(const QPoint &)),
+            SLOT(showContextMenuForWidget(const QPoint &)));
+}
+
+void CatalogWidget::showContextMenuForWidget(const QPoint &point) {
+    QListWidgetItem *selectedItem = ui->catalog_list->itemAt(point);
+
+    QMenu contextMenu("Context menu",this);
+    QAction *viewAction = new QAction("View",this);
+    connect(viewAction, &QAction::triggered,
+            [=](){ this->itemClicked(selectedItem); viewAction->deleteLater();});
+    contextMenu.addAction(viewAction);
+
+    QAction *viewWithAction = new QAction("View With...",this);
+    connect(viewWithAction, &QAction::triggered,
+            [=](){ this->itemClicked(selectedItem); viewWithAction->deleteLater();});
+    contextMenu.addAction(viewWithAction);
+
+    contextMenu.exec(mapToGlobal(point));
 }
 
 CatalogWidget::~CatalogWidget()
@@ -24,6 +50,43 @@ void CatalogWidget::prepForNewDisk(QString filename, DiskFile *disk)
 {
     m_disk = disk;
     m_diskname = filename;
+}
+
+QString CatalogWidget::createToolTip(FileDescriptiveEntry &fde) {
+    QString retval;
+
+    retval += AppleString(fde.filename).printable().trimmed() + "\n";
+    retval += QString("Type: %1\n").arg(fde.fileType());
+    retval += QString("Sectors: %1 (%2 bytes)\n").arg(fde.lengthInSectors).arg(fde.lengthInSectors*256);
+    retval += QString("%1\n").arg(fde.isLocked()?"Locked":"Unlocked");
+
+    GenericFile *file = m_disk->getFile(fde);
+
+    if (dynamic_cast<BinaryFile*>(file)) {
+        BinaryFile *binfile = dynamic_cast<BinaryFile*>(file);
+        quint16 address = binfile->address();
+        quint16 length = binfile->length();
+
+        retval += QString("Address: $%1 (%2)\n").arg((quint16) (address),4,16,QChar('0'))
+                                                .arg(address);
+        retval += QString("Length: $%1 (%2)\n").arg((quint16) (length),4,16,QChar('0'))
+                                               .arg(length);
+    } else if (dynamic_cast<ApplesoftFile*>(file)) {
+        ApplesoftFile *asfile = dynamic_cast<ApplesoftFile*>(file);
+        quint16 length = asfile->length();
+        retval += QString("Length: $%1 (%2)\n").arg((quint16) (length),4,16,QChar('0'))
+                                               .arg(length);
+        quint16 uabytes = asfile->extraData().length();
+        if (uabytes) {
+         retval += QString("Unaccounted Bytes: $%1 (%2)\n").arg((quint16) (uabytes),4,16,QChar('0'))
+                                                   .arg(uabytes);
+        }
+    } else {
+        retval += QString("Data Length: $%1 (%2)\n").arg((quint16) (file->data().length()),4,16,QChar('0'))
+                .arg(file->data().length());
+    }
+
+    return retval;
 }
 
 void CatalogWidget::processNewlyLoadedDisk(QString diskfilename, DiskFile *disk)
@@ -43,6 +106,7 @@ void CatalogWidget::processNewlyLoadedDisk(QString diskfilename, DiskFile *disk)
             QString sizeStr = QString("%1").arg(size,5,10,QChar(' ')).toUpper();
             QString text = QString("%1 %2 %3 %4").arg(locked?"*":" ").arg(sizeStr).arg(filetype).arg(filename);
             QListWidgetItem *item = new QListWidgetItem(text);
+            item->setToolTip(createToolTip(fde));
             item->setData(0x0100,idx);
             ui->catalog_list->addItem(item);
             QRect rect = fm->boundingRect(text);
@@ -64,6 +128,8 @@ void CatalogWidget::unloadDisk(DiskFile *disk)
     ui->catalog_list->clear();
     ui->volume_label->clear();
 }
+
+
 
 void CatalogWidget::itemClicked(QListWidgetItem *item)
 {
