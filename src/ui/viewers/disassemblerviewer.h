@@ -21,6 +21,7 @@ public:
     void setData(QByteArray data);
     void setText(QString text);
 
+    QString getPotentialLabel(quint16 address);
 private:
     Ui::DisassemblerViewer *ui;
 

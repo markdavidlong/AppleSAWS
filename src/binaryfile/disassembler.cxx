@@ -81,7 +81,7 @@ DisassembledItem Disassembler::disassembleOp(quint16 address, quint16 *nextAddre
         break;
     }
     case AM_Immediate:{
-        disassemblyLine = QString("%1 #_ARG8_").arg(op.mnemonic());
+        disassemblyLine = QString("%1 #%2").arg(op.mnemonic()).arg((quint8) hexValues[1],2,16,QChar('0')).toUpper();
         retval.setRawArgument(hexValues[1]);
         break;
     }
@@ -102,7 +102,7 @@ DisassembledItem Disassembler::disassembleOp(quint16 address, quint16 *nextAddre
         disassemblyLine = QString("%1 _ARG16_ {%2%3}").arg(op.mnemonic())
                 .arg((offset<0)?"-":"+")
                 .arg(abs(offset));
-        retval.setRawArgument(hexValues[1] + (hexValues[2]*256));
+        retval.setRawArgument(offsetAddress);
         break;
     }
     case AM_ZeroPage:{

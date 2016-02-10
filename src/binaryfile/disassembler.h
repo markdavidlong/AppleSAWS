@@ -109,16 +109,18 @@ public:
     void setJump(bool jump) { m_is_jump = jump; }
     void setJsr(bool jsr) { m_is_jsr = jsr; }
     void setTargetAddress(quint16 ta) { m_unknown_ta = false; m_target_address = ta; }
-    void setRawArgument(quint16 arg) { m_raw_arg = arg; }
+    void setRawArgument(quint16 arg) { m_has_arg = true; m_raw_arg = arg; }
 
     AssyInstruction assyInstruction() const { return m_instruction; }
     QString rawDisassembledString() const { return m_disassembly_text; }
     QString disassembledString() {
         QString retval = rawDisassembledString();
-        if (retval.contains("_ARG16_")) {
-            retval.replace("_ARG16_","$"+arg16Str());
-        } else if (retval.contains("_ARG8_")) {
-            retval.replace("_ARG8_","$"+arg8Str());
+        if (hasArg()) {
+            if (retval.contains("_ARG16_")) {
+                retval.replace("_ARG16_","$"+arg16Str());
+            } else if (retval.contains("_ARG8_")) {
+                retval.replace("_ARG8_","$"+arg8Str());
+            }
         }
         return retval;
     }
@@ -130,7 +132,7 @@ public:
     bool isJump() const { return m_is_jump; }
     bool isJsr() const { return m_is_jsr; }
     quint16 targetAddress() const { return m_target_address; }
-
+    bool hasArg() const { return m_has_arg; }
     quint16 arg16() { return m_raw_arg; }
     quint8 arg8() { return m_raw_arg % 256; }
     QString arg16Str() { return QString("%1").arg(arg16(),4,16,QChar('0')).toUpper(); }
@@ -142,6 +144,7 @@ private:
         m_is_jump = m_is_branch = m_is_jsr = false;
         m_unknown_ta = true;
         m_raw_arg = 0;
+        m_has_arg = false;
     }
 
     quint16 m_address;
@@ -155,6 +158,7 @@ private:
     AssyInstruction m_instruction;
     bool m_unknown_ta;
     quint16 m_raw_arg;
+    bool m_has_arg;
 };
 
 
