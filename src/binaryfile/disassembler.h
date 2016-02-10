@@ -28,6 +28,7 @@ enum AddressMode {
 struct AssyInstruction {
 
 public:
+
     AssyInstruction(quint8 opcode = 0x00, QString mnemonic = "???", AddressMode am = AM_InvalidOp) {
         m_opcode = opcode;
         m_mnemonic = mnemonic;
@@ -39,6 +40,8 @@ public:
     QString mnemonic() { return m_mnemonic; }
 
     quint8 opcode() { return m_opcode; }
+
+
 
     quint8 numArgs() {
         switch (m_addressMode) {
@@ -106,9 +109,19 @@ public:
     void setJump(bool jump) { m_is_jump = jump; }
     void setJsr(bool jsr) { m_is_jsr = jsr; }
     void setTargetAddress(quint16 ta) { m_unknown_ta = false; m_target_address = ta; }
+    void setRawArgument(quint16 arg) { m_raw_arg = arg; }
 
     AssyInstruction assyInstruction() const { return m_instruction; }
-    QString disassembledString() const { return m_disassembly_text; }
+    QString rawDisassembledString() const { return m_disassembly_text; }
+    QString disassembledString() {
+        QString retval = rawDisassembledString();
+        if (retval.contains("_ARG16_")) {
+            retval.replace("_ARG16_","$"+arg16Str());
+        } else if (retval.contains("_ARG8_")) {
+            retval.replace("_ARG8_","$"+arg8Str());
+        }
+        return retval;
+    }
     quint16 address()  const { return m_address; }
     QString hexAddress() const { return QString("%1").arg(m_address,4,16,QChar('0')).toUpper(); }
     QByteArray hexValues() const { return m_hexvalues; }
@@ -118,11 +131,17 @@ public:
     bool isJsr() const { return m_is_jsr; }
     quint16 targetAddress() const { return m_target_address; }
 
+    quint16 arg16() { return m_raw_arg; }
+    quint8 arg8() { return m_raw_arg % 256; }
+    QString arg16Str() { return QString("%1").arg(arg16(),4,16,QChar('0')).toUpper(); }
+    QString arg8Str() { return QString("%1").arg(arg8(),2,16,QChar('0')).toUpper(); }
+
 private:
     void init() {
         m_address = m_target_address = 0;
         m_is_jump = m_is_branch = m_is_jsr = false;
         m_unknown_ta = true;
+        m_raw_arg = 0;
     }
 
     quint16 m_address;
@@ -135,6 +154,7 @@ private:
     quint16 m_target_address;
     AssyInstruction m_instruction;
     bool m_unknown_ta;
+    quint16 m_raw_arg;
 };
 
 
