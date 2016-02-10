@@ -4,14 +4,14 @@
 #include <math.h>
 
 
-QList<QStringList> Disassembler::disassemble(quint16 from, quint16 to) {
-    QList<QStringList> retval;
+QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to) {
+    QList<DisassembledItem> retval;
 
     quint16 next = 0;
     for (int idx = from; idx <= to; )
     {
-        QStringList line = disassembleOp(quint16(idx), &next);
-        retval.append(line);
+        DisassembledItem item = disassembleOp(quint16(idx), &next);
+        retval.append(item);
         idx = next ;
         if (idx > 0xffff || (next < from)) {
             qDebug() << "Breaking.";
@@ -23,8 +23,10 @@ QList<QStringList> Disassembler::disassemble(quint16 from, quint16 to) {
 }
 
 
-QStringList Disassembler::disassembleOp(quint16 address, quint16 *nextAddress)
+DisassembledItem Disassembler::disassembleOp(quint16 address, quint16 *nextAddress)
 {
+    DisassembledItem retval;
+
     quint8 opcode = m_memimage[address];
     AssyInstruction op = m_opcodeinfo[opcode];
 
@@ -38,7 +40,7 @@ QStringList Disassembler::disassembleOp(quint16 address, quint16 *nextAddress)
         hexValues.append(val);
     }
 
-    QString addressStr = QString("%1 ").arg(address,4,16,QChar('0')).toUpper();
+
 
     for (int idx = 0; idx < hexValues.length(); idx++) {
         hexValueString.append(QString("%1 ").arg((quint8) hexValues[idx],2,16,QChar('0')));
@@ -100,6 +102,8 @@ QStringList Disassembler::disassembleOp(quint16 address, quint16 *nextAddress)
         qint8 offset = (qint8) hexValues[1];
         quint16 offsetAddress = address+2+offset;
 
+        retval.setTargetAddress(offsetAddress);
+
         disassemblyLine = QString("%1 $%2 {%3%4}").arg(op.mnemonic())
                 .arg((quint16) offsetAddress,4,16,QChar('0'))
                 .arg((offset<0)?"-":"+")
@@ -143,10 +147,14 @@ QStringList Disassembler::disassembleOp(quint16 address, quint16 *nextAddress)
     }
     }
 
-    QStringList retval;
-    retval.append(addressStr.trimmed());
-    retval.append(hexValueString.trimmed().toUpper().leftJustified(12,' '));
-    retval.append(disassemblyLine.toUpper());
+    if (opcode == 0x20 || opcode == 0x4c) {
+        retval.setTargetAddress(hexValues[2]*256 + hexValues[1]);
+    }
+
+    retval.setAddress(address);
+    retval.setDisassembledString(disassemblyLine.toUpper());
+    retval.setHexString(hexValueString.trimmed().toUpper().leftJustified(12,' '));
+    retval.setHexValues(hexValues);
     return retval;
 }
 

@@ -29,12 +29,12 @@ void DisassemblerViewer::setFile(BinaryFile *file) {
     mem.addFile(file->data(), address);
     Disassembler dis(mem.values());
 
-    QList<QStringList> lines = dis.disassemble(file->address(), file->address()+file->length());
+    QList<DisassembledItem> lines = dis.disassemble(file->address(), file->address()+file->length());
 
     QStringList formattedLines;
 
-    foreach (QStringList line, lines) {
-        QString newline = QString("%1:  %2 %3").arg(line[0]).arg(line[1]).arg(line[2]);
+    foreach (DisassembledItem di, lines) {
+        QString newline = QString("%1:  %2 %3").arg(di.hexAddress()).arg(di.hexString()).arg(di.disassembledString());
         formattedLines.append(newline);
     }
 
