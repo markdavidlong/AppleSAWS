@@ -57,7 +57,20 @@ void DisassemblerViewer::setFile(BinaryFile *file) {
 QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     QString retval = QString();
 
-    if (address == 0x7129) { retval = "TESTLABEL"; }
+    if (address == 0x03d0) { retval = "DOS_WARMSTART"; }
+    else if (address == 0x03d3) { retval = "DOS_COLDSTART"; }
+    else if (address == 0x03d6) { retval = "DOS_FILE_MANAGER"; }
+    else if (address == 0x03d9) { retval = "DOS_RWTS"; }
+    else if (address == 0x03dc) { retval = "DOS_FM_PARAM_LIST_LOCATE"; }
+    else if (address == 0x03e3) { retval = "DOS_RWTS_PARAM_LIST_LOCATE"; }
+    else if (address == 0x03ea) { retval = "DOS_REPLACE_DOS_INTERCEPTS"; }
+    else if (address == 0x03ef) { retval = "DOS_AUTOSTART_BRK_HANDLER"; }
+    else if (address == 0x03f2) { retval = "DOS_AUTOSTART_RESET_HANDLER"; }
+    else if (address == 0x03f4) { retval = "DOS_POWERUP_BYTE"; }
+    else if (address == 0x03f5) { retval = "DOS_AMPERSAND_HANDLER"; }
+    else if (address == 0x03f8) { retval = "DOS_CTRL_Y_HANDLER"; }
+    else if (address == 0x03fb) { retval = "DOS_NMI_HANDLER"; }
+    else if (address == 0x03fe) { retval = "DOS_IRQ_HANDLER"; }
 
     return retval;
 }

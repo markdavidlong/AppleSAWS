@@ -41,6 +41,9 @@ DisassembledItem Disassembler::disassembleOp(quint16 address, quint16 *nextAddre
     }
 
 
+    quint16 argval = 0;
+    if (op.numArgs() == 1) { argval = hexValues[1]; }
+    else if (op.numArgs() == 2) { argval = (quint8) hexValues[1] + ((quint8) hexValues[2] * 256); }
 
     for (int idx = 0; idx < hexValues.length(); idx++) {
         hexValueString.append(QString("%1 ").arg((quint8) hexValues[idx],2,16,QChar('0')));
@@ -57,32 +60,32 @@ DisassembledItem Disassembler::disassembleOp(quint16 address, quint16 *nextAddre
     }
     case AM_Absolute:{
         disassemblyLine = QString("%1 _ARG16_").arg(op.mnemonic());
-        retval.setRawArgument(hexValues[1] + (hexValues[2]*256));
+        retval.setRawArgument(argval);
         break;
     }
     case AM_AbsoluteIndexedIndirect:{
         disassemblyLine = QString("%1 (_ARG16_,x)").arg(op.mnemonic());
-        retval.setRawArgument(hexValues[1] + (hexValues[2]*256));
+        retval.setRawArgument(argval);
         break;
     }
     case AM_AbsoluteIndexedWithX:{
         disassemblyLine = QString("%1 _ARG16_,x").arg(op.mnemonic());
-        retval.setRawArgument(hexValues[1] + (hexValues[2]*256));
+        retval.setRawArgument(argval);
         break;
     }
     case AM_AbsoluteIndexedWithY:{
         disassemblyLine = QString("%1 _ARG16_,y").arg(op.mnemonic());
-        retval.setRawArgument(hexValues[1] + (hexValues[2]*256));
+        retval.setRawArgument(argval);
         break;
     }
     case AM_AbsoluteIndirect:{
         disassemblyLine = QString("%1 (_ARG16_)").arg(op.mnemonic());
-        retval.setRawArgument(hexValues[1] + (hexValues[2]*256));
+        retval.setRawArgument(argval);
         break;
     }
     case AM_Immediate:{
         disassemblyLine = QString("%1 #%2").arg(op.mnemonic()).arg((quint8) hexValues[1],2,16,QChar('0')).toUpper();
-        retval.setRawArgument(hexValues[1]);
+        retval.setRawArgument(argval);
         break;
     }
     case AM_Implied:{
@@ -107,32 +110,32 @@ DisassembledItem Disassembler::disassembleOp(quint16 address, quint16 *nextAddre
     }
     case AM_ZeroPage:{
         disassemblyLine = QString("%1 _ARG8_").arg(op.mnemonic());
-        retval.setRawArgument(hexValues[1]);
+        retval.setRawArgument(argval);
         break;
     }
     case AM_ZeroPageIndirectIndexedWithY:{
         disassemblyLine = QString("%1 (_ARG8_),Y").arg(op.mnemonic());
-        retval.setRawArgument(hexValues[1]);
+        retval.setRawArgument(argval);
         break;
     }
     case AM_ZeroPageIndexedIndirect:{
         disassemblyLine = QString("%1 (_ARG8_,x)").arg(op.mnemonic());
-        retval.setRawArgument(hexValues[1]);
+        retval.setRawArgument(argval);
         break;
     }
     case AM_ZeroPageIndexedWithX:{
         disassemblyLine = QString("%1 _ARG8_,x").arg(op.mnemonic());
-        retval.setRawArgument(hexValues[1]);
+        retval.setRawArgument(argval);
         break;
     }
     case AM_ZeroPageIndexedWithY:{
         disassemblyLine = QString("%1 _ARG8_,y").arg(op.mnemonic());
-        retval.setRawArgument(hexValues[1]);
+        retval.setRawArgument(argval);
         break;
     }
     case AM_ZeroPageIndirect:{
         disassemblyLine = QString("%1 (_ARG8_)").arg(op.mnemonic());
-        retval.setRawArgument(hexValues[1]);
+        retval.setRawArgument(argval);
         break;
     }
     default:{
