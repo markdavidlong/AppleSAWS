@@ -5,6 +5,7 @@
 
 #include "diskfile.h"
 #include "binaryfile.h"
+#include "applesoftfile.h"
 
 namespace Ui {
 class MainWindow;
@@ -25,6 +26,7 @@ public slots:
     void showLoadDialog();
 
 private slots:
+    void handleDiskItemSelectedHexViewOpen(DiskFile *disk, FileDescriptiveEntry fde);
     void handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescriptiveEntry fde);
 
 signals:
@@ -35,6 +37,7 @@ signals:
     void diskFileUnloaded();
 
 protected:
+    void openInApplesoftFileViewer(ApplesoftFile *file);
     void openInHiresViewWidget(BinaryFile *file, QString filename);
     void openInDisassemblerViewer(BinaryFile *file);
 private:

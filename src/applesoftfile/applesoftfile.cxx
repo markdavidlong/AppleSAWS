@@ -7,6 +7,7 @@ ApplesoftFile::ApplesoftFile(QByteArray data) : GenericFile(data)
     {
         setData(data);
     }
+    setAddress(0x801);
 }
 
 void ApplesoftFile::setData(QByteArray data)
@@ -17,8 +18,16 @@ void ApplesoftFile::setData(QByteArray data)
     quint8 addhi = m_data.at(1);
     m_length = addlo + (addhi * 256);
     m_data.remove(0,2);
-    m_data = m_data.left(m_length);
+  //  m_data = m_data.left(m_length);
     parse();
+}
+
+QByteArray ApplesoftFile::rawData() {
+    QByteArray retval;
+    retval.append(m_length % 255);
+    retval.append(m_length / 255);
+    retval.append(m_data);
+    return retval;
 }
 
 void ApplesoftFile::parse(quint16 start_address)

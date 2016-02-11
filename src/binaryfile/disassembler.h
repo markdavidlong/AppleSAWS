@@ -131,6 +131,9 @@ public:
     bool isBranch() const { return m_is_branch; }
     bool isJump() const { return m_is_jump; }
     bool isJsr() const { return m_is_jsr; }
+    bool isReturn() { return (m_instruction.opcode() == 0x60); }
+    bool isBreak() { return (m_instruction.opcode() == 0x00); }
+
     quint16 targetAddress() const { return m_target_address; }
     bool hasArg() const { return m_has_arg; }
     quint16 arg16() { return m_raw_arg; }

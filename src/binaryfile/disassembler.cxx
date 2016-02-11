@@ -42,7 +42,7 @@ DisassembledItem Disassembler::disassembleOp(quint16 address, quint16 *nextAddre
 
 
     quint16 argval = 0;
-    if (op.numArgs() == 1) { argval = hexValues[1]; }
+    if (op.numArgs() == 1) { argval = (quint8) hexValues[1]; }
     else if (op.numArgs() == 2) { argval = (quint8) hexValues[1] + ((quint8) hexValues[2] * 256); }
 
     for (int idx = 0; idx < hexValues.length(); idx++) {

@@ -9,6 +9,7 @@
 #include "memory.h"
 #include "disassembler.h"
 #include "disassemblerviewer.h"
+#include "hexdumpviewer.h"
 
 #include <QTextDocument>
 
@@ -24,8 +25,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->action_Quit, SIGNAL(triggered()), qApp, SLOT(quit()));
     connect(ui->action_Load_Disk_Image, SIGNAL(triggered()), SLOT(showLoadDialog()));
     connect(ui->action_Unload_Disk_Image, SIGNAL(triggered()), SLOT(unloadDiskFile()));
-    connect(ui->catalogWidget,SIGNAL(itemSelected(DiskFile*,FileDescriptiveEntry)),
+    connect(ui->catalogWidget,SIGNAL(openWithDefaultViewer(DiskFile*,FileDescriptiveEntry)),
             SLOT(handleDiskItemSelectedDefaultOpen(DiskFile*,FileDescriptiveEntry)));
+    connect(ui->catalogWidget,SIGNAL(openWithHexViewer(DiskFile*,FileDescriptiveEntry)),
+            SLOT(handleDiskItemSelectedHexViewOpen(DiskFile*,FileDescriptiveEntry)));
 
 
     connect(this, SIGNAL(diskFileLoading(QString, DiskFile*)),
@@ -96,15 +99,31 @@ void MainWindow::openInDisassemblerViewer(BinaryFile *file) {
     hvwma->setFile(file);
 }
 
+void MainWindow::openInApplesoftFileViewer(ApplesoftFile *file) {
+
+    ApplesoftFileViewer *afv = new ApplesoftFileViewer(0);
+    afv->setFile(file);
+    afv->show();
+}
+
+
+void MainWindow::handleDiskItemSelectedHexViewOpen(DiskFile *disk, FileDescriptiveEntry fde) {
+    GenericFile *file = disk->getFile(fde);
+    file->setFilename(AppleString(fde.filename).printable().trimmed());
+    HexDumpViewer *hdv = new HexDumpViewer(0);
+
+    hdv->setFile(file,file->address());
+    hdv->show();
+}
 
 
 void MainWindow::handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescriptiveEntry fde)
 {
     GenericFile *file = disk->getFile(fde);
+    file->setFilename(AppleString(fde.filename).printable().trimmed());
 
     if (dynamic_cast<BinaryFile*>(file)) {
         BinaryFile *binfile = dynamic_cast<BinaryFile*>(file);
-        binfile->setFilename(AppleString(fde.filename).printable().trimmed());
 
         if (fde.lengthInSectors == 34 && (binfile->address() == 0x2000 || binfile->address() == 0x4000))
         {
@@ -120,10 +139,12 @@ void MainWindow::handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescripti
     {
         ApplesoftFile *abf = dynamic_cast<ApplesoftFile *>(file);
         abf->setFilename(AppleString(fde.filename).printable().trimmed());
+        openInApplesoftFileViewer(abf);
 
-        ApplesoftFileViewer *afv = new ApplesoftFileViewer(0);
-        afv->setFile(abf);
-        afv->show();
+    } else {
+        HexDumpViewer *hdv = new HexDumpViewer(0);
+        hdv->setFile(file,file->address());
+        hdv->show();
     }
 
 }

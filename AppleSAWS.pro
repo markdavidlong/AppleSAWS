@@ -41,7 +41,8 @@ SOURCES += \
     src/applesoftfile/applesoftformatter.cxx \
     src/applesoftfile/applesoftline.cpp  \
     src/internals/memory.cxx \
-    src/ui/viewers/disassemblerviewer.cpp
+    src/ui/viewers/disassemblerviewer.cpp \
+    src/ui/viewers/hexdumpviewer.cpp
 
 HEADERS += \
     src/diskfiles/dos33/diskfile.h \
@@ -64,10 +65,12 @@ HEADERS += \
     src/applesoftfile/applesoftformatter.h \
     src/applesoftfile/applesoftline.h  \
     src/internals/memory.h \
-    src/ui/viewers/disassemblerviewer.h
+    src/ui/viewers/disassemblerviewer.h \
+    src/ui/viewers/hexdumpviewer.h
 
 FORMS += \
     src/ui/catalogwidget.ui \
     src/ui/mainwindow.ui \
     src/ui/viewers/applesoftfileviewer.ui \
-    src/ui/viewers/disassemblerviewer.ui
+    src/ui/viewers/disassemblerviewer.ui \
+    src/ui/viewers/hexdumpviewer.ui

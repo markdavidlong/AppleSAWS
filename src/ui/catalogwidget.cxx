@@ -33,10 +33,15 @@ void CatalogWidget::showContextMenuForWidget(const QPoint &point) {
             [=](){ this->itemClicked(selectedItem); viewAction->deleteLater();});
     contextMenu.addAction(viewAction);
 
-    QAction *viewWithAction = new QAction("View With...",this);
-    connect(viewWithAction, &QAction::triggered,
-            [=](){ this->itemClicked(selectedItem); viewWithAction->deleteLater();});
-    contextMenu.addAction(viewWithAction);
+    QAction *hexViewAction = new QAction("Hex View",this);
+    connect(hexViewAction, &QAction::triggered,
+            [=](){ this->toggleHexView(selectedItem); hexViewAction->deleteLater();});
+    contextMenu.addAction(hexViewAction);
+
+//    QAction *viewWithAction = new QAction("View With...",this);
+//    connect(viewWithAction, &QAction::triggered,
+//            [=](){ this->itemClicked(selectedItem); viewWithAction->deleteLater();});
+//    contextMenu.addAction(viewWithAction);
 
     contextMenu.exec(mapToGlobal(point));
 }
@@ -61,14 +66,14 @@ QString CatalogWidget::createToolTip(FileDescriptiveEntry &fde) {
     retval += QString("%1\n").arg(fde.isLocked()?"Locked":"Unlocked");
 
     GenericFile *file = m_disk->getFile(fde);
+    quint16 address = file->address();
+    retval += QString("Address: $%1 (%2)\n").arg((quint16) (address),4,16,QChar('0'))
+                                            .arg(address);
 
     if (dynamic_cast<BinaryFile*>(file)) {
         BinaryFile *binfile = dynamic_cast<BinaryFile*>(file);
-        quint16 address = binfile->address();
         quint16 length = binfile->length();
 
-        retval += QString("Address: $%1 (%2)\n").arg((quint16) (address),4,16,QChar('0'))
-                                                .arg(address);
         retval += QString("Length: $%1 (%2)\n").arg((quint16) (length),4,16,QChar('0'))
                                                .arg(length);
     } else if (dynamic_cast<ApplesoftFile*>(file)) {
@@ -135,8 +140,16 @@ void CatalogWidget::itemClicked(QListWidgetItem *item)
 {
     int idx = item->data(0x0100).toInt();
     FileDescriptiveEntry fde = m_disk->getAllFDEs()[idx];
-    qDebug() << "File " << AppleString(fde.filename).printable().trimmed();
-    emit itemSelected(m_disk,fde);
+    qDebug() << "Default File " << AppleString(fde.filename).printable().trimmed();
+    emit openWithDefaultViewer(m_disk,fde);
+}
+
+void CatalogWidget::toggleHexView(QListWidgetItem *item)
+{
+    int idx = item->data(0x0100).toInt();
+    FileDescriptiveEntry fde = m_disk->getAllFDEs()[idx];
+    qDebug() << "Hex File " << AppleString(fde.filename).printable().trimmed();
+    emit openWithHexViewer(m_disk,fde);
 }
 
 

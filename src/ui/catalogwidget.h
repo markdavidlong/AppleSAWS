@@ -28,12 +28,14 @@ public slots:
     void showContextMenuForWidget(const QPoint &);
 signals:
     void newFileSelected(FileDescriptiveEntry *entry);
-    void itemSelected(DiskFile *disk, FileDescriptiveEntry fde);
+    void openWithDefaultViewer(DiskFile *disk, FileDescriptiveEntry fde);
+    void openWithHexViewer(DiskFile *disk, FileDescriptiveEntry fde);
 
 protected:
     QString createToolTip(FileDescriptiveEntry &fde);
 private slots:
     void itemClicked(QListWidgetItem *item);
+    void toggleHexView(QListWidgetItem *item);
 
 private:
 

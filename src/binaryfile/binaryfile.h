@@ -9,13 +9,11 @@ public:
     BinaryFile(QByteArray data = QByteArray());
     void setData(QByteArray data);
 
-    quint16 address() { return m_address; }
     quint16 length() { return m_length; }
 
     void dump();
 
 protected:
-    quint16 m_address;
     quint16 m_length;
 };
 

@@ -23,6 +23,7 @@ public:
 
     quint16 length() const { return m_length; }
 
+    QByteArray rawData();
 private:
     void parse(quint16 start_address = 0x0801);
 
