@@ -8,15 +8,16 @@ TARGET = AppleSAWS
 TEMPLATE = app
 
 INCLUDEPATH += src/
+INCLUDEPATH += src/relocatablefile
 INCLUDEPATH += src/diskfiles
 INCLUDEPATH += src/diskfiles/dos33
 INCLUDEPATH += src/util
 INCLUDEPATH += src/applesoftfile
 INCLUDEPATH += src/binaryfile
-INCLUDEPATH += src/ui
 INCLUDEPATH += src/ui/viewers
 INCLUDEPATH += src/imported
 INCLUDEPATH += src/internals
+INCLUDEPATH += src/ui
 
 DEFINES += WS_VIDEO
 
@@ -42,7 +43,8 @@ SOURCES += \
     src/applesoftfile/applesoftline.cpp  \
     src/internals/memory.cxx \
     src/ui/viewers/disassemblerviewer.cpp \
-    src/ui/viewers/hexdumpviewer.cpp
+    src/ui/viewers/hexdumpviewer.cpp \
+    src/relocatablefile/relocatablefile.cxx
 
 HEADERS += \
     src/diskfiles/dos33/diskfile.h \
@@ -66,7 +68,8 @@ HEADERS += \
     src/applesoftfile/applesoftline.h  \
     src/internals/memory.h \
     src/ui/viewers/disassemblerviewer.h \
-    src/ui/viewers/hexdumpviewer.h
+    src/ui/viewers/hexdumpviewer.h \
+    src/relocatablefile/relocatablefile.h
 
 FORMS += \
     src/ui/catalogwidget.ui \

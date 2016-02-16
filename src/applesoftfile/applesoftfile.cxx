@@ -58,12 +58,12 @@ void ApplesoftFile::parse(quint16 start_address)
 
     m_data_end = idx;
 
-//    if (idx < m_data.length()) {
-//        qDebug() << QString("%1 byte(s) unaccounted for.").arg(m_data.length() - idx);
-//    }
-    if (idx < m_length) {
-        qDebug() << QString("%1 byte(s) unaccounted for.").arg(m_length - idx);
+    if (idx < m_data.length()) {
+        qDebug() << QString("%1 byte(s) unaccounted for.").arg(m_data.length() - idx);
     }
+//    if (idx < m_length) {
+//        qDebug() << QString("%1 byte(s) unaccounted for.").arg(m_length - idx);
+//    }
 }
 
 QStringList ApplesoftFile::extraDataHexValues() {

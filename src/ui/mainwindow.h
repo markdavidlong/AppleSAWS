@@ -6,6 +6,8 @@
 #include "diskfile.h"
 #include "binaryfile.h"
 #include "applesoftfile.h"
+//#include "relocatablefile.h"
+
 
 namespace Ui {
 class MainWindow;

@@ -54,10 +54,48 @@ void DisassemblerViewer::setFile(BinaryFile *file) {
     setData(joinedlines);
 }
 
+
+void DisassemblerViewer::setFile(RelocatableFile *file) {
+    m_file = file;
+
+    QString title = QString("Disassembler Viewer: %1").arg(m_file->filename());
+    setWindowTitle(title);
+
+    quint16 address = file->address();
+    Memory mem;
+    mem.addFile(file->getBinaryCodeImage(), address);
+    Disassembler dis(mem.values());
+
+    QList<DisassembledItem> lines = dis.disassemble(file->address(), file->address()+file->codeImageLength());
+
+    QStringList formattedLines;
+
+    foreach (DisassembledItem di, lines) {
+        QString ds = di.rawDisassembledString();
+        if (di.hasArg()) {
+            QString potentialLabel = getPotentialLabel(di.arg16());
+            if (!potentialLabel.isEmpty()) {
+                if (ds.contains("_ARG16_")) { ds.replace("_ARG16_",potentialLabel); }
+                else if (ds.contains("_ARG8_")) { ds.replace("_ARG8_",potentialLabel); }
+            } else {
+                ds = di.disassembledString();
+            }
+        }
+        QString newline = QString("%1:  %2 %3").arg(di.hexAddress()).arg(di.hexString()).arg(ds);
+        formattedLines.append(newline);
+    }
+
+    QByteArray joinedlines = qPrintable(formattedLines.join("\n"));
+    setData(joinedlines);
+}
+
+
 QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     QString retval = QString();
 
-         if (address == 0x03d0) { retval = "DOS_WARMSTART"; }
+
+
+    if (address == 0x03d0) { retval = "DOS_WARMSTART"; }
     else if (address == 0x03d3) { retval = "DOS_COLDSTART"; }
     else if (address == 0x03d6) { retval = "DOS_FILE_MANAGER"; }
     else if (address == 0x03d9) { retval = "DOS_RWTS"; }
@@ -76,12 +114,41 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
 
     else if (address == 0x07f8) { retval = "MON_MSLOT"; }
     else if (address == 0xc000) { retval = "MON_IOADR/MON_KBD"; }
+
+    else if (address == 0xc001) { retval = "M80_SET80COL"; }
+    else if (address == 0xc002) { retval = "M80_RDMAINRAM"; }
+    else if (address == 0xc003) { retval = "M80_RDCARDRAM"; }
+    else if (address == 0xc004) { retval = "M80_WRMAINRAM"; }
+    else if (address == 0xc005) { retval = "M80_WRCARDRAM"; }
+
     else if (address == 0xc006) { retval = "MON_SETSLOTCXROM"; }
     else if (address == 0xc007) { retval = "MON_SETINTCXROM"; }
+
+    else if (address == 0xc008) { retval = "M80_SETSTDSZ"; }
+    else if (address == 0xc009) { retval = "M80_SETALTZP"; }
+    else if (address == 0xc00B) { retval = "M80_SETSLOTC3ROM"; }
+    else if (address == 0xc00C) { retval = "M80_CLR80VID"; }
+    else if (address == 0xc00D) { retval = "M80_SET80VID"; }
+    else if (address == 0xc00E) { retval = "M80_CLRALTCHAR"; }
+    else if (address == 0xc00F) { retval = "M80_SETALTCHAR"; }
+
     else if (address == 0xc010) { retval = "MON_KBDSTRB"; }
+
+    else if (address == 0xc011) { retval = "M80_RDLCBNK2"; }
+    else if (address == 0xc012) { retval = "M80_RDLCRAM"; }
+    else if (address == 0xc013) { retval = "M80_RDRAMRD"; }
+    else if (address == 0xc014) { retval = "M80_RDRAMWRT"; }
+
     else if (address == 0xc015) { retval = "MON_RDCXROM"; }
     else if (address == 0xc018) { retval = "MON_RD80STORE"; }
+
+    else if (address == 0xc019) { retval = "M80_RDVBLBAR"; }
+    else if (address == 0xc01A) { retval = "M80_RDTEXT"; }
+
     else if (address == 0xc01c) { retval = "MON_RDPAGE2"; }
+
+    else if (address == 0xc01f) { retval = "M80_RD80VID"; }
+
     else if (address == 0xc020) { retval = "MON_TAPEOUT"; }
     else if (address == 0xc030) { retval = "MON_SPKR"; }
     else if (address == 0xc050) { retval = "MON_TXTCLR"; }
@@ -103,6 +170,266 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     else if (address == 0xc060) { retval = "MON_TAPEIN"; }
     else if (address == 0xc064) { retval = "MON_PADDL0"; }
     else if (address == 0xc070) { retval = "MON_PTRIG"; }
+
+    else if (address == 0xc100) { retval = "M80_BFUNCPG"; }
+    else if (address == 0xc107) { retval = "M80_B.FUNCK"; }
+    else if (address == 0xc10E) { retval = "M80_B.FUNCNE"; }
+    else if (address == 0xc11f) { retval = "M80_B.OLDFUNC"; }
+    else if (address == 0xc129) { retval = "M80_F.CLREOP"; }
+    else if (address == 0xc12d) { retval = "M80_CLEOP1"; }
+    else if (address == 0xc143) { retval = "M80_F.HOME"; }
+    else if (address == 0xc14d) { retval = "M80_F.SCROLL"; }
+    else if (address == 0xc153) { retval = "M80_SCRL1"; }
+    else if (address == 0xc169) { retval = "M80_SCRL2"; }
+    else if (address == 0xc172) { retval = "M80_SCRL3"; }
+    else if (address == 0xc17d) { retval = "M80_F.CLREOL"; }
+    else if (address == 0xc181) { retval = "M80_CLEOL2"; }
+    else if (address == 0xc18a) { retval = "M80_F.SETWND"; }
+    else if (address == 0xc19c) { retval = "M80_F.CLEOLZ"; }
+    else if (address == 0xc1a1) { retval = "M80_F.GORET"; }
+    else if (address == 0xc1a4) { retval = "M80_B.FUNCO"; }
+    else if (address == 0xc1c5) { retval = "M80_NOI"; }
+    else if (address == 0xc1cd) { retval = "M80_B.SCROLL"; }
+    else if (address == 0xc1d3) { retval = "M80_B.CLREOL"; }
+    else if (address == 0xc1d9) { retval = "M80_B.CLEOLZ"; }
+    else if (address == 0xc1e1) { retval = "M80_B.CLREOP"; }
+    else if (address == 0xc1e7) { retval = "M80_B.SETWND"; }
+    else if (address == 0xc1ea) { retval = "M80_B.RESET"; }
+    else if (address == 0xc1ed) { retval = "M80_B.HOME"; }
+    else if (address == 0xc1ff) { retval = "M80_B.VECTOR"; }
+    else if (address == 0xc20e) { retval = "M80_B.GETCH"; }
+    else if (address == 0xc211) { retval = "M80_B.FUNC1"; }
+    else if (address == 0xc219) { retval = "M80_B.SETWNDX"; }
+    else if (address == 0xc221) { retval = "M80_B.SETWND2"; }
+    else if (address == 0xc22e) { retval = "M80_GOBACK"; }
+    else if (address == 0xc234) { retval = "M80_B.RESETX"; }
+    else if (address == 0xc252) { retval = "M80_BLAST"; }
+    else if (address == 0xc261) { retval = "M80_DIAGS"; }
+    else if (address == 0xc264) { retval = "M80_RESETRET"; }
+    else if (address == 0xc26e) { retval = "M80_B.ESCFIX"; }
+    else if (address == 0xc272) { retval = "M80_B.ESCFIX2"; }
+    else if (address == 0xc27a) { retval = "M80_B.ESCFIX3"; }
+    else if (address == 0xc27d) { retval = "M80_GORETN"; }
+    else if (address == 0xc280) { retval = "M80_ESCIN"; }
+    else if (address == 0xc284) { retval = "M80_ESCOUT"; }
+    else if (address == 0xc288) { retval = "M80_B.KEYIN"; }
+    else if (address == 0xc29c) { retval = "M80_B.KEYIN2"; }
+    else if (address == 0xc2b5) { retval = "M80_GOTKEY"; }
+    else if (address == 0xc2c6) { retval = "M80_KEYDLY"; }
+    else if (address == 0xc2cc) { retval = "M80_IK1"; }
+    else if (address == 0xc2ce) { retval = "M80_IK2"; }
+    else if (address == 0xc2d5) { retval = "M80_IK2A"; }
+    else if (address == 0xc2db) { retval = "M80_IK3"; }
+    else if (address == 0xc2e6) { retval = "M80_KDRETN"; }
+    else if (address == 0xc2e9) { retval = "M80_KDRETY"; }
+    else if (address == 0xc2ea) { retval = "M80_KDRET"; }
+    else if (address == 0xc2eb) { retval = "M80_F.RETURN"; }
+    else if (address == 0xc2f1) { retval = "M80_F.RET1"; }
+    else if (address == 0xc2f4) { retval = "M80_X.CLEOLZ"; }
+    else if (address == 0xc2f6) { retval = "M80_X.CLEOL2"; }
+    else if (address == 0xc300) { retval = "M80_CN00/M80_BASICINT"; }
+    else if (address == 0xc305) { retval = "M80_BASICIN"; }
+    else if (address == 0xc307) { retval = "M80_BASICOUT"; }
+    else if (address == 0xc317) { retval = "M80_BASICENT"; }
+    else if (address == 0xc336) { retval = "M80_BASICENT2"; }
+    else if (address == 0xc348) { retval = "M80_JBASINIT"; }
+    else if (address == 0xc34b) { retval = "M80_JPINIT"; }
+    else if (address == 0xc351) { retval = "M80_JPREAD"; }
+    else if (address == 0xc357) { retval = "M80_JPWRITE"; }
+    else if (address == 0xc35d) { retval = "M80_JPSTAT"; }
+    else if (address == 0xc363) { retval = "M80_MOVE"; }
+    else if (address == 0xc378) { retval = "M80_MOVEC2M"; }
+    else if (address == 0xc37b) { retval = "M80_MOVESTRT"; }
+    else if (address == 0xc380) { retval = "M80_MOVELOOP"; }
+    else if (address == 0xc38a) { retval = "M80_NXTA1"; }
+    else if (address == 0xc398) { retval = "M80_C01"; }
+    else if (address == 0xc3a3) { retval = "M80_C03"; }
+    else if (address == 0xc3ac) { retval = "M80_MOVERET"; }
+    else if (address == 0xc3b0) { retval = "M80_XFER"; }
+    else if (address == 0xc3c5) { retval = "M80_XFERC2M"; }
+    else if (address == 0xc3cd) { retval = "M80_XFERAZP"; }
+    else if (address == 0xc3dc) { retval = "M80_XFERSZP"; }
+    else if (address == 0xc3eb) { retval = "M80_SETCB"; }
+    else if (address == 0xc803) { retval = "M80_BASICINIT"; }
+    else if (address == 0xc813) { retval = "M80_HANG"; }
+    else if (address == 0xc816) { retval = "M80_BINIT1"; }
+    else if (address == 0xc831) { retval = "M80_BINIT1A"; }
+    else if (address == 0xc850) { retval = "M80_BINIT2"; }
+    else if (address == 0xc85d) { retval = "M80_CLEARIT"; }
+    else if (address == 0xc866) { retval = "M80_C8BASIC"; }
+    else if (address == 0xc874) { retval = "M80_C8B2"; }
+    else if (address == 0xc87e) { retval = "M80_C8B3"; }
+    else if (address == 0xc890) { retval = "M80_C8B4"; }
+    else if (address == 0xc896) { retval = "M80_BOUT"; }
+    else if (address == 0xc8a1) { retval = "M80_BPRINT"; }
+    else if (address == 0xc8b4) { retval = "M80_KBDWAIT"; }
+    else if (address == 0xc8c0) { retval = "M80_NOWAIT"; }
+    else if (address == 0xc8cc) { retval = "M80_BPNCTL"; }
+    else if (address == 0xc8e2) { retval = "M80_BIORET"; }
+    else if (address == 0xc8f6) { retval = "M80_BINPUT"; }
+    else if (address == 0xc905) { retval = "M80_B.INPUT"; }
+    else if (address == 0xc918) { retval = "M80_ESCAPING"; }
+    else if (address == 0xc929) { retval = "M80_ESC1"; }
+    else if (address == 0xc92b) { retval = "M80_ESC2"; }
+    else if (address == 0xc935) { retval = "M80_ESC3"; }
+    else if (address == 0xc945) { retval = "M80_ESCSPEC"; }
+    else if (address == 0xc954) { retval = "M80_ESCSPEC2"; }
+    else if (address == 0xc960) { retval = "M80_ESCNONE"; }
+    else if (address == 0xc963) { retval = "M80_ESCSPEC3"; }
+    else if (address == 0xc972) { retval = "M80_ESCTAB"; }
+    else if (address == 0xc983) { retval = "M80_ESCCHAR"; }
+    else if (address == 0xc994) { retval = "M80_PSTATUS"; }
+    else if (address == 0xc99e) { retval = "M80_PSTATUS2"; }
+    else if (address == 0xc9b0) { retval = "M80_PSTATUS3"; }
+    else if (address == 0xc9b4) { retval = "M80_PSTATUS4"; }
+    else if (address == 0xc9b7) { retval = "M80_NOESC"; }
+    else if (address == 0xc9c6) { retval = "M80_B.NOPICK"; }
+    else if (address == 0xc9df) { retval = "M80_B.CHKCAN"; }
+    else if (address == 0xc9f7) { retval = "M80_B.FLIP"; }
+    else if (address == 0xca02) { retval = "M80_B.CANLIT"; }
+    else if (address == 0xca0a) { retval = "M80_B.FIXCHR"; }
+    else if (address == 0xca24) { retval = "M80_B.INRET"; }
+    else if (address == 0xca27) { retval = "M80_GETPRIOR"; }
+    else if (address == 0xca49) { retval = "M80_GPX"; }
+    else if (address == 0xca4a) { retval = "M80_PREAD"; }
+    else if (address == 0xca4f) { retval = "M80_PREADRET2"; }
+    else if (address == 0xca51) { retval = "M80_PWRITE"; }
+    else if (address == 0xca62) { retval = "M80_PIGOOD"; }
+    else if (address == 0xca74) { retval = "M80_PREAD"; }
+    else if (address == 0xca8a) { retval = "M80_PREADRET2"; }
+    else if (address == 0xca8e) { retval = "M80_PWRITE"; }
+    else if (address == 0xca9e) { retval = "M80_PWRITE2"; }
+    else if (address == 0xcaaf) { retval = "M80_GETY"; }
+    else if (address == 0xcacb) { retval = "M80_PWRITE3"; }
+    else if (address == 0xcadc) { retval = "M80_STARTXY"; }
+    else if (address == 0xcaeb) { retval = "M80_PWRITE4"; }
+    else if (address == 0xcb09) { retval = "M80_PWWRAP"; }
+    else if (address == 0xcb0f) { retval = "M80_PWRITERET"; }
+    else if (address == 0xcb15) { retval = "M80_GETKEY"; }
+    else if (address == 0xcb1b) { retval = "M80_GETK2"; }
+    else if (address == 0xcb24) { retval = "M80_TESTCARD"; }
+    else if (address == 0xcb48) { retval = "M80_STAY2"; }
+    else if (address == 0xcb4d) { retval = "M80_STAY80"; }
+    else if (address == 0xcb4e) { retval = "M80_TESTFAIL"; }
+    else if (address == 0xcb51) { retval = "M80_BASCALC"; }
+    else if (address == 0xcb54) { retval = "M80_BASCALCZ"; }
+    else if (address == 0xcb55) { retval = "M80_BSCLC1"; }
+    else if (address == 0xcb5b) { retval = "M80_BSCLC1A"; }
+    else if (address == 0xcb6d) { retval = "M80_BSCLC2"; }
+    else if (address == 0xcb7e) { retval = "M80_BASCLC3"; }
+    else if (address == 0xcb97) { retval = "M80_BASCLCX"; }
+    else if (address == 0xcb99) { retval = "M80_CTLCHAR"; }
+    else if (address == 0xcbab) { retval = "M80_CTLCHARX"; }
+    else if (address == 0xcbae) { retval = "M80_CTLGO"; }
+    else if (address == 0xcbb2) { retval = "M80_CTLRET"; }
+    else if (address == 0xcbb6) { retval = "M80_CTLXFER"; }
+    else if (address == 0xcbbc) { retval = "M80_X.BELL"; }
+    else if (address == 0xcbce) { retval = "M80_BELL2"; }
+    else if (address == 0xcbcf) { retval = "M80_WAIT"; }
+    else if (address == 0xcbd0) { retval = "M80_WAIT2"; }
+    else if (address == 0xcbd1) { retval = "M80_WAIT3"; }
+    else if (address == 0xcbdb) { retval = "M80_X.BS"; }
+    else if (address == 0xcbe2) { retval = "M80_BS40"; }
+    else if (address == 0xcbeb) { retval = "M80_BSDONE"; }
+    else if (address == 0xcbec) { retval = "M80_X.CR"; }
+    else if (address == 0xcbfd) { retval = "M80_X.CRPAS"; }
+    else if (address == 0xcc0c) { retval = "M80_X.CRRET"; }
+    else if (address == 0xcc0d) { retval = "M80_X.EM"; }
+    else if (address == 0xcc1a) { retval = "M80_X.SUB"; }
+    else if (address == 0xcc1d) { retval = "M80_X.SUB80"; }
+    else if (address == 0xcc1f) { retval = "M80_X.SUBLP"; }
+    else if (address == 0xcc26) { retval = "M80_X.FS"; }
+    else if (address == 0xcc33) { retval = "M80_X.FSRET"; }
+    else if (address == 0xcc34) { retval = "M80_X.US"; }
+    else if (address == 0xcc40) { retval = "M80_X.US1"; }
+    else if (address == 0xcc45) { retval = "M80_X.US2"; }
+    else if (address == 0xcc48) { retval = "M80_X.USRET"; }
+    else if (address == 0xcc49) { retval = "M80_X.SO"; }
+    else if (address == 0xcc52) { retval = "M80_X.SI"; }
+    else if (address == 0xcc59) { retval = "M80_STUFFINV"; }
+    else if (address == 0xcc5f) { retval = "M80_CTLADL"; }
+    else if (address == 0xcc78) { retval = "M80_CTLADH"; }
+    else if (address == 0xcc91) { retval = "M80_X.LF"; }
+    else if (address == 0xcc9e) { retval = "M80_X.LF2"; }
+    else if (address == 0xcca4) { retval = "M80_SCROLLUP"; }
+    else if (address == 0xccaa) { retval = "M80_SCROLLDN"; }
+    else if (address == 0xccae) { retval = "M80_SCROLL1"; }
+    else if (address == 0xccb8) { retval = "M80_SCROLL2"; }
+    else if (address == 0xccd1) { retval = "M80_SCRLSUB"; }
+    else if (address == 0xccdd) { retval = "M80_MSCROL0"; }
+    else if (address == 0xcce1) { retval = "M80_MSCROL1"; }
+    else if (address == 0xccf9) { retval = "M80_MSCRL2"; }
+    else if (address == 0xcd02) { retval = "M80_MSCRLRET"; }
+    else if (address == 0xcd09) { retval = "M80_ONEMORE"; }
+    else if (address == 0xcd10) { retval = "M80_MSCRLRTS"; }
+    else if (address == 0xcd11) { retval = "M80_X.SCRLRET"; }
+    else if (address == 0xcd17) { retval = "M80_X.SCRLRET2"; }
+    else if (address == 0xcd20) { retval = "M80_X.LFRET"; }
+    else if (address == 0xcd23) { retval = "M80_X.VT"; }
+    else if (address == 0xcd2c) { retval = "M80_X.VTLOOP"; }
+    else if (address == 0xcd32) { retval = "M80_X.VTNEXT"; }
+    else if (address == 0xcd42) { retval = "M80_X.FF"; }
+    else if (address == 0xcd48) { retval = "M80_X.GS"; }
+    else if (address == 0xcd4e) { retval = "M80_X.GSEOLZ"; }
+    else if (address == 0xcd54) { retval = "M80_X.GS2"; }
+    else if (address == 0xcd59) { retval = "M80_X.DC1"; }
+    else if (address == 0xcd64) { retval = "M80_X.DC1B"; }
+    else if (address == 0xcd76) { retval = "M80_X.DC1RTS"; }
+    else if (address == 0xcd77) { retval = "M80_X.DC2"; }
+    else if (address == 0xcd88) { retval = "M80_X.DC2B"; }
+    else if (address == 0xcd90) { retval = "M80_X.NAK"; }
+    else if (address == 0xcd9a) { retval = "M80_X.NAKRET/M80_DC2RET"; }
+    else if (address == 0xcd9b) { retval = "M80_FULL80"; }
+    else if (address == 0xcdaa) { retval = "M80_QUIT"; }
+    else if (address == 0xcdc0) { retval = "M80_QUIT2"; }
+    else if (address == 0xcddb) { retval = "M80_SCRN84"; }
+    else if (address == 0xcdea) { retval = "M80_SCR40"; }
+    else if (address == 0xce01) { retval = "M80_SCR40RET"; }
+    else if (address == 0xce0a) { retval = "M80_ATEFOR"; }
+    else if (address == 0xce13) { retval = "M80_ATEFOR1"; }
+    else if (address == 0xce22) { retval = "M80_GET84"; }
+    else if (address == 0xce32) { retval = "M80_SCRN48"; }
+    else if (address == 0xce3e) { retval = "M80_SCR80"; }
+    else if (address == 0xce55) { retval = "M80_SCR80RET"; }
+    else if (address == 0xce58) { retval = "M80_SCRNRET"; }
+    else if (address == 0xce63) { retval = "M80_FORATE"; }
+    else if (address == 0xce6f) { retval = "M80_FORATE1"; }
+    else if (address == 0xce91) { retval = "M80_CLRHALF"; }
+    else if (address == 0xce9b) { retval = "M80_CLRHALF2"; }
+    else if (address == 0xcea3) { retval = "M80_DO48"; }
+    else if (address == 0xceaf) { retval = "M80_SETCH"; }
+    else if (address == 0xced9) { retval = "M80_SETCHRTS"; }
+    else if (address == 0xcedd) { retval = "M80_INVERT"; }
+    else if (address == 0xcef2) { retval = "M80_STORCHAR"; }
+    else if (address == 0xcef9) { retval = "M80_STOR2"; }
+    else if (address == 0xcf00) { retval = "M80_SEV"; }
+    else if (address == 0xcf01) { retval = "M80_PICK"; }
+    else if (address == 0xcf06) { retval = "M80_SCREENIT"; }
+    else if (address == 0xcf1e) { retval = "M80_SCRN2"; }
+    else if (address == 0xcf2a) { retval = "M80_STOR80"; }
+    else if (address == 0xcf37) { retval = "M80_SCRN3"; }
+    else if (address == 0xcf40) { retval = "M80_SCRN40"; }
+    else if (address == 0xcf4a) { retval = "M80_STOR40"; }
+    else if (address == 0xcf4e) { retval = "M80_STPKEXIT"; }
+    else if (address == 0xcf52) { retval = "M80_ESCON"; }
+    else if (address == 0xcf65) { retval = "M80_ESCOFF"; }
+    else if (address == 0xcf6e) { retval = "M80_ESCRET"; }
+    else if (address == 0xcf78) { retval = "M80_COPYROM"; }
+    else if (address == 0xcf95) { retval = "M80_COPYROM2"; }
+    else if (address == 0xcfb3) { retval = "M80_LCB2ROM"; }
+    else if (address == 0xcfb9) { retval = "M80_LCB1"; }
+    else if (address == 0xcfc2) { retval = "M80_LCB1ROM"; }
+    else if (address == 0xcfc5) { retval = "M80_COPYRET"; }
+    else if (address == 0xcfc8) { retval = "M80_PSETUP"; }
+    else if (address == 0xcfd2) { retval = "M80_PSETUP2"; }
+    else if (address == 0xcfdf) { retval = "M80_PSETUPRET"; }
+    else if (address == 0xcfea) { retval = "M80_F.TABLE"; }
+    else if (address == 0xcff0) { retval = "M80_PLUSMINUS1"; }
+    else if (address == 0xcff3) { retval = "M80_B.TABLE"; }
+    else if (address == 0xcff9) { retval = "M80_WNDTAB"; }
+    else if (address == 0xcffd) { retval = "M80_ZZEND"; }
+
+
     else if (address == 0xcfff) { retval = "MON_CLRROM"; }
     else if (address == 0xe000) { retval = "MON_BASIC"; }
     else if (address == 0xe003) { retval = "MON_BASIC2"; }
@@ -574,8 +901,6 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     else if (address == 0xf7d9) { retval = "AS_GETARYPT"; }
     else if (address == 0xf7e7) { retval = "AS_HTAB"; }
 
-
-
     else if (address == 0xf800) { retval = "MON_PLOT"; }
     else if (address == 0xf80c) { retval = "MON_RTMASK"; }
     else if (address == 0xf80e) { retval = "MON_PLOT1"; }
@@ -661,6 +986,9 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     else if (address == 0xfb6f) { retval = "MON_SETPWRC"; }
     else if (address == 0xfb78) { retval = "MON_VIDWAIT"; }
     else if (address == 0xfb88) { retval = "MON_KBDWAIT"; }
+
+    else if (address == 0xfbb3) { retval = "M80_F8VERSION"; }
+
     else if (address == 0xfb94) { retval = "MON_NOWAIT"; }
     else if (address == 0xfb97) { retval = "MON_ESCOLD"; }
     else if (address == 0xfb9b) { retval = "MON_ESCNOW"; }
@@ -668,6 +996,7 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     else if (address == 0xfbb3) { retval = "MON_VERSION"; }
     else if (address == 0xfbb4) { retval = "MON_GOTOCX"; }
     else if (address == 0xfbc1) { retval = "MON_BASCALC"; }
+
     else if (address == 0xfbd0) { retval = "MON_BASCLC2"; }
     else if (address == 0xfbd9) { retval = "MON_BELL1"; }
     else if (address == 0xfbe4) { retval = "MON_BELL2"; }
@@ -688,6 +1017,9 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     else if (address == 0xfc66) { retval = "MON_LF"; }
     else if (address == 0xfc70) { retval = "MON_SCROLL"; }
     else if (address == 0xfc72) { retval = "MON_XGOTOCX"; }
+
+    else if (address == 0xfc75) { retval = "M80_SNIFFIRQ"; }
+
     else if (address == 0xfc84) { retval = "MON_RDCX"; }
     else if (address == 0xfc91) { retval = "MON_ISSLOTS"; }
     else if (address == 0xfc99) { retval = "MON_ISPAGE1"; }
@@ -709,8 +1041,13 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     else if (address == 0xfcfa) { retval = "MON_READ2BIT"; }
     else if (address == 0xfcfd) { retval = "MON_RDBIT"; }
     else if (address == 0xfd0c) { retval = "MON_RDKEY"; }
+
+
     else if (address == 0xfd18) { retval = "MON_KEYIN"; }
     else if (address == 0xfd21) { retval = "MON_RDESC"; }
+
+    else if (address == 0xfd29) { retval = "M80_FUNCEXIT"; }
+
     else if (address == 0xfd2f) { retval = "MON_ESC"; }
     else if (address == 0xfd35) { retval = "MON_RDCHAR"; }
     else if (address == 0xfd3d) { retval = "MON_NOTCR"; }
@@ -788,6 +1125,9 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     else if (address == 0xff44) { retval = "MON_RESTR1"; }
     else if (address == 0xff4a) { retval = "MON_SAVE"; }
     else if (address == 0xff4c) { retval = "MON_SAV1"; }
+
+    else if (address == 0xff58) { retval = "M80_IORTS"; }
+
     else if (address == 0xff59) { retval = "MON_OLDRST"; }
     else if (address == 0xff65) { retval = "MON_MON"; }
     else if (address == 0xff69) { retval = "MON_MONZ"; }

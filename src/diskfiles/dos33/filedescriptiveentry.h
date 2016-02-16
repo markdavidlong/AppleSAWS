@@ -16,17 +16,17 @@ struct FileDescriptiveEntry {
     }
 
     QString fileType() {
-        if (fileTypeAndFlags & IntegerBasicFile) { return "I"; }
-        if (fileTypeAndFlags & ApplesoftBasicFile) { return "A"; }
-        if (fileTypeAndFlags & RelocatableFile) { return "R"; }
-        if (fileTypeAndFlags & RawBinaryFile) { return "B"; }
-        if (fileTypeAndFlags & TypeSFile) { return "S"; }
-        if (fileTypeAndFlags & TypeAFile) { return "a"; }
-        if (fileTypeAndFlags & TypeBFile) { return "b"; }
+        if (fileTypeAndFlags & DOSIntegerBasicFile) { return "I"; }
+        if (fileTypeAndFlags & DOSApplesoftBasicFile) { return "A"; }
+        if (fileTypeAndFlags & DOSRelocatableFile) { return "R"; }
+        if (fileTypeAndFlags & DOSRawBinaryFile) { return "B"; }
+        if (fileTypeAndFlags & DOSTypeSFile) { return "S"; }
+        if (fileTypeAndFlags & DOSTypeAFile) { return "a"; }
+        if (fileTypeAndFlags & DOSTypeBFile) { return "b"; }
         return "T";
     }
 
-    bool isLocked() { return (fileTypeAndFlags & IsLocked); }
+    bool isLocked() { return (fileTypeAndFlags & DOSIsLocked); }
 
     void dump() {
         qDebug() << "First TS List Sector: Track: " << QString("%1").arg(firstTSListSector.track,2,16,QChar('0')).toUpper()

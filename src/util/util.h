@@ -6,15 +6,15 @@
 #include <QDebug>
 
 typedef enum {
-    TextFile = 0x00,
-    IntegerBasicFile = 0x01,
-    ApplesoftBasicFile = 0x02,
-    RawBinaryFile = 0x04,
-    TypeSFile = 0x08,
-    RelocatableFile = 0x10,
-    TypeAFile = 0x20,
-    TypeBFile= 0x40,
-    IsLocked = 0x80
+    DOSTextFile = 0x00,
+    DOSIntegerBasicFile = 0x01,
+    DOSApplesoftBasicFile = 0x02,
+    DOSRawBinaryFile = 0x04,
+    DOSTypeSFile = 0x08,
+    DOSRelocatableFile = 0x10,
+    DOSTypeAFile = 0x20,
+    DOSTypeBFile= 0x40,
+    DOSIsLocked = 0x80
 } FileTypeFlag;
 
 typedef enum {
@@ -52,6 +52,19 @@ struct TSPair {
 
     void dump() { qDebug() << "TSPair: track: " << track << " sector: " << sector; }
 };
+
+inline QString uint8ToHex(quint8 val) {
+    QString retval = QString("%1").arg(val,2,16,QChar('0')).toUpper();
+    return retval;
+}
+
+inline QString uint16ToHex(quint16 val) {
+    QString retval = QString("%1").arg(val,4,16,QChar('0')).toUpper();
+    return retval;
+}
+
+
+
 
 
 

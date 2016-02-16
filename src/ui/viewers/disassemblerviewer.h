@@ -5,6 +5,8 @@
 #include <QByteArray>
 
 #include "binaryfile.h"
+#include "relocatablefile.h"
+
 namespace Ui {
 class DisassemblerViewer;
 }
@@ -18,6 +20,7 @@ public:
     ~DisassemblerViewer();
 
     void setFile(BinaryFile *file);
+    void setFile(RelocatableFile *file);
     void setData(QByteArray data);
     void setText(QString text);
 
@@ -25,7 +28,7 @@ public:
 private:
     Ui::DisassemblerViewer *ui;
 
-    BinaryFile *m_file;
+    GenericFile *m_file;
 };
 
 #endif // DISASSEMBLERVIEWER_H

@@ -22,6 +22,9 @@ void BinaryFile::setData(QByteArray data)
 
 void BinaryFile::dump()
 {
-    qDebug() << QString("Address: %1  Length: %2").arg((quint16) address(),4,16,QChar('0')).arg(m_length,4,16,QChar('0')).toUpper();
-    qDebug() << QString("Data Length Recorded: %1").arg(m_data.length(),4,16,QChar('0')).toUpper();
+    qDebug() << QString("Address: %1  Length: %2")
+                .arg((quint16) address(),4,16,QChar('0'))
+                .arg(m_length,4,16,QChar('0')).toUpper();
+    qDebug() << QString("Data Length Recorded: %1")
+                .arg(m_data.length(),4,16,QChar('0')).toUpper();
 }

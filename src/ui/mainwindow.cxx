@@ -1,22 +1,24 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <QFileDialog>
 #include "hiresviewwidget.h"
 #include "applesoftfileviewer.h"
-#include <QMdiSubWindow>
 #include "applesoftfile.h"
 #include "memory.h"
 #include "disassembler.h"
 #include "disassemblerviewer.h"
 #include "hexdumpviewer.h"
+#include "relocatablefile.h"
 
+#include <QFileDialog>
 #include <QTextDocument>
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+
     ui->setupUi(this);
     m_disk = 0;
 
@@ -122,6 +124,8 @@ void MainWindow::handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescripti
     GenericFile *file = disk->getFile(fde);
     file->setFilename(AppleString(fde.filename).printable().trimmed());
 
+    qDebug() << "Default open. Type: " << fde.fileType();
+
     if (dynamic_cast<BinaryFile*>(file)) {
         BinaryFile *binfile = dynamic_cast<BinaryFile*>(file);
 
@@ -140,8 +144,20 @@ void MainWindow::handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescripti
         ApplesoftFile *abf = dynamic_cast<ApplesoftFile *>(file);
         abf->setFilename(AppleString(fde.filename).printable().trimmed());
         openInApplesoftFileViewer(abf);
-
-    } else {
+    }
+    else if (dynamic_cast<RelocatableFile *>(file))
+    {
+        RelocatableFile *rf = dynamic_cast<RelocatableFile *>(file);
+  //      rf->dump();
+        HexDumpViewer *hdv = new HexDumpViewer(0);
+        hdv->setFile(file,file->address());
+        hdv->show();
+        DisassemblerViewer *hvwma = new DisassemblerViewer(0);
+        hvwma->show();
+        hvwma->setFile(rf);
+    }
+    else
+    {
         HexDumpViewer *hdv = new HexDumpViewer(0);
         hdv->setFile(file,file->address());
         hdv->show();
