@@ -18,7 +18,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-
     ui->setupUi(this);
     m_disk = 0;
 
@@ -39,8 +38,6 @@ MainWindow::MainWindow(QWidget *parent) :
             ui->catalogWidget, SLOT(processNewlyLoadedDisk(QString,DiskFile*)));
     connect(this, SIGNAL(diskFileUnloading(DiskFile*)),
             ui->catalogWidget, SLOT(unloadDisk(DiskFile*)));
-
-
 }
 
 MainWindow::~MainWindow()
@@ -148,7 +145,6 @@ void MainWindow::handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescripti
     else if (dynamic_cast<RelocatableFile *>(file))
     {
         RelocatableFile *rf = dynamic_cast<RelocatableFile *>(file);
-  //      rf->dump();
         HexDumpViewer *hdv = new HexDumpViewer(0);
         hdv->setFile(file,file->address());
         hdv->show();
