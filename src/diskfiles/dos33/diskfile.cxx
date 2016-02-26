@@ -8,6 +8,7 @@
 #include "applesoftfile.h"
 #include "binaryfile.h"
 #include "relocatablefile.h"
+#include "textfile.h"
 
 DiskFile::DiskFile(QString filename)
 {
@@ -91,17 +92,21 @@ GenericFile *DiskFile::getFile(FileDescriptiveEntry fde)
         TrackSectorList tsl = getSector(fde.firstTSListSector).promoteToTrackSectorList();
         QByteArray data = getDataFromTrackSectorList(tsl);
 
-        if (fde.fileTypeAndFlags & DOSApplesoftBasicFile)
+        if (fde.fileType() == "A")
         {
             retval = new ApplesoftFile(data);
         }
-        else if (fde.fileTypeAndFlags & DOSRawBinaryFile)
+        else if (fde.fileType() == "B")
         {
             retval = new BinaryFile(data);
         }
-        else if (fde.fileTypeAndFlags & DOSRelocatableFile)
+        else if (fde.fileType() == "R")
         {
             retval = new RelocatableFile(data);
+        }
+        else if ((fde.fileType() == "T"))
+        {
+            retval = new TextFile(data);
         }
         else
         {

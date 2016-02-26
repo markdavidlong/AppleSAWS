@@ -24,6 +24,7 @@ private:
 
 class AppleString : public QByteArray {
 public:
+    void setData(const QByteArray &data) { insert(0,data); }
     QString printable() const;
     QVector<TextAttribute> attributes() const;
 

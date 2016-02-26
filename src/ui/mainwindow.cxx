@@ -4,10 +4,13 @@
 #include "hiresviewwidget.h"
 #include "applesoftfileviewer.h"
 #include "applesoftfile.h"
+#include "textfile.h"
 #include "memory.h"
 #include "disassembler.h"
 #include "disassemblerviewer.h"
 #include "hexdumpviewer.h"
+#include "texthexdumpviewer.h"
+
 #include "relocatablefile.h"
 
 #include <QFileDialog>
@@ -141,6 +144,14 @@ void MainWindow::handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescripti
         ApplesoftFile *abf = dynamic_cast<ApplesoftFile *>(file);
         abf->setFilename(AppleString(fde.filename).printable().trimmed());
         openInApplesoftFileViewer(abf);
+    }
+    else if (dynamic_cast<TextFile *>(file))
+    {
+        TextFile *tf = dynamic_cast<TextFile *>(file);
+        tf->setFilename(AppleString(fde.filename).printable().trimmed());
+        TextHexDumpViewer *thdv = new TextHexDumpViewer();
+        thdv->setFile(tf);
+        thdv->show();
     }
     else if (dynamic_cast<RelocatableFile *>(file))
     {

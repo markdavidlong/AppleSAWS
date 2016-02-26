@@ -14,6 +14,7 @@ INCLUDEPATH += src/diskfiles/dos33
 INCLUDEPATH += src/util
 INCLUDEPATH += src/applesoftfile
 INCLUDEPATH += src/binaryfile
+INCLUDEPATH += src/textfile
 INCLUDEPATH += src/ui/viewers
 INCLUDEPATH += src/imported
 INCLUDEPATH += src/internals
@@ -35,6 +36,7 @@ SOURCES += \
     src/applesoftfile/applesofttoken.cxx \
     src/binaryfile/disassembler.cxx \
     src/binaryfile/binaryfile.cxx \
+    src/textfile/textfile.cxx \
     src/ui/catalogwidget.cxx \
     src/ui/mainwindow.cxx \
     src/ui/viewers/hiresviewwidget.cxx \
@@ -44,6 +46,7 @@ SOURCES += \
     src/internals/memory.cxx \
     src/ui/viewers/disassemblerviewer.cpp \
     src/ui/viewers/hexdumpviewer.cpp \
+    src/ui/viewers/texthexdumpviewer.cpp \
     src/relocatablefile/relocatablefile.cxx
 
 HEADERS += \
@@ -60,6 +63,7 @@ HEADERS += \
     src/applesoftfile/applesofttoken.h \
     src/binaryfile/disassembler.h \
     src/binaryfile/binaryfile.h \
+    src/textfile/textfile.h \
     src/ui/catalogwidget.h \
     src/ui/mainwindow.h \
     src/ui/viewers/hiresviewwidget.h \
@@ -69,6 +73,7 @@ HEADERS += \
     src/internals/memory.h \
     src/ui/viewers/disassemblerviewer.h \
     src/ui/viewers/hexdumpviewer.h \
+    src/ui/viewers/texthexdumpviewer.h \
     src/relocatablefile/relocatablefile.h
 
 FORMS += \
@@ -76,4 +81,5 @@ FORMS += \
     src/ui/mainwindow.ui \
     src/ui/viewers/applesoftfileviewer.ui \
     src/ui/viewers/disassemblerviewer.ui \
-    src/ui/viewers/hexdumpviewer.ui
+    src/ui/viewers/hexdumpviewer.ui \
+    src/ui/viewers/texthexdumpviewer.ui

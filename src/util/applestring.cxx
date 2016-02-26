@@ -6,7 +6,10 @@ QString AppleString::printable() const
 {
     QString retval;
     foreach (quint8 ch, *this) {
-        retval.append(AppleChar(ch).printable());
+        if (ch > 0x80)
+            retval.append(QChar(ch-0x80));
+        else
+            retval.append(QChar(ch));
     }
     return retval;
 }
@@ -20,7 +23,6 @@ QVector<TextAttribute> AppleString::attributes() const
     }
     return retval;
 }
-
 
 
 QChar AppleChar::printable() const

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>HexDumpViewer</class>
- <widget class="QWidget" name="HexDumpViewer">
+ <class>TextHexDumpViewer</class>
+ <widget class="QWidget" name="TextHexDumpViewer">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -18,7 +18,7 @@
     <widget class="QTextBrowser" name="textArea">
      <property name="font">
       <font>
-       <family>Courier 10 Pitch</family>
+       <family>Courier</family>
        <pointsize>12</pointsize>
       </font>
      </property>
