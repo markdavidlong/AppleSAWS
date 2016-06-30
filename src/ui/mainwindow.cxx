@@ -9,12 +9,15 @@
 #include "disassembler.h"
 #include "disassemblerviewer.h"
 #include "hexdumpviewer.h"
+#include "mazeviewer.h"
 #include "texthexdumpviewer.h"
 
 #include "relocatablefile.h"
 
 #include <QFileDialog>
 #include <QTextDocument>
+#include <QSettings>
+#include <QString>
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -58,6 +61,8 @@ void MainWindow::loadDiskFile(QString filename)
     emit diskFileLoading(filename,m_disk);
     if (m_disk->read(filename)) {
         ui->action_Unload_Disk_Image->setEnabled(true);
+        QSettings settings;
+        settings.setValue("lastOpened",filename);
         emit diskFileLoaded(filename,m_disk);
     } else {
         emit diskFileLoadFailed(filename,m_disk);
@@ -101,6 +106,14 @@ void MainWindow::openInDisassemblerViewer(BinaryFile *file) {
     hvwma->setFile(file);
 }
 
+void MainWindow::openInMazeViewer(BinaryFile *file) {
+    MazeViewer *hvwma = new MazeViewer(0);
+    int cellw = 70;
+    hvwma->resize(cellw*8,cellw*10);
+    hvwma->show();
+    hvwma->setFile(file);
+}
+
 void MainWindow::openInApplesoftFileViewer(ApplesoftFile *file) {
 
     ApplesoftFileViewer *afv = new ApplesoftFileViewer(0);
@@ -119,6 +132,7 @@ void MainWindow::handleDiskItemSelectedHexViewOpen(DiskFile *disk, FileDescripti
 }
 
 
+
 void MainWindow::handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescriptiveEntry fde)
 {
     GenericFile *file = disk->getFile(fde);
@@ -133,10 +147,13 @@ void MainWindow::handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescripti
         {
             openInHiresViewWidget(binfile, AppleString(fde.filename).printable().trimmed());
         }
+        else if (file->filename().contains("maze",Qt::CaseInsensitive))
+        {
+            openInMazeViewer(binfile);
+        }
         else
         {
             openInDisassemblerViewer(binfile);
-
         }
     }
     else if (dynamic_cast<ApplesoftFile *>(file))

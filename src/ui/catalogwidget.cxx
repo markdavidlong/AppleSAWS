@@ -38,6 +38,8 @@ void CatalogWidget::showContextMenuForWidget(const QPoint &point) {
             [=](){ this->toggleHexView(selectedItem); hexViewAction->deleteLater();});
     contextMenu.addAction(hexViewAction);
 
+
+
 //    QAction *viewWithAction = new QAction("View With...",this);
 //    connect(viewWithAction, &QAction::triggered,
 //            [=](){ this->itemClicked(selectedItem); viewWithAction->deleteLater();});
@@ -151,5 +153,6 @@ void CatalogWidget::toggleHexView(QListWidgetItem *item)
     qDebug() << "Hex File " << AppleString(fde.filename).printable().trimmed();
     emit openWithHexViewer(m_disk,fde);
 }
+
 
 

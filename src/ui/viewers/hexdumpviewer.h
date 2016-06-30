@@ -21,13 +21,20 @@ public:
     ~HexDumpViewer();
 
     void setFile(GenericFile *file, quint16 offset = 0);
-    void setData(QByteArray data);
-    void setText(QString text);
+
+public slots:
+    void showHexValues();
+    void showAsciiValues();
 
 private:
+    void setText(QString text);
+    void setData(QByteArray data);
+    QString valToAppleAscii(quint8 val);
+
     Ui::HexDumpViewer *ui;
 
     quint16 m_offset;
+    QByteArray m_data;
 };
 
 #endif // HEXDUMPVIEWER_H

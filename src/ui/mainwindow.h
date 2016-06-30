@@ -42,6 +42,7 @@ protected:
     void openInApplesoftFileViewer(ApplesoftFile *file);
     void openInHiresViewWidget(BinaryFile *file, QString filename);
     void openInDisassemblerViewer(BinaryFile *file);
+    void openInMazeViewer(BinaryFile *file);
 private:
     Ui::MainWindow *ui;
 

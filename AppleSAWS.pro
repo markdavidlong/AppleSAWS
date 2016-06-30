@@ -47,7 +47,8 @@ SOURCES += \
     src/ui/viewers/disassemblerviewer.cpp \
     src/ui/viewers/hexdumpviewer.cpp \
     src/ui/viewers/texthexdumpviewer.cpp \
-    src/relocatablefile/relocatablefile.cxx
+    src/relocatablefile/relocatablefile.cxx \
+    src/ui/viewers/mazeviewer.cpp
 
 HEADERS += \
     src/diskfiles/dos33/diskfile.h \
@@ -74,7 +75,8 @@ HEADERS += \
     src/ui/viewers/disassemblerviewer.h \
     src/ui/viewers/hexdumpviewer.h \
     src/ui/viewers/texthexdumpviewer.h \
-    src/relocatablefile/relocatablefile.h
+    src/relocatablefile/relocatablefile.h \
+    src/ui/viewers/mazeviewer.h
 
 FORMS += \
     src/ui/catalogwidget.ui \

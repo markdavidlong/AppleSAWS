@@ -1,4 +1,6 @@
 #include <QApplication>
+#include <QSettings>
+#include <QString>
 
 #include "mainwindow.h"
 #include "binaryfile.h"
@@ -10,10 +12,16 @@
 int main(int argc, char** argv)
 {
     QApplication a(argc, argv);
+    QCoreApplication::setOrganizationName("AppleSAWS");
+    QCoreApplication::setOrganizationDomain("ml.com");
+    QCoreApplication::setApplicationName("AppleSAWS");
     MainWindow w;
-    w.loadDiskFile("~/AppleSAWS/images/missing_ring_good.dsk");
-//    w.loadDiskFile("~/AppleSAWS/images/dos.3.3.system.master.dsk");
-//    w.loadDiskFile("~/AppleSAWS/images//montezuma_etc.dsk");
+    QSettings settings;
+    QString lastOpened = settings.value("lastOpened").toString();
+    if (!lastOpened.isEmpty())
+    {
+        w.loadDiskFile(lastOpened);
+    }
     w.show();
 
     return a.exec();
