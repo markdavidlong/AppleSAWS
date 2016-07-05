@@ -23,11 +23,13 @@ public slots:
     void setFile(ApplesoftFile *m_file);
     void setData(QByteArray data);
     void setText(QString text);
+    void findText();
+
 
 private:
     ApplesoftFile *m_file;
     ApplesoftFormatter *m_formatter;
-
+    bool m_isFirstFind;
     Ui::ApplesoftFileViewer *ui;
 };
 

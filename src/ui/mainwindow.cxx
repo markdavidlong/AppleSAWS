@@ -108,7 +108,7 @@ void MainWindow::openInDisassemblerViewer(BinaryFile *file) {
 
 void MainWindow::openInMazeViewer(BinaryFile *file) {
     MazeViewer *hvwma = new MazeViewer(0);
-    int cellw = 70;
+    int cellw = 90;
     hvwma->resize(cellw*8,cellw*10);
     hvwma->show();
     hvwma->setFile(file);

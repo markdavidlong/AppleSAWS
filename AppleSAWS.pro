@@ -48,7 +48,8 @@ SOURCES += \
     src/ui/viewers/hexdumpviewer.cpp \
     src/ui/viewers/texthexdumpviewer.cpp \
     src/relocatablefile/relocatablefile.cxx \
-    src/ui/viewers/mazeviewer.cpp
+    src/ui/viewers/mazeviewer.cpp \
+    src/binaryfile/binaryfilemetadata.cpp
 
 HEADERS += \
     src/diskfiles/dos33/diskfile.h \
@@ -76,7 +77,8 @@ HEADERS += \
     src/ui/viewers/hexdumpviewer.h \
     src/ui/viewers/texthexdumpviewer.h \
     src/relocatablefile/relocatablefile.h \
-    src/ui/viewers/mazeviewer.h
+    src/ui/viewers/mazeviewer.h \
+    src/binaryfile/binaryfilemetadata.h
 
 FORMS += \
     src/ui/catalogwidget.ui \

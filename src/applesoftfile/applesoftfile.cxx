@@ -61,9 +61,6 @@ void ApplesoftFile::parse(quint16 start_address)
     if (idx < m_data.length()) {
         qDebug() << QString("%1 byte(s) unaccounted for.").arg(m_data.length() - idx);
     }
-//    if (idx < m_length) {
-//        qDebug() << QString("%1 byte(s) unaccounted for.").arg(m_length - idx);
-//    }
 }
 
 QStringList ApplesoftFile::extraDataHexValues() {
@@ -95,6 +92,7 @@ QByteArray ApplesoftFile::extraData()
 
 void Retokenizer::retokenize(ApplesoftLine &line)
 {
+    Q_UNUSED(line);
 //    QList <QByteArray> string_list;
 //    QList <QByteArray> number_list;
 
@@ -171,6 +169,8 @@ void Retokenizer::retokenize(ApplesoftLine &line)
 
 QByteArray Retokenizer::retokenizePart(QByteArray part) {
     QByteArray retval;
+
+    Q_UNUSED(part);
 
     return retval;
 }

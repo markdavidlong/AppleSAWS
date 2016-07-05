@@ -23,8 +23,7 @@ public:
     void setFile(GenericFile *file, quint16 offset = 0);
 
 public slots:
-    void showHexValues();
-    void showAsciiValues();
+    void showHexAndAsciiValues();
 
 private:
     void setText(QString text);

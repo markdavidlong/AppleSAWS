@@ -1,6 +1,7 @@
 #include "mazeviewer.h"
 #include <QPainter>
 #include <QResizeEvent>
+#include <QDebug>
 
 #include "memory.h"
 
@@ -64,6 +65,7 @@ void MazeViewer::drawMaze()
     {
         for (int jdx = 0; jdx < 10; jdx++)
         {
+            int currentRoom = (jdx*8) + idx;
             double cellTop = jdx * cellHeight + 1;
             double cellBot = (jdx+1) * cellHeight - 1;
 
@@ -206,10 +208,27 @@ void MazeViewer::drawMaze()
             //        .arg(tr,2,16,QChar('0'))
             //        .arg(mo,2,16,QChar('0'));
 
-            QString str = QString("%1\n%2\n%3")
+            int playerCount = mem.at(0x80fd);
+
+            QString pl;
+            for (int rdx = 0; rdx < playerCount; rdx++)
+            {
+                quint8 roomPlayerIsIn = mem.at(0x8008 + (32*rdx));
+
+                if (roomPlayerIsIn == currentRoom) {
+                    if (rdx == 0) { pl += QString("\u2460"); }
+                    if (rdx == 1) { pl += QString("\u2461"); }
+                    if (rdx == 2) { pl += QString("\u2462"); }
+                    if (rdx == 3) { pl += QString("\u2463"); }
+                    if (rdx == 4) { pl += QString("\u2464"); }
+                }
+            }
+
+            QString str = QString("%1\n%2\n%3\n%4")
                     .arg(idx+(jdx*8))
                     .arg(mos)
-                    .arg(trs);
+                    .arg(trs)
+                    .arg(pl);
 
             painter.drawText(QRect(cellLeft+2,cellTop+2,cellWidth-2,cellHeight-2),str);
         }
@@ -367,7 +386,7 @@ QString MazeViewer::monsterToString(quint8 mc)
         name = "Hmncls";
         break;
     case 0x0e:
-        name = "UNKN";
+        name = "(INVAL)";
         break;
     case 0x0f:
         name = "EvlMage";
