@@ -1,5 +1,4 @@
 #include "charset.h"
-#include <QDebug>
 
 
 CharSetCharacter::CharSetCharacter(quint8 asciival, QByteArray bytes)
@@ -35,12 +34,10 @@ void CharacterSet::buildSetFromSetBlob(QByteArray data)
         qWarning("Unexpected character set size: %d (not 768).  Resizing.",data.size());
         data.resize(768);
     }
-qDebug() << "BuildSet: " << data;
     int val = 32;
     for (int idx = 0; idx < 768; idx+=8)
     {
         QByteArray ch = data.mid(idx,8);
-        qDebug() << "Added character " << idx / 8 << "Data: " << ch;
 
         CharSetCharacter csc = CharSetCharacter(val,ch);
         m_charmap.insert(val,csc);
@@ -50,7 +47,6 @@ qDebug() << "BuildSet: " << data;
 
 QList<CharSetCharacter> CharacterSet::allCharacters() const
 {
-    qDebug() << "allCharacters: " << m_charmap.values().count();
     return m_charmap.values();
 
 

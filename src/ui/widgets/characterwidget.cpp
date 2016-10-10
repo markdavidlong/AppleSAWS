@@ -4,7 +4,6 @@
 #include <QSize>
 #include <QPainter>
 #include <QBitArray>
-#include <QDebug>
 
 CharacterWidget::CharacterWidget(QWidget *parent, CharSetCharacter ch, int scale)
     : QWidget(parent), m_character(ch), m_scale(scale)
@@ -26,7 +25,6 @@ CharacterWidget::CharacterWidget(QWidget *parent, CharSetCharacter ch, int scale
 
 void CharacterWidget::doRepaint()
 {
-    qDebug() << "doRepaint() begin";
     m_pixmap.fill(m_bgcolor);
     QPainter painter(&m_pixmap);
 
@@ -34,7 +32,6 @@ void CharacterWidget::doRepaint()
     painter.setBrush(m_fgcolor);
 
     QByteArray chardata = m_character.data();
-    qDebug() << chardata;
 
     for (quint8 yval = 0; yval < 8; yval++)
     {
@@ -51,7 +48,6 @@ void CharacterWidget::doRepaint()
         bits.setBit(5,(line & 0x20));
         bits.setBit(6,(line & 0x40));
 
-        qDebug() << "Bits: " << bits;
         int shiftval = 0;
         painter.setBrush(m_fgcolor);
         if (m_dobitshift && (line & 0x80)) {
@@ -91,7 +87,6 @@ void CharacterWidget::doRepaint()
     }
 
     repaint();
-    qDebug() << "end";
 }
 
 void CharacterWidget::paintEvent(QPaintEvent *)

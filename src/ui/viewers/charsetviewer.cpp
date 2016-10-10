@@ -1,6 +1,5 @@
 #include "charsetviewer.h"
 
-#include <QDebug>
 
 CharSetViewer::CharSetViewer(QWidget *parent) : QWidget(parent)
 {
@@ -23,7 +22,6 @@ void CharSetViewer::setFile(BinaryFile *file)
     int ypos = 0;
     foreach (CharSetCharacter csc, m_charset.allCharacters())
     {
-        qDebug() << "CSC: " << csc.asciiVal();
         CharacterWidget *cw = new CharacterWidget(this,csc,4);
         cw->showGrid(true);
         cw->enableBitShift(true);
