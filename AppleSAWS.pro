@@ -1,5 +1,5 @@
 
-QT       += core gui
+QT += core gui
 CONFIG += c++11
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -18,6 +18,7 @@ INCLUDEPATH += src/textfile
 INCLUDEPATH += src/ui/viewers
 INCLUDEPATH += src/imported
 INCLUDEPATH += src/internals
+INCLUDEPATH += src/ui/widgets/
 INCLUDEPATH += src/ui
 
 DEFINES += WS_VIDEO
@@ -34,22 +35,26 @@ SOURCES += \
     src/util/applestring.cxx \
     src/applesoftfile/applesoftfile.cxx \
     src/applesoftfile/applesofttoken.cxx \
+    src/applesoftfile/applesoftformatter.cxx \
+    src/applesoftfile/applesoftline.cpp  \
     src/binaryfile/disassembler.cxx \
     src/binaryfile/binaryfile.cxx \
     src/textfile/textfile.cxx \
     src/ui/catalogwidget.cxx \
     src/ui/mainwindow.cxx \
     src/ui/viewers/hiresviewwidget.cxx \
-    src/ui/viewers/applesoftfileviewer.cxx \ 
-    src/applesoftfile/applesoftformatter.cxx \
-    src/applesoftfile/applesoftline.cpp  \
-    src/internals/memory.cxx \
+    src/ui/viewers/applesoftfileviewer.cxx \
     src/ui/viewers/disassemblerviewer.cpp \
     src/ui/viewers/hexdumpviewer.cpp \
     src/ui/viewers/texthexdumpviewer.cpp \
-    src/relocatablefile/relocatablefile.cxx \
     src/ui/viewers/mazeviewer.cpp \
-    src/binaryfile/binaryfilemetadata.cpp
+    src/ui/viewers/charsetviewer.cpp \
+    src/internals/memory.cxx \
+    src/relocatablefile/relocatablefile.cxx \
+    src/binaryfile/binaryfilemetadata.cpp \
+    src/util/charset.cpp \
+    src/ui/widgets/characterwidget.cpp
+
 
 HEADERS += \
     src/diskfiles/dos33/diskfile.h \
@@ -78,7 +83,10 @@ HEADERS += \
     src/ui/viewers/texthexdumpviewer.h \
     src/relocatablefile/relocatablefile.h \
     src/ui/viewers/mazeviewer.h \
-    src/binaryfile/binaryfilemetadata.h
+    src/binaryfile/binaryfilemetadata.h \
+    src/ui/widgets/characterwidget.h \
+    src/util/charset.h \
+    src/ui/viewers/charsetviewer.h
 
 FORMS += \
     src/ui/catalogwidget.ui \

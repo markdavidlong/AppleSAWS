@@ -11,7 +11,7 @@
 #include "hexdumpviewer.h"
 #include "mazeviewer.h"
 #include "texthexdumpviewer.h"
-
+#include "charsetviewer.h"
 #include "relocatablefile.h"
 
 #include <QFileDialog>
@@ -114,6 +114,13 @@ void MainWindow::openInMazeViewer(BinaryFile *file) {
     hvwma->setFile(file);
 }
 
+void MainWindow::openInCharSetViewer(BinaryFile *file)
+{
+    CharSetViewer *csv = new CharSetViewer(0);
+    csv->setFile(file);
+    csv->show();
+}
+
 void MainWindow::openInApplesoftFileViewer(ApplesoftFile *file) {
 
     ApplesoftFileViewer *afv = new ApplesoftFileViewer(0);
@@ -150,6 +157,10 @@ void MainWindow::handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescripti
         else if (file->filename().contains("maze",Qt::CaseInsensitive))
         {
             openInMazeViewer(binfile);
+        }
+        else if (file->filename().contains(".set",Qt::CaseInsensitive))
+        {
+            openInCharSetViewer(binfile);
         }
         else
         {

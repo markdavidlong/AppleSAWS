@@ -43,6 +43,7 @@ protected:
     void openInHiresViewWidget(BinaryFile *file, QString filename);
     void openInDisassemblerViewer(BinaryFile *file);
     void openInMazeViewer(BinaryFile *file);
+    void openInCharSetViewer(BinaryFile *file);
 private:
     Ui::MainWindow *ui;
 
