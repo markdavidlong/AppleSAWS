@@ -310,6 +310,10 @@ QString MazeViewer::inventoryToString(quint8 inv)
     quint8 gems = (inv & 0xf0) >> 4;
     quint8 gold_or_special = (inv & 0x0f);
 
+    if (gems == 0 && gold_or_special == 0) {
+        return "";
+    }
+
     if (gems == 0)  // Special item;
     {
         if (gold_or_special == 0x00) { return ""; }
@@ -330,10 +334,30 @@ QString MazeViewer::inventoryToString(quint8 inv)
         if (gold_or_special == 0x0F) { return "UNKN 15"; }
         return "";
     }
+    else if (gold_or_special == 0)
+    {
+        if (gems == 0x01) { return "MagicShld (4)";}
+        if (gems == 0x02) { return "MthrlArmr (6)";}
+        if (gems == 0x03) { return "MagicSwd (255)";}
+        if (gems == 0x04) { return "MagicSwd (5)";}
+        if (gems == 0x05) { return "MagicArrs (3)";}
+        if (gems == 0x06) { return "MgcWarAx (4)";}
+        if (gems == 0x07) { return "MagicStf (4)";}
+        if (gems == 0x08) { return "GldRng (1)";}
+        if (gems == 0x09) { return "GldRng (2)";}
+        if (gems == 0x0a) { return "GldRng (4)";}
+        if (gems == 0x0b) { return "GldRng (8)";}
+        if (gems == 0x0c) { return "GldRng (16)";}
+        if (gems == 0x0d) { return "GldRng (32)";}
+        if (gems == 0x0e) { return "GldRng (64)";}
+        if (gems == 0x0f) { return "GldRng (128)"; }
+    }
     else
     {
         return QString("%1Gm,%2Au").arg(gems).arg(gold_or_special * 4);
     }
+
+    return "";
 }
 
 QString MazeViewer::monsterToString(quint8 mc)
