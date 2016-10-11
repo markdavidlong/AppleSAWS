@@ -52,7 +52,11 @@ void ApplesoftFile::parse(quint16 start_address)
             line.tokens.append(token);
         } while (val != 0x00);
 
+        Retokenizer ret;
+        ret.retokenize(line);
+
         current_address = line.next_address;
+
         m_lines.append(line);
     }
 
@@ -93,78 +97,90 @@ QByteArray ApplesoftFile::extraData()
 void Retokenizer::retokenize(ApplesoftLine &line)
 {
     Q_UNUSED(line);
-//    QList <QByteArray> string_list;
-//    QList <QByteArray> number_list;
-
-//    QByteArray newTokens;
-
-//// Set Strings aside for a bit to simplify parsing
-//    QByteArray tmpTokens = line.raw_tokens;
-//    QByteArray tmpstr;
-//    bool inString = false;
-//    for (int idx = 0; idx < line.raw_tokens.length(); idx++)
-//    {
-//        quint8 byte = tmpTokens.at(idx);
-
-//        if (byte == '"') {
-//            if (!inString) {
-//                inString = true;
-//                tmpstr.append(byte);
-//            } else {
-//                inString = false;
-//                string_list.append(tmpstr);
-//                tmpstr = "";
-//                newTokens.append(0xff);
-//            }
-//        } else if (!inString) {
-//            newTokens.append(byte);
-//        }
-//    }
-//    if (inString) {
-//        string_list.append(tmpstr);
-//        newTokens.append(0xff);
-//    }
 
 
+    QVector<ApplesoftToken> replacements;
+    QVector<ApplesoftToken> tmptokens = line.tokens;
+    ApplesoftToken token;
 
+    QByteArray buffer;
 
-////// Set Numbers aside for a bit too
-////    tmpTokens = newTokens;
-////    newTokens = "";
-////    bool inNumber = false;
-////    QByteArray tmpnum;
-////    for (int idx = 0; idx < tmpTokens.length(); idx++)
-////    {
-////        quint8 byte = tmpTokens.at(idx);
+    bool inRem = false;
 
-////        if ((byte >= '0' && byte <= '9') || byte == '.') {
-////            if (!inNumber) {
-////                inNumber = true;
-////                tmpnum.append(byte);
-////            }
-////        } else if (inNumber) {
-////            inNumber = false;
-////            number_list.append(tmpnum);
-////            tmpnum = "";
-////            newTokens.append(0xfe);
-////            newTokens.append(byte);
-////        } else {
-////            newTokens.append(byte);
-////        }
-////    }
-////    if (inNumber) {
-////        number_list.append(tmpnum);
-////        newTokens.append(0xfe);
-////    }
+    // Handle REMs
 
+    while (!tmptokens.isEmpty())
+    {
+        token = tmptokens.takeFirst();
 
-//    line.advanced_tokens = newTokens;
+        if (!inRem) {
+            replacements.append(token);
+            if (token.getByteValue() == ApplesoftToken::ASRem)
+            {
+                inRem = true;
+            }
+        }
+        else
+        {
+            buffer.append(token.getByteValue());
+        }
+    }
+    if (inRem) {
+        ApplesoftToken remstrtoken(ApplesoftToken::RemStringTokenVal, buffer);
+        replacements.append(remstrtoken);
+        buffer.clear();
+        inRem = false;
+    }
 
-//    //    QList<QByteArray> tmpParts = tmpTokens.split(':');
+    line.tokens = replacements;
+    replacements.clear();
 
-////    foreach (QByteArray part, tmpParts) {
-////        QByteArray retokenizedPart = retokenzePart(part);
-////    }
+    // Handle DATAs
+
+    // Handle Strings
+
+    tmptokens = line.tokens;
+    bool inString = false;
+
+    while (!tmptokens.isEmpty())
+    {
+        token = tmptokens.takeFirst();
+        if (token.getTokenId() >= 0x80)
+        {
+            replacements.append(token);
+            continue;
+        }
+
+        if (token.getByteValue() == '"')
+        {
+            if (!inString)
+            {
+                inString = true;
+                buffer.append(token.getByteValue());
+                continue;
+            }
+            else
+            {
+                buffer.append(token.getByteValue());
+                ApplesoftToken strtoken(ApplesoftToken::StringTokenVal, buffer);
+                replacements.append(strtoken);
+                buffer.clear();
+                inString = false;
+                continue;
+            }
+        }
+
+        if (inString)
+        {
+            buffer.append(token.getByteValue());
+            continue;
+        }
+
+        replacements.append(token);
+    }
+
+    line.tokens = replacements;
+
 }
 
 QByteArray Retokenizer::retokenizePart(QByteArray part) {

@@ -12,12 +12,16 @@ public:
     static const quint16 StringTokenVal       = 0x100;
     static const quint16 RemStringTokenVal    = 0x101;
     static const quint16 DataStringTokenVal   = 0x102;
+
     static const quint16 IntegerTokenVal      = 0x103;
     static const quint16 FloatTokenVal        = 0x104;
+
     static const quint16 IntVarTokenVal       = 0x105;
     static const quint16 IntAryVarTokenVal    = 0x106;
+
     static const quint16 FloatVarTokenVal     = 0x107;
     static const quint16 FloatAryVarTokenVal  = 0x108;
+
     static const quint16 StringVarTokenVal    = 0x109;
     static const quint16 StringAryVarTokenVal = 0x10A;
 
@@ -127,8 +131,8 @@ public:
     quint16 getTokenId() const { return m_token_id; }
 
     void setValue(QVariant value);
-
     QVariant getValue() const { return m_payload; }
+
     QByteArray getByteStringValue() const { return m_payload.toByteArray(); }
     quint16 getWordValue() const { return (quint16) (m_payload.toUInt() & 0xFFFF); }
     quint8 getByteValue() const { return (quint8) (m_payload.toUInt() & 0xFF); }

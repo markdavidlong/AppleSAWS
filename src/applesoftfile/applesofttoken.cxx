@@ -97,8 +97,11 @@ QString ApplesoftToken::getRawPrintableString()
         return QString(QChar(m_token_id));
     } else if (m_token_id <= 0xff) {
         return m_tokens[m_token_id];
-    } else
+    } else if (m_token_id == StringTokenVal) {
+        return getByteStringValue();
+    } else {
         return "[temp undefined]";
+    }
 }
 
 void ApplesoftToken::initializeTokenTable()

@@ -12,7 +12,7 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
     setWindowTitle(title);
 
     m_formatter = new ApplesoftFormatter(this);
-    m_formatter->setFlags(ApplesoftFormatter::PrettyFlags);
+    m_formatter->setFlags(ApplesoftFormatter::PrettyFlags | ApplesoftFormatter::BreakAfterReturn);
 
     connect(ui->findButton,SIGNAL(clicked(bool)), SLOT(findText()));
     m_isFirstFind = true;

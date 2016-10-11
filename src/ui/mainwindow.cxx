@@ -82,9 +82,11 @@ void MainWindow::unloadDiskFile()
 
 void MainWindow::showLoadDialog()
 {
+    QSettings settings;
+    QString last = settings.value("lastOpened",".").toString();
     QString filename = QFileDialog::getOpenFileName(this,
                                                     tr("Open Disk Image"),
-                                                    "/home/mlong/Desktop",
+                                                    last,
                                                     "Disk Images (*.do *.dsk)");
     if (!filename.isEmpty()) {
         loadDiskFile(filename);
