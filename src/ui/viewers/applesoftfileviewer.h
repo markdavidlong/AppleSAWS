@@ -26,6 +26,9 @@ public slots:
     void findText();
 
 
+protected slots:
+    void launchVarBrowser();
+
 private:
     ApplesoftFile *m_file;
     ApplesoftFormatter *m_formatter;

@@ -36,7 +36,6 @@ SOURCES += \
     src/applesoftfile/applesoftfile.cxx \
     src/applesoftfile/applesofttoken.cxx \
     src/applesoftfile/applesoftformatter.cxx \
-    src/applesoftfile/applesoftline.cpp  \
     src/binaryfile/disassembler.cxx \
     src/binaryfile/binaryfile.cxx \
     src/textfile/textfile.cxx \
@@ -53,7 +52,8 @@ SOURCES += \
     src/relocatablefile/relocatablefile.cxx \
     src/binaryfile/binaryfilemetadata.cpp \
     src/util/charset.cpp \
-    src/ui/widgets/characterwidget.cpp
+    src/ui/widgets/characterwidget.cpp \
+    src/ui/viewers/applesoftfiledetailviewer.cpp
 
 
 HEADERS += \
@@ -86,7 +86,8 @@ HEADERS += \
     src/binaryfile/binaryfilemetadata.h \
     src/ui/widgets/characterwidget.h \
     src/util/charset.h \
-    src/ui/viewers/charsetviewer.h
+    src/ui/viewers/charsetviewer.h \
+    src/ui/viewers/applesoftfiledetailviewer.h
 
 FORMS += \
     src/ui/catalogwidget.ui \
@@ -94,4 +95,5 @@ FORMS += \
     src/ui/viewers/applesoftfileviewer.ui \
     src/ui/viewers/disassemblerviewer.ui \
     src/ui/viewers/hexdumpviewer.ui \
-    src/ui/viewers/texthexdumpviewer.ui
+    src/ui/viewers/texthexdumpviewer.ui \
+    src/ui/viewers/applesoftfiledetailviewer.ui

@@ -1,6 +1,7 @@
 #include "applesoftfileviewer.h"
 #include "ui_applesoftfileviewer.h"
 #include "applesoftformatter.h"
+#include "applesoftfiledetailviewer.h"
 #include <QDebug>
 
 ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
@@ -19,6 +20,8 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
     ui->textArea->setUndoRedoEnabled(false);
     ui->textArea->setUndoRedoEnabled(true);
 
+
+    connect(ui->varBrowserButton, SIGNAL(clicked(bool)), SLOT(launchVarBrowser()));
 }
 
 ApplesoftFileViewer::~ApplesoftFileViewer()
@@ -44,6 +47,14 @@ void ApplesoftFileViewer::setData(QByteArray data)
 void ApplesoftFileViewer::setText(QString text)
 {
     ui->textArea->setHtml(text);
+}
+
+void ApplesoftFileViewer::launchVarBrowser()
+{
+    ApplesoftFileDetailViewer *afdv = new ApplesoftFileDetailViewer();
+
+    afdv->setLineData(m_file->getLines());
+    afdv->show();
 }
 
 void ApplesoftFileViewer::findText()

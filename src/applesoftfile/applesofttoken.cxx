@@ -106,8 +106,6 @@ QString ApplesoftToken::getHtmlPrintableString()
     if (getTokenId() == ApplesoftToken::IntegerTokenVal || getTokenId() == ApplesoftToken::FloatAryVarTokenVal)
         return QString("<font color=\"blue\">%1</font>").arg(baseval);
 
-
-
     return QString("<font color=\"orange\">%1</font>").arg(baseval);
 
 }

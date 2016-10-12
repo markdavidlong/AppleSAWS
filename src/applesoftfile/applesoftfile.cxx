@@ -22,7 +22,6 @@ void ApplesoftFile::setData(QByteArray data)
     quint8 addhi = m_data.at(1);
     m_length = addlo + (addhi * 256);
     m_data.remove(0,2);
-  //  m_data = m_data.left(m_length);
     parse();
 }
 
