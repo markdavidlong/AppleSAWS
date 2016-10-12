@@ -62,7 +62,7 @@ void ApplesoftFileDetailViewer::process()
             case ApplesoftToken::StringVarTokenVal: vtname = "String"; break;
             case ApplesoftToken::IntAryVarTokenVal: vtname = "Int Array"; break;
             case ApplesoftToken::FloatAryVarTokenVal: vtname = "Float Array"; break;
-            case ApplesoftToken::StringAryVarTokenVal: vtname = "Float String"; break;
+            case ApplesoftToken::StringAryVarTokenVal: vtname = "String Array"; break;
             default: vtname = "Unknown";
         }
 
