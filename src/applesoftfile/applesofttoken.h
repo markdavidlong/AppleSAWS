@@ -16,8 +16,6 @@ public:
     static const quint16 IntegerTokenVal      = 0x103;
     static const quint16 FloatTokenVal        = 0x104;
 
-
-
     static const quint16 IntVarTokenVal       = 0x105;
     static const quint16 IntAryVarTokenVal    = 0x106;
 

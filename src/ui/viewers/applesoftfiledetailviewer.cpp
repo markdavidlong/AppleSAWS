@@ -11,6 +11,7 @@ ApplesoftFileDetailViewer::ApplesoftFileDetailViewer(QWidget *parent) :
     ui(new Ui::ApplesoftFileDetailViewer)
 {
     ui->setupUi(this);
+    ui->m_varView->setSortingEnabled(true);
 }
 
 ApplesoftFileDetailViewer::~ApplesoftFileDetailViewer()
@@ -20,7 +21,8 @@ ApplesoftFileDetailViewer::~ApplesoftFileDetailViewer()
 
 void ApplesoftFileDetailViewer::process()
 {
-     QMap<QString,QStringList> vardata;
+    QMap<QString,QStringList> vardata;
+    QMap<QString,quint16> vartypes;
 
     foreach (ApplesoftLine line, m_lines)
     {
@@ -29,18 +31,22 @@ void ApplesoftFileDetailViewer::process()
         {
             quint16 tid = token.getTokenId();
             if (tid == ApplesoftToken::IntVarTokenVal ||
-                tid == ApplesoftToken::IntAryVarTokenVal ||
-                tid == ApplesoftToken::FloatVarTokenVal ||
-                tid == ApplesoftToken::FloatAryVarTokenVal ||
-                tid == ApplesoftToken::StringVarTokenVal ||
-                tid == ApplesoftToken::StringAryVarTokenVal)
+                    tid == ApplesoftToken::IntAryVarTokenVal ||
+                    tid == ApplesoftToken::FloatVarTokenVal ||
+                    tid == ApplesoftToken::FloatAryVarTokenVal ||
+                    tid == ApplesoftToken::StringVarTokenVal ||
+                    tid == ApplesoftToken::StringAryVarTokenVal)
             {
                 QString varname = token.getStringValue();
                 if (varname.contains("(")) { varname.append(")"); }
                 vardata[varname].append(QString("%1").arg(linenum));
+                vartypes[varname] = tid;
             }
         }
     }
+
+    QMap<quint16,QString> typemap;
+
     QStringList keys = vardata.keys();
     ui->m_varView->setRowCount(keys.count());
     qSort(keys);
@@ -48,6 +54,19 @@ void ApplesoftFileDetailViewer::process()
     foreach (QString key, keys)
     {
         QString linenums = vardata[key].join(",");
+        quint16 vtype = vartypes[key];
+        QString vtname;
+        switch (vtype) {
+            case ApplesoftToken::IntVarTokenVal: vtname = "Int"; break;
+            case ApplesoftToken::FloatVarTokenVal: vtname = "Float"; break;
+            case ApplesoftToken::StringVarTokenVal: vtname = "String"; break;
+            case ApplesoftToken::IntAryVarTokenVal: vtname = "Int Array"; break;
+            case ApplesoftToken::FloatAryVarTokenVal: vtname = "Float Array"; break;
+            case ApplesoftToken::StringAryVarTokenVal: vtname = "Float String"; break;
+            default: vtname = "Unknown";
+        }
+
+        ui->m_varView->setItem(idx,0,new QTableWidgetItem(vtname));
         ui->m_varView->setItem(idx,1,new QTableWidgetItem(key));
         ui->m_varView->setItem(idx,2,new QTableWidgetItem(linenums));
         idx++;
