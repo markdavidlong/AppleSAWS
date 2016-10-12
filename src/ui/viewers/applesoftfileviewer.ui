@@ -53,8 +53,10 @@
     <widget class="QTextBrowser" name="textArea">
      <property name="font">
       <font>
-       <family>Courier 10 Pitch</family>
-       <pointsize>10</pointsize>
+       <family>Misc Fixed</family>
+       <pointsize>14</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
       </font>
      </property>
      <property name="acceptDrops">

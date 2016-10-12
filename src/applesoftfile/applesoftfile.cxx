@@ -1,5 +1,9 @@
 #include "applesoftfile.h"
 #include <QDebug>
+#include <QRegularExpression>
+#include <QRegularExpressionMatch>
+#include <QRegularExpressionMatchIterator>
+#include <QList>
 
 ApplesoftFile::ApplesoftFile(QByteArray data) : GenericFile(data)
 {
@@ -32,6 +36,7 @@ QByteArray ApplesoftFile::rawData() {
 
 void ApplesoftFile::parse(quint16 start_address)
 {
+
     int idx = 0;
     quint8 val = 0;
 
@@ -96,18 +101,24 @@ QByteArray ApplesoftFile::extraData()
 
 void Retokenizer::retokenize(ApplesoftLine &line)
 {
-    Q_UNUSED(line);
+    line.tokens = retokenizeRems(line.tokens);
+    line.tokens = retokenizeStrings(line.tokens);
+    line.tokens = retokenizeDataStatements(line.tokens);
+    line.tokens = retokenizeVariables(line.tokens);
+    line.tokens = retokenizeNumbers(line.tokens);
 
 
-    QVector<ApplesoftToken> replacements;
-    QVector<ApplesoftToken> tmptokens = line.tokens;
+}
+
+QVector<ApplesoftToken> Retokenizer::retokenizeRems(QVector<ApplesoftToken>&datatokens)
+{
+    // Handle REMs
     ApplesoftToken token;
-
+    QVector<ApplesoftToken> replacements;
+    QVector<ApplesoftToken> tmptokens = datatokens;
     QByteArray buffer;
 
     bool inRem = false;
-
-    // Handle REMs
 
     while (!tmptokens.isEmpty())
     {
@@ -132,14 +143,17 @@ void Retokenizer::retokenize(ApplesoftLine &line)
         inRem = false;
     }
 
-    line.tokens = replacements;
-    replacements.clear();
+    return replacements;
+}
 
-    // Handle DATAs
-
+QVector<ApplesoftToken> Retokenizer::retokenizeStrings(QVector<ApplesoftToken>&datatokens)
+{
     // Handle Strings
+    QVector<ApplesoftToken> replacements;
+    QVector<ApplesoftToken> tmptokens = datatokens;
+    QString buffer;
+    ApplesoftToken token;
 
-    tmptokens = line.tokens;
     bool inString = false;
 
     while (!tmptokens.isEmpty())
@@ -148,45 +162,241 @@ void Retokenizer::retokenize(ApplesoftLine &line)
         if (token.getTokenId() >= 0x80)
         {
             replacements.append(token);
-            continue;
-        }
+         //   continue;
+        } else
 
-        if (token.getByteValue() == '"')
+        if (token.getWordValue() == '"')
         {
             if (!inString)
             {
                 inString = true;
-                buffer.append(token.getByteValue());
-                continue;
+                buffer.append(token.getWordValue());
+              //  continue;
             }
             else
             {
-                buffer.append(token.getByteValue());
+                buffer.append(token.getWordValue());
                 ApplesoftToken strtoken(ApplesoftToken::StringTokenVal, buffer);
                 replacements.append(strtoken);
                 buffer.clear();
                 inString = false;
-                continue;
+//                continue;
             }
-        }
+        } else
 
         if (inString)
         {
-            buffer.append(token.getByteValue());
-            continue;
-        }
+            buffer.append(token.getWordValue());
+            // continue;
+        } else
 
         replacements.append(token);
     }
 
-    line.tokens = replacements;
-
+    return replacements;
 }
 
-QByteArray Retokenizer::retokenizePart(QByteArray part) {
-    QByteArray retval;
+QVector<ApplesoftToken> Retokenizer::retokenizeDataStatements(QVector<ApplesoftToken>&datatokens)
+{
+    // Handle DATAs
+    QVector<ApplesoftToken> tmptokens = datatokens;
+    QVector<ApplesoftToken> replacements;
+    ApplesoftToken token;
 
-    Q_UNUSED(part);
+    QVector<ApplesoftToken> datatokenbuffer;
+    bool inData = false;
+    while (!tmptokens.isEmpty())
+    {
+        token = tmptokens.takeFirst();
 
+        if (!inData) {
+            replacements.append(token);
+            if (token.getTokenId() == ApplesoftToken::ASData)
+            {
+                inData = true;
+            }
+        }
+        else
+        {
+            datatokenbuffer.append(token);
+        }
+    }
+    if (inData) {
+        QVector<ApplesoftToken> dataTokens;
+        dataTokens = processDataPayload(datatokenbuffer);
+        replacements.append(dataTokens);
+        datatokenbuffer.clear();
+        inData = false;
+    }
+    return replacements;
+}
+
+
+QVector<ApplesoftToken> Retokenizer::processDataPayload(QVector<ApplesoftToken>& datatokens)
+{
+    QVector<ApplesoftToken> retval;
+
+    ApplesoftToken token;
+
+    QString stringbuffer;
+
+    while (!datatokens.isEmpty())
+    {
+        token = datatokens.takeFirst();
+        if (token.getTokenId() == ApplesoftToken::StringTokenVal)
+        {
+            ApplesoftToken newToken(ApplesoftToken::DataStringTokenVal, token.getStringValue());
+            retval.append(newToken);
+            continue;
+        }
+        if (token.getWordValue() == ',')
+        {
+            if (!stringbuffer.isEmpty())
+            {
+                ApplesoftToken datastrtoken(ApplesoftToken::DataStringTokenVal, stringbuffer);
+                retval.append(datastrtoken);
+                stringbuffer.clear();
+            }
+            retval.append(token);
+            continue;
+
+        }
+        stringbuffer.append(token.getWordValue());
+    }
+    if (!stringbuffer.isEmpty())
+    {
+        ApplesoftToken datastrtoken(ApplesoftToken::DataStringTokenVal, stringbuffer);
+        retval.append(datastrtoken);
+        stringbuffer.clear();
+    }
     return retval;
+}
+QVector<ApplesoftToken> Retokenizer::retokenizeVariables(QVector<ApplesoftToken>&datatokens)
+{
+    // Handle variable names
+    QList<ApplesoftToken> tmptokens = QList<ApplesoftToken>::fromVector(datatokens);
+    ApplesoftToken token;
+
+    QRegularExpression varregexp("[A-Za-z][A-Za-z0-9]*[$%]?\\(?");
+
+    QString parsestring;
+    // Parse the tokens to find assist
+    for (int idx = 0; idx < tmptokens.count();idx++)
+    {
+        token = datatokens.at(idx);
+
+        if (token.getTokenId() < 0x0080 && token.getTokenId() > 0x0000)
+        {
+            parsestring.append(QChar(token.getWordValue()));
+        }
+        else
+        {
+            parsestring.append("_");
+        }
+    }
+    QList<QRegularExpressionMatch> matchstack;
+    QRegularExpressionMatchIterator matches = varregexp.globalMatch(parsestring);
+ //   qDebug() << parsestring;
+    while (matches.hasNext()) {
+        QRegularExpressionMatch rematch = matches.next();
+        matchstack.push_front(rematch);
+
+//        qDebug() << "Capture " << " = " << rematch.capturedTexts() << "From: " << rematch.capturedStart()
+//                 << "To: " << rematch.capturedEnd()-1 << "("<<rematch.capturedLength()<<")";
+    }
+
+    foreach(QRegularExpressionMatch rematch, matchstack)
+    {
+        QString text = rematch.captured(0);
+        int start = rematch.capturedStart();
+        int length = rematch.capturedLength();
+
+        quint16 tokentype = ApplesoftToken::FloatVarTokenVal;
+        if (text.contains("$")) {
+            tokentype = ApplesoftToken::StringVarTokenVal;
+        } else if (text.contains("%")) {
+            tokentype = ApplesoftToken::IntVarTokenVal;
+        }
+
+        if (text.contains("(")) {
+            if (tokentype == ApplesoftToken::FloatVarTokenVal) {
+                tokentype = ApplesoftToken::FloatAryVarTokenVal;
+            } else if (tokentype == ApplesoftToken::StringVarTokenVal) {
+                tokentype = ApplesoftToken::StringAryVarTokenVal;
+            } else {
+                tokentype = ApplesoftToken::IntAryVarTokenVal;
+            }
+        }
+
+        ApplesoftToken vartoken = ApplesoftToken(tokentype,text);
+
+        for (int idx = 0; idx < length; idx++)
+        {
+            tmptokens.removeAt(start);
+        }
+        tmptokens.insert(start,vartoken);
+
+    }
+
+    datatokens = tmptokens.toVector();
+    return datatokens;
+}
+
+QVector<ApplesoftToken> Retokenizer::retokenizeNumbers(QVector<ApplesoftToken>&datatokens)
+{
+    // Handle numbers
+    QList<ApplesoftToken> tmptokens = QList<ApplesoftToken>::fromVector(datatokens);
+    ApplesoftToken token;
+
+    QRegularExpression varregexp("[0-9]+(\\.[0-9]*)?");
+
+    QString parsestring;
+    // Parse the tokens to find assist
+    for (int idx = 0; idx < tmptokens.count();idx++)
+    {
+        token = datatokens.at(idx);
+
+        if (token.getTokenId() < 0x0080 && token.getTokenId() > 0x0000)
+        {
+            parsestring.append(QChar(token.getWordValue()));
+        }
+        else
+        {
+            parsestring.append("_");
+        }
+    }
+    QList<QRegularExpressionMatch> matchstack;
+    QRegularExpressionMatchIterator matches = varregexp.globalMatch(parsestring);
+//    qDebug() << parsestring;
+    while (matches.hasNext()) {
+        QRegularExpressionMatch rematch = matches.next();
+        matchstack.push_front(rematch);
+
+//        qDebug() << "Capture " << " = " << rematch.capturedTexts() << "From: " << rematch.capturedStart()
+//                 << "To: " << rematch.capturedEnd()-1 << "("<<rematch.capturedLength()<<")";
+    }
+
+    foreach(QRegularExpressionMatch rematch, matchstack)
+    {
+        QString text = rematch.captured(0);
+        int start = rematch.capturedStart();
+        int length = rematch.capturedLength();
+
+        quint16 tokentype = ApplesoftToken::IntegerTokenVal;
+        if (text.contains(".")) {
+            tokentype = ApplesoftToken::FloatTokenVal;
+        }
+
+        ApplesoftToken vartoken = ApplesoftToken(tokentype,text);
+
+        for (int idx = 0; idx < length; idx++)
+        {
+            tmptokens.removeAt(start);
+        }
+        tmptokens.insert(start,vartoken);
+
+    }
+
+    datatokens = tmptokens.toVector();
+    return datatokens;
 }

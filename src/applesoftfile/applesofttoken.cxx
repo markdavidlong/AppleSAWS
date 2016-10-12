@@ -89,16 +89,59 @@ void ApplesoftToken::setValue(QVariant value)
     m_payload = value;
 }
 
+QString ApplesoftToken::getHtmlPrintableString()
+{
+    QString baseval = getRawPrintableString().toHtmlEscaped();
+
+    if (getTokenId() <= 0x7f)
+        return QString("<font color=\"black\">%1</font>").arg(baseval);
+    if (getTokenId() <= 0xff)
+        return QString("<font color=\"red\">%1</font>").arg(baseval);
+    if (getTokenId() == ApplesoftToken::StringTokenVal)
+        return QString("<font color=\"black\">%1</font>").arg(baseval);
+    if (getTokenId() == ApplesoftToken::DataStringTokenVal)
+        return QString("<font color=\"green\">%1</font>").arg(baseval);
+    if (getTokenId() == ApplesoftToken::RemStringTokenVal)
+        return QString("<font color=\"grey\">%1</font>").arg(baseval);
+    if (getTokenId() == ApplesoftToken::IntegerTokenVal || getTokenId() == ApplesoftToken::FloatAryVarTokenVal)
+        return QString("<font color=\"blue\">%1</font>").arg(baseval);
+
+
+
+    return QString("<font color=\"orange\">%1</font>").arg(baseval);
+
+}
+
 QString ApplesoftToken::getRawPrintableString()
 {
     if (m_token_id == 0x00) {
         return "";
     } else if (m_token_id <= 0x7f) {
-        return QString(QChar(m_token_id));
+        return QString((m_token_id));
     } else if (m_token_id <= 0xff) {
         return m_tokens[m_token_id];
     } else if (m_token_id == StringTokenVal) {
-        return getByteStringValue();
+        return getStringValue();
+    } else if (m_token_id == RemStringTokenVal) {
+        return getStringValue();
+    } else if (m_token_id == DataStringTokenVal) {
+        return getStringValue();
+    } else if (m_token_id == IntegerTokenVal) {
+        return getStringValue();
+    } else if (m_token_id == FloatTokenVal) {
+        return getStringValue();
+    } else if (m_token_id == IntVarTokenVal) {
+        return getStringValue();
+    } else if (m_token_id == IntAryVarTokenVal) {
+        return getStringValue();
+    } else if (m_token_id == FloatVarTokenVal) {
+        return getStringValue();
+    } else if (m_token_id == FloatAryVarTokenVal) {
+        return getStringValue();
+    } else if (m_token_id == StringVarTokenVal) {
+        return getStringValue();
+    } else if (m_token_id == StringAryVarTokenVal) {
+        return getStringValue();
     } else {
         return "[temp undefined]";
     }

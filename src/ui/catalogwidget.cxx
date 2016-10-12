@@ -61,7 +61,7 @@ void CatalogWidget::prepForNewDisk(QString filename, DiskFile *disk)
 
 QString CatalogWidget::createToolTip(FileDescriptiveEntry &fde) {
     QString retval;
-
+qDebug() << AppleString(fde.filename).printable().trimmed();
     retval += AppleString(fde.filename).printable().trimmed() + "\n";
     retval += QString("Type: %1\n").arg(fde.fileType());
     retval += QString("Sectors: %1 (%2 bytes)\n").arg(fde.lengthInSectors).arg(fde.lengthInSectors*256);

@@ -38,8 +38,15 @@ private:
 class Retokenizer {
 public:
     static void retokenize(ApplesoftLine &line);
+
 private:
-    QByteArray retokenizePart(QByteArray part);
+    static QVector<ApplesoftToken> retokenizeRems(QVector<ApplesoftToken> &datatokens);
+    static QVector<ApplesoftToken> retokenizeStrings(QVector<ApplesoftToken> &datatokens);
+    static QVector<ApplesoftToken> retokenizeDataStatements(QVector<ApplesoftToken> &datatokens);
+    static QVector<ApplesoftToken> processDataPayload(QVector<ApplesoftToken> &datatokens);
+    static QVector<ApplesoftToken> retokenizeVariables(QVector<ApplesoftToken> &datatokens);
+    static QVector<ApplesoftToken> retokenizeNumbers(QVector<ApplesoftToken> &datatokens);
 };
+
 
 #endif // APPLESOFTFILE_H

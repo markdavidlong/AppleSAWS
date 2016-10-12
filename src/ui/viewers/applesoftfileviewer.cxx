@@ -12,8 +12,8 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
     setWindowTitle(title);
 
     m_formatter = new ApplesoftFormatter(this);
-    m_formatter->setFlags(ApplesoftFormatter::PrettyFlags | ApplesoftFormatter::BreakAfterReturn);
-
+    //m_formatter->setFlags(ApplesoftFormatter::PrettyFlags | ApplesoftFormatter::BreakAfterReturn);
+    m_formatter->setFlags(ApplesoftFormatter::AllFlags);
     connect(ui->findButton,SIGNAL(clicked(bool)), SLOT(findText()));
     m_isFirstFind = true;
     ui->textArea->setUndoRedoEnabled(false);

@@ -16,6 +16,8 @@ public:
     static const quint16 IntegerTokenVal      = 0x103;
     static const quint16 FloatTokenVal        = 0x104;
 
+
+
     static const quint16 IntVarTokenVal       = 0x105;
     static const quint16 IntAryVarTokenVal    = 0x106;
 
@@ -24,6 +26,8 @@ public:
 
     static const quint16 StringVarTokenVal    = 0x109;
     static const quint16 StringAryVarTokenVal = 0x10A;
+
+
 
     static const quint16 ASEnd;      static const quint16 ASFor;
     static const quint16 ASNext;     static const quint16 ASData;
@@ -134,6 +138,7 @@ public:
     QVariant getValue() const { return m_payload; }
 
     QByteArray getByteStringValue() const { return m_payload.toByteArray(); }
+    QString getStringValue() const { return m_payload.toString(); }
     quint16 getWordValue() const { return (quint16) (m_payload.toUInt() & 0xFFFF); }
     quint8 getByteValue() const { return (quint8) (m_payload.toUInt() & 0xFF); }
 
@@ -147,6 +152,7 @@ public:
         return m_tokens[token];
     }
 
+    QString getHtmlPrintableString();
 private:
 
     static QMap<quint16, QString> m_tokens;
