@@ -63,8 +63,15 @@
     </property>
     <addaction name="action_Hex_Converter"/>
    </widget>
+   <widget class="QMenu" name="menuDocs">
+    <property name="title">
+     <string>&amp;Misc</string>
+    </property>
+    <addaction name="action_HRCG_Commands"/>
+   </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Util"/>
+   <addaction name="menuDocs"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
@@ -96,6 +103,11 @@
   <action name="action_Hex_Converter">
    <property name="text">
     <string>&amp;Hex Converter...</string>
+   </property>
+  </action>
+  <action name="action_HRCG_Commands">
+   <property name="text">
+    <string>&amp;HRCG Commands</string>
    </property>
   </action>
  </widget>

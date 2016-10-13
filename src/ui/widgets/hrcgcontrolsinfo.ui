@@ -1,0 +1,947 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>HRCGControlsInfo</class>
+ <widget class="QDialog" name="HRCGControlsInfo">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>507</width>
+    <height>620</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>HRCG Contols</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QTableWidget" name="tableWidget">
+     <property name="editTriggers">
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
+     <property name="alternatingRowColors">
+      <bool>true</bool>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::SingleSelection</enum>
+     </property>
+     <property name="selectionBehavior">
+      <enum>QAbstractItemView::SelectRows</enum>
+     </property>
+     <property name="sortingEnabled">
+      <bool>true</bool>
+     </property>
+     <attribute name="horizontalHeaderStretchLastSection">
+      <bool>true</bool>
+     </attribute>
+     <attribute name="verticalHeaderVisible">
+      <bool>false</bool>
+     </attribute>
+     <attribute name="verticalHeaderDefaultSectionSize">
+      <number>20</number>
+     </attribute>
+     <attribute name="verticalHeaderMinimumSectionSize">
+      <number>20</number>
+     </attribute>
+     <row>
+      <property name="text">
+       <string>A</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>B</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>C</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>D</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>E</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>F</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>I</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>K</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>L</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>N</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>OA</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>OB</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>OC</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>OD</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>OO</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>OP</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>OR</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>OS</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>OT</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>OW</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>OY</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>OZ</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>P</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Q</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>S</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>V</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>W</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Y</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Z</string>
+      </property>
+     </row>
+     <column>
+      <property name="text">
+       <string>Sequence</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Hex</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Decimal</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Chars</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Description</string>
+      </property>
+     </column>
+     <item row="0" column="0">
+      <property name="text">
+       <string>^A n</string>
+      </property>
+     </item>
+     <item row="0" column="1">
+      <property name="text">
+       <string>0x01 n</string>
+      </property>
+     </item>
+     <item row="0" column="2">
+      <property name="text">
+       <string>1 n</string>
+      </property>
+     </item>
+     <item row="0" column="3">
+      <property name="text">
+       <string>SOH</string>
+      </property>
+     </item>
+     <item row="0" column="4">
+      <property name="text">
+       <string>Select Character Set n</string>
+      </property>
+     </item>
+     <item row="1" column="0">
+      <property name="text">
+       <string>^B</string>
+      </property>
+     </item>
+     <item row="1" column="1">
+      <property name="text">
+       <string>0x02</string>
+      </property>
+     </item>
+     <item row="1" column="2">
+      <property name="text">
+       <string>2</string>
+      </property>
+     </item>
+     <item row="1" column="3">
+      <property name="text">
+       <string>STX</string>
+      </property>
+     </item>
+     <item row="1" column="4">
+      <property name="text">
+       <string>Begin Block Display</string>
+      </property>
+     </item>
+     <item row="2" column="0">
+      <property name="text">
+       <string>^C</string>
+      </property>
+     </item>
+     <item row="2" column="1">
+      <property name="text">
+       <string>0x03</string>
+      </property>
+     </item>
+     <item row="2" column="2">
+      <property name="text">
+       <string>3</string>
+      </property>
+     </item>
+     <item row="2" column="3">
+      <property name="text">
+       <string>ETX</string>
+      </property>
+     </item>
+     <item row="2" column="4">
+      <property name="text">
+       <string>Carriage Return</string>
+      </property>
+     </item>
+     <item row="3" column="0">
+      <property name="text">
+       <string>^D</string>
+      </property>
+     </item>
+     <item row="3" column="1">
+      <property name="text">
+       <string>0x04</string>
+      </property>
+     </item>
+     <item row="3" column="2">
+      <property name="text">
+       <string>4</string>
+      </property>
+     </item>
+     <item row="3" column="3">
+      <property name="text">
+       <string>EOT</string>
+      </property>
+     </item>
+     <item row="3" column="4">
+      <property name="text">
+       <string>Delimit Block Display</string>
+      </property>
+     </item>
+     <item row="4" column="0">
+      <property name="text">
+       <string>^E</string>
+      </property>
+     </item>
+     <item row="4" column="1">
+      <property name="text">
+       <string>0x05</string>
+      </property>
+     </item>
+     <item row="4" column="2">
+      <property name="text">
+       <string>5</string>
+      </property>
+     </item>
+     <item row="4" column="3">
+      <property name="text">
+       <string>ENQ</string>
+      </property>
+     </item>
+     <item row="4" column="4">
+      <property name="text">
+       <string>Clear to End of Line</string>
+      </property>
+     </item>
+     <item row="5" column="0">
+      <property name="text">
+       <string>^F</string>
+      </property>
+     </item>
+     <item row="5" column="1">
+      <property name="text">
+       <string>0x06</string>
+      </property>
+     </item>
+     <item row="5" column="2">
+      <property name="text">
+       <string>6</string>
+      </property>
+     </item>
+     <item row="5" column="3">
+      <property name="text">
+       <string>ACK</string>
+      </property>
+     </item>
+     <item row="5" column="4">
+      <property name="text">
+       <string>Clear to End of Screen</string>
+      </property>
+     </item>
+     <item row="6" column="0">
+      <property name="text">
+       <string>^I</string>
+      </property>
+     </item>
+     <item row="6" column="1">
+      <property name="text">
+       <string>0x09</string>
+      </property>
+     </item>
+     <item row="6" column="2">
+      <property name="text">
+       <string>9</string>
+      </property>
+     </item>
+     <item row="6" column="3">
+      <property name="text">
+       <string>HT</string>
+      </property>
+     </item>
+     <item row="6" column="4">
+      <property name="text">
+       <string>Inverse Video</string>
+      </property>
+     </item>
+     <item row="7" column="0">
+      <property name="text">
+       <string>^K</string>
+      </property>
+     </item>
+     <item row="7" column="1">
+      <property name="text">
+       <string>0x0B</string>
+      </property>
+     </item>
+     <item row="7" column="2">
+      <property name="text">
+       <string>11</string>
+      </property>
+     </item>
+     <item row="7" column="3">
+      <property name="text">
+       <string>VT</string>
+      </property>
+     </item>
+     <item row="7" column="4">
+      <property name="text">
+       <string>Caps Lock *</string>
+      </property>
+     </item>
+     <item row="8" column="0">
+      <property name="text">
+       <string>^L</string>
+      </property>
+     </item>
+     <item row="8" column="1">
+      <property name="text">
+       <string>0x0C</string>
+      </property>
+     </item>
+     <item row="8" column="2">
+      <property name="text">
+       <string>12</string>
+      </property>
+     </item>
+     <item row="8" column="3">
+      <property name="text">
+       <string>FF</string>
+      </property>
+     </item>
+     <item row="8" column="4">
+      <property name="text">
+       <string>Lower Case</string>
+      </property>
+     </item>
+     <item row="9" column="0">
+      <property name="text">
+       <string>^N</string>
+      </property>
+     </item>
+     <item row="9" column="1">
+      <property name="text">
+       <string>0x0E</string>
+      </property>
+     </item>
+     <item row="9" column="2">
+      <property name="text">
+       <string>14</string>
+      </property>
+     </item>
+     <item row="9" column="3">
+      <property name="text">
+       <string>SO</string>
+      </property>
+     </item>
+     <item row="9" column="4">
+      <property name="text">
+       <string>Normal Video *</string>
+      </property>
+     </item>
+     <item row="10" column="0">
+      <property name="text">
+       <string>^O ^A</string>
+      </property>
+     </item>
+     <item row="10" column="1">
+      <property name="text">
+       <string>0x0F 0x01</string>
+      </property>
+     </item>
+     <item row="10" column="2">
+      <property name="text">
+       <string>15 1</string>
+      </property>
+     </item>
+     <item row="10" column="3">
+      <property name="text">
+       <string>SI SOH</string>
+      </property>
+     </item>
+     <item row="10" column="4">
+      <property name="text">
+       <string>Primary is Page 1 *</string>
+      </property>
+     </item>
+     <item row="11" column="0">
+      <property name="text">
+       <string>^O ^B</string>
+      </property>
+     </item>
+     <item row="11" column="1">
+      <property name="text">
+       <string>0x0F 0x02</string>
+      </property>
+     </item>
+     <item row="11" column="2">
+      <property name="text">
+       <string>15 2</string>
+      </property>
+     </item>
+     <item row="11" column="3">
+      <property name="text">
+       <string>SI STX</string>
+      </property>
+     </item>
+     <item row="11" column="4">
+      <property name="text">
+       <string>Primary is Page 2</string>
+      </property>
+     </item>
+     <item row="12" column="0">
+      <property name="text">
+       <string>^O ^C</string>
+      </property>
+     </item>
+     <item row="12" column="1">
+      <property name="text">
+       <string>0x0F 0x03</string>
+      </property>
+     </item>
+     <item row="12" column="2">
+      <property name="text">
+       <string>15 3</string>
+      </property>
+     </item>
+     <item row="12" column="3">
+      <property name="text">
+       <string>SI ETX</string>
+      </property>
+     </item>
+     <item row="12" column="4">
+      <property name="text">
+       <string>Complement</string>
+      </property>
+     </item>
+     <item row="13" column="0">
+      <property name="text">
+       <string>^O ^D</string>
+      </property>
+     </item>
+     <item row="13" column="1">
+      <property name="text">
+       <string>0x0F 0x04</string>
+      </property>
+     </item>
+     <item row="13" column="2">
+      <property name="text">
+       <string>15 4</string>
+      </property>
+     </item>
+     <item row="13" column="3">
+      <property name="text">
+       <string>SI EOT</string>
+      </property>
+     </item>
+     <item row="13" column="4">
+      <property name="text">
+       <string>Display Primary</string>
+      </property>
+     </item>
+     <item row="14" column="0">
+      <property name="text">
+       <string>^O ^O</string>
+      </property>
+     </item>
+     <item row="14" column="1">
+      <property name="text">
+       <string>0x0F 0x0F</string>
+      </property>
+     </item>
+     <item row="14" column="2">
+      <property name="text">
+       <string>15 15</string>
+      </property>
+     </item>
+     <item row="14" column="3">
+      <property name="text">
+       <string>SI SI</string>
+      </property>
+     </item>
+     <item row="14" column="4">
+      <property name="text">
+       <string>Overstrike</string>
+      </property>
+     </item>
+     <item row="15" column="0">
+      <property name="text">
+       <string>^O ^P</string>
+      </property>
+     </item>
+     <item row="15" column="1">
+      <property name="text">
+       <string>0x0F 0x10</string>
+      </property>
+     </item>
+     <item row="15" column="2">
+      <property name="text">
+       <string>15 16</string>
+      </property>
+     </item>
+     <item row="15" column="3">
+      <property name="text">
+       <string>SI DLE</string>
+      </property>
+     </item>
+     <item row="15" column="4">
+      <property name="text">
+       <string>Print *</string>
+      </property>
+     </item>
+     <item row="16" column="0">
+      <property name="text">
+       <string>^O ^R</string>
+      </property>
+     </item>
+     <item row="16" column="1">
+      <property name="text">
+       <string>0x0F 0x12</string>
+      </property>
+     </item>
+     <item row="16" column="2">
+      <property name="text">
+       <string>15 18</string>
+      </property>
+     </item>
+     <item row="16" column="3">
+      <property name="text">
+       <string>SI DC2</string>
+      </property>
+     </item>
+     <item row="16" column="4">
+      <property name="text">
+       <string>Reverse Overlay</string>
+      </property>
+     </item>
+     <item row="17" column="0">
+      <property name="text">
+       <string>^O ^S</string>
+      </property>
+     </item>
+     <item row="17" column="1">
+      <property name="text">
+       <string>0x0F 0x13</string>
+      </property>
+     </item>
+     <item row="17" column="2">
+      <property name="text">
+       <string>15 19</string>
+      </property>
+     </item>
+     <item row="17" column="3">
+      <property name="text">
+       <string>SI DC3</string>
+      </property>
+     </item>
+     <item row="17" column="4">
+      <property name="text">
+       <string>Scroll *</string>
+      </property>
+     </item>
+     <item row="18" column="0">
+      <property name="text">
+       <string>^O ^T</string>
+      </property>
+     </item>
+     <item row="18" column="1">
+      <property name="text">
+       <string>0x0F 0x14</string>
+      </property>
+     </item>
+     <item row="18" column="2">
+      <property name="text">
+       <string>15 20</string>
+      </property>
+     </item>
+     <item row="18" column="3">
+      <property name="text">
+       <string>SI DC4</string>
+      </property>
+     </item>
+     <item row="18" column="4">
+      <property name="text">
+       <string>Transparent Overlay</string>
+      </property>
+     </item>
+     <item row="19" column="0">
+      <property name="text">
+       <string>^O ^W</string>
+      </property>
+     </item>
+     <item row="19" column="1">
+      <property name="text">
+       <string>0x0F 0x17</string>
+      </property>
+     </item>
+     <item row="19" column="2">
+      <property name="text">
+       <string>15 23</string>
+      </property>
+     </item>
+     <item row="19" column="3">
+      <property name="text">
+       <string>SI ETB</string>
+      </property>
+     </item>
+     <item row="19" column="4">
+      <property name="text">
+       <string>Wrap</string>
+      </property>
+     </item>
+     <item row="20" column="0">
+      <property name="text">
+       <string>^O ^Y</string>
+      </property>
+     </item>
+     <item row="20" column="1">
+      <property name="text">
+       <string>0x0F 0x18</string>
+      </property>
+     </item>
+     <item row="20" column="2">
+      <property name="text">
+       <string>15 25</string>
+      </property>
+     </item>
+     <item row="20" column="3">
+      <property name="text">
+       <string>SI EM</string>
+      </property>
+     </item>
+     <item row="20" column="4">
+      <property name="text">
+       <string>Call User Sub A</string>
+      </property>
+     </item>
+     <item row="21" column="0">
+      <property name="text">
+       <string>^O ^Z</string>
+      </property>
+     </item>
+     <item row="21" column="1">
+      <property name="text">
+       <string>0x0F 0x1A</string>
+      </property>
+     </item>
+     <item row="21" column="2">
+      <property name="text">
+       <string>15 26</string>
+      </property>
+     </item>
+     <item row="21" column="3">
+      <property name="text">
+       <string>SI SUB</string>
+      </property>
+     </item>
+     <item row="21" column="4">
+      <property name="text">
+       <string>Call User Sub B</string>
+      </property>
+     </item>
+     <item row="22" column="0">
+      <property name="text">
+       <string>^P</string>
+      </property>
+     </item>
+     <item row="22" column="1">
+      <property name="text">
+       <string>0x10</string>
+      </property>
+     </item>
+     <item row="22" column="2">
+      <property name="text">
+       <string>16</string>
+      </property>
+     </item>
+     <item row="22" column="3">
+      <property name="text">
+       <string>DLE</string>
+      </property>
+     </item>
+     <item row="22" column="4">
+      <property name="text">
+       <string>Clear Page</string>
+      </property>
+     </item>
+     <item row="23" column="0">
+      <property name="text">
+       <string>^Q</string>
+      </property>
+     </item>
+     <item row="23" column="1">
+      <property name="text">
+       <string>0x11</string>
+      </property>
+     </item>
+     <item row="23" column="2">
+      <property name="text">
+       <string>17</string>
+      </property>
+     </item>
+     <item row="23" column="3">
+      <property name="text">
+       <string>DC1</string>
+      </property>
+     </item>
+     <item row="23" column="4">
+      <property name="text">
+       <string>Home Cursor</string>
+      </property>
+     </item>
+     <item row="24" column="0">
+      <property name="text">
+       <string>^S</string>
+      </property>
+     </item>
+     <item row="24" column="1">
+      <property name="text">
+       <string>0x13</string>
+      </property>
+     </item>
+     <item row="24" column="2">
+      <property name="text">
+       <string>19</string>
+      </property>
+     </item>
+     <item row="24" column="3">
+      <property name="text">
+       <string>DC3</string>
+      </property>
+     </item>
+     <item row="24" column="4">
+      <property name="text">
+       <string>Shift</string>
+      </property>
+     </item>
+     <item row="25" column="0">
+      <property name="text">
+       <string>^V</string>
+      </property>
+     </item>
+     <item row="25" column="1">
+      <property name="text">
+       <string>0x16</string>
+      </property>
+     </item>
+     <item row="25" column="2">
+      <property name="text">
+       <string>22</string>
+      </property>
+     </item>
+     <item row="25" column="3">
+      <property name="text">
+       <string>SYN</string>
+      </property>
+     </item>
+     <item row="25" column="4">
+      <property name="text">
+       <string>Set Text Window (upper-left)</string>
+      </property>
+     </item>
+     <item row="26" column="0">
+      <property name="text">
+       <string>^W</string>
+      </property>
+     </item>
+     <item row="26" column="1">
+      <property name="text">
+       <string>0x17</string>
+      </property>
+     </item>
+     <item row="26" column="2">
+      <property name="text">
+       <string>23</string>
+      </property>
+     </item>
+     <item row="26" column="3">
+      <property name="text">
+       <string>ETB</string>
+      </property>
+     </item>
+     <item row="26" column="4">
+      <property name="text">
+       <string>Set Text Window (lower-right)</string>
+      </property>
+     </item>
+     <item row="27" column="0">
+      <property name="text">
+       <string>^Y</string>
+      </property>
+     </item>
+     <item row="27" column="1">
+      <property name="text">
+       <string>0x19</string>
+      </property>
+     </item>
+     <item row="27" column="2">
+      <property name="text">
+       <string>25</string>
+      </property>
+     </item>
+     <item row="27" column="3">
+      <property name="text">
+       <string>EM</string>
+      </property>
+     </item>
+     <item row="27" column="4">
+      <property name="text">
+       <string>Set Text Window (full screen) *</string>
+      </property>
+     </item>
+     <item row="28" column="0">
+      <property name="text">
+       <string>^Z</string>
+      </property>
+     </item>
+     <item row="28" column="1">
+      <property name="text">
+       <string>0x1A</string>
+      </property>
+     </item>
+     <item row="28" column="2">
+      <property name="text">
+       <string>26</string>
+      </property>
+     </item>
+     <item row="28" column="3">
+      <property name="text">
+       <string>SUB</string>
+      </property>
+     </item>
+     <item row="28" column="4">
+      <property name="text">
+       <string>Restore Default Parameters</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

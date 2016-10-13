@@ -17,7 +17,7 @@ public:
     explicit ApplesoftFileViewer(QWidget *parent = 0);
     ~ApplesoftFileViewer();
 
-    void setFormatter(ApplesoftFormatter *formatter);
+   // void setFormatter(ApplesoftFormatter *formatter);
 
 public slots:
     void setFile(ApplesoftFile *m_file);
@@ -26,8 +26,12 @@ public slots:
     void findText();
 
 
+protected:
 protected slots:
+    void setIndentCode(bool enabled);
+    void setIntsAsHex(bool enabled);
     void launchVarBrowser();
+    void reformatText();
 
 private:
     ApplesoftFile *m_file;

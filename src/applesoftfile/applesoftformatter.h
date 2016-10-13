@@ -11,11 +11,16 @@ class ApplesoftFormatter : public QObject
 
 public:
     enum FormatOption {
-        NoOptions = 0x00,
-        FormatHTML = 0x01,
-        ShowCtrlChars = 0x02,
+        NoOptions =        0x00,
+
+        FormatHTML =       0x01,
+        ShowCtrlChars =    0x02,
         BreakAfterReturn = 0x04,
-        PrettyFlags = 0x07,
+        PrettyFlags =      ShowCtrlChars | BreakAfterReturn | FormatHTML,
+
+        ReindentCode =     0x08,
+        ShowIntsAsHex =    0x10,
+
         AllFlags = 0xffffffff
     };
     Q_DECLARE_FLAGS(FormatOptions, FormatOption)
@@ -24,6 +29,7 @@ public:
     explicit ApplesoftFormatter(QObject *parent = 0);
     void setFlags(FormatOptions options) { m_format_options = options; }
     void setFile(ApplesoftFile *file);
+    FormatOptions flags() { return m_format_options; }
 
     QString formatText();
 

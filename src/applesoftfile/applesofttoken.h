@@ -137,13 +137,14 @@ public:
 
     QByteArray getByteStringValue() const { return m_payload.toByteArray(); }
     QString getStringValue() const { return m_payload.toString(); }
+    quint32 getIntegerValue() const { return (quint32) (m_payload.toUInt() & 0xFFFFFFFF); }
     quint16 getWordValue() const { return (quint16) (m_payload.toUInt() & 0xFFFF); }
     quint8 getByteValue() const { return (quint8) (m_payload.toUInt() & 0xFF); }
 
     TokenType getTokenType() const { return m_token_type; }
     CommandType getCommandType() const { return m_command_type; }
 
-    QString getRawPrintableString();
+    QString getRawPrintableString() const;
 
     static QString getStringForToken(quint8 token) {
         if (m_tokens.size() == 0) { initializeTokenTable(); }

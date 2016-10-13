@@ -14,12 +14,17 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
 
     m_formatter = new ApplesoftFormatter(this);
     //m_formatter->setFlags(ApplesoftFormatter::PrettyFlags | ApplesoftFormatter::BreakAfterReturn);
-    m_formatter->setFlags(ApplesoftFormatter::AllFlags);
+    m_formatter->setFlags(ApplesoftFormatter::PrettyFlags);
     connect(ui->findButton,SIGNAL(clicked(bool)), SLOT(findText()));
     m_isFirstFind = true;
     ui->textArea->setUndoRedoEnabled(false);
     ui->textArea->setUndoRedoEnabled(true);
 
+    connect(ui->intHexCB, SIGNAL(toggled(bool)), SLOT(setIntsAsHex(bool)));
+    connect(ui->intHexCB, SIGNAL(toggled(bool)), ui->findText,SLOT(clear()));
+
+    connect(ui->indentCode, SIGNAL(toggled(bool)), SLOT(setIndentCode(bool)));
+    connect(ui->indentCode, SIGNAL(toggled(bool)), ui->findText,SLOT(clear()));
 
     connect(ui->varBrowserButton, SIGNAL(clicked(bool)), SLOT(launchVarBrowser()));
 }
@@ -27,6 +32,37 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
 ApplesoftFileViewer::~ApplesoftFileViewer()
 {
     delete ui;
+}
+
+void ApplesoftFileViewer::setIndentCode(bool enabled)
+{
+    if (enabled)
+    {
+        m_formatter->setFlags(m_formatter->flags() | ApplesoftFormatter::ReindentCode);
+    }
+    else
+    {
+        m_formatter->setFlags(m_formatter->flags() & ~ApplesoftFormatter::ReindentCode);
+    }
+    reformatText();
+}
+
+void ApplesoftFileViewer::setIntsAsHex(bool enabled)
+{
+    if (enabled)
+    {
+        m_formatter->setFlags(m_formatter->flags() | ApplesoftFormatter::ShowIntsAsHex);
+    }
+    else
+    {
+        m_formatter->setFlags(m_formatter->flags() & ~ApplesoftFormatter::ShowIntsAsHex);
+    }
+    reformatText();
+}
+
+void ApplesoftFileViewer::reformatText()
+{
+    ui->textArea->setText(m_formatter->formatText());
 }
 
 void ApplesoftFileViewer::setFile(ApplesoftFile *file) {

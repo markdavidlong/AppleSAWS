@@ -38,6 +38,7 @@ void ApplesoftFile::parse(quint16 start_address)
 
     int idx = 0;
     quint8 val = 0;
+    m_lines.clear();
 
     quint16 current_address = start_address;
     while (idx < m_data.length()) {

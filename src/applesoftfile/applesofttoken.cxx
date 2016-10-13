@@ -110,7 +110,7 @@ QString ApplesoftToken::getHtmlPrintableString()
 
 }
 
-QString ApplesoftToken::getRawPrintableString()
+QString ApplesoftToken::getRawPrintableString() const
 {
     if (m_token_id == 0x00) {
         return "";

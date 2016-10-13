@@ -8,6 +8,7 @@
 #include "applesoftfile.h"
 //#include "relocatablefile.h"
 #include "hexconverter.h"
+#include "hrcgcontrolsinfo.h"
 
 
 namespace Ui {
@@ -47,6 +48,7 @@ protected:
     void openInCharSetViewer(BinaryFile *file);
 private:
     Ui::MainWindow *ui;
+    HRCGControlsInfo *m_hrcgDialog;
     HexConverter *m_hexConverter;
 
     DiskFile *m_disk;

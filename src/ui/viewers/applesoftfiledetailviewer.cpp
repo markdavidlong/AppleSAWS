@@ -13,6 +13,7 @@ ApplesoftFileDetailViewer::ApplesoftFileDetailViewer(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->m_varView->setSortingEnabled(true);
+
 }
 
 ApplesoftFileDetailViewer::~ApplesoftFileDetailViewer()
@@ -54,6 +55,7 @@ void ApplesoftFileDetailViewer::process()
     int idx = 0;
     foreach (QString key, keys)
     {
+        vardata[key].removeDuplicates();
         QString linenums = vardata[key].join(",");
         quint16 vtype = vartypes[key];
         QString vtname;
@@ -75,10 +77,19 @@ void ApplesoftFileDetailViewer::process()
         twi->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         ui->m_varView->setItem(idx,1,twi);
 
+        twi = new QTableWidgetItem("     ");
+        twi->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
+        ui->m_varView->setItem(idx,2,twi);
+
+
         twi = new QTableWidgetItem(linenums);
         twi->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-        ui->m_varView->setItem(idx,2,twi);
+        ui->m_varView->setItem(idx,3,twi);
         idx++;
     }
+
+    ui->m_varView->resizeColumnToContents(0);
+    ui->m_varView->resizeColumnToContents(1);
+    ui->m_varView->resizeColumnToContents(2);
 
 }

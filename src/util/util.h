@@ -63,6 +63,11 @@ inline QString uint16ToHex(quint16 val) {
     return retval;
 }
 
+inline QString uint32ToHex(quint32 val) {
+    QString retval = QString("%1").arg(val,8,16,QChar('0')).toUpper();
+    return retval;
+}
+
 
 
 

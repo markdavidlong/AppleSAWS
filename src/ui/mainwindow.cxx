@@ -13,6 +13,7 @@
 #include "texthexdumpviewer.h"
 #include "charsetviewer.h"
 #include "relocatablefile.h"
+#include "hrcgcontrolsinfo.h"
 
 #include <QFileDialog>
 #include <QTextDocument>
@@ -45,6 +46,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this, SIGNAL(diskFileUnloading(DiskFile*)),
             ui->catalogWidget, SLOT(unloadDisk(DiskFile*)));
 
+
+    m_hrcgDialog = new HRCGControlsInfo(this);
+    connect(ui->action_HRCG_Commands, SIGNAL(triggered()), m_hrcgDialog, SLOT(show()));
 
     m_hexConverter = new HexConverter(this);
     connect(ui->action_Hex_Converter, SIGNAL(triggered()), m_hexConverter, SLOT(show()));
