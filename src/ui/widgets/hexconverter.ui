@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>HexConverter</class>
+ <widget class="QDialog" name="HexConverter">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>247</width>
+    <height>113</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>HexConverter</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="hexLabel">
+       <property name="text">
+        <string>Hex</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="uint16Label">
+       <property name="text">
+        <string>UInt16</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLabel" name="int16Label">
+       <property name="text">
+        <string>Int16</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLineEdit" name="hexLineEdit">
+       <property name="inputMask">
+        <string>HHHH</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="uint16LineEdit"/>
+     </item>
+     <item row="1" column="2">
+      <widget class="QLineEdit" name="int16LineEdit"/>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLabel" name="uint8Label">
+       <property name="text">
+        <string>Uint8</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
+      <widget class="QLabel" name="int8Label">
+       <property name="text">
+        <string>Int8</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="uint8LineEdit"/>
+     </item>
+     <item row="3" column="2">
+      <widget class="QLineEdit" name="int8LineEdit"/>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

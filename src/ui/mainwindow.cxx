@@ -44,6 +44,10 @@ MainWindow::MainWindow(QWidget *parent) :
             ui->catalogWidget, SLOT(processNewlyLoadedDisk(QString,DiskFile*)));
     connect(this, SIGNAL(diskFileUnloading(DiskFile*)),
             ui->catalogWidget, SLOT(unloadDisk(DiskFile*)));
+
+
+    m_hexConverter = new HexConverter(this);
+    connect(ui->action_Hex_Converter, SIGNAL(triggered()), m_hexConverter, SLOT(show()));
 }
 
 MainWindow::~MainWindow()

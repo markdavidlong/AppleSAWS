@@ -53,7 +53,8 @@ SOURCES += \
     src/binaryfile/binaryfilemetadata.cpp \
     src/util/charset.cpp \
     src/ui/widgets/characterwidget.cpp \
-    src/ui/viewers/applesoftfiledetailviewer.cpp
+    src/ui/viewers/applesoftfiledetailviewer.cpp \
+    src/ui/widgets/hexconverter.cpp
 
 
 HEADERS += \
@@ -87,7 +88,8 @@ HEADERS += \
     src/ui/widgets/characterwidget.h \
     src/util/charset.h \
     src/ui/viewers/charsetviewer.h \
-    src/ui/viewers/applesoftfiledetailviewer.h
+    src/ui/viewers/applesoftfiledetailviewer.h \
+    src/ui/widgets/hexconverter.h
 
 FORMS += \
     src/ui/catalogwidget.ui \
@@ -96,4 +98,5 @@ FORMS += \
     src/ui/viewers/disassemblerviewer.ui \
     src/ui/viewers/hexdumpviewer.ui \
     src/ui/viewers/texthexdumpviewer.ui \
-    src/ui/viewers/applesoftfiledetailviewer.ui
+    src/ui/viewers/applesoftfiledetailviewer.ui \
+    src/ui/widgets/hexconverter.ui

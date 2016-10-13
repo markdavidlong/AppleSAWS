@@ -7,6 +7,7 @@
 #include "binaryfile.h"
 #include "applesoftfile.h"
 //#include "relocatablefile.h"
+#include "hexconverter.h"
 
 
 namespace Ui {
@@ -46,6 +47,7 @@ protected:
     void openInCharSetViewer(BinaryFile *file);
 private:
     Ui::MainWindow *ui;
+    HexConverter *m_hexConverter;
 
     DiskFile *m_disk;
 };

@@ -45,7 +45,7 @@
      <x>0</x>
      <y>0</y>
      <width>273</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -57,7 +57,14 @@
     <addaction name="separator"/>
     <addaction name="action_Quit"/>
    </widget>
+   <widget class="QMenu" name="menu_Util">
+    <property name="title">
+     <string>&amp;Util</string>
+    </property>
+    <addaction name="action_Hex_Converter"/>
+   </widget>
    <addaction name="menu_File"/>
+   <addaction name="menu_Util"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
@@ -84,6 +91,11 @@
   <action name="action_Unload_Disk_Image">
    <property name="text">
     <string>&amp;Unload Disk Image</string>
+   </property>
+  </action>
+  <action name="action_Hex_Converter">
+   <property name="text">
+    <string>&amp;Hex Converter...</string>
    </property>
   </action>
  </widget>

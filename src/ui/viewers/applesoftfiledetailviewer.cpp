@@ -4,6 +4,7 @@
 #include <QMap>
 #include <QString>
 #include <QStringList>
+#include <QTableWidgetItem>
 
 
 ApplesoftFileDetailViewer::ApplesoftFileDetailViewer(QWidget *parent) :
@@ -66,9 +67,17 @@ void ApplesoftFileDetailViewer::process()
             default: vtname = "Unknown";
         }
 
-        ui->m_varView->setItem(idx,0,new QTableWidgetItem(vtname));
-        ui->m_varView->setItem(idx,1,new QTableWidgetItem(key));
-        ui->m_varView->setItem(idx,2,new QTableWidgetItem(linenums));
+        QTableWidgetItem *twi = new QTableWidgetItem(vtname);
+        twi->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+        ui->m_varView->setItem(idx,0,twi);
+
+        twi = new QTableWidgetItem(key);
+        twi->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+        ui->m_varView->setItem(idx,1,twi);
+
+        twi = new QTableWidgetItem(linenums);
+        twi->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+        ui->m_varView->setItem(idx,2,twi);
         idx++;
     }
 
