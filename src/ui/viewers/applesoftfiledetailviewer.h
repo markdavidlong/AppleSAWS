@@ -17,7 +17,7 @@ public:
     explicit ApplesoftFileDetailViewer(QWidget *parent = 0);
     ~ApplesoftFileDetailViewer();
 
-    void setLineData(QVector<ApplesoftLine> lineData) { m_lines = lineData; process(); }
+    void setLineData(QVector<ApplesoftLine> lineData);
 
 private:
     void  process();

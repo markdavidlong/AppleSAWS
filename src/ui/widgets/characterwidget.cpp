@@ -65,7 +65,6 @@ void CharacterWidget::doRepaint()
                                  m_scale*2, m_scale*2);
             }
         }
-
     }
 
     if (m_showgrid)
@@ -85,7 +84,6 @@ void CharacterWidget::doRepaint()
         painter.drawLine(0,m_pixmap.height(), m_pixmap.width(), m_pixmap.height());
         painter.drawLine(m_pixmap.width(), m_pixmap.height(), m_pixmap.width(),0);
         painter.drawLine(m_pixmap.width(),0, 0,0);
-
     }
 
     repaint();

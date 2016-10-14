@@ -6,7 +6,7 @@
 #include <QByteArray>
 
 TextHexDumpViewer::TextHexDumpViewer(QWidget *parent) :
-    QWidget(parent),
+    FileViewerInterface(parent),
     ui(new Ui::TextHexDumpViewer)
 {
     ui->setupUi(this);

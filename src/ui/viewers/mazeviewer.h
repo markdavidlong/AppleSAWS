@@ -7,11 +7,12 @@
 
 #include "binaryfile.h"
 #include "memory.h"
+#include "fileviewerinterface.h"
 
 
 /// A class for viewing maze files in "The Missing Ring" by DataMost.
 
-class MazeViewer : public QWidget
+class MazeViewer : public FileViewerInterface
 {
     Q_OBJECT
 public:
@@ -20,6 +21,8 @@ public:
     void drawMaze();
     void resizeEvent(QResizeEvent *event);
     void paintEvent(QPaintEvent *event);
+
+    void setFile(GenericFile *file);
 
     void setFile(BinaryFile *file);
 

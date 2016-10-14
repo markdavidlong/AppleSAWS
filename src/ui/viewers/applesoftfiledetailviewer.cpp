@@ -21,6 +21,12 @@ ApplesoftFileDetailViewer::~ApplesoftFileDetailViewer()
     delete ui;
 }
 
+void ApplesoftFileDetailViewer::setLineData(QVector<ApplesoftLine> lineData)
+{
+    m_lines = lineData;
+    process();
+}
+
 void ApplesoftFileDetailViewer::process()
 {
     QMap<QString,QStringList> vardata;
@@ -32,12 +38,12 @@ void ApplesoftFileDetailViewer::process()
         foreach(ApplesoftToken token, line.tokens)
         {
             quint16 tid = token.getTokenId();
-            if (tid == ApplesoftToken::IntVarTokenVal ||
-                    tid == ApplesoftToken::IntAryVarTokenVal ||
-                    tid == ApplesoftToken::FloatVarTokenVal ||
-                    tid == ApplesoftToken::FloatAryVarTokenVal ||
-                    tid == ApplesoftToken::StringVarTokenVal ||
-                    tid == ApplesoftToken::StringAryVarTokenVal)
+            if (tid == ApplesoftToken::IntVarTokenVal      ||
+                tid == ApplesoftToken::IntAryVarTokenVal   ||
+                tid == ApplesoftToken::FloatVarTokenVal    ||
+                tid == ApplesoftToken::FloatAryVarTokenVal ||
+                tid == ApplesoftToken::StringVarTokenVal   ||
+                tid == ApplesoftToken::StringAryVarTokenVal)
             {
                 QString varname = token.getStringValue();
                 if (varname.contains("(")) { varname.append(")"); }

@@ -3,15 +3,17 @@
 
 #include "binaryfile.h"
 #include "characterwidget.h"
+#include "fileviewerinterface.h"
 
 #include <QWidget>
 
-class CharSetViewer : public QWidget
+class CharSetViewer : public FileViewerInterface
 {
     Q_OBJECT
 public:
     explicit CharSetViewer(QWidget *parent = 0);
 
+    void setFile(GenericFile *file);
     void setFile(BinaryFile *file);
 
 signals:

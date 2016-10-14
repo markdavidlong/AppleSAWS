@@ -9,7 +9,7 @@
 //#include "relocatablefile.h"
 #include "hexconverter.h"
 #include "hrcgcontrolsinfo.h"
-
+#include "viewerbase.h"
 
 namespace Ui {
 class MainWindow;
@@ -30,7 +30,6 @@ public slots:
     void showLoadDialog();
 
 private slots:
-    void handleDiskItemSelectedHexViewOpen(DiskFile *disk, FileDescriptiveEntry fde);
     void handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescriptiveEntry fde);
 
 signals:
@@ -40,12 +39,6 @@ signals:
     void diskFileUnloading(DiskFile *file);
     void diskFileUnloaded();
 
-protected:
-    void openInApplesoftFileViewer(ApplesoftFile *file);
-    void openInHiresViewWidget(BinaryFile *file, QString filename);
-    void openInDisassemblerViewer(BinaryFile *file);
-    void openInMazeViewer(BinaryFile *file);
-    void openInCharSetViewer(BinaryFile *file);
 private:
     Ui::MainWindow *ui;
     HRCGControlsInfo *m_hrcgDialog;

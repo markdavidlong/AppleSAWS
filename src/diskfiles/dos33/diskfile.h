@@ -5,6 +5,7 @@
 #include <QMap>
 #include <QString>
 #include <QDebug>
+#include <QCryptographicHash>
 
 #include "util.h"
 #include "sector.h"
@@ -36,11 +37,14 @@ public:
 
     QList<FileDescriptiveEntry> getAllFDEs();
 
+    QByteArray fileHash() const { return m_hash; }
+
 
 private:
 
     QMap< int, QMap< int, Sector> > m_contents;
     QMap<FileDescriptiveEntry,GenericFile *> m_files;
+    QByteArray m_hash;
 
 };
 

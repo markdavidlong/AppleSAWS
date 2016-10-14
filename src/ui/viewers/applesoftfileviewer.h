@@ -4,22 +4,26 @@
 #include <QWidget>
 #include "applesoftfile.h"
 #include "applesoftformatter.h"
+#include "viewerbase.h"
 
 namespace Ui {
 class ApplesoftFileViewer;
 }
 
-class ApplesoftFileViewer : public QWidget
+class ApplesoftFileViewer : public FileViewerInterface
 {
     Q_OBJECT
 
 public:
-    explicit ApplesoftFileViewer(QWidget *parent = 0);
+     ApplesoftFileViewer(QWidget *parent = 0);
     ~ApplesoftFileViewer();
 
    // void setFormatter(ApplesoftFormatter *formatter);
 
+    virtual QMenu* optionsMenuItems() const;
+
 public slots:
+     void setFile(GenericFile *file);
     void setFile(ApplesoftFile *m_file);
     void setData(QByteArray data);
     void setText(QString text);

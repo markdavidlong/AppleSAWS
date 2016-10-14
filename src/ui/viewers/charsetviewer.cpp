@@ -1,12 +1,24 @@
 #include "charsetviewer.h"
+#include <QGridLayout>
 
 
-CharSetViewer::CharSetViewer(QWidget *parent) : QWidget(parent)
+CharSetViewer::CharSetViewer(QWidget *parent) : FileViewerInterface(parent)
 {
     m_file = Q_NULLPTR;
 
+    QGridLayout *qgl = new QGridLayout(this);
+    setLayout(qgl);
     QString title = QString("Character Set Viewer");
     setWindowTitle(title);
+}
+
+void CharSetViewer::setFile(GenericFile *file)
+{
+    if (dynamic_cast<BinaryFile*>(file))
+    {
+        BinaryFile *bf = dynamic_cast<BinaryFile*>(file);
+        setFile(bf);
+    }
 }
 
 void CharSetViewer::setFile(BinaryFile *file)
@@ -27,8 +39,12 @@ void CharSetViewer::setFile(BinaryFile *file)
         cw->enableBitShift(true);
         cw->setBgColor(Qt::white);
         cw->setFgColor(Qt::black);
-        cw->move(xpos,ypos);
+
+        QGridLayout *qgl = qobject_cast<QGridLayout*>(this->layout());
+        qgl->addWidget(cw,ypos,xpos);
+        //cw->move(xpos,ypos);
         cw->show();
+
         xpos+= cw->width();
         if (xpos/cw->width() > 11) {
             xpos = 0;

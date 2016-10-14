@@ -10,7 +10,7 @@
 
 
 HiresViewWidget::HiresViewWidget(QWidget *parent) :
-    QWidget(parent)
+    FileViewerInterface(parent)
 {
     resize(561,384);
     m_viewMode = Color2;
@@ -18,9 +18,7 @@ HiresViewWidget::HiresViewWidget(QWidget *parent) :
 
     if (m_rowTable == 0) { makeOffsetTable(); }
 
-    qDebug() << "ctor";
     m_pixmap = QPixmap(561,384);
-    qDebug() << "Pixmap size: " << m_pixmap.size();
     QPainter painter(&m_pixmap);
     painter.setBrush(Qt::black);
     painter.drawRect(0,0,this->width(),this->height());
@@ -83,7 +81,6 @@ void HiresViewWidget::handleShowScanLinesAction(bool toggled) {
 void HiresViewWidget::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
-    qDebug() << "paintEvent";
 
     //    if (m_pixmap.size() != this->size()) {
     //        m_pixmap = m_pixmap.scaled(this->size(),Qt::KeepAspectRatio);
@@ -94,14 +91,13 @@ void HiresViewWidget::paintEvent(QPaintEvent *event)
     QPainter painter(this);
 
     QPixmap tmppixmap = m_pixmap;
-    tmppixmap = tmppixmap.scaled(this->size(), Qt::KeepAspectRatio);
+//    tmppixmap = tmppixmap.scaled(this->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
     painter.drawPixmap(0,0,tmppixmap);
 }
 
 void HiresViewWidget::resizeEvent(QResizeEvent *)
 {
-    qDebug() << "resizeEvent";
 
 }
 
@@ -513,6 +509,15 @@ void HiresViewWidget::contextMenuEvent(QContextMenuEvent *event) {
     menu.addSeparator();
     menu.addAction(showScanLinesAction);
     menu.exec(event->globalPos());
+}
+
+void HiresViewWidget::setFile(GenericFile *file)
+{
+    BinaryFile *af = dynamic_cast<BinaryFile*>(file);
+    if (af)
+    {
+        setFile(af);
+    }
 }
 
 QMap<int,int> *HiresViewWidget::m_rowTable = 0;

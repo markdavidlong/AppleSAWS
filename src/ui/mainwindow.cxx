@@ -104,108 +104,13 @@ void MainWindow::showLoadDialog()
     }
 }
 
-void MainWindow::openInHiresViewWidget(BinaryFile *file, QString filename) {
-    HiresViewWidget *hvwma = new HiresViewWidget(0);
-
-    QString title = QString("Image: %1").arg(filename);
-    hvwma->setWindowTitle(title);
-    hvwma->show();
-    hvwma->setData(file->data());
-}
-
-void MainWindow::openInDisassemblerViewer(BinaryFile *file) {
-    DisassemblerViewer *hvwma = new DisassemblerViewer(0);
-    hvwma->show();
-    hvwma->setFile(file);
-}
-
-void MainWindow::openInMazeViewer(BinaryFile *file) {
-    MazeViewer *hvwma = new MazeViewer(0);
-    int cellw = 90;
-    hvwma->resize(cellw*8,cellw*10);
-    hvwma->show();
-    hvwma->setFile(file);
-}
-
-void MainWindow::openInCharSetViewer(BinaryFile *file)
-{
-    CharSetViewer *csv = new CharSetViewer(0);
-    csv->setFile(file);
-    csv->show();
-}
-
-void MainWindow::openInApplesoftFileViewer(ApplesoftFile *file) {
-
-    ApplesoftFileViewer *afv = new ApplesoftFileViewer(0);
-    afv->setFile(file);
-    afv->show();
-}
-
-void MainWindow::handleDiskItemSelectedHexViewOpen(DiskFile *disk, FileDescriptiveEntry fde) {
-    GenericFile *file = disk->getFile(fde);
-    file->setFilename(AppleString(fde.filename).printable().trimmed());
-    HexDumpViewer *hdv = new HexDumpViewer(0);
-
-    hdv->setFile(file,file->address());
-    hdv->show();
-}
 
 void MainWindow::handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescriptiveEntry fde)
 {
     GenericFile *file = disk->getFile(fde);
     file->setFilename(AppleString(fde.filename).printable().trimmed());
 
-    qDebug() << "Default open. Type: " << fde.fileType();
-
-    if (dynamic_cast<BinaryFile*>(file)) {
-        BinaryFile *binfile = dynamic_cast<BinaryFile*>(file);
-
-        if (fde.lengthInSectors == 34 && (binfile->address() == 0x2000 || binfile->address() == 0x4000))
-        {
-            openInHiresViewWidget(binfile, AppleString(fde.filename).printable().trimmed());
-        }
-        else if (file->filename().contains("maze",Qt::CaseInsensitive))
-        {
-            openInMazeViewer(binfile);
-        }
-        else if (file->filename().contains(".set",Qt::CaseInsensitive))
-        {
-            openInCharSetViewer(binfile);
-        }
-        else
-        {
-            openInDisassemblerViewer(binfile);
-        }
-    }
-    else if (dynamic_cast<ApplesoftFile *>(file))
-    {
-        ApplesoftFile *abf = dynamic_cast<ApplesoftFile *>(file);
-        abf->setFilename(AppleString(fde.filename).printable().trimmed());
-        openInApplesoftFileViewer(abf);
-    }
-    else if (dynamic_cast<TextFile *>(file))
-    {
-        TextFile *tf = dynamic_cast<TextFile *>(file);
-        tf->setFilename(AppleString(fde.filename).printable().trimmed());
-        TextHexDumpViewer *thdv = new TextHexDumpViewer();
-        thdv->setFile(tf);
-        thdv->show();
-    }
-    else if (dynamic_cast<RelocatableFile *>(file))
-    {
-        RelocatableFile *rf = dynamic_cast<RelocatableFile *>(file);
-//        HexDumpViewer *hdv = new HexDumpViewer(0);
-//        hdv->setFile(file,file->address());
-//        hdv->show();
-        DisassemblerViewer *hvwma = new DisassemblerViewer(0);
-        hvwma->show();
-        hvwma->setFile(rf);
-    }
-    else
-    {
-        HexDumpViewer *hdv = new HexDumpViewer(0);
-        hdv->setFile(file,file->address());
-        hdv->show();
-    }
-
+    ViewerBase *vb = new ViewerBase();
+    vb->setFile(file);
+    vb->show();
 }

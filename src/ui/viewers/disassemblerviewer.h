@@ -6,12 +6,13 @@
 
 #include "binaryfile.h"
 #include "relocatablefile.h"
+#include "fileviewerinterface.h"
 
 namespace Ui {
 class DisassemblerViewer;
 }
 
-class DisassemblerViewer : public QWidget
+class DisassemblerViewer : public FileViewerInterface
 {
     Q_OBJECT
 
@@ -25,6 +26,10 @@ public:
     void setText(QString text);
 
     QString getPotentialLabel(quint16 address);
+
+public slots:
+    void setFile(GenericFile *file);
+
 private:
     Ui::DisassemblerViewer *ui;
 

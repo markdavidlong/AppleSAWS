@@ -2,11 +2,12 @@
 #include "ui_disassemblerviewer.h"
 #include "disassembler.h"
 #include "memory.h"
+#include "relocatablefile.h"
 
 #include <QDebug>
 
 DisassemblerViewer::DisassemblerViewer(QWidget *parent) :
-    QWidget(parent),
+    FileViewerInterface(parent),
     ui(new Ui::DisassemblerViewer)
 {
     ui->setupUi(this);
@@ -18,6 +19,18 @@ DisassemblerViewer::DisassemblerViewer(QWidget *parent) :
 DisassemblerViewer::~DisassemblerViewer()
 {
     delete ui;
+}
+
+void DisassemblerViewer::setFile(GenericFile *file)
+{
+    if (dynamic_cast<RelocatableFile*>(file))
+    {
+        setFile(dynamic_cast<RelocatableFile*>(file));
+    }
+    if (dynamic_cast<BinaryFile*>(file))
+    {
+        setFile(dynamic_cast<BinaryFile*>(file));
+    }
 }
 
 void DisassemblerViewer::setFile(BinaryFile *file) {

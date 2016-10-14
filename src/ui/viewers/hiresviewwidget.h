@@ -2,6 +2,7 @@
 #define HIRESVIEWWIDGET_H
 
 #include "binaryfile.h"
+#include "fileviewerinterface.h"
 
 #include <QWidget>
 #include <QPixmap>
@@ -30,7 +31,7 @@ static const QColor lightBlueColor = QColor(208,195,255);
 static const QColor whiteColor = QColor(255,255,255);
 
 
-class HiresViewWidget : public QWidget
+class HiresViewWidget : public FileViewerInterface
 {
     Q_OBJECT
 public:
@@ -53,7 +54,9 @@ public:
 signals:
 
 public slots:
+    void setFile(GenericFile *file);
     void setFile(BinaryFile *file);
+
     void setData(QByteArray data);
     void setMode(ViewMode);
 

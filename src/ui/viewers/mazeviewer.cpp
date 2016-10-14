@@ -5,7 +5,7 @@
 
 #include "memory.h"
 
-MazeViewer::MazeViewer(QWidget *parent) : QWidget(parent)
+MazeViewer::MazeViewer(QWidget *parent) : FileViewerInterface(parent)
 {
     setMinimumSize(480,600);
     m_maze = QPixmap(width(),height());
@@ -26,6 +26,14 @@ void MazeViewer::paintEvent(QPaintEvent *event)
     drawMaze();
     QPainter painter(this);
     painter.drawPixmap(0,0,m_maze);
+}
+
+void MazeViewer::setFile(GenericFile *file)
+{
+    if (dynamic_cast<BinaryFile*>(file))
+    {
+        setFile(dynamic_cast<BinaryFile*>(file));
+    }
 }
 
 void MazeViewer::setFile(BinaryFile *file)

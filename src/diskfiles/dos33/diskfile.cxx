@@ -29,9 +29,12 @@ DiskFile::~DiskFile()
 bool DiskFile::read(QString filename)
 {
     QFile infile(filename);
+    QCryptographicHash hash(QCryptographicHash::Md5);
+
     if (infile.open(QIODevice::ReadOnly))
     {
-        QDataStream qds(&infile);
+        QByteArray contents = infile.readAll();
+        QDataStream qds(contents);
         for (int track = 0; track < 35; track++)
         {
             for (int sector = 0; sector < 16; sector++)
@@ -51,6 +54,10 @@ bool DiskFile::read(QString filename)
                 }
             }
         }
+        hash.addData(contents);
+
+        m_hash = hash.result();
+        qDebug() << "Hash: " << m_hash;
 
         return true;
     }

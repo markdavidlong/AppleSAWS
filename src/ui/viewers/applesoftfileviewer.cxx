@@ -3,13 +3,18 @@
 #include "applesoftformatter.h"
 #include "applesoftfiledetailviewer.h"
 #include <QDebug>
+#include <QSettings>
 
 ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
-    QWidget(parent),
+    FileViewerInterface(parent),
     ui(new Ui::ApplesoftFileViewer)
 {
     ui->setupUi(this);
+
+    QSettings settings;
     QString title = QString("AppleSoft Viewer");
+    m_title = title;
+    emit setTitle(title);
     setWindowTitle(title);
 
     m_formatter = new ApplesoftFormatter(this);
@@ -20,6 +25,11 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
     ui->textArea->setUndoRedoEnabled(false);
     ui->textArea->setUndoRedoEnabled(true);
 
+    setIntsAsHex(settings.value("ASViewer.intsAsHex",false).toBool());
+    ui->intHexCB->setChecked(settings.value("ASViewer.intsAsHex",false).toBool());
+    setIndentCode(settings.value("ASViewer.indentCode",false).toBool());
+    ui->indentCode->setChecked(settings.value("ASViewer.indentCode",false).toBool());
+
     connect(ui->intHexCB, SIGNAL(toggled(bool)), SLOT(setIntsAsHex(bool)));
     connect(ui->intHexCB, SIGNAL(toggled(bool)), ui->findText,SLOT(clear()));
 
@@ -27,11 +37,17 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
     connect(ui->indentCode, SIGNAL(toggled(bool)), ui->findText,SLOT(clear()));
 
     connect(ui->varBrowserButton, SIGNAL(clicked(bool)), SLOT(launchVarBrowser()));
+
 }
 
 ApplesoftFileViewer::~ApplesoftFileViewer()
 {
     delete ui;
+}
+
+QMenu *ApplesoftFileViewer::optionsMenuItems() const
+{
+    return Q_NULLPTR;
 }
 
 void ApplesoftFileViewer::setIndentCode(bool enabled)
@@ -44,6 +60,8 @@ void ApplesoftFileViewer::setIndentCode(bool enabled)
     {
         m_formatter->setFlags(m_formatter->flags() & ~ApplesoftFormatter::ReindentCode);
     }
+    QSettings settings;
+    settings.setValue("ASViewer.indentCode",enabled);
     reformatText();
 }
 
@@ -57,6 +75,8 @@ void ApplesoftFileViewer::setIntsAsHex(bool enabled)
     {
         m_formatter->setFlags(m_formatter->flags() & ~ApplesoftFormatter::ShowIntsAsHex);
     }
+    QSettings settings;
+    settings.setValue("ASViewer.intsAsHex",enabled);
     reformatText();
 }
 
@@ -65,11 +85,21 @@ void ApplesoftFileViewer::reformatText()
     ui->textArea->setText(m_formatter->formatText());
 }
 
+void ApplesoftFileViewer::setFile(GenericFile *file) {
+    ApplesoftFile *af = dynamic_cast<ApplesoftFile*>(file);
+    if (af)
+    {
+        setFile(af);
+    }
+}
+
 void ApplesoftFileViewer::setFile(ApplesoftFile *file) {
     m_file = file;
     m_formatter->setFile(file);
 
     QString title = QString("AppleSoft Viewer: %1").arg(m_file->filename());
+    m_title = title;
+    emit setTitle(title);
     setWindowTitle(title);
 
     ui->textArea->setText(m_formatter->formatText());

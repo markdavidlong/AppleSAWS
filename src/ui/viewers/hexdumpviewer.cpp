@@ -5,7 +5,7 @@
 #include <QScrollBar>
 
 HexDumpViewer::HexDumpViewer(QWidget *parent) :
-    QWidget(parent),
+    FileViewerInterface(parent),
     ui(new Ui::HexDumpViewer)
 {
     ui->setupUi(this);
