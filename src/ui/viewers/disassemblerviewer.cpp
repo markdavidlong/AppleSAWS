@@ -58,7 +58,7 @@ void DisassemblerViewer::setFile(BinaryFile *file) {
 void DisassemblerViewer::setFile(RelocatableFile *file) {
     m_file = file;
 
-    QString title = QString("Disassembler Viewer: %1").arg(m_file->filename());
+    QString title = QString("Disassembler Viewer: %1 (Relocatable)").arg(m_file->filename());
     setWindowTitle(title);
 
     quint16 address = file->address() + 6 ; // Handle offset for relocatable metadata
@@ -96,9 +96,236 @@ void DisassemblerViewer::setFile(RelocatableFile *file) {
 QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     QString retval = QString();
 
+    if (address == 0x0A) { retval = "ASBASIC_USRVEC0"; }
+    else if (address == 0x0B) { retval = "ASBASIC_USRVEC1"; }
+    else if (address == 0x0C) { retval = "ASBASIC_USRVEC2"; }
+    else if (address == 0x0D) { retval = "ASBASIC_GENPURPOSE0"; }
+    else if (address == 0x0E) { retval = "ASBASIC_GENPURPOSE1"; }
+    else if (address == 0x0F) { retval = "ASBASIC_GENPURPOSE2"; }
+    else if (address == 0x10) { retval = "ASBASIC_GENPURPOSE3"; }
+    else if (address == 0x11) { retval = "ASBASIC_GENPURPOSE4"; }
+    else if (address == 0x12) { retval = "ASBASIC_GENPURPOSE5"; }
+    else if (address == 0x13) { retval = "ASBASIC_GENPURPOSE6"; }
+    else if (address == 0x14) { retval = "ASBASIC_GENPURPOSE7"; }
+    else if (address == 0x15) { retval = "ASBASIC_GENPURPOSE8"; }
+    else if (address == 0x16) { retval = "ASBASIC_GENPURPOSE9"; }
+    else if (address == 0x17) { retval = "ASBASIC_GENPURPOSE10"; }
 
 
-    if (address == 0x03d0) { retval = "DOS_WARMSTART"; }
+    else if (address == 0x24) { retval = "DOS_CURSOR_HORIZONTAL"; }
+    else if (address == 0x28) { retval = "DOS_BASL"; }
+    else if (address == 0x29) { retval = "DOS_BASH"; }
+    else if (address == 0x33) { retval = "DOS_PROMPT_CHAR"; }
+    else if (address == 0x36) { retval = "DOS_CSWL"; }
+    else if (address == 0x37) { retval = "DOS_CSWH"; }
+    else if (address == 0x38) { retval = "DOS_KSWL"; }
+    else if (address == 0x39) { retval = "DOS_KSWH"; }
+    else if (address == 0x40) { retval = "DOS_FILE_BUFFER_L"; }
+    else if (address == 0x41) { retval = "DOS_FILE_BUFFER_H"; }
+    else if (address == 0x42) { retval = "DOS_BUFFER_ADDR_L"; }
+    else if (address == 0x43) { retval = "DOS_BUFFER_ADDR_H"; }
+    else if (address == 0x44) { retval = "DOS_NUMERIC_OPERAND_L"; }
+    else if (address == 0x45) { retval = "DOS_NUMERIC_OPERAND_H"; }
+
+    else if (address == 0x50) { retval = "ASBASIC_PTR_0L"; }
+    else if (address == 0x51) { retval = "ASBASIC_PTR_0H"; }
+    else if (address == 0x52) { retval = "ASBASIC_PTR_1L"; }
+    else if (address == 0x53) { retval = "ASBASIC_PTR_1H"; }
+    else if (address == 0x54) { retval = "ASBASIC_PTR_2L"; }
+    else if (address == 0x55) { retval = "ASBASIC_PTR_2H"; }
+    else if (address == 0x56) { retval = "ASBASIC_PTR_3L"; }
+    else if (address == 0x57) { retval = "ASBASIC_PTR_3H"; }
+    else if (address == 0x58) { retval = "ASBASIC_PTR_4L"; }
+    else if (address == 0x59) { retval = "ASBASIC_PTR_4H"; }
+    else if (address == 0x5A) { retval = "ASBASIC_PTR_5L"; }
+    else if (address == 0x5B) { retval = "ASBASIC_PTR_5H"; }
+    else if (address == 0x5C) { retval = "ASBASIC_PTR_6L"; }
+    else if (address == 0x5D) { retval = "ASBASIC_PTR_6H"; }
+    else if (address == 0x5E) { retval = "ASBASIC_PTR_7L"; }
+    else if (address == 0x5F) { retval = "ASBASIC_PTR_7H"; }
+    else if (address == 0x60) { retval = "ASBASIC_PTR_8L"; }
+    else if (address == 0x61) { retval = "ASBASIC_PTR_8H"; }
+
+    else if (address == 0x62) { retval = "ASBASIC_MULT_DIV_RESULT0"; }
+    else if (address == 0x63) { retval = "ASBASIC_MULT_DIV_RESULT1"; }
+    else if (address == 0x64) { retval = "ASBASIC_MULT_DIV_RESULT2"; }
+    else if (address == 0x65) { retval = "ASBASIC_MULT_DIV_RESULT3"; }
+    else if (address == 0x66) { retval = "ASBASIC_MULT_DIV_RESULT4"; }
+
+
+    else if (address == 0x67) { retval = "ASBASIC_PROG_STARTL"; }
+    else if (address == 0x68) { retval = "ASBASIC_PROG_STARTH"; }
+
+    else if (address == 0x69) { retval = "ASBASIC_VAR_STARTL"; }
+    else if (address == 0x6A) { retval = "ASBASIC_VAR_STARTH"; }
+
+    else if (address == 0x6B) { retval = "ASBASIC_ARRAY_STARTL"; }
+    else if (address == 0x6C) { retval = "ASBASIC_ARRAY_STARTH"; }
+
+    else if (address == 0x6D) { retval = "ASBASIC_NUMSTORE_ENDL"; }
+    else if (address == 0x6E) { retval = "ASBASIC_NUMSTORE_ENDH"; }
+
+    else if (address == 0x6F) { retval = "ASBASIC_STRING_STARTL"; }
+    else if (address == 0x70) { retval = "ASBASIC_STRING_STARTH"; }
+
+    else if (address == 0x71) { retval = "ASBASIC_PTR_9L"; }
+    else if (address == 0x72) { retval = "ASBASIC_PTR_9H"; }
+
+    else if (address == 0x73) { retval = "ASBASIC_HIMEM_L"; }
+    else if (address == 0x74) { retval = "ASBASIC_HIMEM_H"; }
+
+    else if (address == 0x75) { retval = "ASBASIC_CURR_LINENUM_L"; }
+    else if (address == 0x76) { retval = "ASBASIC_CURR_LINENUM_H"; }
+
+    else if (address == 0x77) { retval = "ASBASIC_INTR_LINENUM_L"; }
+    else if (address == 0x78) { retval = "ASBASIC_INTR_LINENUM_H"; }
+
+    else if (address == 0x79) { retval = "ASBASIC_NEXT_STATEMENT_L"; }
+    else if (address == 0x7A) { retval = "ASBASIC_NEXT_STATEMENT_H"; }
+
+    else if (address == 0x7B) { retval = "ASBASIC_DATA_LINENUM_L"; }
+    else if (address == 0x7C) { retval = "ASBASIC_DATA_LINENUM_H"; }
+
+    else if (address == 0x7D) { retval = "ASBASIC_DATA_ADDR_L"; }
+    else if (address == 0x7E) { retval = "ASBASIC_DATA_ADDR_H"; }
+
+    else if (address == 0x7F) { retval = "ASBASIC_INPUT_SRC_L"; }
+    else if (address == 0x80) { retval = "ASBASIC_INPUT_SRC_H"; }
+
+    else if (address == 0x81) { retval = "ASBASIC_LAST_VARNAME_L"; }
+    else if (address == 0x82) { retval = "ASBASIC_LAST_VARNAME_H"; }
+
+    else if (address == 0x83) { retval = "ASBASIC_LAST_VARVAL_L"; }
+    else if (address == 0x84) { retval = "ASBASIC_LAST_VARVAL_H"; }
+
+    else if (address == 0x85) { retval = "ASBASIC_GENPURPOSE10"; }
+    else if (address == 0x86) { retval = "ASBASIC_GENPURPOSE11"; }
+    else if (address == 0x87) { retval = "ASBASIC_GENPURPOSE12"; }
+    else if (address == 0x88) { retval = "ASBASIC_GENPURPOSE13"; }
+    else if (address == 0x89) { retval = "ASBASIC_GENPURPOSE14"; }
+    else if (address == 0x8A) { retval = "ASBASIC_GENPURPOSE15"; }
+    else if (address == 0x8B) { retval = "ASBASIC_GENPURPOSE16"; }
+    else if (address == 0x8C) { retval = "ASBASIC_GENPURPOSE17"; }
+    else if (address == 0x8D) { retval = "ASBASIC_GENPURPOSE18"; }
+    else if (address == 0x8E) { retval = "ASBASIC_GENPURPOSE19"; }
+    else if (address == 0x8F) { retval = "ASBASIC_GENPURPOSE20"; }
+    else if (address == 0x90) { retval = "ASBASIC_GENPURPOSE21"; }
+    else if (address == 0x91) { retval = "ASBASIC_GENPURPOSE22"; }
+    else if (address == 0x92) { retval = "ASBASIC_GENPURPOSE23"; }
+    else if (address == 0x93) { retval = "ASBASIC_GENPURPOSE24"; }
+    else if (address == 0x94) { retval = "ASBASIC_GENPURPOSE25"; }
+    else if (address == 0x95) { retval = "ASBASIC_GENPURPOSE26"; }
+    else if (address == 0x96) { retval = "ASBASIC_GENPURPOSE27"; }
+    else if (address == 0x97) { retval = "ASBASIC_GENPURPOSE28"; }
+    else if (address == 0x98) { retval = "ASBASIC_GENPURPOSE29"; }
+    else if (address == 0x99) { retval = "ASBASIC_GENPURPOSE30"; }
+    else if (address == 0x9A) { retval = "ASBASIC_GENPURPOSE31"; }
+    else if (address == 0x9B) { retval = "ASBASIC_GENPURPOSE32"; }
+    else if (address == 0x9C) { retval = "ASBASIC_GENPURPOSE33"; }
+
+    else if (address == 0x9D) { retval = "ASBASIC_FPACCUM_0"; }
+    else if (address == 0x9E) { retval = "ASBASIC_FPACCUM_1"; }
+    else if (address == 0x9F) { retval = "ASBASIC_FPACCUM_2"; }
+    else if (address == 0xA0) { retval = "ASBASIC_FPACCUM_3"; }
+    else if (address == 0xA1) { retval = "ASBASIC_FPACCUM_4"; }
+    else if (address == 0xA2) { retval = "ASBASIC_FPACCUM_5"; }
+    else if (address == 0xA3) { retval = "ASBASIC_FPACCUM_6"; }
+
+    else if (address == 0xA4) { retval = "ASBASIC_FP_GENUSE"; }
+
+    else if (address == 0xA5) { retval = "ASBASIC_SEC_FPACCUM_0"; }
+    else if (address == 0xA6) { retval = "ASBASIC_SEC_FPACCUM_1"; }
+    else if (address == 0xA7) { retval = "ASBASIC_SEC_FPACCUM_2"; }
+    else if (address == 0xA8) { retval = "ASBASIC_SEC_FPACCUM_3"; }
+    else if (address == 0xA9) { retval = "ASBASIC_SEC_FPACCUM_4"; }
+    else if (address == 0xAA) { retval = "ASBASIC_SEC_FPACCUM_5"; }
+    else if (address == 0xAB) { retval = "ASBASIC_SEC_FPACCUM_6"; }
+
+    else if (address == 0xAC) { retval = "ASBASIC_GENUSE_FLAGS0"; }
+    else if (address == 0xAD) { retval = "ASBASIC_GENUSE_FLAGS1"; }
+    else if (address == 0xAE) { retval = "ASBASIC_GENUSE_FLAGS2"; }
+
+    else if (address == 0xAF) { retval = "ASBASIC_PROGEND_L"; }
+    else if (address == 0xB0) { retval = "ASBASIC_PROGEND_H"; }
+
+    else if (address == 0xB1) { retval = "ASBASIC_CHRGET0"; }
+    else if (address == 0xB2) { retval = "ASBASIC_CHRGET1"; }
+    else if (address == 0xB3) { retval = "ASBASIC_CHRGET2"; }
+    else if (address == 0xB4) { retval = "ASBASIC_CHRGET3"; }
+    else if (address == 0xB5) { retval = "ASBASIC_CHRGET4"; }
+    else if (address == 0xB6) { retval = "ASBASIC_CHRGET5"; }
+    else if (address == 0xB7) { retval = "ASBASIC_CHRGET6"; }
+    else if (address == 0xB8) { retval = "ASBASIC_CHRGET7"; }
+    else if (address == 0xB9) { retval = "ASBASIC_CHRGET8"; }
+    else if (address == 0xBA) { retval = "ASBASIC_CHRGET9"; }
+    else if (address == 0xBB) { retval = "ASBASIC_CHRGET10"; }
+    else if (address == 0xBC) { retval = "ASBASIC_CHRGET11"; }
+    else if (address == 0xBD) { retval = "ASBASIC_CHRGET12"; }
+    else if (address == 0xBE) { retval = "ASBASIC_CHRGET13"; }
+    else if (address == 0xBF) { retval = "ASBASIC_CHRGET14"; }
+    else if (address == 0xC0) { retval = "ASBASIC_CHRGET15"; }
+    else if (address == 0xC1) { retval = "ASBASIC_CHRGET16"; }
+    else if (address == 0xC2) { retval = "ASBASIC_CHRGET17"; }
+    else if (address == 0xC3) { retval = "ASBASIC_CHRGET18"; }
+    else if (address == 0xC4) { retval = "ASBASIC_CHRGET19"; }
+    else if (address == 0xC5) { retval = "ASBASIC_CHRGET20"; }
+    else if (address == 0xC6) { retval = "ASBASIC_CHRGET21"; }
+    else if (address == 0xC7) { retval = "ASBASIC_CHRGET22"; }
+    else if (address == 0xC8) { retval = "ASBASIC_CHRGET23"; }
+
+    else if (address == 0xC9) { retval = "ASBASIC_RNDNUM0"; }
+    else if (address == 0xCA) { retval = "ASBASIC_RNDNUM1"; }
+    else if (address == 0xCB) { retval = "ASBASIC_RNDNUM2"; }
+    else if (address == 0xCC) { retval = "ASBASIC_RNDNUM3"; }
+    else if (address == 0xCD) { retval = "ASBASIC_RNDNUM4"; }
+
+    else if (address == 0xD0) { retval = "ASBASIC_HGRSCRTCH_0L"; }
+    else if (address == 0xD1) { retval = "ASBASIC_HGRSCRTCH_0H"; }
+    else if (address == 0xD2) { retval = "ASBASIC_HGRSCRTCH_1L"; }
+    else if (address == 0xD3) { retval = "ASBASIC_HGRSCRTCH_1H"; }
+    else if (address == 0xD4) { retval = "ASBASIC_HGRSCRTCH_2L"; }
+    else if (address == 0xD5) { retval = "ASBASIC_HGRSCRTCH_2H"; }
+
+
+    else if (address == 0xD6) { retval = "DOS_ASBASIC_PROG_PROT_FLAG"; }
+
+    else if (address == 0xD8) { retval = "ASBASIC_ONERR_0L"; }
+    else if (address == 0xD9) { retval = "ASBASIC_ONERR_0H"; }
+    else if (address == 0xDA) { retval = "ASBASIC_ONERR_1L"; }
+    else if (address == 0xDB) { retval = "ASBASIC_ONERR_1H"; }
+    else if (address == 0xDC) { retval = "ASBASIC_ONERR_2L"; }
+    else if (address == 0xDD) { retval = "ASBASIC_ONERR_2H"; }
+    else if (address == 0xDE) { retval = "ASBASIC_ONERR_3L"; }
+    else if (address == 0xDF) { retval = "ASBASIC_ONERR_3H"; }
+
+    else if (address == 0xE0) { retval = "ASBASIC_HGR_XCOORD_L"; }
+    else if (address == 0xE1) { retval = "ASBASIC_HGR_XCOORD_H"; }
+    else if (address == 0xE2) { retval = "ASBASIC_HGR_YCOORD"; }
+
+    else if (address == 0xE4) { retval = "ASBASIC_HGR_COLORBYTE"; }
+
+    else if (address == 0xE5) { retval = "ASBASIC_HGR_GENUSE0"; }
+    else if (address == 0xE6) { retval = "ASBASIC_HGR_GENUSE1"; }
+    else if (address == 0xE7) { retval = "ASBASIC_HGR_GENUSE2"; }
+
+    else if (address == 0xE8) { retval = "ASBASIC_SHAPETBL_L"; }
+    else if (address == 0xE9) { retval = "ASBASIC_SHAPETBL_H"; }
+
+    else if (address == 0xEA) { retval = "ASBASIC_HGR_COLLISION_CTR"; }
+
+    else if (address == 0xF0) { retval = "ASBASIC_GENUSE_FLAGS3"; }
+    else if (address == 0xF1) { retval = "ASBASIC_GENUSE_FLAGS4"; }
+    else if (address == 0xF2) { retval = "ASBASIC_GENUSE_FLAGS5"; }
+    else if (address == 0xF3) { retval = "ASBASIC_GENUSE_FLAGS6"; }
+
+    else if (address == 0xF4) { retval = "ASBASIC_ONERR4"; }
+    else if (address == 0xF5) { retval = "ASBASIC_ONERR5"; }
+    else if (address == 0xF6) { retval = "ASBASIC_ONERR6"; }
+    else if (address == 0xF7) { retval = "ASBASIC_ONERR7"; }
+    else if (address == 0xF8) { retval = "ASBASIC_ONERR8"; }
+
+
+    else if (address == 0x03d0) { retval = "DOS_WARMSTART"; }
     else if (address == 0x03d3) { retval = "DOS_COLDSTART"; }
     else if (address == 0x03d6) { retval = "DOS_FILE_MANAGER"; }
     else if (address == 0x03d9) { retval = "DOS_RWTS"; }

@@ -145,13 +145,14 @@ public:
     CommandType getCommandType() const { return m_command_type; }
 
     QString getRawPrintableString() const;
+    QString getHtmlPrintableString() const;
 
     static QString getStringForToken(quint8 token) {
         if (m_tokens.size() == 0) { initializeTokenTable(); }
         return m_tokens[token];
     }
 
-    QString getHtmlPrintableString();
+
 private:
 
     static QMap<quint16, QString> m_tokens;

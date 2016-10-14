@@ -8,6 +8,8 @@
 CharacterWidget::CharacterWidget(QWidget *parent, CharSetCharacter ch, int scale)
     : QWidget(parent), m_character(ch), m_scale(scale)
 {
+    m_dobitshift = true;
+    m_showgrid = true;
     resize(15*m_scale, 16*m_scale);
     setMaximumSize(this->size());
     setMinimumSize(this->size());

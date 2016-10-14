@@ -81,12 +81,12 @@ QStringList RelocatableFile::decodeRelocatableDict()
         else if (b4rt.first == ByteHi) { typestr = "Hi Byte"; }
         else { typestr = "Lo Byte"; }
         quint16 fo = item.getFieldOffset();
-        qDebug() << "  Item #" << idx
-                 << "Field Offset: " << uint16ToHex(fo)
-                 << "FieldSize: " << ((item.getFieldSize()==RFS2Byte)?"2-Byte":"1-Byte")
-                 << typestr << uint8ToHex(b4rt.second)
-                 << ((item.isNotEndOfRLD())?"NotEndOfRLD":"EndOfRLD")
-                 << "    " << ((item.isExtern())?"Extern":"Not Extern");
+//        qDebug() << "  Item #" << idx
+//                 << "Field Offset: " << uint16ToHex(fo)
+//                 << "FieldSize: " << ((item.getFieldSize()==RFS2Byte)?"2-Byte":"1-Byte")
+//                 << typestr << uint8ToHex(b4rt.second)
+//                 << ((item.isNotEndOfRLD())?"NotEndOfRLD":"EndOfRLD")
+//                 << "    " << ((item.isExtern())?"Extern":"Not Extern");
 
         retval.append(QString("Item %1, Offset %2, @ %3, %4 Field, %5")
                 .arg(idx++)

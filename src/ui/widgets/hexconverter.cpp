@@ -8,10 +8,10 @@ HexConverter::HexConverter(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->uint8LineEdit->setValidator(new QIntValidator(0,255));
-    ui->int8LineEdit->setValidator(new QIntValidator(-128,127));
-    ui->uint16LineEdit->setValidator(new QIntValidator(0,65535));
-    ui->int16LineEdit->setValidator(new QIntValidator(-32768,32767));
+    ui->uint8LineEdit->setValidator(new QIntValidator(0,255,this));
+    ui->int8LineEdit->setValidator(new QIntValidator(-128,127,this));
+    ui->uint16LineEdit->setValidator(new QIntValidator(0,65535,this));
+    ui->int16LineEdit->setValidator(new QIntValidator(-32768,32767,this));
 
     connect(ui->hexLineEdit, SIGNAL(textEdited(QString)), SLOT(calcFromNewHex(QString)));
     connect(ui->uint8LineEdit, SIGNAL(textEdited(QString)), SLOT(calcFromNewUint8(QString)));

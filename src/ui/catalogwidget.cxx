@@ -101,7 +101,7 @@ void CatalogWidget::processNewlyLoadedDisk(QString diskfilename, DiskFile *disk)
     if (m_disk == disk) {
         QUrl url = QUrl::fromLocalFile(diskfilename);
         QString shortfilename = url.fileName();
-        QFontMetrics *fm = new QFontMetrics(ui->catalog_list->font());
+        QFontMetrics fm(ui->catalog_list->font());
         QRect maxrect;
         ui->volume_label->setText(shortfilename);
         int idx = 0;
@@ -116,7 +116,7 @@ void CatalogWidget::processNewlyLoadedDisk(QString diskfilename, DiskFile *disk)
             item->setToolTip(createToolTip(fde));
             item->setData(0x0100,idx);
             ui->catalog_list->addItem(item);
-            QRect rect = fm->boundingRect(text);
+            QRect rect = fm.boundingRect(text);
             if (rect.width() > maxrect.width()) {
                 maxrect = rect;
             }

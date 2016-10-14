@@ -88,7 +88,7 @@ void ApplesoftToken::setValue(QVariant value)
     m_payload = value;
 }
 
-QString ApplesoftToken::getHtmlPrintableString()
+QString ApplesoftToken::getHtmlPrintableString() const
 {
     QString baseval = getRawPrintableString().toHtmlEscaped();
 

@@ -56,6 +56,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    if (m_disk) {
+        unloadDiskFile();
+    }
     delete ui;
 }
 
@@ -138,7 +141,6 @@ void MainWindow::openInApplesoftFileViewer(ApplesoftFile *file) {
     afv->show();
 }
 
-
 void MainWindow::handleDiskItemSelectedHexViewOpen(DiskFile *disk, FileDescriptiveEntry fde) {
     GenericFile *file = disk->getFile(fde);
     file->setFilename(AppleString(fde.filename).printable().trimmed());
@@ -147,8 +149,6 @@ void MainWindow::handleDiskItemSelectedHexViewOpen(DiskFile *disk, FileDescripti
     hdv->setFile(file,file->address());
     hdv->show();
 }
-
-
 
 void MainWindow::handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescriptiveEntry fde)
 {
@@ -194,9 +194,9 @@ void MainWindow::handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescripti
     else if (dynamic_cast<RelocatableFile *>(file))
     {
         RelocatableFile *rf = dynamic_cast<RelocatableFile *>(file);
-        HexDumpViewer *hdv = new HexDumpViewer(0);
-        hdv->setFile(file,file->address());
-        hdv->show();
+//        HexDumpViewer *hdv = new HexDumpViewer(0);
+//        hdv->setFile(file,file->address());
+//        hdv->show();
         DisassemblerViewer *hvwma = new DisassemblerViewer(0);
         hvwma->show();
         hvwma->setFile(rf);
