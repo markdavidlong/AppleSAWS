@@ -19,9 +19,9 @@ CatalogWidget::CatalogWidget(QWidget *parent) :
     connect(ui->catalog_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
             SLOT(itemClicked(QListWidgetItem*)));
 
-    ui->catalog_list->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(ui->catalog_list, SIGNAL(customContextMenuRequested(const QPoint &)),
-            SLOT(showContextMenuForWidget(const QPoint &)));
+//    ui->catalog_list->setContextMenuPolicy(Qt::CustomContextMenu);
+//    connect(ui->catalog_list, SIGNAL(customContextMenuRequested(const QPoint &)),
+//            SLOT(showContextMenuForWidget(const QPoint &)));
 }
 
 void CatalogWidget::showContextMenuForWidget(const QPoint &point) {
@@ -32,18 +32,6 @@ void CatalogWidget::showContextMenuForWidget(const QPoint &point) {
     connect(viewAction, &QAction::triggered,
             [=](){ this->itemClicked(selectedItem); viewAction->deleteLater();});
     contextMenu.addAction(viewAction);
-
-    QAction *hexViewAction = new QAction("Hex View",this);
-    connect(hexViewAction, &QAction::triggered,
-            [=](){ this->toggleHexView(selectedItem); hexViewAction->deleteLater();});
-    contextMenu.addAction(hexViewAction);
-
-
-
-//    QAction *viewWithAction = new QAction("View With...",this);
-//    connect(viewWithAction, &QAction::triggered,
-//            [=](){ this->itemClicked(selectedItem); viewWithAction->deleteLater();});
-//    contextMenu.addAction(viewWithAction);
 
     contextMenu.exec(mapToGlobal(point));
 }
@@ -144,14 +132,6 @@ void CatalogWidget::itemClicked(QListWidgetItem *item)
     FileDescriptiveEntry fde = m_disk->getAllFDEs()[idx];
     qDebug() << "Default File " << AppleString(fde.filename).printable().trimmed();
     emit openWithDefaultViewer(m_disk,fde);
-}
-
-void CatalogWidget::toggleHexView(QListWidgetItem *item)
-{
-    int idx = item->data(0x0100).toInt();
-    FileDescriptiveEntry fde = m_disk->getAllFDEs()[idx];
-    qDebug() << "Hex File " << AppleString(fde.filename).printable().trimmed();
-    emit openWithHexViewer(m_disk,fde);
 }
 
 

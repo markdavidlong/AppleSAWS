@@ -29,13 +29,12 @@ public slots:
 signals:
     void newFileSelected(FileDescriptiveEntry *entry);
     void openWithDefaultViewer(DiskFile *disk, FileDescriptiveEntry fde);
-    void openWithHexViewer(DiskFile *disk, FileDescriptiveEntry fde);
 
 protected:
     QString createToolTip(FileDescriptiveEntry &fde);
+
 private slots:
     void itemClicked(QListWidgetItem *item);
-    void toggleHexView(QListWidgetItem *item);
 
 private:
 
