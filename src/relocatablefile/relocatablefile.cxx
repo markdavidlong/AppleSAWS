@@ -69,3 +69,32 @@ void RelocatableFile::dump()
 
 
 }
+
+QStringList RelocatableFile::decodeRelocatableDict()
+{
+    QStringList retval;
+    int idx = 0;
+    foreach (RelocatableDictItem item, m_relocatable_dict) {
+        Byte4ReturnType b4rt = item.getByte4();
+        QString typestr;
+        if (b4rt.first == ESDSymbol) { typestr = "ESDSymbol"; }
+        else if (b4rt.first == ByteHi) { typestr = "Hi Byte"; }
+        else { typestr = "Lo Byte"; }
+        quint16 fo = item.getFieldOffset();
+        qDebug() << "  Item #" << idx
+                 << "Field Offset: " << uint16ToHex(fo)
+                 << "FieldSize: " << ((item.getFieldSize()==RFS2Byte)?"2-Byte":"1-Byte")
+                 << typestr << uint8ToHex(b4rt.second)
+                 << ((item.isNotEndOfRLD())?"NotEndOfRLD":"EndOfRLD")
+                 << "    " << ((item.isExtern())?"Extern":"Not Extern");
+
+        retval.append(QString("Item %1, Offset %2, @ %3, %4 Field, %5")
+                .arg(idx++)
+                .arg(uint16ToHex(fo))
+                .arg(uint16ToHex(fo+address()+6))
+                .arg((item.getFieldSize()==RFS2Byte)?"2-Byte":"1-Byte")
+                .arg((item.isExtern())?"Extern":"Not Extern"));
+    }
+
+    return retval;
+}

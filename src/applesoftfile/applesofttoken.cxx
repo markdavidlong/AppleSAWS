@@ -27,7 +27,7 @@ void ApplesoftToken::setTokenId(quint16 id)
     m_token_type = UNKNOWN_TOKEN;
     m_command_type = NONE;
 
-    if (id <= 0xff) {
+    if (id <= 0x7f) {
         setValue(id);
         m_token_type = ASCIICHAR_TOKEN;
         m_command_type = NONE;
@@ -81,7 +81,6 @@ void ApplesoftToken::setTokenId(quint16 id)
         m_token_type = STRING_ARY_VARIABLE_TOKEN;
         m_command_type = NONE;
     }
-
 }
 
 void ApplesoftToken::setValue(QVariant value)
@@ -107,7 +106,6 @@ QString ApplesoftToken::getHtmlPrintableString()
         return QString("<font color=\"blue\">%1</font>").arg(baseval);
 
     return QString("<font color=\"orange\">%1</font>").arg(baseval);
-
 }
 
 QString ApplesoftToken::getRawPrintableString() const

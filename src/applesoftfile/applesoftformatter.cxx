@@ -20,6 +20,7 @@ QString ApplesoftFormatter::formatText()
     }
 
     QString retval;
+    m_flowTargets.clear();
 
     foreach (ApplesoftLine line, m_file->getLines()) {
         QString linestring = QString("%1 ").arg(line.linenum,5,10,QChar(' '));
@@ -33,6 +34,7 @@ QString ApplesoftFormatter::formatText()
         while (tokenIt.hasNext())
         {
             ApplesoftToken token = tokenIt.next();
+            bool isFlowTarget = false;
 
             QString tokenstr = token.getRawPrintableString();
 
@@ -45,17 +47,20 @@ QString ApplesoftFormatter::formatText()
                 firstToken = false;
             }
 
+            //TODO: Move this to the parser...
+            if (previousToken.getTokenId() == ApplesoftToken::ASGoto  ||
+                    previousToken.getTokenId() == ApplesoftToken::ASGosub ||
+                    previousToken.getTokenId() == ApplesoftToken::ASThen)
+            {
+                isFlowTarget = true;
+                m_flowTargets.append(line.linenum);
+            }
+
             if (m_format_options.testFlag(ShowIntsAsHex)) {
                 if (token.getTokenId() == ApplesoftToken::IntegerTokenVal)
                 {
-                    bool okToConvert = true;
-                    if (previousToken.getTokenId() == ApplesoftToken::ASGoto  ||
-                            previousToken.getTokenId() == ApplesoftToken::ASGosub ||
-                            previousToken.getTokenId() == ApplesoftToken::ASThen)
-                    {
-                        qDebug() << "previous token: " << uint16ToHex(tokenIt.peekPrevious().getTokenId());
-                        okToConvert = false;
-                    }
+                    bool okToConvert = !isFlowTarget;
+
 
                     if (okToConvert)
                     {
@@ -77,7 +82,6 @@ QString ApplesoftFormatter::formatText()
                     }
                 }
             }
-
 
             if (m_format_options.testFlag(BreakAfterReturn)) {
                 if (token.getTokenId() == ApplesoftToken::ASReturn)
@@ -128,7 +132,7 @@ QString ApplesoftFormatter::formatText()
 
 #endif
 
-            //         if (m_format_options.testFlag(ShowCtrlChars))
+            if (m_format_options.testFlag(ShowCtrlChars))
             {
                 tokenstr.replace(QChar(0x7f),QChar(0x2401));
 
@@ -150,6 +154,5 @@ QString ApplesoftFormatter::formatText()
         }
 
     }
-
     return retval;
 }

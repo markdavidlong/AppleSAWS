@@ -33,6 +33,7 @@ public:
 
     QString formatText();
 
+
 signals:
     void newFile(ApplesoftFile *file);
 
@@ -40,6 +41,7 @@ public slots:
 
 private:
     FormatOptions m_format_options;
+    QList<quint16> m_flowTargets;
 
     ApplesoftFile *m_file;
 

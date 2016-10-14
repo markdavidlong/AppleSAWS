@@ -61,12 +61,13 @@ void DisassemblerViewer::setFile(RelocatableFile *file) {
     QString title = QString("Disassembler Viewer: %1").arg(m_file->filename());
     setWindowTitle(title);
 
-    quint16 address = file->address();
+    quint16 address = file->address() + 6 ; // Handle offset for relocatable metadata
+
     Memory mem;
     mem.addFile(file->getBinaryCodeImage(), address);
     Disassembler dis(mem.values());
 
-    QList<DisassembledItem> lines = dis.disassemble(file->address(), file->address()+file->codeImageLength());
+    QList<DisassembledItem> lines = dis.disassemble(address, address+file->codeImageLength()-1);
 
     QStringList formattedLines;
 
@@ -86,7 +87,9 @@ void DisassemblerViewer::setFile(RelocatableFile *file) {
     }
 
     QByteArray joinedlines = qPrintable(formattedLines.join("\n"));
-    setData(joinedlines);
+    QStringList rd = file->decodeRelocatableDict();
+    QByteArray rdlines = qPrintable(rd.join("\n"));
+    setData(joinedlines + '\n' + rdlines);
 }
 
 
