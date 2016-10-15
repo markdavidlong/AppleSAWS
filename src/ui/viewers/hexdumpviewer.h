@@ -24,7 +24,7 @@ public:
     void setFile(GenericFile *file) { setFile(file,0); }
     void setFile(GenericFile *file, quint16 offset);
 
-
+    virtual bool optionsMenuItems(QMenu *) {  return false; }
 
 public slots:
     void showHexAndAsciiValues();

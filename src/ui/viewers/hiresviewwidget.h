@@ -51,6 +51,8 @@ public:
     static QBitArray byteToBits(quint8 byte);
     void contextMenuEvent(QContextMenuEvent *);
 
+    virtual bool optionsMenuItems(QMenu *) {  return false; }
+
 signals:
 
 public slots:

@@ -25,6 +25,7 @@ public:
 
 public slots:
     void showViewer(QString descriptor);
+
 protected:
     void closeEvent(QCloseEvent *event);
     void addViewer(QString descriptor, FileViewerInterface *viewer);
@@ -37,6 +38,7 @@ private:
 
     QMap<QString,FileViewerInterface *> m_viewers;
     GenericFile *m_file;
+    QMenu *m_optionMenu;
 
 };
 

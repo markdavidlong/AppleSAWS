@@ -26,6 +26,8 @@ public:
     void setData(QByteArray data);
     void setText(QString text);
 
+    virtual bool optionsMenuItems(QMenu *) {  return false; }
+
 protected:
     QString makeTextStr(QByteArray data);
     QString makeHexStr(QByteArray data);

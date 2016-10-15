@@ -35,8 +35,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->action_Unload_Disk_Image, SIGNAL(triggered()), SLOT(unloadDiskFile()));
     connect(ui->catalogWidget,SIGNAL(openWithDefaultViewer(DiskFile*,FileDescriptiveEntry)),
             SLOT(handleDiskItemSelectedDefaultOpen(DiskFile*,FileDescriptiveEntry)));
-    connect(ui->catalogWidget,SIGNAL(openWithHexViewer(DiskFile*,FileDescriptiveEntry)),
-            SLOT(handleDiskItemSelectedHexViewOpen(DiskFile*,FileDescriptiveEntry)));
 
 
     connect(this, SIGNAL(diskFileLoading(QString, DiskFile*)),

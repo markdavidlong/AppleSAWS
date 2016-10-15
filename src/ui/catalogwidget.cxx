@@ -18,22 +18,6 @@ CatalogWidget::CatalogWidget(QWidget *parent) :
 
     connect(ui->catalog_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
             SLOT(itemClicked(QListWidgetItem*)));
-
-//    ui->catalog_list->setContextMenuPolicy(Qt::CustomContextMenu);
-//    connect(ui->catalog_list, SIGNAL(customContextMenuRequested(const QPoint &)),
-//            SLOT(showContextMenuForWidget(const QPoint &)));
-}
-
-void CatalogWidget::showContextMenuForWidget(const QPoint &point) {
-    QListWidgetItem *selectedItem = ui->catalog_list->itemAt(point);
-
-    QMenu contextMenu("Context menu",this);
-    QAction *viewAction = new QAction("View",this);
-    connect(viewAction, &QAction::triggered,
-            [=](){ this->itemClicked(selectedItem); viewAction->deleteLater();});
-    contextMenu.addAction(viewAction);
-
-    contextMenu.exec(mapToGlobal(point));
 }
 
 CatalogWidget::~CatalogWidget()
@@ -49,7 +33,7 @@ void CatalogWidget::prepForNewDisk(QString filename, DiskFile *disk)
 
 QString CatalogWidget::createToolTip(FileDescriptiveEntry &fde) {
     QString retval;
-qDebug() << AppleString(fde.filename).printable().trimmed();
+//qDebug() << AppleString(fde.filename).printable().trimmed();
     retval += AppleString(fde.filename).printable().trimmed() + "\n";
     retval += QString("Type: %1\n").arg(fde.fileType());
     retval += QString("Sectors: %1 (%2 bytes)\n").arg(fde.lengthInSectors).arg(fde.lengthInSectors*256);
@@ -111,7 +95,6 @@ void CatalogWidget::processNewlyLoadedDisk(QString diskfilename, DiskFile *disk)
             idx++;
         }
         ui->catalog_list->resize(maxrect.width(),ui->catalog_list->size().height());
-
     }
 }
 
@@ -124,15 +107,10 @@ void CatalogWidget::unloadDisk(DiskFile *disk)
     ui->volume_label->clear();
 }
 
-
-
 void CatalogWidget::itemClicked(QListWidgetItem *item)
 {
     int idx = item->data(0x0100).toInt();
     FileDescriptiveEntry fde = m_disk->getAllFDEs()[idx];
-    qDebug() << "Default File " << AppleString(fde.filename).printable().trimmed();
+ //   qDebug() << "Default File " << AppleString(fde.filename).printable().trimmed();
     emit openWithDefaultViewer(m_disk,fde);
 }
-
-
-

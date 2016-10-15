@@ -26,6 +26,7 @@ public:
     void setText(QString text);
 
     QString getPotentialLabel(quint16 address);
+    virtual bool optionsMenuItems(QMenu *) {  return false; }
 
 public slots:
     void setFile(GenericFile *file);

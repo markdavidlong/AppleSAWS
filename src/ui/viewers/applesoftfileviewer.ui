@@ -21,7 +21,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,1,0,0,0">
+    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,1">
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
@@ -47,27 +47,6 @@
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QCheckBox" name="indentCode">
-       <property name="text">
-        <string>Indent Code</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="intHexCB">
-       <property name="text">
-        <string>Ints as Hex</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="varBrowserButton">
-       <property name="text">
-        <string>Var Broswer</string>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
    <item row="1" column="0">
@@ -88,6 +67,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>FileViewerInterface</class>
+   <extends>QWidget</extends>
+   <header>viewerbase.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

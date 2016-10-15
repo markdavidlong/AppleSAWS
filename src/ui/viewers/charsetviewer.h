@@ -16,6 +16,8 @@ public:
     void setFile(GenericFile *file);
     void setFile(BinaryFile *file);
 
+    virtual bool optionsMenuItems(QMenu *) {  return false; }
+
 signals:
 
 private:

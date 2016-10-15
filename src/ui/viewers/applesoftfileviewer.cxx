@@ -25,19 +25,6 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
     ui->textArea->setUndoRedoEnabled(false);
     ui->textArea->setUndoRedoEnabled(true);
 
-    setIntsAsHex(settings.value("ASViewer.intsAsHex",false).toBool());
-    ui->intHexCB->setChecked(settings.value("ASViewer.intsAsHex",false).toBool());
-    setIndentCode(settings.value("ASViewer.indentCode",false).toBool());
-    ui->indentCode->setChecked(settings.value("ASViewer.indentCode",false).toBool());
-
-    connect(ui->intHexCB, SIGNAL(toggled(bool)), SLOT(setIntsAsHex(bool)));
-    connect(ui->intHexCB, SIGNAL(toggled(bool)), ui->findText,SLOT(clear()));
-
-    connect(ui->indentCode, SIGNAL(toggled(bool)), SLOT(setIndentCode(bool)));
-    connect(ui->indentCode, SIGNAL(toggled(bool)), ui->findText,SLOT(clear()));
-
-    connect(ui->varBrowserButton, SIGNAL(clicked(bool)), SLOT(launchVarBrowser()));
-
 }
 
 ApplesoftFileViewer::~ApplesoftFileViewer()
@@ -45,9 +32,43 @@ ApplesoftFileViewer::~ApplesoftFileViewer()
     delete ui;
 }
 
-QMenu *ApplesoftFileViewer::optionsMenuItems() const
+bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
 {
-    return Q_NULLPTR;
+    qDebug() << "makeMenuOptions()";
+
+
+    QSettings settings;
+
+    QAction *action = new QAction("Show &Ints as Hex",menu);
+    action->setCheckable(true);
+    action->setChecked(settings.value("ASViewer.intsAsHex",false).toBool());
+    setIntsAsHex(settings.value("ASViewer.intsAsHex",false).toBool());
+    connect(action, SIGNAL(toggled(bool)), ui->findText,SLOT(clear()));
+    connect(action, SIGNAL(toggled(bool)),SLOT(setIntsAsHex(bool)));
+    menu->addAction(action);
+
+    action = new QAction("&Reindent code",menu);
+    action->setCheckable(true);
+    action->setChecked(settings.value("ASViewer.indentCode",false).toBool());
+    setIndentCode(settings.value("ASViewer.indentCode",false).toBool());
+    connect(action, SIGNAL(toggled(bool)), ui->findText,SLOT(clear()));
+    connect(action, SIGNAL(toggled(bool)),SLOT(setIndentCode(bool)));
+    menu->addAction(action);
+
+    menu->addSeparator();
+
+    action = new QAction("Show &Variable Explorer...",menu);
+    action->setCheckable(false);
+    connect(action, SIGNAL(triggered(bool)), SLOT(launchVarBrowser()));
+    menu->addAction(action);
+
+    return true;
+}
+
+bool ApplesoftFileViewer::optionsMenuItems(QMenu *menu)
+{
+    qDebug() << "AFV::optionMenuItems()";
+    return makeMenuOptions(menu);
 }
 
 void ApplesoftFileViewer::setIndentCode(bool enabled)

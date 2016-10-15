@@ -25,7 +25,6 @@ public slots:
     void processNewlyLoadedDisk(QString filename, DiskFile *disk);
     void unloadDisk(DiskFile *disk);
 
-    void showContextMenuForWidget(const QPoint &);
 signals:
     void newFileSelected(FileDescriptiveEntry *entry);
     void openWithDefaultViewer(DiskFile *disk, FileDescriptiveEntry fde);

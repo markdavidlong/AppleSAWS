@@ -14,7 +14,7 @@ class FileViewerInterface : public QWidget
 public:
     FileViewerInterface(QWidget *parent = Q_NULLPTR) : QWidget(parent) { }
 
-    virtual QMenu *optionsMenuItems() const  { return Q_NULLPTR; }
+    virtual bool optionsMenuItems(QMenu *) = 0;
 
     bool canPrint() const { return false; }
 

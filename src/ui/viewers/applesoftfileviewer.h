@@ -2,6 +2,9 @@
 #define APPLESOFTFILEVIEWER_H
 
 #include <QWidget>
+#include <QMenu>
+#include <QAction>
+
 #include "applesoftfile.h"
 #include "applesoftformatter.h"
 #include "viewerbase.h"
@@ -20,7 +23,7 @@ public:
 
    // void setFormatter(ApplesoftFormatter *formatter);
 
-    virtual QMenu* optionsMenuItems() const;
+    virtual bool optionsMenuItems(QMenu *menu);
 
 public slots:
      void setFile(GenericFile *file);
@@ -38,6 +41,8 @@ protected slots:
     void reformatText();
 
 private:
+    bool makeMenuOptions(QMenu *menu);
+
     ApplesoftFile *m_file;
     ApplesoftFormatter *m_formatter;
     bool m_isFirstFind;

@@ -26,6 +26,8 @@ public:
 
     void setFile(BinaryFile *file);
 
+    virtual bool optionsMenuItems(QMenu *) {  return false; }
+
 private:
     QPixmap m_maze;
     BinaryFile *m_file;

@@ -5,6 +5,7 @@
 #include <QToolBar>
 #include <QComboBox>
 #include <QLabel>
+#include <QDebug>
 
 #include "applesoftfileviewer.h"
 #include "hexdumpviewer.h"
@@ -33,7 +34,10 @@ ViewerBase::ViewerBase(QWidget *parent) :
     m_viewercombo = new QComboBox(m_toolbar);
     m_toolbar->addWidget(m_viewercombo);
 
-    connect(m_viewercombo, SIGNAL(currentIndexChanged(QString)), SLOT(showViewer(QString)));
+    m_optionMenu = new QMenu("&Viewer");
+    menuBar()->addMenu(m_optionMenu);
+    m_optionMenu->setEnabled(false);
+
 }
 
 ViewerBase::~ViewerBase()
@@ -52,14 +56,12 @@ void ViewerBase::setFile(GenericFile *file)
     descriptor = ("Hex Dump Viewer");
     addViewer(descriptor,hdv);
 
-
     if (dynamic_cast<ApplesoftFile*>(file))
     {
         ApplesoftFileViewer *afv = new ApplesoftFileViewer(0);
         afv->setFile(file);
         descriptor="Applesoft File Viewer";
         addViewer(descriptor,afv);
-        m_stack->setCurrentWidget(afv);
         showViewer(descriptor);
     }
     else if (dynamic_cast<BinaryFile*>(file))
@@ -96,6 +98,7 @@ void ViewerBase::setFile(GenericFile *file)
         thdv->setFile(bf);
         descriptor = QString("Text/Hex Dump Viewer");
         addViewer(descriptor,thdv);
+
         showViewer(descriptor);
     }
     else if (dynamic_cast<RelocatableFile*>(file))
@@ -104,11 +107,15 @@ void ViewerBase::setFile(GenericFile *file)
         dv->setFile(file);
         descriptor = "Relocatable Disassembler Viewer";
         addViewer(descriptor,dv);
+        showViewer(descriptor);
+
     }
     else
     {
         showViewer(descriptor);
     }
+    connect(m_viewercombo, SIGNAL(currentIndexChanged(QString)), SLOT(showViewer(QString)));
+
 }
 
 void ViewerBase::closeEvent(QCloseEvent *event)
@@ -120,16 +127,38 @@ void ViewerBase::addViewer(QString descriptor, FileViewerInterface *viewer)
 {
     if (!m_viewers.contains(descriptor))
     {
+        m_stack->addWidget(viewer);
         m_viewers[descriptor] = viewer;
         m_viewercombo->addItem(descriptor);
-        m_stack->addWidget(viewer);
     }
 }
 
 void ViewerBase::showViewer(QString descriptor)
 {
-    m_viewercombo->setCurrentText(descriptor);
+    qDebug() << "showViewer";
     FileViewerInterface *fvi = m_viewers[descriptor];
-    m_stack->setCurrentWidget(fvi);
-    setWindowTitle(fvi->windowTitle());
+    if (fvi)
+    {
+        m_optionMenu->clear();
+        m_viewercombo->setCurrentText(descriptor);
+        m_stack->setCurrentWidget(fvi);
+        setWindowTitle(fvi->windowTitle());
+
+        if (m_optionMenu)
+        {
+            if (!fvi->optionsMenuItems(m_optionMenu))
+            {
+                m_optionMenu->setEnabled(false);
+            }
+            else
+            {
+                m_optionMenu->setEnabled(true);
+            }
+        }
+    }
+    else
+    {
+        qDebug() << "Could not find widget for descriptor " << descriptor;
+    }
+
 }
