@@ -3,6 +3,9 @@
 
 #include <QDebug>
 #include <QScrollBar>
+#include <QSettings>
+#include <QAction>
+#include <QMenu>
 
 HexDumpViewer::HexDumpViewer(QWidget *parent) :
     FileViewerInterface(parent),
@@ -13,12 +16,33 @@ HexDumpViewer::HexDumpViewer(QWidget *parent) :
 
     QString title = QString("Hex Viewer");
     setWindowTitle(title);
+
+    QSettings settings;
+    toggleWordWrap(settings.value("HexViewer.WordWrap",true).toBool());
 }
 
 HexDumpViewer::~HexDumpViewer()
 {
     delete ui;
 }
+
+void HexDumpViewer::toggleWordWrap(bool enabled)
+{
+    if (enabled)
+    {
+        ui->textArea->setWordWrapMode(QTextOption::WordWrap);
+    }
+    else
+    {
+        ui->textArea->setWordWrapMode(QTextOption::NoWrap);
+    }
+    QSettings settings;
+    settings.setValue("HexViewer.WordWrap",enabled);
+}
+
+
+
+
 
 void HexDumpViewer::showHexAndAsciiValues()
 {
@@ -105,6 +129,19 @@ void HexDumpViewer::setFile(GenericFile *file, quint16 offset)
 
     showHexAndAsciiValues();
 
+}
+
+bool HexDumpViewer::optionsMenuItems(QMenu *menu)
+{
+    QSettings settings;
+
+    QAction *action = new QAction("&Word Wrap");
+    action->setCheckable(true);
+    action->setChecked(settings.value("HexViewer.WordWrap",true).toBool());
+    connect(action, SIGNAL(toggled(bool)), SLOT(toggleWordWrap(bool)));
+    menu->addAction(action);
+
+    return true;
 }
 
 void HexDumpViewer::setData(QByteArray data)

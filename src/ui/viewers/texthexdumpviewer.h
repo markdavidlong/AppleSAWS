@@ -26,8 +26,10 @@ public:
     void setData(QByteArray data);
     void setText(QString text);
 
-    virtual bool optionsMenuItems(QMenu *) {  return false; }
+    virtual bool optionsMenuItems(QMenu *menu);
 
+public slots:
+    void toggleWordWrap(bool enabled);
 protected:
     QString makeTextStr(QByteArray data);
     QString makeHexStr(QByteArray data);

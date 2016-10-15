@@ -24,10 +24,11 @@ public:
     void setFile(GenericFile *file) { setFile(file,0); }
     void setFile(GenericFile *file, quint16 offset);
 
-    virtual bool optionsMenuItems(QMenu *) {  return false; }
+    virtual bool optionsMenuItems(QMenu *menu);
 
 public slots:
     void showHexAndAsciiValues();
+    void toggleWordWrap(bool enabled);
 
 private:
     void setText(QString text);

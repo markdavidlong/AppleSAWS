@@ -26,10 +26,11 @@ public:
     void setText(QString text);
 
     QString getPotentialLabel(quint16 address);
-    virtual bool optionsMenuItems(QMenu *) {  return false; }
+    virtual bool optionsMenuItems(QMenu *);
 
 public slots:
     void setFile(GenericFile *file);
+    void toggleWordWrap(bool enabled);
 
 private:
     Ui::DisassemblerViewer *ui;

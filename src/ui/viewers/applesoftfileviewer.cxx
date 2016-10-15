@@ -18,13 +18,13 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
     setWindowTitle(title);
 
     m_formatter = new ApplesoftFormatter(this);
-    //m_formatter->setFlags(ApplesoftFormatter::PrettyFlags | ApplesoftFormatter::BreakAfterReturn);
     m_formatter->setFlags(ApplesoftFormatter::PrettyFlags);
     connect(ui->findButton,SIGNAL(clicked(bool)), SLOT(findText()));
     m_isFirstFind = true;
     ui->textArea->setUndoRedoEnabled(false);
     ui->textArea->setUndoRedoEnabled(true);
-    ui->textArea->setWordWrapMode(QTextOption::NoWrap);
+
+    toggleWordWrap(settings.value("ASViewer.WordWrap",true).toBool());
 }
 
 ApplesoftFileViewer::~ApplesoftFileViewer()

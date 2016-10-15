@@ -4,6 +4,9 @@
 #include "memory.h"
 #include "relocatablefile.h"
 
+#include <QSettings>
+#include <QMenu>
+#include <QAction>
 #include <QDebug>
 
 DisassemblerViewer::DisassemblerViewer(QWidget *parent) :
@@ -14,6 +17,9 @@ DisassemblerViewer::DisassemblerViewer(QWidget *parent) :
 
     QString title = QString("Disassembly Viewer");
     setWindowTitle(title);
+
+    QSettings settings;
+    toggleWordWrap(settings.value("DisassemblerViewer.WordWrap",true).toBool());
 }
 
 DisassemblerViewer::~DisassemblerViewer()
@@ -31,6 +37,20 @@ void DisassemblerViewer::setFile(GenericFile *file)
     {
         setFile(dynamic_cast<BinaryFile*>(file));
     }
+}
+
+void DisassemblerViewer::toggleWordWrap(bool enabled)
+{
+    if (enabled)
+    {
+        ui->textArea->setWordWrapMode(QTextOption::WordWrap);
+    }
+    else
+    {
+        ui->textArea->setWordWrapMode(QTextOption::NoWrap);
+    }
+    QSettings settings;
+    settings.setValue("DisassemblerViewer.WordWrap",enabled);
 }
 
 void DisassemblerViewer::setFile(BinaryFile *file) {
@@ -1389,6 +1409,19 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
 
 
     return retval;
+}
+
+bool DisassemblerViewer::optionsMenuItems(QMenu *menu)
+{
+    QSettings settings;
+
+    QAction *action = new QAction("&Word Wrap");
+    action->setCheckable(true);
+    action->setChecked(settings.value("DisassemblerViewer.WordWrap",true).toBool());
+    connect(action, SIGNAL(toggled(bool)), SLOT(toggleWordWrap(bool)));
+    menu->addAction(action);
+
+    return true;
 }
 
 void DisassemblerViewer::setData(QByteArray data)

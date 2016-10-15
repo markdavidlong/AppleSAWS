@@ -4,6 +4,9 @@
 
 #include <QVector>
 #include <QByteArray>
+#include <QSettings>
+#include <QMenu>
+#include <QAction>
 
 TextHexDumpViewer::TextHexDumpViewer(QWidget *parent) :
     FileViewerInterface(parent),
@@ -14,12 +17,30 @@ TextHexDumpViewer::TextHexDumpViewer(QWidget *parent) :
 
     QString title = QString("Text/Hex File Viewer");
     setWindowTitle(title);
+
+    QSettings settings;
+    toggleWordWrap(settings.value("TexHexViewer.WordWrap",true).toBool());
 }
 
 TextHexDumpViewer::~TextHexDumpViewer()
 {
     delete ui;
 }
+
+void TextHexDumpViewer::toggleWordWrap(bool enabled)
+{
+    if (enabled)
+    {
+        ui->textArea->setWordWrapMode(QTextOption::WordWrap);
+    }
+    else
+    {
+        ui->textArea->setWordWrapMode(QTextOption::NoWrap);
+    }
+    QSettings settings;
+    settings.setValue("TextHexViewer.WordWrap",enabled);
+}
+
 
 QString TextHexDumpViewer::makeHexStr(QByteArray data)
 {
@@ -92,4 +113,17 @@ void TextHexDumpViewer::setData(QByteArray data)
 void TextHexDumpViewer::setText(QString text)
 {
     ui->textArea->setHtml(text);
+}
+
+bool TextHexDumpViewer::optionsMenuItems(QMenu *menu)
+{
+    QSettings settings;
+
+    QAction *action = new QAction("&Word Wrap");
+    action->setCheckable(true);
+    action->setChecked(settings.value("TexHexViewer.WordWrap",true).toBool());
+    connect(action, SIGNAL(toggled(bool)), SLOT(toggleWordWrap(bool)));
+    menu->addAction(action);
+
+    return true;
 }
