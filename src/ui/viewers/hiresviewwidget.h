@@ -51,7 +51,7 @@ public:
     static QBitArray byteToBits(quint8 byte);
     void contextMenuEvent(QContextMenuEvent *);
 
-    virtual bool optionsMenuItems(QMenu *) {  return false; }
+    virtual bool optionsMenuItems(QMenu *);
 
 signals:
 
@@ -67,6 +67,7 @@ protected slots:
     void handleMonochromeAction(bool toggled);
     void handlePerPixelColorAction(bool toggled);
     void handleShowScanLinesAction(bool toggled);
+
 private:
     QPixmap m_pixmap;
     QByteArray m_data;

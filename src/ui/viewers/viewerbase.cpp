@@ -20,7 +20,8 @@ ViewerBase::ViewerBase(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ViewerBase)
 {
-    setMinimumWidth(1024);
+   // setMinimumWidth(1024);
+
     m_stack = new QStackedWidget(this);
     ui->setupUi(this);
     setCentralWidget(m_stack);
@@ -37,7 +38,6 @@ ViewerBase::ViewerBase(QWidget *parent) :
     m_optionMenu = new QMenu("&Viewer");
     menuBar()->addMenu(m_optionMenu);
     m_optionMenu->setEnabled(false);
-
 }
 
 ViewerBase::~ViewerBase()
@@ -135,7 +135,6 @@ void ViewerBase::addViewer(QString descriptor, FileViewerInterface *viewer)
 
 void ViewerBase::showViewer(QString descriptor)
 {
-    qDebug() << "showViewer";
     FileViewerInterface *fvi = m_viewers[descriptor];
     if (fvi)
     {

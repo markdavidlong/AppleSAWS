@@ -16,9 +16,21 @@ public:
     void setFile(GenericFile *file);
     void setFile(BinaryFile *file);
 
-    virtual bool optionsMenuItems(QMenu *) {  return false; }
+    virtual bool optionsMenuItems(QMenu *menu);
+
+public slots:
+    void setFgColor(QColor color);
+    void setBgColor(QColor color);
+    void setGridColor(QColor color);
+
+    void showGrid(bool show);
+    void enableBitShift(bool enable);
+
 
 signals:
+
+protected:
+    QList<CharacterWidget*> getChildren();
 
 private:
     BinaryFile *m_file;

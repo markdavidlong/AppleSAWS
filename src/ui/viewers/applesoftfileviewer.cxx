@@ -34,9 +34,6 @@ ApplesoftFileViewer::~ApplesoftFileViewer()
 
 bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
 {
-    qDebug() << "makeMenuOptions()";
-
-
     QSettings settings;
 
     QAction *action = new QAction("Show &Ints as Hex",menu);
@@ -67,7 +64,6 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
 
 bool ApplesoftFileViewer::optionsMenuItems(QMenu *menu)
 {
-    qDebug() << "AFV::optionMenuItems()";
     return makeMenuOptions(menu);
 }
 

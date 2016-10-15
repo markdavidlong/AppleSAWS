@@ -55,7 +55,6 @@ SOURCES += \
     src/ui/widgets/characterwidget.cpp \
     src/ui/viewers/applesoftfiledetailviewer.cpp \
     src/ui/widgets/hexconverter.cpp \
-    src/ui/widgets/hrcgcontrolsinfo.cpp \
     src/ui/viewers/viewerbase.cpp \
     src/ui/viewers/fileviewerinterface.cpp
 

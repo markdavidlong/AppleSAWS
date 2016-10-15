@@ -5,6 +5,7 @@
 #include <QMap>
 #include <QDebug>
 #include <QResizeEvent>
+#include <QSettings>
 
 #include <math.h>
 
@@ -13,8 +14,9 @@ HiresViewWidget::HiresViewWidget(QWidget *parent) :
     FileViewerInterface(parent)
 {
     resize(561,384);
-    m_viewMode = Color2;
-    m_showScanLines = true;
+    QSettings settings;
+    m_viewMode = static_cast<ViewMode>(settings.value("HiresViewWidget.ViewMode",Color2).toInt());
+    m_showScanLines = settings.value("HiresViewWidget.ShowScanLines",true).toBool();
 
     if (m_rowTable == 0) { makeOffsetTable(); }
 
@@ -42,7 +44,8 @@ HiresViewWidget::HiresViewWidget(QWidget *parent) :
 
     showScanLinesAction = new QAction("Show Scan Lines",this);
     showScanLinesAction->setCheckable(true);
-    showScanLinesAction->setChecked(true);
+    showScanLinesAction->setChecked(m_showScanLines);
+
 
     connect(ntscAction, SIGNAL(toggled(bool)), this, SLOT(handleNtscAction(bool)));
     connect(monochromeAction, SIGNAL(toggled(bool)), this, SLOT(handleMonochromeAction(bool)));
@@ -57,6 +60,8 @@ void HiresViewWidget::handleNtscAction(bool toggled) {
         m_viewMode = Color2;
         update();
     }
+    QSettings settings;
+    settings.setValue("HiresViewWidget.ViewMode",m_viewMode);
 }
 
 void HiresViewWidget::handleMonochromeAction(bool toggled) {
@@ -64,6 +69,8 @@ void HiresViewWidget::handleMonochromeAction(bool toggled) {
         m_viewMode = Monochrome;
         update();
     }
+    QSettings settings;
+    settings.setValue("HiresViewWidget.ViewMode",m_viewMode);
 }
 
 void HiresViewWidget::handlePerPixelColorAction(bool toggled) {
@@ -71,11 +78,15 @@ void HiresViewWidget::handlePerPixelColorAction(bool toggled) {
         m_viewMode = Color1;
         update();
     }
+    QSettings settings;
+    settings.setValue("HiresViewWidget.ViewMode",m_viewMode);
 }
 
 void HiresViewWidget::handleShowScanLinesAction(bool toggled) {
     m_showScanLines = toggled;
     update();
+    QSettings settings;
+    settings.setValue("HiresViewWidget.ShowScanLines",toggled);
 }
 
 void HiresViewWidget::paintEvent(QPaintEvent *event)
@@ -509,6 +520,16 @@ void HiresViewWidget::contextMenuEvent(QContextMenuEvent *event) {
     menu.addSeparator();
     menu.addAction(showScanLinesAction);
     menu.exec(event->globalPos());
+}
+
+bool HiresViewWidget::optionsMenuItems(QMenu *menu)
+{
+    menu->addAction(monochromeAction);
+    menu->addAction(ntscAction);
+    menu->addAction(perPixelColorAction);
+    menu->addSeparator();
+    menu->addAction(showScanLinesAction);
+    return true;
 }
 
 void HiresViewWidget::setFile(GenericFile *file)
