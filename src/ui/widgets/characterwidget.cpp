@@ -5,14 +5,14 @@
 #include <QPainter>
 #include <QBitArray>
 
-CharacterWidget::CharacterWidget(QWidget *parent, CharSetCharacter ch, int scale)
-    : QWidget(parent), m_character(ch), m_scale(scale)
+CharacterWidget::CharacterWidget(QWidget *parent, CharSetCharacter ch)
+    : QWidget(parent), m_character(ch)
 {
+
     m_dobitshift = true;
     m_showgrid = true;
-    resize(15*m_scale, 16*m_scale);
-    setMaximumSize(this->size());
-    setMinimumSize(this->size());
+  //  setMaximumSize(this->size());
+  //  setMinimumSize(this->size());
     m_pixmap = QPixmap(this->size());
     setFgColor(Qt::black);
     setBgColor(Qt::white);
@@ -25,10 +25,19 @@ CharacterWidget::CharacterWidget(QWidget *parent, CharSetCharacter ch, int scale
     doRepaint();
 }
 
+bool CharacterWidget::hasHeightForWidth() const { return true; }
+int CharacterWidget::heightForWidth(int w) const { return w * 9 / 8; }
+
 void CharacterWidget::doRepaint()
 {
-    m_pixmap.fill(m_bgcolor);
+    m_pixmap.fill(QColor(0,0,0,0));
     QPainter painter(&m_pixmap);
+    float hscale = width() / 15;
+    float vscale = height() / 8;
+
+    painter.setPen(m_bgcolor);
+    painter.setBrush(m_bgcolor);
+    painter.drawRect(0,0, hscale * 15, vscale * 8);
 
     painter.setPen(m_fgcolor);
     painter.setBrush(m_fgcolor);
@@ -37,7 +46,7 @@ void CharacterWidget::doRepaint()
 
     for (quint8 yval = 0; yval < 8; yval++)
     {
-        int ypos = yval * m_scale*2;
+        int ypos = yval * vscale;
 
         quint8 line = chardata[yval];
 
@@ -61,8 +70,8 @@ void CharacterWidget::doRepaint()
         {
             if (bits.testBit(jdx))
             {
-                painter.drawRect((jdx*2+shiftval)*m_scale, ypos,
-                                 m_scale*2, m_scale*2);
+                painter.drawRect((jdx*2+shiftval)*hscale, ypos,
+                                 hscale*2,                vscale);
             }
         }
     }
@@ -71,19 +80,21 @@ void CharacterWidget::doRepaint()
     {
         painter.setPen(QPen(m_gridcolor,1,Qt::DotLine));
         painter.setBrush(Qt::NoBrush);
-        for (int idx = 0; idx < 8; idx++)
-        {
-            painter.drawLine(0, idx*m_scale*2, m_pixmap.width(), idx*m_scale*2);
-        }
         for (int idx = 0; idx < 9; idx++)
         {
-            painter.drawLine(idx*m_scale*2, 0, idx*m_scale*2, m_pixmap.width());
+            painter.drawLine(0,           idx*vscale,
+                             hscale * 15, idx*vscale);
+        }
+        for (int idx = 0; idx < 8; idx++)
+        {
+            painter.drawLine(idx*hscale*2, 0,
+                             idx*hscale*2, vscale * 8);
         }
         painter.setPen(QPen(m_gridcolor,2,Qt::SolidLine));
-        painter.drawLine(0,0, 0,m_pixmap.height());
-        painter.drawLine(0,m_pixmap.height(), m_pixmap.width(), m_pixmap.height());
-        painter.drawLine(m_pixmap.width(), m_pixmap.height(), m_pixmap.width(),0);
-        painter.drawLine(m_pixmap.width(),0, 0,0);
+        painter.drawLine(0,0, 0, vscale * 8);
+        painter.drawLine(0,vscale * 8, hscale * 15, vscale * 8);
+        painter.drawLine(hscale * 15, vscale * 8, hscale * 15,0);
+        painter.drawLine(hscale * 15,0, 0,0);
     }
 
     repaint();

@@ -6,6 +6,7 @@
 #include <QComboBox>
 #include <QLabel>
 #include <QDebug>
+#include <QScrollArea>
 
 #include "applesoftfileviewer.h"
 #include "hexdumpviewer.h"
@@ -24,6 +25,12 @@ ViewerBase::ViewerBase(QWidget *parent) :
 
     m_stack = new QStackedWidget(this);
     ui->setupUi(this);
+
+//    QScrollArea *scroller = new QScrollArea(this);
+//    scroller->setWidgetResizable(true);
+//    setCentralWidget(scroller);
+//    scroller->setWidget(m_stack);
+
     setCentralWidget(m_stack);
 
     m_toolbar = new QToolBar(this);

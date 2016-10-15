@@ -7,7 +7,7 @@
 
 MazeViewer::MazeViewer(QWidget *parent) : FileViewerInterface(parent)
 {
-    setMinimumSize(480,600);
+    //setMinimumSize(480,600);
     m_maze = QPixmap(width(),height());
     drawMaze();
 }
@@ -25,7 +25,7 @@ void MazeViewer::paintEvent(QPaintEvent *event)
     Q_UNUSED(event);
     drawMaze();
     QPainter painter(this);
-    painter.drawPixmap(0,0,m_maze);
+    painter.drawPixmap(0, 0, m_maze);
 }
 
 void MazeViewer::setFile(GenericFile *file)
@@ -45,7 +45,6 @@ void MazeViewer::setFile(BinaryFile *file)
 
     quint16 address = file->address();
     mem.addFile(file->data(), address);
-
 }
 
 

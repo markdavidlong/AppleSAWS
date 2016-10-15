@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>836</width>
-    <height>540</height>
+    <width>107</width>
+    <height>117</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -35,6 +35,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>FileViewerInterface</class>
+   <extends>QWidget</extends>
+   <header>viewerbase.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

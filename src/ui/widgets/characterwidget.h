@@ -12,11 +12,12 @@ class CharacterWidget : public QWidget
 
 public:
     CharacterWidget(QWidget *parent = 0,
-                    CharSetCharacter ch = CharSetCharacter(),
-                    int scale = 4);
+                    CharSetCharacter ch = CharSetCharacter());
 
     void doRepaint();
 
+    bool hasHeightForWidth() const;
+    int heightForWidth(int w) const;
 protected:
     void resizeEvent(QResizeEvent *event);
 
@@ -43,6 +44,5 @@ private:
 
     CharSetCharacter m_character;
 
-    int m_scale;
 };
 

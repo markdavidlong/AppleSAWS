@@ -42,6 +42,8 @@ HiresViewWidget::HiresViewWidget(QWidget *parent) :
     perPixelColorAction->setChecked(false);
     formatGroup->addAction(perPixelColorAction);
 
+
+
     showScanLinesAction = new QAction("Show Scan Lines",this);
     showScanLinesAction->setCheckable(true);
     showScanLinesAction->setChecked(m_showScanLines);

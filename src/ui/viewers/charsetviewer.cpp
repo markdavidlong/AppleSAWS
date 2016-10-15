@@ -36,7 +36,7 @@ void CharSetViewer::setFile(BinaryFile *file)
     int ypos = 0;
     foreach (CharSetCharacter csc, m_charset.allCharacters())
     {
-        CharacterWidget *cw = new CharacterWidget(this,csc,4);
+        CharacterWidget *cw = new CharacterWidget(this,csc);
         cw->showGrid(true);
         cw->enableBitShift(true);
         cw->setBgColor(Qt::white);
