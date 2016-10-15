@@ -13,7 +13,6 @@ ApplesoftFileDetailViewer::ApplesoftFileDetailViewer(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->m_varView->setSortingEnabled(true);
-
 }
 
 ApplesoftFileDetailViewer::~ApplesoftFileDetailViewer()

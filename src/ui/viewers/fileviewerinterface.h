@@ -19,7 +19,6 @@ public:
     bool canPrint() const { return false; }
 
 public slots:
-    virtual void activate();
     virtual void setFile(GenericFile *file) = 0;
 
     void doPrint() { }
@@ -31,6 +30,5 @@ signals:
 protected:
     QString m_title;
 };
-
 
 #endif // FILEVIEWERINTERFACE_H

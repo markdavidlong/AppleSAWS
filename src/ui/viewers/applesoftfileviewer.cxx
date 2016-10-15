@@ -193,7 +193,6 @@ void ApplesoftFileViewer::findText()
             count++;
             int position = highlightCursor.position();
             highlightCursor.setPosition(position,QTextCursor::KeepAnchor);
-            //highlightCursor.movePosition(QTextCursor::WordRight,QTextCursor::KeepAnchor);
             highlightCursor.mergeCharFormat(colorFormat);
         }
     }
@@ -203,6 +202,4 @@ void ApplesoftFileViewer::findText()
     ui->textArea->ensureCursorVisible();
 
     m_isFirstFind = false;
-
-
 }
