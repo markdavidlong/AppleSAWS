@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>818</width>
+    <width>954</width>
     <height>614</height>
    </rect>
   </property>
@@ -19,7 +19,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>818</width>
+     <width>954</width>
      <height>21</height>
     </rect>
    </property>
@@ -27,6 +27,7 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <addaction name="actionExport"/>
     <addaction name="action_Print"/>
     <addaction name="separator"/>
     <addaction name="action_Close"/>
@@ -39,12 +40,20 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>&amp;Print</string>
+    <string>&amp;Print...</string>
    </property>
   </action>
   <action name="action_Close">
    <property name="text">
     <string>&amp;Close</string>
+   </property>
+  </action>
+  <action name="actionExport">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Export...</string>
    </property>
   </action>
  </widget>
