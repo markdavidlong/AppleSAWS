@@ -24,7 +24,7 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
     m_isFirstFind = true;
     ui->textArea->setUndoRedoEnabled(false);
     ui->textArea->setUndoRedoEnabled(true);
-
+    ui->textArea->setWordWrapMode(QTextOption::NoWrap);
 }
 
 ApplesoftFileViewer::~ApplesoftFileViewer()
@@ -59,12 +59,34 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
     connect(action, SIGNAL(triggered(bool)), SLOT(launchVarBrowser()));
     menu->addAction(action);
 
+    menu->addSeparator();
+
+    action = new QAction("&Word Wrap");
+    action->setCheckable(true);
+    action->setChecked(settings.value("ASViewer.WordWrap",true).toBool());
+    connect(action, SIGNAL(toggled(bool)), SLOT(toggleWordWrap(bool)));
+    menu->addAction(action);
+
     return true;
 }
 
 bool ApplesoftFileViewer::optionsMenuItems(QMenu *menu)
 {
     return makeMenuOptions(menu);
+}
+
+void ApplesoftFileViewer::toggleWordWrap(bool enabled)
+{
+    if (enabled)
+    {
+        ui->textArea->setWordWrapMode(QTextOption::WordWrap);
+    }
+    else
+    {
+        ui->textArea->setWordWrapMode(QTextOption::NoWrap);
+    }
+    QSettings settings;
+    settings.setValue("ASViewer.WordWrap",enabled);
 }
 
 void ApplesoftFileViewer::setIndentCode(bool enabled)

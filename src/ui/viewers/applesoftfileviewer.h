@@ -33,8 +33,8 @@ public slots:
     void findText();
 
 
-protected:
 protected slots:
+    void toggleWordWrap(bool enabled);
     void setIndentCode(bool enabled);
     void setIntsAsHex(bool enabled);
     void launchVarBrowser();
