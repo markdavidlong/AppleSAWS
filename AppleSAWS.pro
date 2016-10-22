@@ -55,7 +55,9 @@ SOURCES += \
     src/ui/widgets/characterwidget.cpp \
     src/ui/viewers/applesoftfiledetailviewer.cpp \
     src/ui/widgets/hexconverter.cpp \
-    src/ui/viewers/viewerbase.cpp
+    src/ui/viewers/viewerbase.cpp \
+    src/ui/widgets/CharacterSetExplorer.cpp \
+    src/ui/widgets/HiresScreenWidget.cpp
 
 
 HEADERS += \
@@ -93,7 +95,9 @@ HEADERS += \
     src/ui/widgets/hexconverter.h \
     src/ui/widgets/hrcgcontrolsinfo.h \
     src/ui/viewers/viewerbase.h \
-    src/ui/viewers/fileviewerinterface.h
+    src/ui/viewers/fileviewerinterface.h \
+    src/ui/widgets/CharacterSetExplorer.h \
+    src/ui/widgets/HiresScreenWidget.h
 
 FORMS += \
     src/ui/catalogwidget.ui \
@@ -105,4 +109,5 @@ FORMS += \
     src/ui/viewers/applesoftfiledetailviewer.ui \
     src/ui/widgets/hexconverter.ui \
     src/ui/widgets/hrcgcontrolsinfo.ui \
-    src/ui/viewers/viewerbase.ui
+    src/ui/viewers/viewerbase.ui \
+    src/ui/widgets/CharacterSetExplorer.ui
