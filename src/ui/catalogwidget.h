@@ -4,7 +4,6 @@
 #include <QWidget>
 #include <QListWidgetItem>
 
-
 #include "diskfile.h"
 
 namespace Ui {

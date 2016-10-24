@@ -3,6 +3,11 @@
 
 #include <QWidget>
 #include <QString>
+#include <QPrinter>
+#include <QPrintDialog>
+#include <QFileDialog>
+#include <QStandardPaths>
+#include <QMessageBox>
 
 class GenericFile;
 class QMenu;
@@ -16,16 +21,18 @@ public:
 
     virtual bool optionsMenuItems(QMenu *) = 0;
 
-    bool canPrint() const { return false; }
+    virtual bool canPrint() const { return false; }
+    virtual bool canExport() const { return false; }
+
+    QString title() const { return m_title; }
 
 public slots:
     virtual void setFile(GenericFile *file) = 0;
 
-    void doPrint() { }
-    QString title() const { return m_title; }
+    virtual void doPrint() { }
+    virtual void doExport() { }
 
 signals:
-    void setTitle(QString title);
 
 protected:
     QString m_title;

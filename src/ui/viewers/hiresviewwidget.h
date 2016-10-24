@@ -24,10 +24,14 @@ public:
      explicit HiresViewWidget(QWidget *parent = 0);
      virtual bool optionsMenuItems(QMenu *);
 
+    bool canPrint() const;
+    bool canExport() const;
 public slots:
     void setFile(GenericFile *file);
     void setFile(BinaryFile *file);
 
+    void doPrint();
+    void doExport();
 private:
     HiresScreenWidget *hrsw;
 

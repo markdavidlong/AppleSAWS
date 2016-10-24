@@ -21,6 +21,7 @@ public slots:
     void calcFromNewHex(QString value);
     void calcFromNewUint8(QString value);
     void calcFromNewInt8(QString value);
+
 protected slots:
 private:
     Ui::HexConverter *ui;

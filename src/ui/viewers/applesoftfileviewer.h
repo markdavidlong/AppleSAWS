@@ -25,13 +25,17 @@ public:
 
     virtual bool optionsMenuItems(QMenu *menu);
 
+     virtual bool canPrint() const;
+
+     bool canExport() const;
 public slots:
-     void setFile(GenericFile *file);
+    void setFile(GenericFile *file);
     void setFile(ApplesoftFile *m_file);
     void setData(QByteArray data);
     void setText(QString text);
     void findText();
-
+    void doPrint();
+    void doExport();
 
 protected slots:
     void toggleWordWrap(bool enabled);

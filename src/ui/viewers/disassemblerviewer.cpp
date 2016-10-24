@@ -9,6 +9,7 @@
 #include <QAction>
 #include <QDebug>
 
+
 DisassemblerViewer::DisassemblerViewer(QWidget *parent) :
     FileViewerInterface(parent),
     ui(new Ui::DisassemblerViewer)
@@ -1432,4 +1433,50 @@ void DisassemblerViewer::setData(QByteArray data)
 void DisassemblerViewer::setText(QString text)
 {
     ui->textArea->setHtml(text);
+}
+
+bool DisassemblerViewer::canPrint() const { return true; }
+
+void DisassemblerViewer::doPrint()
+{
+    QPrinter printer;
+
+    QPrintDialog dialog(&printer, this);
+    dialog.setWindowTitle(tr("Print Dissassembly"));
+    if (ui->textArea->textCursor().hasSelection())
+        dialog.addEnabledOption(QAbstractPrintDialog::PrintSelection);
+    if (dialog.exec() != QDialog::Accepted) {
+        qDebug() << "Cancelled";
+
+        return;
+    }
+
+    ui->textArea->print(&printer);
+}
+
+bool DisassemblerViewer::canExport() const { return true; }
+
+void DisassemblerViewer::doExport()
+{
+    QString defaultPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    QDir savename = QDir(defaultPath).filePath(m_file->filename()+".txt");
+
+    QString saveName = QFileDialog::getSaveFileName(this,
+       tr("Export Disassembly"), savename.path(), tr("Text Files (*.txt)"));
+
+    if (saveName == "") return;  // User cancelled
+
+    qDebug() << "Set filename: " << saveName;
+
+    QFile saveFile(saveName);
+    if (!saveFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QMessageBox::warning(this,"Save Error","Could not save "+saveName);
+        return;
+    }
+
+    QTextStream out(&saveFile);
+    out << ui->textArea->document()->toPlainText();
+    saveFile.close();
+
 }

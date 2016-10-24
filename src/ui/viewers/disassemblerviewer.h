@@ -27,11 +27,15 @@ public:
 
     QString getPotentialLabel(quint16 address);
     virtual bool optionsMenuItems(QMenu *);
+    bool canPrint() const;
+    bool canExport() const;
 
 public slots:
     void setFile(GenericFile *file);
     void toggleWordWrap(bool enabled);
 
+    void doPrint();
+    void doExport();
 private:
     Ui::DisassemblerViewer *ui;
 

@@ -21,8 +21,6 @@ ViewerBase::ViewerBase(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ViewerBase)
 {
-   // setMinimumWidth(1024);
-
     m_stack = new QStackedWidget(this);
     ui->setupUi(this);
 
@@ -30,6 +28,8 @@ ViewerBase::ViewerBase(QWidget *parent) :
 //    scroller->setWidgetResizable(true);
 //    setCentralWidget(scroller);
 //    scroller->setWidget(m_stack);
+
+
 
     setCentralWidget(m_stack);
 
@@ -57,13 +57,13 @@ void ViewerBase::setFile(GenericFile *file)
     m_file = file;
 
     QString descriptor;
-    QString defaultDescriptor;
+    QString defaultViewerDescriptor;
 
     HexDumpViewer *hdv = new HexDumpViewer(0);
     hdv->setFile(file);
     descriptor = ("Hex Dump Viewer");
     addViewer(descriptor,hdv);
-    defaultDescriptor = descriptor;
+    defaultViewerDescriptor = descriptor;
 
     if (dynamic_cast<ApplesoftFile*>(file))
     {
@@ -71,8 +71,7 @@ void ViewerBase::setFile(GenericFile *file)
         afv->setFile(file);
         descriptor="Applesoft File Viewer";
         addViewer(descriptor,afv);
-        defaultDescriptor = descriptor;
-        showViewer(descriptor);
+        defaultViewerDescriptor = descriptor;
     }
     else if (dynamic_cast<BinaryFile*>(file))
     {
@@ -97,20 +96,20 @@ void ViewerBase::setFile(GenericFile *file)
         dv->setFile(bf);
         descriptor = "Disassembler Viewer";
         addViewer(descriptor,dv);
-        defaultDescriptor = descriptor;
+        defaultViewerDescriptor = descriptor;
 
         if (bf->filename().toUpper().endsWith(".SET"))
         {
-            defaultDescriptor ="HRCG Character Set Viewer";
+            defaultViewerDescriptor ="HRCG Character Set Viewer";
         }
         if (bf->filename().toUpper().startsWith("MAZE"))
         {
-            defaultDescriptor = "MissingRing Maze Viewer";
+            defaultViewerDescriptor = "MissingRing Maze Viewer";
         }
         if ((bf->address() == 0x2000 || bf->address() == 0x4000)
             && bf->length() == 0x2000)
         {
-            defaultDescriptor = "HiRes Image Viewer";
+            defaultViewerDescriptor = "HiRes Image Viewer";
         }
 
     }
@@ -123,7 +122,7 @@ void ViewerBase::setFile(GenericFile *file)
         descriptor = QString("Text/Hex Dump Viewer");
         addViewer(descriptor,thdv);
 
-        defaultDescriptor = descriptor;
+        defaultViewerDescriptor = descriptor;
     }
     else if (dynamic_cast<RelocatableFile*>(file))
     {
@@ -131,12 +130,11 @@ void ViewerBase::setFile(GenericFile *file)
         dv->setFile(file);
         descriptor = "Relocatable Disassembler Viewer";
         addViewer(descriptor,dv);
-        defaultDescriptor = descriptor;
+        defaultViewerDescriptor = descriptor;
 
     }
     connect(m_viewercombo, SIGNAL(currentIndexChanged(QString)), SLOT(showViewer(QString)));
-    showViewer(defaultDescriptor);
-
+    showViewer(defaultViewerDescriptor);
 }
 
 void ViewerBase::closeEvent(QCloseEvent *event)
@@ -159,6 +157,14 @@ void ViewerBase::showViewer(QString descriptor)
     FileViewerInterface *fvi = m_viewers[descriptor];
     if (fvi)
     {
+        ui->actionExport->disconnect(SIGNAL(triggered(bool)));
+        ui->actionExport->setEnabled(fvi->canExport());
+        connect(ui->actionExport, SIGNAL(triggered(bool)), fvi, SLOT(doExport()));
+
+        ui->action_Print->disconnect(SIGNAL(triggered(bool)));
+        ui->action_Print->setEnabled(fvi->canPrint());
+        connect(ui->action_Print, SIGNAL(triggered(bool)), fvi, SLOT(doPrint()));
+
         m_optionMenu->clear();
         m_viewercombo->setCurrentText(descriptor);
         m_stack->setCurrentWidget(fvi);
@@ -178,7 +184,7 @@ void ViewerBase::showViewer(QString descriptor)
     }
     else
     {
-        qDebug() << "Could not find widget for descriptor " << descriptor;
+        qDebug() << "Could not find widget for descriptor" << descriptor;
     }
 
 }

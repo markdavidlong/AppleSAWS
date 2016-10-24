@@ -26,9 +26,14 @@ public:
 
     virtual bool optionsMenuItems(QMenu *menu);
 
+    bool canPrint() const;
+    bool canExport() const;
+
 public slots:
     void showHexAndAsciiValues();
     void toggleWordWrap(bool enabled);
+    void doPrint();
+    void doExport();
 
 private:
     void setText(QString text);
@@ -39,6 +44,8 @@ private:
 
     quint16 m_offset;
     QByteArray m_data;
+
+    GenericFile *m_file;
 };
 
 #endif // HEXDUMPVIEWER_H

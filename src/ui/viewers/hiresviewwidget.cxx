@@ -51,4 +51,55 @@ void HiresViewWidget::setFile(GenericFile *file)
         setFile(af);
     }
 }
+bool HiresViewWidget::canPrint() const { return true; }
+
+void HiresViewWidget::doPrint()
+{
+    QPrinter printer;
+
+    QPrintDialog dialog(&printer, this);
+    dialog.setWindowTitle(tr("Print HiRes Image"));
+
+    if (dialog.exec() != QDialog::Accepted) {
+        return;
+    }
+
+
+    QPainter painter(&printer);
+    QPixmap pm = hrsw->getPixmap();
+    if (!pm.isNull() && pm.width() != 0 && pm.height() != 0)
+    {
+        painter.drawPixmap(0,0,pm.width(),pm.height(),pm);
+    }
+    else
+    {
+        QMessageBox::warning(this,"Print Error","Could not print image");
+    }
+}
+
+bool HiresViewWidget::canExport() const { return true; }
+
+void HiresViewWidget::doExport()
+{
+    QString defaultPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    QDir savename = QDir(defaultPath).filePath(m_file->filename()+".png");
+
+    QString saveName = QFileDialog::getSaveFileName(this,
+        tr("Export HiRes Image"), savename.path(), tr("Png Files (*.png)"));
+
+    if (saveName == "") return;  // User cancelled
+
+    qDebug() << "Set filename: " << saveName;
+
+    QFile saveFile(saveName);
+    if (!saveFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QMessageBox::warning(this,"Save Error","Could not save "+saveName);
+        return;
+    }
+
+    QPixmap pm = hrsw->getPixmap();
+    pm.save(savename.path());
+
+}
 

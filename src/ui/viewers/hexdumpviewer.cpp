@@ -11,6 +11,7 @@ HexDumpViewer::HexDumpViewer(QWidget *parent) :
     FileViewerInterface(parent),
     ui(new Ui::HexDumpViewer)
 {
+    m_file = Q_NULLPTR;
     ui->setupUi(this);
     m_offset = 0;
 
@@ -120,6 +121,7 @@ QString HexDumpViewer::valToAppleAscii(quint8 val)
 
 void HexDumpViewer::setFile(GenericFile *file, quint16 offset)
 {
+    m_file = file;
     QString title = QString("Hex Viewer: %1").arg(file->filename());
     setWindowTitle(title);
 
@@ -152,4 +154,48 @@ void HexDumpViewer::setData(QByteArray data)
 void HexDumpViewer::setText(QString text)
 {
     ui->textArea->setHtml(text);
+}
+
+bool HexDumpViewer::canPrint() const { return true; }
+
+void HexDumpViewer::doPrint()
+{
+    QPrinter printer;
+
+    QPrintDialog dialog(&printer, this);
+    dialog.setWindowTitle(tr("Print Hex Dump"));
+    if (ui->textArea->textCursor().hasSelection())
+        dialog.addEnabledOption(QAbstractPrintDialog::PrintSelection);
+    if (dialog.exec() != QDialog::Accepted) {
+        return;
+    }
+
+    ui->textArea->print(&printer);
+}
+
+
+bool HexDumpViewer::canExport() const { return true; }
+
+void HexDumpViewer::doExport()
+{
+    QString defaultPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    QDir savename = QDir(defaultPath).filePath(m_file->filename()+".txt");
+
+    QString saveName = QFileDialog::getSaveFileName(this,
+       tr("Export Hex Dump"), savename.path(), tr("Text Files (*.txt)"));
+
+    if (saveName == "") return;  // User cancelled
+
+    qDebug() << "Set filename: " << saveName;
+
+    QFile saveFile(saveName);
+    if (!saveFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QMessageBox::warning(this,"Save Error","Could not save "+saveName);
+        return;
+    }
+
+    QTextStream out(&saveFile);
+    out << ui->textArea->document()->toPlainText();
+    saveFile.close();
 }

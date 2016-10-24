@@ -103,6 +103,8 @@ public:
      ColRow getColRowFromAppleAddress(quint16 address);
      ColRow getColRowFromRawAddress(quint16 address);
 
+     QPixmap getPixmap() const { return m_pixmap; }
+
 signals:
 
 public slots:

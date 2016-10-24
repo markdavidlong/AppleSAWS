@@ -4,6 +4,9 @@
 #include "applesoftfiledetailviewer.h"
 #include <QDebug>
 #include <QSettings>
+#include <QPrinter>
+#include <QPrintDialog>
+
 
 ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
     FileViewerInterface(parent),
@@ -14,7 +17,6 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
     QSettings settings;
     QString title = QString("AppleSoft Viewer");
     m_title = title;
-    emit setTitle(title);
     setWindowTitle(title);
 
     m_formatter = new ApplesoftFormatter(this);
@@ -74,6 +76,7 @@ bool ApplesoftFileViewer::optionsMenuItems(QMenu *menu)
 {
     return makeMenuOptions(menu);
 }
+
 
 void ApplesoftFileViewer::toggleWordWrap(bool enabled)
 {
@@ -138,7 +141,6 @@ void ApplesoftFileViewer::setFile(ApplesoftFile *file) {
 
     QString title = QString("AppleSoft Viewer: %1").arg(m_file->filename());
     m_title = title;
-    emit setTitle(title);
     setWindowTitle(title);
 
     ui->textArea->setText(m_formatter->formatText());
@@ -164,6 +166,8 @@ void ApplesoftFileViewer::launchVarBrowser()
 
 void ApplesoftFileViewer::findText()
 {
+    //TODO: Make this much more robust
+
     QString searchString = ui->findText->text();
     QTextDocument *document = ui->textArea->document();
 
@@ -203,3 +207,47 @@ void ApplesoftFileViewer::findText()
 
     m_isFirstFind = false;
 }
+
+bool ApplesoftFileViewer::canPrint() const { return true; }
+
+void ApplesoftFileViewer::doPrint()
+{
+    QPrinter printer;
+
+    QPrintDialog dialog(&printer, this);
+    dialog.setWindowTitle(tr("Print AppleSoft File"));
+    if (ui->textArea->textCursor().hasSelection())
+        dialog.addEnabledOption(QAbstractPrintDialog::PrintSelection);
+    if (dialog.exec() != QDialog::Accepted) {
+        return;
+    }
+
+    ui->textArea->print(&printer);
+}
+
+bool ApplesoftFileViewer::canExport() const { return true; }
+
+void ApplesoftFileViewer::doExport()
+{
+    QString defaultPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    QDir savename = QDir(defaultPath).filePath(m_file->filename()+".txt");
+
+    QString saveName = QFileDialog::getSaveFileName(this,
+       tr("Export AppleSoft"), savename.path(), tr("Text Files (*.txt)"));
+
+    if (saveName == "") return;  // User cancelled
+
+    qDebug() << "Set filename: " << saveName;
+
+    QFile saveFile(saveName);
+    if (!saveFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QMessageBox::warning(this,"Save Error","Could not save "+saveName);
+        return;
+    }
+
+    QTextStream out(&saveFile);
+    out << ui->textArea->document()->toPlainText();
+    saveFile.close();
+}
+

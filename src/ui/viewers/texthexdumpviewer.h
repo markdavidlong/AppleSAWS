@@ -28,8 +28,14 @@ public:
 
     virtual bool optionsMenuItems(QMenu *menu);
 
+    bool canPrint() const;
+    bool canExport() const;
+
 public slots:
     void toggleWordWrap(bool enabled);
+    void doPrint();
+    void doExport();
+
 protected:
     QString makeTextStr(QByteArray data);
     QString makeHexStr(QByteArray data);
@@ -37,6 +43,8 @@ private:
     Ui::TextHexDumpViewer *ui;
 
     quint16 m_offset;
+
+    GenericFile *m_file;
 };
 
 #endif // TEXTHEXDUMPVIEWER_H
