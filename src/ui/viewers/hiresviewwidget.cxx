@@ -22,7 +22,6 @@ HiresViewWidget::HiresViewWidget(QWidget *parent) :
     resize(561,384);
 }
 
-
 void HiresViewWidget::setFile(BinaryFile *file) {
     m_file = file;
 
@@ -31,7 +30,6 @@ void HiresViewWidget::setFile(BinaryFile *file) {
 
     hrsw->setData(file->data());
 }
-
 
 bool HiresViewWidget::optionsMenuItems(QMenu *menu)
 {
@@ -51,6 +49,7 @@ void HiresViewWidget::setFile(GenericFile *file)
         setFile(af);
     }
 }
+
 bool HiresViewWidget::canPrint() const { return true; }
 
 void HiresViewWidget::doPrint()
@@ -58,12 +57,10 @@ void HiresViewWidget::doPrint()
     QPrinter printer;
 
     QPrintDialog dialog(&printer, this);
+
     dialog.setWindowTitle(tr("Print HiRes Image"));
 
-    if (dialog.exec() != QDialog::Accepted) {
-        return;
-    }
-
+    if (dialog.exec() != QDialog::Accepted) { return; }
 
     QPainter painter(&printer);
     QPixmap pm = hrsw->getPixmap();
@@ -100,6 +97,5 @@ void HiresViewWidget::doExport()
 
     QPixmap pm = hrsw->getPixmap();
     pm.save(savename.path());
-
 }
 
