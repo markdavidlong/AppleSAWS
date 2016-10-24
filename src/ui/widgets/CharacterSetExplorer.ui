@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>HRCG Character Set Explorer</string>
   </property>
   <property name="autoFillBackground">
    <bool>true</bool>
