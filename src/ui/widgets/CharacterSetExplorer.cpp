@@ -23,7 +23,7 @@ CharacterSetExplorer::~CharacterSetExplorer()
 
 void CharacterSetExplorer::handleInsertCharButton()
 {
-
+    //TODO
 }
 
 void CharacterSetExplorer::handleTextChanged(QString string)
