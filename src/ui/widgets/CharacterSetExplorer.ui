@@ -50,15 +50,11 @@
      </item>
      <item>
       <widget class="QPushButton" name="insertChar">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>Insert Char...</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="drawButton">
-       <property name="text">
-        <string>Draw</string>
        </property>
       </widget>
      </item>

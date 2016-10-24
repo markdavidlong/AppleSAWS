@@ -20,7 +20,6 @@ public:
     void setCharSet(CharacterSet &charset);
 
 public slots:
-    void handleDrawButton();
     void handleInsertCharButton();
     void handleTextChanged(QString string);
 
