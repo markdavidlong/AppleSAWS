@@ -12,14 +12,13 @@ Among other things, the app includes:
 * A Text file viewer.
 * A graphics viewer which can show hires screen dumps as monochrome, with NTSC artifacts, or a hybrid mode where each pixel's natural color is shown in-place (with no white color blending.)
 * An HRCG character set viewer and explorer
+* Exporting files and graphics to the local filesystem (as either .txt or .png files, as appropriate)
 * (Though not useful to most) A maze viewer for the game which I was originally exploring (Datamost's "The Missing Ring", by Terry Romine, 1982)
 * Probably some other stuff I can't think of at the moment.
 
 There is also a Hex/Decimal converter utility and some in-app documentation for HRCG control character codes. Mainly stuff that I found useful at the time I was writing it.
 
 In the pipeline are some more useful features (as I get a chance):
-* Printing of all viewer window data
-* Exporting text/graphics from all viewer windows
 * Syntax Highlighting
 * More low-level disk exploration tools (sector-level stuff, comparing DOS versions between disks, etc.)
 * More analysis of AppleSoft programs (Tracing flow control, find addresses of PEEKS, POKES, CALLS, USRs, and &'s)
