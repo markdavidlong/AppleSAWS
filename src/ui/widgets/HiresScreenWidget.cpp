@@ -120,8 +120,8 @@ void HiresScreenWidget::resizeEvent(QResizeEvent *)
 
 }
 
-void HiresScreenWidget::drawPixmap() {
-
+void HiresScreenWidget::drawPixmap()
+{
     QPainter pmpainter(&m_pixmap);
 
     pmpainter.setBrush(Qt::black);
@@ -207,7 +207,7 @@ void HiresScreenWidget::drawPixmap() {
             int xoff = cr.col() * 7;
             int yoff = cr.row() * 2;
 
-            quint8 cOffset = 0;// highBit?1:0;
+            quint8 cOffset =  highBit?1:0;
 
             quint8 doubleScan = 0;
             if (!m_showScanLines)
@@ -276,7 +276,11 @@ QByteArray HiresScreenWidget::packData(QByteArray unpackedData)
     for (int idx = 0; idx < qMin(unpackedData.count(),8192); idx++)
     {
         ColRow cr = getColRowFromRawAddress(idx);
-        packedData[cr.appleAddress()] = unpackedData[idx];
+
+        if (cr.isDefined())
+        {
+            packedData[cr.appleAddress()] = unpackedData[idx];
+        }
     }
 
     return packedData;
@@ -303,20 +307,17 @@ int HiresScreenWidget::getLineAddressOffset(int line)
 void HiresScreenWidget::setData(QByteArray data) {
     m_data = data;
 
-    drawPixmap();
+    repaint();
 }
 
 void HiresScreenWidget::drawMonoLine(QPainter &painter, int lineNum, QBitArray data) {
+    painter.setPen(Qt::black);
+    painter.drawLine(0,lineNum,data.count(),lineNum);
+    painter.setPen(Qt::white);
     for (int idx = 0; idx < data.count(); idx++) {
 
         if (data.at(idx))
-        {
-            painter.setPen(Qt::white);
-        } else {
-            painter.setPen(Qt::black);
-        }
-
-        painter.drawPoint(idx,lineNum);
+            painter.drawPoint(idx,lineNum);
     }
 }
 
@@ -402,7 +403,6 @@ QColor HiresScreenWidget::getColorFromBits(QBitArray bits, quint8 phase)
     if (bitval == 7  && phase == 3) return lightBlueColor;
 
     return whiteColor;
-
 }
 
 void HiresScreenWidget::drawNtscLine(QPainter &painter, int lineNum, QBitArray data) {
@@ -479,7 +479,6 @@ HiresScreenWidget::ColRow HiresScreenWidget::getColRowFromRawAddress(quint16 add
 
 void HiresScreenWidget::makeAddressTables()
 {
-    qDebug() << " ****** makeAddressTables()";
     m_rawAddressToColRowList.resize(8192);
     m_appleAddressToColRowList.resize(8192);
 
@@ -488,7 +487,6 @@ void HiresScreenWidget::makeAddressTables()
         for (int col = 0; col < 40; col++)
         {
             ColRow cr(col,row);
-            //    qDebug() << "Col: " << col << "Row: " << row << "Raw: " << cr.rawAddress() << "  Apple: " << cr.appleAddress();
 
             m_rawAddressToColRowList[cr.rawAddress()] = cr;
             m_appleAddressToColRowList[cr.appleAddress()] = cr;

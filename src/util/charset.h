@@ -24,14 +24,13 @@ private:
 };
 
 
-
-
 class CharacterSet
 {
 public:
     void buildSetFromSetBlob(QByteArray data);
     CharSetCharacter operator[](int asciival) const { return m_charmap[asciival]; }
     QList<CharSetCharacter> allCharacters() const;
+    bool contains(int asciival) { return m_charmap.keys().contains(asciival); }
 
 private:
     QMap<int, CharSetCharacter> m_charmap;

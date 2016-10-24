@@ -3,6 +3,8 @@
 
 #include <QDialog>
 
+#include "charset.h"
+
 namespace Ui {
 class CharacterSetExplorer;
 }
@@ -15,8 +17,19 @@ public:
     explicit CharacterSetExplorer(QWidget *parent = 0);
     ~CharacterSetExplorer();
 
+    void setCharSet(CharacterSet &charset);
+
+public slots:
+    void handleDrawButton();
+    void handleInsertCharButton();
+    void handleTextChanged(QString string);
+
 private:
     Ui::CharacterSetExplorer *ui;
+
+    QByteArray m_unpackedScreen;
+
+    CharacterSet m_charset;
 };
 
 #endif // CHARACTERSETEXPLORER_H

@@ -10,12 +10,31 @@
     <height>352</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
+  <property name="autoFillBackground">
+   <bool>true</bool>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <layout class="QGridLayout" name="gridLayout" rowstretch="1,999999">
    <item row="1" column="0">
-    <widget class="QWidget" name="drawWidget" native="true"/>
+    <widget class="HiresScreenWidget" name="drawWidget" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>561</width>
+       <height>384</height>
+      </size>
+     </property>
+    </widget>
    </item>
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -30,6 +49,13 @@
       <widget class="QLineEdit" name="inputText"/>
      </item>
      <item>
+      <widget class="QPushButton" name="insertChar">
+       <property name="text">
+        <string>Insert Char...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="drawButton">
        <property name="text">
         <string>Draw</string>
@@ -40,6 +66,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>HiresScreenWidget</class>
+   <extends>QWidget</extends>
+   <header>HiresScreenWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -7,11 +7,16 @@
 CharSetViewer::CharSetViewer(QWidget *parent) : FileViewerInterface(parent)
 {
     m_file = Q_NULLPTR;
+    m_cse = Q_NULLPTR;
 
     QGridLayout *qgl = new QGridLayout(this);
     setLayout(qgl);
     QString title = QString("Character Set Viewer");
     setWindowTitle(title);
+}
+
+CharSetViewer::~CharSetViewer()
+{
 }
 
 void CharSetViewer::setFile(GenericFile *file)
@@ -73,9 +78,30 @@ bool CharSetViewer::optionsMenuItems(QMenu *menu)
     connect(action, SIGNAL(toggled(bool)),SLOT(enableBitShift(bool)));
     menu->addAction(action);
 
+    menu->addSeparator();
+
+    action = new QAction("&Character Set Explorer...");
+    connect(action, SIGNAL(triggered(bool)), SLOT(showExplorer()));
+    menu->addAction(action);
+
     return true;
 }
 
+void CharSetViewer::showExplorer()
+{
+    if (!m_cse) {
+        m_cse = new CharacterSetExplorer(this);
+        connect(m_cse, SIGNAL(destroyed(QObject*)), SLOT(cleanupExplorer()));
+        m_cse->setCharSet(m_charset);
+    }
+    m_cse->show();
+    m_cse->raise();
+}
+
+void CharSetViewer::cleanupExplorer()
+{
+    m_cse = Q_NULLPTR;
+}
 
 QList<CharacterWidget *> CharSetViewer::getChildren()
 {
