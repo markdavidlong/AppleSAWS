@@ -57,11 +57,13 @@ void ViewerBase::setFile(GenericFile *file)
     m_file = file;
 
     QString descriptor;
+    QString defaultDescriptor;
 
     HexDumpViewer *hdv = new HexDumpViewer(0);
     hdv->setFile(file);
     descriptor = ("Hex Dump Viewer");
     addViewer(descriptor,hdv);
+    defaultDescriptor = descriptor;
 
     if (dynamic_cast<ApplesoftFile*>(file))
     {
@@ -69,6 +71,7 @@ void ViewerBase::setFile(GenericFile *file)
         afv->setFile(file);
         descriptor="Applesoft File Viewer";
         addViewer(descriptor,afv);
+        defaultDescriptor = descriptor;
         showViewer(descriptor);
     }
     else if (dynamic_cast<BinaryFile*>(file))
@@ -94,8 +97,22 @@ void ViewerBase::setFile(GenericFile *file)
         dv->setFile(bf);
         descriptor = "Disassembler Viewer";
         addViewer(descriptor,dv);
+        defaultDescriptor = descriptor;
 
-        showViewer(descriptor);
+        if (bf->filename().toUpper().endsWith(".SET"))
+        {
+            defaultDescriptor ="HRCG Character Set Viewer";
+        }
+        if (bf->filename().toUpper().startsWith("MAZE"))
+        {
+            defaultDescriptor = "MissingRing Maze Viewer";
+        }
+        if ((bf->address() == 0x2000 || bf->address() == 0x4000)
+            && bf->length() == 0x2000)
+        {
+            defaultDescriptor = "HiRes Image Viewer";
+        }
+
     }
     else if (dynamic_cast<TextFile*>(file))
     {
@@ -106,7 +123,7 @@ void ViewerBase::setFile(GenericFile *file)
         descriptor = QString("Text/Hex Dump Viewer");
         addViewer(descriptor,thdv);
 
-        showViewer(descriptor);
+        defaultDescriptor = descriptor;
     }
     else if (dynamic_cast<RelocatableFile*>(file))
     {
@@ -114,14 +131,11 @@ void ViewerBase::setFile(GenericFile *file)
         dv->setFile(file);
         descriptor = "Relocatable Disassembler Viewer";
         addViewer(descriptor,dv);
-        showViewer(descriptor);
+        defaultDescriptor = descriptor;
 
     }
-    else
-    {
-        showViewer(descriptor);
-    }
     connect(m_viewercombo, SIGNAL(currentIndexChanged(QString)), SLOT(showViewer(QString)));
+    showViewer(defaultDescriptor);
 
 }
 
