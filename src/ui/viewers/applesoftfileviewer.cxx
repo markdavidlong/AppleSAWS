@@ -27,12 +27,17 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
     ui->textArea->setUndoRedoEnabled(true);
 
     toggleWordWrap(settings.value("ASViewer.WordWrap",true).toBool());
+
+    setIndentCode(settings.value("ASViewer.indentCode",false).toBool(), NoReformat);
+    setIntsAsHex(settings.value("ASViewer.intsAsHex",false).toBool(), NoReformat);
 }
 
 ApplesoftFileViewer::~ApplesoftFileViewer()
 {
     delete ui;
 }
+
+
 
 bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
 {
@@ -41,7 +46,7 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
     QAction *action = new QAction("Show &Ints as Hex",menu);
     action->setCheckable(true);
     action->setChecked(settings.value("ASViewer.intsAsHex",false).toBool());
-    setIntsAsHex(settings.value("ASViewer.intsAsHex",false).toBool());
+    setIntsAsHex(settings.value("ASViewer.intsAsHex",false).toBool(),NoReformat);
     connect(action, SIGNAL(toggled(bool)), ui->findText,SLOT(clear()));
     connect(action, SIGNAL(toggled(bool)),SLOT(setIntsAsHex(bool)));
     menu->addAction(action);
@@ -49,7 +54,7 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
     action = new QAction("&Reindent code",menu);
     action->setCheckable(true);
     action->setChecked(settings.value("ASViewer.indentCode",false).toBool());
-    setIndentCode(settings.value("ASViewer.indentCode",false).toBool());
+    setIndentCode(settings.value("ASViewer.indentCode",false).toBool(),NoReformat);
     connect(action, SIGNAL(toggled(bool)), ui->findText,SLOT(clear()));
     connect(action, SIGNAL(toggled(bool)),SLOT(setIndentCode(bool)));
     menu->addAction(action);
@@ -92,7 +97,7 @@ void ApplesoftFileViewer::toggleWordWrap(bool enabled)
     settings.setValue("ASViewer.WordWrap",enabled);
 }
 
-void ApplesoftFileViewer::setIndentCode(bool enabled)
+void ApplesoftFileViewer::setIndentCode(bool enabled, ReformatRule reformat)
 {
     if (enabled)
     {
@@ -104,10 +109,11 @@ void ApplesoftFileViewer::setIndentCode(bool enabled)
     }
     QSettings settings;
     settings.setValue("ASViewer.indentCode",enabled);
-    reformatText();
+    if (reformat == ForceReformat)
+        reformatText();
 }
 
-void ApplesoftFileViewer::setIntsAsHex(bool enabled)
+void ApplesoftFileViewer::setIntsAsHex(bool enabled, ReformatRule reformat)
 {
     if (enabled)
     {
@@ -119,12 +125,14 @@ void ApplesoftFileViewer::setIntsAsHex(bool enabled)
     }
     QSettings settings;
     settings.setValue("ASViewer.intsAsHex",enabled);
-    reformatText();
+    if (reformat == ForceReformat)
+        reformatText();
 }
 
 void ApplesoftFileViewer::reformatText()
 {
     ui->textArea->setText(m_formatter->formatText());
+    qDebug() << m_formatter->flowTargets();
 }
 
 void ApplesoftFileViewer::setFile(GenericFile *file) {

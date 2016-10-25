@@ -18,6 +18,12 @@ class ApplesoftFileViewer : public FileViewerInterface
     Q_OBJECT
 
 public:
+
+    typedef enum {
+        ForceReformat,
+        NoReformat
+    } ReformatRule;
+
      ApplesoftFileViewer(QWidget *parent = 0);
     ~ApplesoftFileViewer();
 
@@ -28,6 +34,7 @@ public:
      virtual bool canPrint() const;
 
      bool canExport() const;
+
 public slots:
     void setFile(GenericFile *file);
     void setFile(ApplesoftFile *m_file);
@@ -39,8 +46,8 @@ public slots:
 
 protected slots:
     void toggleWordWrap(bool enabled);
-    void setIndentCode(bool enabled);
-    void setIntsAsHex(bool enabled);
+    void setIndentCode(bool enabled, ReformatRule reformat = ForceReformat);
+    void setIntsAsHex(bool enabled, ReformatRule reformat = ForceReformat);
     void launchVarBrowser();
     void reformatText();
 
