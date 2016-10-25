@@ -32,7 +32,7 @@ In the pipeline are some more useful features (as I get a chance):
 * ProDOS support
 * Modification/Writing disk images
 * Lots of optimization and refactoring
-* Introduction of Session management, allowing annotation and documention of interconnectivity between files and disk image contents, as well as preferences of groups of default viewers to open for a given image or set of images
+* Introduction of project management, allowing annotation and documention of interconnectivity between files and disk image contents, as well as preferences of groups of default viewers to open for a given image or set of images
 * Plenty of other stuff!
 
 Anyway, if you take a look at it and think it's interesting, I'd love to hear some feedback.
