@@ -137,7 +137,9 @@ public:
 
     QByteArray getByteStringValue() const { return m_payload.toByteArray(); }
     QString getStringValue() const { return m_payload.toString(); }
-    quint32 getIntegerValue() const { return (quint32) (m_payload.toUInt() & 0xFFFFFFFF); }
+    quint32 getUnsignedIntegerValue() const { return (quint32) (m_payload.toUInt() & 0xFFFFFFFF); }
+    qint32 getIntegerValue() const { return (qint32) (m_payload.toInt() & 0xFFFFFFFF); }
+
     quint16 getWordValue() const { return (quint16) (m_payload.toUInt() & 0xFFFF); }
     quint8 getByteValue() const { return (quint8) (m_payload.toUInt() & 0xFF); }
 

@@ -81,13 +81,15 @@ QString ApplesoftFormatter::formatText()
 
                     if (okToConvert)
                     {
-                        quint32 ui32val = token.getIntegerValue();
-                        if (ui32val < 256)
+                        quint32 ui32val = token.getUnsignedIntegerValue();
+                        qint32  i32val = token.getIntegerValue();
+qDebug() << "UI32: " << ui32val << " I32: " << i32val;
+                        if ((i32val < 128 && i32val >= -128) || ui32val < 256)
                         {
                             quint8 ui8 = ui32val;
                             tokenstr = "0x"+uint8ToHex(ui8);
                         }
-                        else if (ui32val < 65536)
+                        else if ((i32val < 32768 && i32val >= -32768) || ui32val < 65536)
                         {
                             quint16 ui16 = ui32val;
                             tokenstr = "0x"+uint16ToHex(ui16);

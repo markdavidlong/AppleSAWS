@@ -428,7 +428,47 @@ QVector<ApplesoftToken> Retokenizer::retokenizeNegativeNumbers(QVector<Applesoft
     //      Best bet would be to look at how AppleSoft handles these values.
     //  A = - 0 is the same as 0
 
+    QList<ApplesoftToken> tmptokens = QList<ApplesoftToken>::fromVector(datatokens);
+    ApplesoftToken token;
+
+    QMutableListIterator<ApplesoftToken>it(tmptokens);
+
+    bool lastWasInt = false;
+
+    while (it.hasNext())
+    {
+        token = it.next();
+        if (token.getTokenId() == ApplesoftToken::IntegerTokenVal) lastWasInt = true;
+        else if (token.getTokenId() == ApplesoftToken::FloatTokenVal) lastWasInt = true;
+        else if (token.getTokenId() == ApplesoftToken::IntVarTokenVal) lastWasInt = true;
+        else if (token.getTokenId() == ApplesoftToken::FloatVarTokenVal) lastWasInt = true;
+        else if (token.getTokenId() == ')') lastWasInt = true;
+else
+        if (token.getTokenId() == ApplesoftToken::ASMINUS)
+        {
+            if (!lastWasInt && it.hasNext() && it.peekNext().getTokenId() == ApplesoftToken::IntegerTokenVal)
+            {
+                it.remove();
+                token = it.next();
+                it.remove();
+                int val = token.getUnsignedIntegerValue() * -1;
+                token.setValue(val);
+                it.insert(token);
+                lastWasInt = true;
+            }
+            else
+            {
+                lastWasInt = false;
+            }
+        }
+        else
+        {
+            lastWasInt = false;
+        }
 
 
-    return datatokens;
+
+    }
+
+    return tmptokens.toVector();
 }
