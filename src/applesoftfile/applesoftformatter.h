@@ -33,6 +33,7 @@ public:
 
     QString formatText();
 
+    QList<QPair<quint16, quint16> > flowTargets() const { return m_flowTargets; }
 
 signals:
     void newFile(ApplesoftFile *file);
@@ -41,7 +42,7 @@ public slots:
 
 private:
     FormatOptions m_format_options;
-    QList<quint16> m_flowTargets;
+    QList<QPair<quint16, quint16> > m_flowTargets;
 
     ApplesoftFile *m_file;
 

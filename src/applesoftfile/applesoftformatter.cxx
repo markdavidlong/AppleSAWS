@@ -47,20 +47,37 @@ QString ApplesoftFormatter::formatText()
                 firstToken = false;
             }
 
-            //TODO: Move this to the parser...
+            //TODO: Move this to the parser.
+            //TODO: This doesn't yet handle: ON expr GOTO/GOSUB n1,n2,n3,...
             if (previousToken.getTokenId() == ApplesoftToken::ASGoto  ||
                     previousToken.getTokenId() == ApplesoftToken::ASGosub ||
                     previousToken.getTokenId() == ApplesoftToken::ASThen)
             {
-                isFlowTarget = true;
-                m_flowTargets.append(line.linenum);
+                isFlowTarget = false;
+                if (previousToken.getTokenId() == ApplesoftToken::ASGoto ||
+                    previousToken.getTokenId() == ApplesoftToken::ASGosub)
+                {
+                    isFlowTarget = true;
+                }
+                else if (previousToken.getTokenId() == ApplesoftToken::ASThen &&
+                        token.getTokenId() == ApplesoftToken::IntegerTokenVal)
+                {
+                    isFlowTarget = true;
+                }
+
+                if (isFlowTarget)
+                {
+                    QPair<quint16,quint16> pair;
+                    pair.first = line.linenum;
+                    pair.second = token.getWordValue();
+                    m_flowTargets.append(pair);
+                }
             }
 
             if (m_format_options.testFlag(ShowIntsAsHex)) {
                 if (token.getTokenId() == ApplesoftToken::IntegerTokenVal)
                 {
                     bool okToConvert = !isFlowTarget;
-
 
                     if (okToConvert)
                     {
