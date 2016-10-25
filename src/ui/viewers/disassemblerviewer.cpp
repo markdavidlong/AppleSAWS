@@ -130,7 +130,7 @@ void DisassemblerViewer::setFile(RelocatableFile *file) {
 QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     QString retval = QString();
 
-    if (address == 0x0A) { retval = "ASBASIC_USRVEC0"; }
+  /*  if (address == 0x0A) { retval = "ASBASIC_USRVEC0"; }
     else if (address == 0x0B) { retval = "ASBASIC_USRVEC1"; }
     else if (address == 0x0C) { retval = "ASBASIC_USRVEC2"; }
     else if (address == 0x0D) { retval = "ASBASIC_GENPURPOSE0"; }
@@ -146,7 +146,7 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     else if (address == 0x17) { retval = "ASBASIC_GENPURPOSE10"; }
 
 
-    else if (address == 0x24) { retval = "DOS_CURSOR_HORIZONTAL"; }
+    else */ if (address == 0x24) { retval = "DOS_CURSOR_HORIZONTAL"; }
     else if (address == 0x28) { retval = "DOS_BASL"; }
     else if (address == 0x29) { retval = "DOS_BASH"; }
     else if (address == 0x33) { retval = "DOS_PROMPT_CHAR"; }
@@ -160,7 +160,7 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     else if (address == 0x43) { retval = "DOS_BUFFER_ADDR_H"; }
     else if (address == 0x44) { retval = "DOS_NUMERIC_OPERAND_L"; }
     else if (address == 0x45) { retval = "DOS_NUMERIC_OPERAND_H"; }
-
+/*
     else if (address == 0x50) { retval = "ASBASIC_PTR_0L"; }
     else if (address == 0x51) { retval = "ASBASIC_PTR_0H"; }
     else if (address == 0x52) { retval = "ASBASIC_PTR_1L"; }
@@ -185,7 +185,7 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     else if (address == 0x64) { retval = "ASBASIC_MULT_DIV_RESULT2"; }
     else if (address == 0x65) { retval = "ASBASIC_MULT_DIV_RESULT3"; }
     else if (address == 0x66) { retval = "ASBASIC_MULT_DIV_RESULT4"; }
-
+*/
 
     else if (address == 0x67) { retval = "ASBASIC_PROG_STARTL"; }
     else if (address == 0x68) { retval = "ASBASIC_PROG_STARTH"; }
@@ -231,7 +231,7 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
 
     else if (address == 0x83) { retval = "ASBASIC_LAST_VARVAL_L"; }
     else if (address == 0x84) { retval = "ASBASIC_LAST_VARVAL_H"; }
-
+/*
     else if (address == 0x85) { retval = "ASBASIC_GENPURPOSE10"; }
     else if (address == 0x86) { retval = "ASBASIC_GENPURPOSE11"; }
     else if (address == 0x87) { retval = "ASBASIC_GENPURPOSE12"; }
@@ -278,10 +278,10 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     else if (address == 0xAC) { retval = "ASBASIC_GENUSE_FLAGS0"; }
     else if (address == 0xAD) { retval = "ASBASIC_GENUSE_FLAGS1"; }
     else if (address == 0xAE) { retval = "ASBASIC_GENUSE_FLAGS2"; }
-
+*/
     else if (address == 0xAF) { retval = "ASBASIC_PROGEND_L"; }
     else if (address == 0xB0) { retval = "ASBASIC_PROGEND_H"; }
-
+/*
     else if (address == 0xB1) { retval = "ASBASIC_CHRGET0"; }
     else if (address == 0xB2) { retval = "ASBASIC_CHRGET1"; }
     else if (address == 0xB3) { retval = "ASBASIC_CHRGET2"; }
@@ -319,10 +319,10 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     else if (address == 0xD3) { retval = "ASBASIC_HGRSCRTCH_1H"; }
     else if (address == 0xD4) { retval = "ASBASIC_HGRSCRTCH_2L"; }
     else if (address == 0xD5) { retval = "ASBASIC_HGRSCRTCH_2H"; }
-
+*/
 
     else if (address == 0xD6) { retval = "DOS_ASBASIC_PROG_PROT_FLAG"; }
-
+/*
     else if (address == 0xD8) { retval = "ASBASIC_ONERR_0L"; }
     else if (address == 0xD9) { retval = "ASBASIC_ONERR_0H"; }
     else if (address == 0xDA) { retval = "ASBASIC_ONERR_1L"; }
@@ -331,22 +331,22 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     else if (address == 0xDD) { retval = "ASBASIC_ONERR_2H"; }
     else if (address == 0xDE) { retval = "ASBASIC_ONERR_3L"; }
     else if (address == 0xDF) { retval = "ASBASIC_ONERR_3H"; }
-
+*/
     else if (address == 0xE0) { retval = "ASBASIC_HGR_XCOORD_L"; }
     else if (address == 0xE1) { retval = "ASBASIC_HGR_XCOORD_H"; }
     else if (address == 0xE2) { retval = "ASBASIC_HGR_YCOORD"; }
 
     else if (address == 0xE4) { retval = "ASBASIC_HGR_COLORBYTE"; }
-
+/*
     else if (address == 0xE5) { retval = "ASBASIC_HGR_GENUSE0"; }
     else if (address == 0xE6) { retval = "ASBASIC_HGR_GENUSE1"; }
     else if (address == 0xE7) { retval = "ASBASIC_HGR_GENUSE2"; }
-
+*/
     else if (address == 0xE8) { retval = "ASBASIC_SHAPETBL_L"; }
     else if (address == 0xE9) { retval = "ASBASIC_SHAPETBL_H"; }
 
     else if (address == 0xEA) { retval = "ASBASIC_HGR_COLLISION_CTR"; }
-
+/*
     else if (address == 0xF0) { retval = "ASBASIC_GENUSE_FLAGS3"; }
     else if (address == 0xF1) { retval = "ASBASIC_GENUSE_FLAGS4"; }
     else if (address == 0xF2) { retval = "ASBASIC_GENUSE_FLAGS5"; }
@@ -357,7 +357,7 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     else if (address == 0xF6) { retval = "ASBASIC_ONERR6"; }
     else if (address == 0xF7) { retval = "ASBASIC_ONERR7"; }
     else if (address == 0xF8) { retval = "ASBASIC_ONERR8"; }
-
+*/
 
     else if (address == 0x03d0) { retval = "DOS_WARMSTART"; }
     else if (address == 0x03d3) { retval = "DOS_COLDSTART"; }

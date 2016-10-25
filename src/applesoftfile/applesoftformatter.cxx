@@ -1,6 +1,8 @@
 #include "applesoftformatter.h"
 #include "util.h"
 
+#define HEXPREFIX "0x"
+
 ApplesoftFormatter::ApplesoftFormatter(QObject *parent) :
     QObject(parent)
 {
@@ -83,20 +85,19 @@ QString ApplesoftFormatter::formatText()
                     {
                         quint32 ui32val = token.getUnsignedIntegerValue();
                         qint32  i32val = token.getIntegerValue();
-qDebug() << "UI32: " << ui32val << " I32: " << i32val;
                         if ((i32val < 128 && i32val >= -128) || ui32val < 256)
                         {
                             quint8 ui8 = ui32val;
-                            tokenstr = "0x"+uint8ToHex(ui8);
+                            tokenstr = HEXPREFIX+uint8ToHex(ui8);
                         }
                         else if ((i32val < 32768 && i32val >= -32768) || ui32val < 65536)
                         {
                             quint16 ui16 = ui32val;
-                            tokenstr = "0x"+uint16ToHex(ui16);
+                            tokenstr = HEXPREFIX+uint16ToHex(ui16);
                         }
                         else
                         {
-                            tokenstr = "0x"+uint32ToHex(ui32val);
+                            tokenstr = HEXPREFIX+uint32ToHex(ui32val);
                         }
                     }
                 }
