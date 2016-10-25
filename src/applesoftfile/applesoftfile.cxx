@@ -106,6 +106,7 @@ void Retokenizer::retokenize(ApplesoftLine &line)
     line.tokens = retokenizeDataStatements(line.tokens);
     line.tokens = retokenizeVariables(line.tokens);
     line.tokens = retokenizeNumbers(line.tokens);
+    line.tokens = retokenizeNegativeNumbers(line.tokens);
 
 
 }
@@ -398,5 +399,36 @@ QVector<ApplesoftToken> Retokenizer::retokenizeNumbers(QVector<ApplesoftToken>&d
     }
 
     datatokens = tmptokens.toVector();
+    return datatokens;
+}
+
+QVector<ApplesoftToken> Retokenizer::retokenizeNegativeNumbers(QVector<ApplesoftToken>&datatokens)
+{
+    //TODO:  Code to make determination of negative numbers vs. unary minus/math formulas.
+    //  Prefixed '-' tokens for negative numbers should get merged with the integer value token.
+    //  So, need to determine when we're in an expression vs when we're starting a number.
+    //
+    //  A = -1 should retokenize.
+    //  A = - 4 - 1 should retokenize -4
+    //  A = - 4 - - 1 should retokenize -4 and -1
+    //  A = 3 - 1 shoud not retokenize
+    //  A = A - 1 should not
+    //  A = PEEK(123) - 5 should not
+    //  A = 4 * - 1 should
+    //  A = (1 + 2) - 4 should not
+    //  A = (1 + 2) + - 4 should
+    //  A = (1 + 2) - - 4 should
+    //  POKE - 4, 1 should
+    //  PRINT + - 4 should
+    //  PRINT - 4 should
+    //  PRINT + + + - - - 4 should retokenize the last -4.
+    //  A = 1 - - 4 should
+    //  A = 1 - - - 4 should, probably, but it's errorprone to say the least,
+    //      as are any multiple arbitrary +/-'s.  Have to hope for the best here.
+    //      Best bet would be to look at how AppleSoft handles these values.
+    //  A = - 0 is the same as 0
+
+
+
     return datatokens;
 }

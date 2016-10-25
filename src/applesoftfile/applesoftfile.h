@@ -31,14 +31,13 @@ private:
     QVector<ApplesoftLine> m_lines;
     int m_data_end;
     quint16 m_length;
-
-    friend class Retokenizer;
 };
 
 class Retokenizer {
 public:
     static void retokenize(ApplesoftLine &line);
 
+protected:
 private:
     static QVector<ApplesoftToken> retokenizeRems(QVector<ApplesoftToken> &datatokens);
     static QVector<ApplesoftToken> retokenizeStrings(QVector<ApplesoftToken> &datatokens);
@@ -46,6 +45,7 @@ private:
     static QVector<ApplesoftToken> processDataPayload(QVector<ApplesoftToken> &datatokens);
     static QVector<ApplesoftToken> retokenizeVariables(QVector<ApplesoftToken> &datatokens);
     static QVector<ApplesoftToken> retokenizeNumbers(QVector<ApplesoftToken> &datatokens);
+    static QVector<ApplesoftToken> retokenizeNegativeNumbers(QVector<ApplesoftToken> &datatokens);
 };
 
 
