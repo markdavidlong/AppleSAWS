@@ -109,7 +109,8 @@ HEADERS += \
     src/ui/widgets/LocationInfoDialog.h \
     src/binaryfile/EntryPoints.h \
     src/binaryfile/AssemblerSymbols.h \
-    src/binaryfile/AssemblerSymbolModel.h
+    src/binaryfile/AssemblerSymbolModel.h \
+    src/binaryfile/MemoryUsageMap.h
 
 FORMS += \
     src/ui/catalogwidget.ui \

@@ -112,7 +112,6 @@ void DisassemblerMetadataDialog::handleRemoveSymbolButton()
 
 }
 
-
 void DisassemblerMetadataDialog::processSymbols()
 {
     m_as->doTestData();

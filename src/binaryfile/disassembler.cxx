@@ -4,58 +4,182 @@
 #include <math.h>
 
 
-QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to) {
-    QList<DisassembledItem> retval;
+Disassembler::Disassembler(QByteArray memimage)
+{
+    m_memimage = memimage, makeOpcodeTable();
+    m_memusagemap.clearData();
+}
 
-    quint16 next = 0;
+QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to,bool processRecursively) {
+    QList<DisassembledItem> retval;
+    qDebug() << "Disassemble: From"<<uint16ToHex(from)<<"to"<<uint16ToHex(to);
+    //#define OLDDISSEM
+#ifdef OLDDISSEM
     for (int idx = from; idx <= to; )
     {
-        DisassembledItem item = disassembleOp(quint16(idx), &next);
+
+        DisassembledItem item;
+        disassembleOp(quint16(idx),item);
         retval.append(item);
-        idx = next ;
-        if (idx > 0xffff || (next < from)) {
+        idx = item.nextContiguousAddress();
+        if (idx > 0xffff || (idx < from)) {
             qDebug() << "Breaking.";
             break;
         }
     }
+#else
+    MemoryUsageMap memuse;
+
+    bool stopping = false;
+    quint16 next = from;
+
+    while (!stopping)
+    {
+        //   quint8 opcode = m_memimage[next];
+        //   qDebug() << "Opcode: " << uint8ToHex(opcode);
+        DisassembledItem item;
+        bool ok = false;
+
+        if (next >= from && next <= to)  //TODO: Remove this to not limit disassembly to program range
+            ok = disassembleOp(next,item,&memuse);
+
+        if (ok)
+        {
+            retval.append(item);
+
+            quint16 flow  = item.nextFlowAddress();
+            qDebug() << uint16ToHex(next) << uint16ToHex(flow);
+            if (item.isBranch())
+            {
+                qDebug() << "Is Branch";
+                if (!m_jumps.contains(item.targetAddress()))
+                {
+                    m_jumps.append(item.targetAddress());
+                }
+            }
+
+            if (item.isJsr() && !item.canNotFollow())
+            {
+                if (item.targetAddress() <= to) //TODO: Remove this to not limit disassembly to program range
+                    if (!m_jumps.contains(item.targetAddress()))
+                    {
+                        m_jumps.append(item.targetAddress());
+                    }
+            }
+
+            if (next <= to) //TODO: Remove this to not limit disassembly to program range
+            {
+                next = flow;
+                stopping = item.stopsProcessing();
+            }
+            else stopping = true;
+        }
+        else
+        {
+            stopping = true; // already processed this address
+        }
+
+        //     if (found.contains(next)) stopping = true;
+        if (next >= to) stopping = true;
+        //        if (stopping) {
+        //            qDebug() << "Stopping.  Stops processing: "
+        //                     << item.stopsProcessing()
+        //                     << ", next>=to: " << (next >= to)
+        //                     << ", alreadyFound: " << ((!ok)?"true":"false");
+        //        }
+    }
+
+    m_memusagemap.merge(memuse);
+
+    if (processRecursively)
+    while (m_jumps.size())
+    {
+        quint16 num = m_jumps.takeFirst();
+        if (!m_memusagemap[num].testFlag(Operation))
+        {
+            if (num >= from && num <= to) // TODO: remove this to not limit disassembly to program range
+            {
+                qDebug() << "Calling recursively to"<<uint16ToHex(num);
+                retval.append(disassemble(num,to,false));
+                qDebug() << "Return from recursive call.";
+            }
+        }
+    }
+
+#endif
+    qSort(retval);
+
+    //    QStringList hexdump;
+    //    foreach (quint16 adr,m_memusagemap.addressesWhichContain(Operation))
+    //    {
+    //        hexdump.append(uint16ToHex(adr));
+    //    }
+    //    qDebug() << "Operations:" << hexdump;
+
+    //    hexdump.clear();
+    //    foreach (quint16 adr,m_memusagemap.addressesWhichContain(OperationArg))
+    //    {
+    //        hexdump.append(uint16ToHex(adr));
+    //    }
+    //    qDebug() << "Operations Args:" << hexdump;
+
 
     return retval;
 }
 
-
-DisassembledItem Disassembler::disassembleOp(quint16 address, quint16 *nextAddress)
+bool Disassembler::disassembleOp(quint16 address, DisassembledItem &retval, MemoryUsageMap *memuse)
 {
-    DisassembledItem retval;
+
+    if (memuse)
+    {
+        if ((*memuse)[address].testFlag(Operation)) return false;
+    }
 
     quint8 opcode = m_memimage[address];
     AssyInstruction op = m_opcodeinfo[opcode];
+    retval.setInstruction(op);
+
+    if (opcode == 0x6C || opcode == 0x7c) // Indirect jumps
+        retval.setCanNotFollow(true);
 
     QString disassemblyLine;
     QString hexValueString;
     QByteArray hexValues;
     hexValues.append(opcode);
 
+    // Prepare Op Code arguments
+
     for (int idx = 1; idx < op.numArgs()+1; idx++) {
         quint8 val = m_memimage[address+idx];
         hexValues.append(val);
     }
-
+    if (memuse)
+    {
+        (*memuse)[address].setFlag(Operation);
+        for (int idx = 1; idx < op.numArgs()+1; idx++)
+        {
+            (*memuse)[address+idx].setFlag(OperationArg);
+        }
+    }
 
     quint16 argval = 0;
-    if (op.numArgs() == 1) { argval = (quint8) hexValues[1]; }
-    else if (op.numArgs() == 2) { argval = (quint8) hexValues[1] + ((quint8) hexValues[2] * 256); }
+    if (op.numArgs() == 1)
+        argval = (quint8) hexValues[1];
+    else if (op.numArgs() == 2)
+        argval = (quint8) hexValues[1] + ((quint8) hexValues[2] * 256);
 
     for (int idx = 0; idx < hexValues.length(); idx++) {
         hexValueString.append(QString("%1 ").arg((quint8) hexValues[idx],2,16,QChar('0')));
     }
     
-    if (nextAddress) {
-        *nextAddress = address + 1 + op.numArgs();
-    }
+    retval.setNextContiguousAddress(address+1+op.numArgs());
+    retval.setNextFlowAddress(address+1+op.numArgs());
 
+    // Disassemble instruction
     switch (op.addressMode()) {
     case AM_InvalidOp: {
         disassemblyLine = op.mnemonic();
+        retval.setIsInvalidOp(true);
         break;
     }
     case AM_Absolute:{
@@ -140,6 +264,7 @@ DisassembledItem Disassembler::disassembleOp(quint16 address, quint16 *nextAddre
     }
     default:{
         disassemblyLine = op.mnemonic();
+        retval.setIsInvalidOp(true);
         qDebug() << "Unhandled Address Mode: " << op.addressMode();
         break;
     }
@@ -149,11 +274,19 @@ DisassembledItem Disassembler::disassembleOp(quint16 address, quint16 *nextAddre
         retval.setTargetAddress(hexValues[2]*256 + hexValues[1]);
     }
 
+    if (opcode == 0x4c)
+    {
+        qDebug() << "JMP: Setting next flow address to"<<uint16ToHex(hexValues[2]*256 + hexValues[1]);
+        retval.setNextFlowAddress(hexValues[2]*256 + hexValues[1]);
+    }
+
+
     retval.setAddress(address);
     retval.setDisassembledString(disassemblyLine.toUpper());
     retval.setHexString(hexValueString.trimmed().toUpper().leftJustified(12,' '));
     retval.setHexValues(hexValues);
-    return retval;
+
+    return true;
 }
 
 void Disassembler::makeOpcodeTable()
@@ -743,6 +876,8 @@ DisassembledItem::DisassembledItem(AssyInstruction instr) {
 
 void DisassembledItem::setInstruction(AssyInstruction instr) {
     m_instruction = instr;
+    //    qDebug() << "Set instruction: " << uint8ToHex(instr.opcode());
+    //    qDebug() << " Copied instr:" << m_instruction.debugStr();
     if (instr.opcode() == 0x20) { m_is_jsr = true; }
     if (instr.opcode() == 0x10) { m_is_branch = true; } // BPL
     if (instr.opcode() == 0x30) { m_is_branch = true; } // BMI
@@ -772,8 +907,13 @@ QString DisassembledItem::disassembledString() {
 
 void DisassembledItem::init() {
     m_address = m_target_address = 0;
+    m_nextContiguousAddress = 0;
+    m_nextFlowAddress = 0;
     m_is_jump = m_is_branch = m_is_jsr = false;
     m_unknown_ta = true;
     m_raw_arg = 0;
     m_has_arg = false;
+    m_canNotFollow = false;
+    m_isInvalidOp = false;
+
 }
