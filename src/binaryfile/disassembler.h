@@ -145,7 +145,10 @@ public:
         P65C02
     };
 
-    QList<DisassembledItem> disassemble(quint16 from, quint16 to,bool processRecursively = true);
+    QList<DisassembledItem> disassemble(quint16 from,
+                                        quint16 to,
+                                        QList<quint16> entryPoints,
+                                        bool processRecursively = true);
 
     MemoryUsageMap *memoryUsageMap() { return &m_memusagemap; }
 

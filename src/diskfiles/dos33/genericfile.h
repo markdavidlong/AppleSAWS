@@ -18,10 +18,15 @@ public:
     virtual quint16 address() { return m_address; }
     virtual QByteArray rawData() { return m_data; }
 
+    virtual void setLength(quint16 length) { m_length = length; }
+    virtual quint16 length() { return m_length; }
+
+
 protected:
     QByteArray m_data;
     QString m_filename;
     quint16 m_address;
+    qint16 m_length;
 
 };
 

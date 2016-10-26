@@ -52,6 +52,7 @@ void DisassemblerMetadataDialog::handleCancelButton()
 
 void DisassemblerMetadataDialog::handleExitButton()
 {
+    m_bfm->save();
     this->close();
 }
 

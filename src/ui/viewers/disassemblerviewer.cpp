@@ -73,7 +73,12 @@ void DisassemblerViewer::setFile(BinaryFile *file) {
 
     quint16 address = file->address();
 
-    QStringList formattedLines = getDisassemblyStrings(address);
+    m_mem.addFile(m_file->data(), address);
+
+    QList<quint16> addresses = m_bfm->entryPoints()->getEntryPointAddresses();
+    if (!addresses.count()) { addresses.append(address); }
+    QStringList formattedLines = getDisassemblyStrings(addresses);
+
     QByteArray joinedlines = qPrintable(formattedLines.join("\n"));
     setData(joinedlines);
 }
@@ -91,7 +96,11 @@ void DisassemblerViewer::setFile(RelocatableFile *file) {
 
     quint16 address = file->address() + 6 ; // Handle offset for relocatable metadata
 
-    QStringList formattedLines = getDisassemblyStrings(address);
+    m_mem.addFile(m_file->data(), address);
+
+    QList<quint16> addresses = m_bfm->entryPoints()->getEntryPointAddresses();
+    if (!addresses.count()) { addresses.append(address); }
+    QStringList formattedLines = getDisassemblyStrings(addresses);
 
     QByteArray joinedlines = qPrintable(formattedLines.join("\n"));
     QStringList rd = file->decodeRelocatableDict();
@@ -102,10 +111,9 @@ void DisassemblerViewer::setFile(RelocatableFile *file) {
 void DisassemblerViewer::handleDisassembleRequest(QList<quint16> addresses)
 {
     QStringList strings;
-    foreach (quint16 addr, addresses)
-    {
-        strings += getDisassemblyStrings(addr);
-    }
+
+    strings += getDisassemblyStrings(addresses);
+
     qSort(strings);
     strings.removeDuplicates();
 
@@ -126,23 +134,15 @@ void DisassemblerViewer::handleDisassembleRequest(QList<quint16> addresses)
 }
 
 
-QStringList DisassemblerViewer::getDisassemblyStrings(quint16 address) {
-    Memory mem;
-    mem.addFile(m_file->data(), address);
-    Disassembler dis(mem.values());
+QStringList DisassemblerViewer::getDisassemblyStrings(QList<quint16> entryPoints) {
 
-    int length = 0;
-    if (dynamic_cast<BinaryFile*>(m_file))
-    {
-        length = (dynamic_cast<BinaryFile*>(m_file))->length();
-    }
-    else
-    {
-        length = m_file->rawData().size();
-    }
+    Disassembler dis(m_mem.values());
+
+    int length = m_file->length();
 
     QList<DisassembledItem> lines = dis.disassemble(m_file->address(),
-                                                    m_file->address()+length);
+                                                    m_file->address()+length,
+                                                    entryPoints);
     dis.setUnknownToData(m_file->address(),m_file->address()+length);
 
     QStringList formattedLines;
@@ -162,14 +162,14 @@ QStringList DisassemblerViewer::getDisassemblyStrings(quint16 address) {
         formattedLines.append(newline);
     }
 
-    for (int idx = address; idx < address+length; idx++)
+    for (int idx = m_file->address(); idx < m_file->address()+length; idx++)
     {
         if (dis.memoryUsageMap()->at(idx).testFlag(Data))
         {
             QString newline = QString("%1:  %2           %3 (%4)").arg(uint16ToHex(idx))
-                    .arg(uint8ToHex(mem.at(idx)))
-                    .arg(makeDescriptorStringForVal(mem.at(idx)))
-                    .arg(dis.getMnemonicForOp(mem.at(idx)));
+                    .arg(uint8ToHex(m_mem.at(idx)))
+                    .arg(makeDescriptorStringForVal(m_mem.at(idx)))
+                    .arg(dis.getMnemonicForOp(m_mem.at(idx)));
             formattedLines.append(newline);
         }
     }

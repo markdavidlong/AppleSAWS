@@ -10,7 +10,9 @@ Disassembler::Disassembler(QByteArray memimage)
     m_memusagemap.clearData();
 }
 
-QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to,bool processRecursively) {
+QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to,
+                                                  QList<quint16> entryPoints,
+                                                  bool processRecursively) {
     QList<DisassembledItem> retval;
     qDebug() << "Disassemble: From"<<uint16ToHex(from)<<"to"<<uint16ToHex(to);
     //#define OLDDISSEM
@@ -32,6 +34,11 @@ QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to,bool 
 
     bool stopping = false;
     quint16 next = from;
+    if (entryPoints.count())
+    {
+        next = entryPoints.takeFirst();
+        m_jumps.append(entryPoints);
+    }
 
     while (!stopping)
     {
@@ -100,7 +107,7 @@ QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to,bool 
             if (num >= from && num <= to) // TODO: remove this to not limit disassembly to program range
             {
                 qDebug() << "Calling recursively to"<<uint16ToHex(num);
-                retval.append(disassemble(num,to,false));
+                retval.append(disassemble(from,to,QList<quint16>() << num,false));
                 qDebug() << "Return from recursive call.";
             }
         }

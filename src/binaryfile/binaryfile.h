@@ -9,12 +9,11 @@ public:
     BinaryFile(QByteArray data = QByteArray());
     void setData(QByteArray data);
 
-    quint16 length() { return m_length; }
+    virtual quint16 length() { return m_length; }
 
     void dump();
 
 protected:
-    quint16 m_length;
 };
 
 #endif // BINARYFILE_H

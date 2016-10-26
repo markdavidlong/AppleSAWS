@@ -81,7 +81,7 @@ public:
     RelocatableFile(QByteArray data = QByteArray());
     void setData(QByteArray data);
 
-    quint16 length() { return m_data.length(); }
+    virtual quint16 length() { return m_data.length(); }
 
     void dump();
 

@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QByteArray>
 
+#include "memory.h"
 #include "binaryfile.h"
 #include "relocatablefile.h"
 #include "fileviewerinterface.h"
@@ -33,7 +34,7 @@ public:
 
     QString makeDescriptorStringForVal(quint8 val);
 
-    QStringList getDisassemblyStrings(quint16 address);
+    QStringList getDisassemblyStrings(QList<quint16> entryPoints);
 
 public slots:
     void setFile(GenericFile *file);
@@ -55,6 +56,7 @@ private:
 
     BinaryFileMetadata *m_bfm;
 
+    Memory m_mem;
 
     bool m_isRelo;
 };

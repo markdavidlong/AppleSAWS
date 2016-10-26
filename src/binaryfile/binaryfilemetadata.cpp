@@ -1,4 +1,7 @@
 #include "binaryfilemetadata.h"
+#include <QFile>
+#include <QDataStream>
+#include <QDebug>
 
 BinaryFileMetadata::BinaryFileMetadata(GenericFile *file, quint16 defaultAddress, QObject *parent)
     : QObject(parent)
@@ -14,14 +17,32 @@ BinaryFileMetadata::BinaryFileMetadata(GenericFile *file, quint16 defaultAddress
 
 void BinaryFileMetadata::load()
 {
-    EntryPoint ep;
-    ep.note = "Default Entry Point";
-    ep.address = m_defaultAddress;
-    m_eps->addPoint(ep);
+    QFile infile(QString("%1%2").arg(m_file->filename()).arg(".bfm"));
+    if (infile.open(QIODevice::ReadOnly))
+    {
+        qDebug() << "Loading binary file metadata from" << QString("%1%2").arg(m_file->filename()).arg(".bfm");
+        QDataStream ds(&infile);
+        ds >> *m_eps;
+        ds >> *m_as;
+        infile.close();
+    }
+    else qDebug() << "Cannot open " << QString("%1%2").arg(m_file->filename()).arg(".bfm") << "for reading";
+
 }
 
 void BinaryFileMetadata::save()
 {
+    QFile infile(QString("%1%2").arg(m_file->filename()).arg(".bfm"));
+    if (infile.open(QIODevice::WriteOnly))
+    {
+        qDebug() << "Saving binary file metadata to" << QString("%1%2").arg(m_file->filename()).arg(".bfm");
+        QDataStream ds(&infile);
+        ds << *m_eps;
+        ds << *m_as;
+        infile.close();
+    }
+    else qDebug() << "Cannot open " << QString("%1%2").arg(m_file->filename()).arg(".bfm") << "for writing";
+
 }
 
 
