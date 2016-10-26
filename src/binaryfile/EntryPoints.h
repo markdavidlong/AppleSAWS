@@ -28,6 +28,8 @@ public:
 
     int numEntryPoints() const { return m_entryPoints.count(); }
 
+    QList<quint16> getEntryPointAddresses() const;
+
     void doTestData();
 
 signals:

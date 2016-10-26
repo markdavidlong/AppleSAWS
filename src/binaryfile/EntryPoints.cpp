@@ -78,6 +78,18 @@ QDataStream &EntryPoints::write(QDataStream &dataStream) const
     return dataStream;
 }
 
+QList<quint16> EntryPoints::getEntryPointAddresses() const
+{
+    QList<quint16> retval;
+
+    QListIterator<EntryPoint> it(m_entryPoints);
+    while (it.hasNext())
+    {
+        retval.append(it.next().address);
+    }
+    return retval;
+}
+
 QDataStream &operator<<(QDataStream &out, const EntryPoints &model)
 {
     return model.write(out);
