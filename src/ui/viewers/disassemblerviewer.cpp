@@ -77,10 +77,7 @@ void DisassemblerViewer::setFile(BinaryFile *file) {
 
     QList<quint16> addresses = m_bfm->entryPoints()->getEntryPointAddresses();
     if (!addresses.count()) { addresses.append(address); }
-    QStringList formattedLines = getDisassemblyStrings(addresses);
-
-    QByteArray joinedlines = qPrintable(formattedLines.join("\n"));
-    setData(joinedlines);
+    handleDisassembleRequest(addresses);
 }
 
 void DisassemblerViewer::setFile(RelocatableFile *file) {
@@ -100,12 +97,7 @@ void DisassemblerViewer::setFile(RelocatableFile *file) {
 
     QList<quint16> addresses = m_bfm->entryPoints()->getEntryPointAddresses();
     if (!addresses.count()) { addresses.append(address); }
-    QStringList formattedLines = getDisassemblyStrings(addresses);
-
-    QByteArray joinedlines = qPrintable(formattedLines.join("\n"));
-    QStringList rd = file->decodeRelocatableDict();
-    QByteArray rdlines = qPrintable(rd.join("\n"));
-    setData(joinedlines + "\n\n== Relocation Dictionary ==\n\n" + rdlines);
+    handleDisassembleRequest(addresses);
 }
 
 void DisassemblerViewer::handleDisassembleRequest(QList<quint16> addresses)
