@@ -60,7 +60,10 @@ SOURCES += \
     src/ui/widgets/HiresScreenWidget.cpp \
     src/ui/widgets/DisassemblerMetadataDialog.cpp \
     src/binaryfile/EntryPointModel.cpp \
-    src/ui/widgets/LocationInfoDialog.cpp
+    src/ui/widgets/LocationInfoDialog.cpp \
+    src/binaryfile/EntryPoints.cpp \
+    src/binaryfile/AssemblerSymbols.cpp \
+    src/binaryfile/AssemblerSymbolModel.cpp
 
 
 HEADERS += \
@@ -103,7 +106,10 @@ HEADERS += \
     src/ui/widgets/HiresScreenWidget.h \
     src/ui/widgets/DisassemblerMetadataDialog.h \
     src/binaryfile/EntryPointModel.h \
-    src/ui/widgets/LocationInfoDialog.h
+    src/ui/widgets/LocationInfoDialog.h \
+    src/binaryfile/EntryPoints.h \
+    src/binaryfile/AssemblerSymbols.h \
+    src/binaryfile/AssemblerSymbolModel.h
 
 FORMS += \
     src/ui/catalogwidget.ui \

@@ -1,7 +1,8 @@
-#ifndef ENTRYPOINTMODEL_H
-#define ENTRYPOINTMODEL_H
+#ifndef ASSEMBLERSYMBOLMODEL_H
+#define ASSEMBLERSYMBOLMODEL_H
 
-#include "EntryPoints.h"
+
+#include "AssemblerSymbols.h"
 
 #include <QDataStream>
 #include <QAbstractTableModel>
@@ -9,13 +10,13 @@
 
 
 
-class EntryPointModel : public QAbstractTableModel
+class AssemblerSymbolModel : public QAbstractTableModel
 {
     Q_OBJECT
 
 public:
-    explicit EntryPointModel(QObject *parent = 0, EntryPoints *points = Q_NULLPTR);
-    void setEntryPointsData(EntryPoints *points);
+    explicit AssemblerSymbolModel(QObject *parent = 0, AssemblerSymbols *symbols = Q_NULLPTR);
+    void setAssemblerSymbolsData(AssemblerSymbols *symbols);
 
     // Header:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;//DONE
@@ -42,9 +43,9 @@ public:
 
 
 protected slots:
-    void handlePointAddition(int location) { insertRows(location,1); }
-    void handlePointRemoval(int location) { removeRows(location, 1); }
-    void handlePointChange(int location)
+    void handleSymbolAddition(int location) { insertRows(location,1); }
+    void handleSymbolRemoval(int location) { removeRows(location, 1); }
+    void handleSymbolChange(int location)
     {
         QModelIndex ind = createIndex(location,0);
         emit dataChanged(ind,ind,QVector<int>() << Qt::DisplayRole);
@@ -52,10 +53,8 @@ protected slots:
 
 
 private:
-    EntryPoints *entryPoints;
+    AssemblerSymbols *assemblerSymbols;
 };
 
 
-
-
-#endif // ENTRYPOINTMODEL_H
+#endif // ASSEMBLERSYMBOLMODEL_H

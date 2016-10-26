@@ -34,8 +34,8 @@ BinaryFileMetadata::BinaryFileMetadata(QString filename)
 
 bool BinaryFileMetadata::load()
 {
-    setSymbol(0x0000,"Test Symbol 1");
-    setSymbol(0x0006,"Test Symbol 2");
+ //   setSymbol(0x0000,"Test Symbol 1");
+  //  setSymbol(0x0006,"Test Symbol 2");
   //  setEntryPoint(0x0010,"Test Entry Point 1");
   //  setEntryPoint(0x0020,"Test Entry Point 2");
     return true;
@@ -46,39 +46,39 @@ bool BinaryFileMetadata::save()
     return false;
 }
 
-void BinaryFileMetadata::setSymbol(quint16 address, QString name)
-{
-    AssemSymbol symbol;
-    symbol.address = address;
-    symbol.name = name;
-    setSymbol(symbol);
-}
+//void BinaryFileMetadata::setSymbol(quint16 address, QString name)
+//{
+//    AssemSymbol Symbol;
+//    Symbol.address = address;
+//    Symbol.name = name;
+//    setSymbol(Symbol);
+//}
 
-void BinaryFileMetadata::setSymbol(AssemSymbol symbol)
-{
-    m_symbols.insert(symbol.address, symbol);
-}
+//void BinaryFileMetadata::setSymbol(AssemSymbol Symbol)
+//{
+//    m_Symbols.insert(Symbol.address, Symbol);
+//}
 
-AssemSymbol BinaryFileMetadata::getSymbolAtAddress(quint16 address)
-{
-    if (hasSymbolAtAddress(address))
-    {
-        return m_symbols[address];
-    }
-    return AssemSymbol();
-}
+//AssemSymbol BinaryFileMetadata::getSymbolAtAddress(quint16 address)
+//{
+//    if (hasSymbolAtAddress(address))
+//    {
+//        return m_Symbols[address];
+//    }
+//    return AssemSymbol();
+//}
 
-void BinaryFileMetadata::removeSymbol(AssemSymbol symbol)
-{
-    removeSymbol(symbol.address);
-}
+//void BinaryFileMetadata::removeSymbol(AssemSymbol Symbol)
+//{
+//    removeSymbol(Symbol.address);
+//}
 
-void BinaryFileMetadata::removeSymbol(quint16 address)
-{
-    if (hasSymbolAtAddress(address))
-    {
-        m_symbols.remove(address);
-    }
-}
+//void BinaryFileMetadata::removeSymbol(quint16 address)
+//{
+//    if (hasSymbolAtAddress(address))
+//    {
+//        m_Symbols.remove(address);
+//    }
+//}
 
 

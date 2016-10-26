@@ -2,7 +2,10 @@
 #define DISASSEMBLERMETADATADIALOG_H
 
 #include "binaryfilemetadata.h"
+#include "EntryPoints.h"
 #include "EntryPointModel.h"
+#include "AssemblerSymbolModel.h"
+#include "AssemblerSymbols.h"
 #include "LocationInfoDialog.h"
 
 #include <QDialog>
@@ -24,6 +27,9 @@ public:
     void processSymbols();
     void processEntryPoints();
 
+protected:
+    void showEvent(QShowEvent *);
+
 protected slots:
     void handleCancelButton();
     void handleExitButton();
@@ -41,7 +47,11 @@ private:
 
     BinaryFileMetadata *m_bfm;
 
+    EntryPoints *m_eps;
     EntryPointModel *m_epmodel;
+
+    AssemblerSymbols *m_as;
+    AssemblerSymbolModel *m_asmodel;
 
     bool m_isRelocatable;
 };
