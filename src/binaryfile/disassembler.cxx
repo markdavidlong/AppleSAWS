@@ -705,3 +705,75 @@ void Disassembler::makeOpcodeTable()
 #endif
 
 }
+
+AssyInstruction::AssyInstruction(quint8 opcode, QString mnemonic, AddressMode am) {
+    m_opcode = opcode;
+    m_mnemonic = mnemonic;
+    m_addressMode = am;
+}
+
+quint8 AssyInstruction::numArgs() {
+    switch (m_addressMode) {
+    case AM_Absolute:
+    case AM_AbsoluteIndexedIndirect:
+    case AM_AbsoluteIndexedWithX:
+    case AM_AbsoluteIndexedWithY:
+    case AM_AbsoluteIndirect:
+        return 2;
+    case AM_ProgramCounterRelative:
+    case AM_ZeroPage:
+    case AM_ZeroPageIndirectIndexedWithY:
+    case AM_ZeroPageIndexedIndirect:
+    case AM_ZeroPageIndexedWithX:
+    case AM_ZeroPageIndexedWithY:
+    case AM_ZeroPageIndirect:
+    case AM_Immediate:
+        return 1;
+    case AM_InvalidOp:
+    case AM_Implied:
+    case AM_Accumulator:
+    default:
+        return 0;
+    }
+}
+
+DisassembledItem::DisassembledItem(AssyInstruction instr) {
+    setInstruction(instr);
+}
+
+void DisassembledItem::setInstruction(AssyInstruction instr) {
+    m_instruction = instr;
+    if (instr.opcode() == 0x20) { m_is_jsr = true; }
+    if (instr.opcode() == 0x10) { m_is_branch = true; } // BPL
+    if (instr.opcode() == 0x30) { m_is_branch = true; } // BMI
+    if (instr.opcode() == 0x50) { m_is_branch = true; } // BVC
+    if (instr.opcode() == 0x70) { m_is_branch = true; } // BVS
+    if (instr.opcode() == 0x90) { m_is_branch = true; } // BCC
+    if (instr.opcode() == 0xB0) { m_is_branch = true; } // BCS
+    if (instr.opcode() == 0xD0) { m_is_branch = true; } // BNE
+    if (instr.opcode() == 0xF0) { m_is_branch = true; } // BEQ
+    if (instr.opcode() == 0x80) { m_is_jump = true; }   // BRA
+    if (instr.opcode() == 0x4C) { m_is_jump = true; }   // JMP a
+    if (instr.opcode() == 0x6C) { m_is_jump = true; }   // JMP (a)
+    if (instr.opcode() == 0x7C) { m_is_jump = true; }   // JMP (a,x)
+}
+
+QString DisassembledItem::disassembledString() {
+    QString retval = rawDisassembledString();
+    if (hasArg()) {
+        if (retval.contains("_ARG16_")) {
+            retval.replace("_ARG16_","$"+arg16Str());
+        } else if (retval.contains("_ARG8_")) {
+            retval.replace("_ARG8_","$"+arg8Str());
+        }
+    }
+    return retval;
+}
+
+void DisassembledItem::init() {
+    m_address = m_target_address = 0;
+    m_is_jump = m_is_branch = m_is_jsr = false;
+    m_unknown_ta = true;
+    m_raw_arg = 0;
+    m_has_arg = false;
+}
