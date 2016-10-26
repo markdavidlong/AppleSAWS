@@ -57,7 +57,10 @@ SOURCES += \
     src/ui/widgets/hexconverter.cpp \
     src/ui/viewers/viewerbase.cpp \
     src/ui/widgets/CharacterSetExplorer.cpp \
-    src/ui/widgets/HiresScreenWidget.cpp
+    src/ui/widgets/HiresScreenWidget.cpp \
+    src/ui/widgets/DisassemblerMetadataDialog.cpp \
+    src/binaryfile/EntryPointModel.cpp \
+    src/ui/widgets/LocationInfoDialog.cpp
 
 
 HEADERS += \
@@ -97,7 +100,10 @@ HEADERS += \
     src/ui/viewers/viewerbase.h \
     src/ui/viewers/fileviewerinterface.h \
     src/ui/widgets/CharacterSetExplorer.h \
-    src/ui/widgets/HiresScreenWidget.h
+    src/ui/widgets/HiresScreenWidget.h \
+    src/ui/widgets/DisassemblerMetadataDialog.h \
+    src/binaryfile/EntryPointModel.h \
+    src/ui/widgets/LocationInfoDialog.h
 
 FORMS += \
     src/ui/catalogwidget.ui \
@@ -110,4 +116,6 @@ FORMS += \
     src/ui/widgets/hexconverter.ui \
     src/ui/widgets/hrcgcontrolsinfo.ui \
     src/ui/viewers/viewerbase.ui \
-    src/ui/widgets/CharacterSetExplorer.ui
+    src/ui/widgets/CharacterSetExplorer.ui \
+    src/ui/widgets/DisassemblerMetadataDialog.ui \
+    src/ui/widgets/LocationInfoDialog.ui

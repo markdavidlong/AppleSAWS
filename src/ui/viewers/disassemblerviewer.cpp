@@ -15,6 +15,10 @@ DisassemblerViewer::DisassemblerViewer(QWidget *parent) :
     ui(new Ui::DisassemblerViewer)
 {
     ui->setupUi(this);
+    m_isRelo = false;
+    m_dmd = Q_NULLPTR;
+    m_wordWrapAction = Q_NULLPTR;
+    m_showMetadataAction = Q_NULLPTR;
 
     QString title = QString("Disassembly Viewer");
     setWindowTitle(title);
@@ -56,6 +60,7 @@ void DisassemblerViewer::toggleWordWrap(bool enabled)
 
 void DisassemblerViewer::setFile(BinaryFile *file) {
     m_file = file;
+    m_isRelo = false;
 
     QString title = QString("Disassembler Viewer: %1").arg(m_file->filename());
     setWindowTitle(title);
@@ -91,7 +96,7 @@ void DisassemblerViewer::setFile(BinaryFile *file) {
 
 void DisassemblerViewer::setFile(RelocatableFile *file) {
     m_file = file;
-
+    m_isRelo = true;
     QString title = QString("Disassembler Viewer: %1 (Relocatable)").arg(m_file->filename());
     setWindowTitle(title);
 
@@ -130,7 +135,7 @@ void DisassemblerViewer::setFile(RelocatableFile *file) {
 QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     QString retval = QString();
 
-  /*  if (address == 0x0A) { retval = "ASBASIC_USRVEC0"; }
+    /*  if (address == 0x0A) { retval = "ASBASIC_USRVEC0"; }
     else if (address == 0x0B) { retval = "ASBASIC_USRVEC1"; }
     else if (address == 0x0C) { retval = "ASBASIC_USRVEC2"; }
     else if (address == 0x0D) { retval = "ASBASIC_GENPURPOSE0"; }
@@ -160,7 +165,7 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     else if (address == 0x43) { retval = "DOS_BUFFER_ADDR_H"; }
     else if (address == 0x44) { retval = "DOS_NUMERIC_OPERAND_L"; }
     else if (address == 0x45) { retval = "DOS_NUMERIC_OPERAND_H"; }
-/*
+    /*
     else if (address == 0x50) { retval = "ASBASIC_PTR_0L"; }
     else if (address == 0x51) { retval = "ASBASIC_PTR_0H"; }
     else if (address == 0x52) { retval = "ASBASIC_PTR_1L"; }
@@ -231,7 +236,7 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
 
     else if (address == 0x83) { retval = "ASBASIC_LAST_VARVAL_L"; }
     else if (address == 0x84) { retval = "ASBASIC_LAST_VARVAL_H"; }
-/*
+    /*
     else if (address == 0x85) { retval = "ASBASIC_GENPURPOSE10"; }
     else if (address == 0x86) { retval = "ASBASIC_GENPURPOSE11"; }
     else if (address == 0x87) { retval = "ASBASIC_GENPURPOSE12"; }
@@ -281,7 +286,7 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
 */
     else if (address == 0xAF) { retval = "ASBASIC_PROGEND_L"; }
     else if (address == 0xB0) { retval = "ASBASIC_PROGEND_H"; }
-/*
+    /*
     else if (address == 0xB1) { retval = "ASBASIC_CHRGET0"; }
     else if (address == 0xB2) { retval = "ASBASIC_CHRGET1"; }
     else if (address == 0xB3) { retval = "ASBASIC_CHRGET2"; }
@@ -322,7 +327,7 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
 */
 
     else if (address == 0xD6) { retval = "DOS_ASBASIC_PROG_PROT_FLAG"; }
-/*
+    /*
     else if (address == 0xD8) { retval = "ASBASIC_ONERR_0L"; }
     else if (address == 0xD9) { retval = "ASBASIC_ONERR_0H"; }
     else if (address == 0xDA) { retval = "ASBASIC_ONERR_1L"; }
@@ -337,7 +342,7 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     else if (address == 0xE2) { retval = "ASBASIC_HGR_YCOORD"; }
 
     else if (address == 0xE4) { retval = "ASBASIC_HGR_COLORBYTE"; }
-/*
+    /*
     else if (address == 0xE5) { retval = "ASBASIC_HGR_GENUSE0"; }
     else if (address == 0xE6) { retval = "ASBASIC_HGR_GENUSE1"; }
     else if (address == 0xE7) { retval = "ASBASIC_HGR_GENUSE2"; }
@@ -346,7 +351,7 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     else if (address == 0xE9) { retval = "ASBASIC_SHAPETBL_H"; }
 
     else if (address == 0xEA) { retval = "ASBASIC_HGR_COLLISION_CTR"; }
-/*
+    /*
     else if (address == 0xF0) { retval = "ASBASIC_GENUSE_FLAGS3"; }
     else if (address == 0xF1) { retval = "ASBASIC_GENUSE_FLAGS4"; }
     else if (address == 0xF2) { retval = "ASBASIC_GENUSE_FLAGS5"; }
@@ -1416,13 +1421,33 @@ bool DisassemblerViewer::optionsMenuItems(QMenu *menu)
 {
     QSettings settings;
 
-    QAction *action = new QAction("&Word Wrap");
-    action->setCheckable(true);
-    action->setChecked(settings.value("DisassemblerViewer.WordWrap",true).toBool());
-    connect(action, SIGNAL(toggled(bool)), SLOT(toggleWordWrap(bool)));
-    menu->addAction(action);
+    if (!m_wordWrapAction) {
+        m_wordWrapAction = new QAction("&Word Wrap");
+        m_wordWrapAction->setCheckable(true);
+        m_wordWrapAction->setChecked(settings.value("DisassemblerViewer.WordWrap",true).toBool());
+        connect(m_wordWrapAction, SIGNAL(toggled(bool)), SLOT(toggleWordWrap(bool)));
+    }
+    menu->addAction(m_wordWrapAction);
+
+    menu->addSeparator();
+
+    if (!m_showMetadataAction) {
+        m_showMetadataAction = new QAction("&Dissassembler Metadata");
+        connect(m_showMetadataAction, SIGNAL(triggered(bool)), SLOT(showMetadataDialog()));
+    }
+    menu->addAction(m_showMetadataAction);
 
     return true;
+}
+
+void DisassemblerViewer::showMetadataDialog()
+{
+    if (!m_dmd) {
+        m_dmd = new DisassemblerMetadataDialog(this);
+        m_dmd->setRelocatable(m_isRelo);
+    }
+    m_dmd->show();
+    m_dmd->raise();
 }
 
 void DisassemblerViewer::setData(QByteArray data)
@@ -1462,7 +1487,7 @@ void DisassemblerViewer::doExport()
     QDir savename = QDir(defaultPath).filePath(m_file->filename()+".txt");
 
     QString saveName = QFileDialog::getSaveFileName(this,
-       tr("Export Disassembly"), savename.path(), tr("Text Files (*.txt)"));
+                                                    tr("Export Disassembly"), savename.path(), tr("Text Files (*.txt)"));
 
     if (saveName == "") return;  // User cancelled
 

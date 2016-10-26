@@ -3,50 +3,53 @@
 
 #include <Qt>
 #include <QList>
+#include <QMap>
 
 
-struct AddressRange
-{
-public:
-    quint16 start;
-    quint16 end;
 
-    quint16 length() { return end-start; }
-
-    bool contains(quint16 address) { return (address >= start && address <= end); }
-
+struct AssemSymbol {
+    quint16 address;
+    QString name;
 };
 
 class BinaryFileMetadata
 {
 public:
-    enum UseType {
-        UNKNOWN = 0x00,
-        ROM     = 0x01,
-        IO      = 0x02,
-        BASIC   = 0x04,
-        OPCODE  = 0x08,
-        DATA    = 0x10
-    };
 
-    BinaryFileMetadata();
+    BinaryFileMetadata(QString filename);
 
-    void addEntryPoint(quint16 address);
-    void addDataRange(AddressRange range);
+    void setFilename(QString filename) { m_filename = filename; }
+    QString filename() const { return m_filename; }
 
     bool load();
     bool save();
 
-    bool containsEntryPoint(quint16 address);
-    void removeEntryPoint(quint16 address);
+//    void setEntryPoint(quint16 address, QString note = "");
+//    void setEntryPoint(EntryPoint ep);
 
-    QList<quint16> getEntryPoints() { return m_entryPoints; }
-    QList<AddressRange> getDataRanges() { return m_dataRanges; }
+//    bool hasEntryPointAtAddress(EntryPoint ep);
+//    bool hasEntryPointAtAddress(quint16 address);
+
+//    void removeEntryPoint(quint16 address);
+
+//    QList<EntryPoint> getEntryPointList() const { return m_entryPoints.values(); }
+//    QMap<quint16,EntryPoint> getEntryPointMap() const { return m_entryPoints; }
+
+    void setSymbol(quint16 address, QString name);
+    void setSymbol(AssemSymbol symbol);
+    bool hasSymbol(AssemSymbol symbol) const { return hasSymbolAtAddress(symbol.address); }
+    bool hasSymbolAtAddress(quint16 address) const { return m_symbols.contains(address); }
+    AssemSymbol getSymbolAtAddress(quint16 address);
+    void removeSymbol(AssemSymbol symbol);
+    void removeSymbol(quint16 address);
+
+    QList<AssemSymbol> getSymbolList() const { return m_symbols.values(); }
+    QMap<quint16, AssemSymbol> getSymbolMap() const { return m_symbols; }
 
 private:
-    QList<quint16> m_entryPoints;
-    QList<AddressRange> m_dataRanges;
 
+    QMap<quint16,AssemSymbol> m_symbols;
+    QString m_filename;
 };
 
 #endif // BINARYFILEMETADATA_H

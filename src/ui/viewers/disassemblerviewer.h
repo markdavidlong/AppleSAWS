@@ -7,6 +7,7 @@
 #include "binaryfile.h"
 #include "relocatablefile.h"
 #include "fileviewerinterface.h"
+#include "DisassemblerMetadataDialog.h"
 
 namespace Ui {
 class DisassemblerViewer;
@@ -36,10 +37,18 @@ public slots:
 
     void doPrint();
     void doExport();
+protected slots:
+    void showMetadataDialog();
 private:
     Ui::DisassemblerViewer *ui;
 
+    DisassemblerMetadataDialog *m_dmd;
     GenericFile *m_file;
+
+    QAction *m_wordWrapAction;
+    QAction *m_showMetadataAction;
+
+    bool m_isRelo;
 };
 
 #endif // DISASSEMBLERVIEWER_H
