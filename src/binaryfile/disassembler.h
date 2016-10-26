@@ -1,8 +1,8 @@
 #ifndef DISASSEMBLER_H
 #define DISASSEMBLER_H
 
-#include "util.h"
 #include "MemoryUsageMap.h"
+#include "util.h"
 
 #include <QByteArray>
 #include <QStringList>
@@ -149,16 +149,23 @@ public:
 
     MemoryUsageMap *memoryUsageMap() { return &m_memusagemap; }
 
+    void setUnknownToData(quint16 from, quint16 to);
+
+    QString getMnemonicForOp(quint8 opcode)
+    {
+        return m_opcodeinfo[opcode].mnemonic();
+    }
+
 private:
 
     bool disassembleOp(quint16 address, DisassembledItem &retval, MemoryUsageMap *memuse = Q_NULLPTR);
     void makeOpcodeTable();
 
+
     QHash<quint8,AssyInstruction> m_opcodeinfo;
     QByteArray m_memimage;
 
     QList<quint16> m_jumps;
- //   QList<quint16> found;
 
     MemoryUsageMap m_memusagemap;
 

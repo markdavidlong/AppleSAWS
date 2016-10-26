@@ -839,6 +839,17 @@ void Disassembler::makeOpcodeTable()
 
 }
 
+void Disassembler::setUnknownToData(quint16 from, quint16 to)
+{
+    for (int idx = from; idx <= to; idx++)
+    {
+        if (m_memusagemap[idx].testFlag(Unknown))
+        {
+            m_memusagemap[idx].setFlag(Data);
+        }
+    }
+}
+
 AssyInstruction::AssyInstruction(quint8 opcode, QString mnemonic, AddressMode am) {
     m_opcode = opcode;
     m_mnemonic = mnemonic;

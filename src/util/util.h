@@ -73,4 +73,6 @@ inline QString uint32ToHex(quint32 val) {
 
 
 
+
+
 #endif // UTIL_H

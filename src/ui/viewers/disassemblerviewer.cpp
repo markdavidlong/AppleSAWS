@@ -2,6 +2,7 @@
 #include "ui_disassemblerviewer.h"
 #include "disassembler.h"
 #include "memory.h"
+#include "util.h"
 #include "relocatablefile.h"
 
 #include <QSettings>
@@ -34,6 +35,7 @@ DisassemblerViewer::~DisassemblerViewer()
 
 void DisassemblerViewer::setFile(GenericFile *file)
 {
+
     if (dynamic_cast<RelocatableFile*>(file))
     {
         setFile(dynamic_cast<RelocatableFile*>(file));
@@ -62,51 +64,86 @@ void DisassemblerViewer::setFile(BinaryFile *file) {
     m_file = file;
     m_isRelo = false;
 
+    m_bfm = new BinaryFileMetadata(m_file, file->address(), this);
+    connect(m_bfm, SIGNAL(doDisassemble(QList<quint16>)),
+            SLOT(handleDisassembleRequest(QList<quint16>)));
+
     QString title = QString("Disassembler Viewer: %1").arg(m_file->filename());
     setWindowTitle(title);
 
     quint16 address = file->address();
-    Memory mem;
-    mem.addFile(file->data(), address);
-    Disassembler dis(mem.values());
 
-    QList<DisassembledItem> lines = dis.disassemble(file->address(), file->address()+file->length());
-
-    QStringList formattedLines;
-
-    foreach (DisassembledItem di, lines) {
-        QString ds = di.rawDisassembledString();
-        if (di.hasArg()) {
-            QString potentialLabel = getPotentialLabel(di.arg16());
-            if (!potentialLabel.isEmpty()) {
-                if (ds.contains("_ARG16_")) { ds.replace("_ARG16_",potentialLabel); }
-                else if (ds.contains("_ARG8_")) { ds.replace("_ARG8_",potentialLabel); }
-            } else {
-                ds = di.disassembledString();
-            }
-        }
-        QString newline = QString("%1:  %2 %3").arg(di.hexAddress()).arg(di.hexString()).arg(ds);
-        formattedLines.append(newline);
-    }
-
+    QStringList formattedLines = getDisassemblyStrings(address);
     QByteArray joinedlines = qPrintable(formattedLines.join("\n"));
     setData(joinedlines);
 }
 
-
 void DisassemblerViewer::setFile(RelocatableFile *file) {
     m_file = file;
     m_isRelo = true;
+
+    m_bfm = new BinaryFileMetadata(m_file, file->address() + 6, this);
+    connect(m_bfm, SIGNAL(doDisassemble(QList<quint16>)),
+            SLOT(handleDisassembleRequest(QList<quint16>)));
+
     QString title = QString("Disassembler Viewer: %1 (Relocatable)").arg(m_file->filename());
     setWindowTitle(title);
 
     quint16 address = file->address() + 6 ; // Handle offset for relocatable metadata
 
+    QStringList formattedLines = getDisassemblyStrings(address);
+
+    QByteArray joinedlines = qPrintable(formattedLines.join("\n"));
+    QStringList rd = file->decodeRelocatableDict();
+    QByteArray rdlines = qPrintable(rd.join("\n"));
+    setData(joinedlines + "\n\n== Relocation Dictionary ==\n\n" + rdlines);
+}
+
+void DisassemblerViewer::handleDisassembleRequest(QList<quint16> addresses)
+{
+    QStringList strings;
+    foreach (quint16 addr, addresses)
+    {
+        strings += getDisassemblyStrings(addr);
+    }
+    qSort(strings);
+    strings.removeDuplicates();
+
+    if (m_isRelo)
+    {
+        QByteArray joinedlines = qPrintable(strings.join("\n"));
+        QStringList rd = (dynamic_cast<RelocatableFile*>(m_file))->decodeRelocatableDict();
+        QByteArray rdlines = qPrintable(rd.join("\n"));
+        ui->textArea->clear();
+        setData(joinedlines + "\n\n== Relocation Dictionary ==\n\n" + rdlines);
+    }
+    else
+    {
+        QByteArray joinedlines = qPrintable(strings.join("\n"));
+        ui->textArea->clear();
+        setData(joinedlines);
+    }
+}
+
+
+QStringList DisassemblerViewer::getDisassemblyStrings(quint16 address) {
     Memory mem;
-    mem.addFile(file->getBinaryCodeImage(), address);
+    mem.addFile(m_file->data(), address);
     Disassembler dis(mem.values());
 
-    QList<DisassembledItem> lines = dis.disassemble(address, address+file->codeImageLength()-1);
+    int length = 0;
+    if (dynamic_cast<BinaryFile*>(m_file))
+    {
+        length = (dynamic_cast<BinaryFile*>(m_file))->length();
+    }
+    else
+    {
+        length = m_file->rawData().size();
+    }
+
+    QList<DisassembledItem> lines = dis.disassemble(m_file->address(),
+                                                    m_file->address()+length);
+    dis.setUnknownToData(m_file->address(),m_file->address()+length);
 
     QStringList formattedLines;
 
@@ -125,11 +162,21 @@ void DisassemblerViewer::setFile(RelocatableFile *file) {
         formattedLines.append(newline);
     }
 
-    QByteArray joinedlines = qPrintable(formattedLines.join("\n"));
-    QStringList rd = file->decodeRelocatableDict();
-    QByteArray rdlines = qPrintable(rd.join("\n"));
-    setData(joinedlines + '\n' + rdlines);
+    for (int idx = address; idx < address+length; idx++)
+    {
+        if (dis.memoryUsageMap()->at(idx).testFlag(Data))
+        {
+            QString newline = QString("%1:  %2           %3 (%4)").arg(uint16ToHex(idx))
+                    .arg(uint8ToHex(mem.at(idx)))
+                    .arg(makeDescriptorStringForVal(mem.at(idx)))
+                    .arg(dis.getMnemonicForOp(mem.at(idx)));
+            formattedLines.append(newline);
+        }
+    }
+    qSort(formattedLines);
+    return formattedLines;
 }
+
 
 
 QString DisassemblerViewer::getPotentialLabel(quint16 address) {
@@ -1443,7 +1490,7 @@ bool DisassemblerViewer::optionsMenuItems(QMenu *menu)
 void DisassemblerViewer::showMetadataDialog()
 {
     if (!m_dmd) {
-        m_dmd = new DisassemblerMetadataDialog(this);
+        m_dmd = new DisassemblerMetadataDialog(m_bfm, this);
         m_dmd->setRelocatable(m_isRelo);
     }
     m_dmd->show();
@@ -1503,5 +1550,36 @@ void DisassemblerViewer::doExport()
     QTextStream out(&saveFile);
     out << ui->textArea->document()->toPlainText();
     saveFile.close();
+}
 
+QString DisassemblerViewer::makeDescriptorStringForVal(quint8 val)
+{
+    QString retval;
+
+//    QString zone;
+//    if (val <= 0x3f) zone = "Inverse";
+//    else if (val <= 0x7f) zone = "Flash";
+//    else if (val <= 0x9f) zone = "(Alt) Normal";
+//    else zone = "Normal";
+
+//    quint8 baseascii = val;
+//    if (val <= 0x1f) baseascii += 0x40;
+//    else if (val <= 0x5f) baseascii += 0;
+//    else if (val <= 0xbf) baseascii -= 0x40;
+//    else  baseascii -= 80;
+
+//    QString ch = QChar(baseascii);
+//    if (val == 0xff) ch = "[DEL]";
+
+//    QString appleAscii = QString("%1 %2").arg(ch).arg(zone);
+
+//    if (val < 0x20)
+//    {
+//        QString ctrl = QString(" / (^%1)").arg(QChar(val+0x40));
+//        appleAscii.append(ctrl);
+//    }
+
+//    retval = QString("; %1 / %2").arg(val).arg(appleAscii);
+    retval = QString("; %1").arg(val);
+    return retval;
 }

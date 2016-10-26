@@ -4,24 +4,17 @@
 #include <QDebug>
 
 
-DisassemblerMetadataDialog::DisassemblerMetadataDialog(QWidget *parent) :
+DisassemblerMetadataDialog::DisassemblerMetadataDialog(BinaryFileMetadata *bfm, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DisassemblerMetadataDialog)
 {
     ui->setupUi(this);
     setRelocatable(false);
 
-    m_bfm = new BinaryFileMetadata("Test");
-    m_bfm->load();
+    m_bfm = bfm;
 
-    m_eps = new EntryPoints(this);
-    m_as = new AssemblerSymbols(this);
-
-    processEntryPoints();
-    processSymbols();
-
-    m_epmodel = new EntryPointModel(this,m_eps);
-    m_asmodel = new AssemblerSymbolModel(this,m_as);
+    m_epmodel = new EntryPointModel(this,m_bfm->entryPoints());
+    m_asmodel = new AssemblerSymbolModel(this,m_bfm->assemblerSymbols());
 
     ui->entryTable->setModel(m_epmodel);
     ui->symbolTable->setModel(m_asmodel);
@@ -64,7 +57,7 @@ void DisassemblerMetadataDialog::handleExitButton()
 
 void DisassemblerMetadataDialog::handleProcessButton()
 {
-
+    m_bfm->requestDisassembly();
 }
 
 
@@ -77,7 +70,7 @@ void DisassemblerMetadataDialog::handleAddEntryPointButton()
         EntryPoint ep;
         ep.address = lid.getAddress();
         ep.note = lid.getInfo();
-        m_eps->addPoint(ep);
+        m_bfm->entryPoints()->addPoint(ep);
         ui->entryTable->resizeRowsToContents();
     }
 }
@@ -102,7 +95,7 @@ void DisassemblerMetadataDialog::handleAddSymbolButton()
         AssemblerSymbol as;
         as.address = lid.getAddress();
         as.name = lid.getInfo();
-        m_as->addSymbol(as);
+        m_bfm->assemblerSymbols()->addSymbol(as);
         ui->symbolTable->resizeRowsToContents();
     }
 }
@@ -110,14 +103,4 @@ void DisassemblerMetadataDialog::handleAddSymbolButton()
 void DisassemblerMetadataDialog::handleRemoveSymbolButton()
 {
 
-}
-
-void DisassemblerMetadataDialog::processSymbols()
-{
-    m_as->doTestData();
-}
-
-void DisassemblerMetadataDialog::processEntryPoints()
-{
-    m_eps->doTestData();
 }

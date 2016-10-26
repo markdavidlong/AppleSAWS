@@ -1,84 +1,29 @@
 #include "binaryfilemetadata.h"
 
-BinaryFileMetadata::BinaryFileMetadata(QString filename)
+BinaryFileMetadata::BinaryFileMetadata(GenericFile *file, quint16 defaultAddress, QObject *parent)
+    : QObject(parent)
 {
-    m_filename = filename;
+    m_file = file;
+    m_defaultAddress = defaultAddress;
+
+    m_eps = new EntryPoints(this);
+    m_as = new AssemblerSymbols(this);
+
+    load();
 }
 
-//void BinaryFileMetadata::setEntryPoint(quint16 address, QString note)
-//{
-//    EntryPoint ep;
-//    ep.address = address;
-//    ep.note = note;
-//    setEntryPoint(ep);
-//}
-
-//void BinaryFileMetadata::setEntryPoint(EntryPoint ep)
-//{
-//    m_entryPoints.insert(ep.address,ep);
-//}
-
-
-//bool BinaryFileMetadata::hasEntryPointAtAddress(quint16 address)
-//{
-//    return m_entryPoints.contains(address);
-//}
-
-//void BinaryFileMetadata::removeEntryPoint(quint16 address)
-//{
-//    if (hasEntryPointAtAddress(address))
-//    {
-//        m_entryPoints.remove(address);
-//    }
-//}
-
-bool BinaryFileMetadata::load()
+void BinaryFileMetadata::load()
 {
- //   setSymbol(0x0000,"Test Symbol 1");
-  //  setSymbol(0x0006,"Test Symbol 2");
-  //  setEntryPoint(0x0010,"Test Entry Point 1");
-  //  setEntryPoint(0x0020,"Test Entry Point 2");
-    return true;
+    EntryPoint ep;
+    ep.note = "Default Entry Point";
+    ep.address = m_defaultAddress;
+    m_eps->addPoint(ep);
 }
 
-bool BinaryFileMetadata::save()
+void BinaryFileMetadata::save()
 {
-    return false;
 }
 
-//void BinaryFileMetadata::setSymbol(quint16 address, QString name)
-//{
-//    AssemSymbol Symbol;
-//    Symbol.address = address;
-//    Symbol.name = name;
-//    setSymbol(Symbol);
-//}
 
-//void BinaryFileMetadata::setSymbol(AssemSymbol Symbol)
-//{
-//    m_Symbols.insert(Symbol.address, Symbol);
-//}
-
-//AssemSymbol BinaryFileMetadata::getSymbolAtAddress(quint16 address)
-//{
-//    if (hasSymbolAtAddress(address))
-//    {
-//        return m_Symbols[address];
-//    }
-//    return AssemSymbol();
-//}
-
-//void BinaryFileMetadata::removeSymbol(AssemSymbol Symbol)
-//{
-//    removeSymbol(Symbol.address);
-//}
-
-//void BinaryFileMetadata::removeSymbol(quint16 address)
-//{
-//    if (hasSymbolAtAddress(address))
-//    {
-//        m_Symbols.remove(address);
-//    }
-//}
 
 

@@ -31,12 +31,17 @@ public:
     bool canPrint() const;
     bool canExport() const;
 
+    QString makeDescriptorStringForVal(quint8 val);
+
+    QStringList getDisassemblyStrings(quint16 address);
+
 public slots:
     void setFile(GenericFile *file);
     void toggleWordWrap(bool enabled);
 
     void doPrint();
     void doExport();
+    void handleDisassembleRequest(QList<quint16> addresses);
 protected slots:
     void showMetadataDialog();
 private:
@@ -47,6 +52,9 @@ private:
 
     QAction *m_wordWrapAction;
     QAction *m_showMetadataAction;
+
+    BinaryFileMetadata *m_bfm;
+
 
     bool m_isRelo;
 };

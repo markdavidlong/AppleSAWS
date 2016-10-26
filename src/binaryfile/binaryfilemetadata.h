@@ -1,51 +1,47 @@
 #ifndef BINARYFILEMETADATA_H
 #define BINARYFILEMETADATA_H
 
+#include "EntryPoints.h"
+#include "AssemblerSymbols.h"
+#include "genericfile.h"
+#include "binaryfile.h"
+
 #include <Qt>
 #include <QList>
 #include <QMap>
+#include <QObject>
 
 
 
 
-class BinaryFileMetadata
+class BinaryFileMetadata : public QObject
 {
+    Q_OBJECT
 public:
+    BinaryFileMetadata(GenericFile *file, quint16 defaultAddress, QObject *parent = 0);
 
-    BinaryFileMetadata(QString filename);
+    QString filename() const { return m_file->filename(); }
 
-    void setFilename(QString filename) { m_filename = filename; }
-    QString filename() const { return m_filename; }
+    EntryPoints *entryPoints() { return m_eps; }
+    AssemblerSymbols *assemblerSymbols() { return m_as; }
 
-    bool load();
-    bool save();
+signals:
+    void doDisassemble(QList<quint16>);
 
-//    void setEntryPoint(quint16 address, QString note = "");
-//    void setEntryPoint(EntryPoint ep);
+public slots:
+    void load();
+    void save();
 
-//    bool hasEntryPointAtAddress(EntryPoint ep);
-//    bool hasEntryPointAtAddress(quint16 address);
-
-//    void removeEntryPoint(quint16 address);
-
-//    QList<EntryPoint> getEntryPointList() const { return m_entryPoints.values(); }
-//    QMap<quint16,EntryPoint> getEntryPointMap() const { return m_entryPoints; }
-
-//    void setSymbol(quint16 address, QString name);
-//    void setSymbol(AssemSymbol Symbol);
-//    bool hasSymbol(AssemSymbol Symbol) const { return hasSymbolAtAddress(Symbol.address); }
-//    bool hasSymbolAtAddress(quint16 address) const { return m_Symbols.contains(address); }
-//    AssemSymbol getSymbolAtAddress(quint16 address);
-//    void removeSymbol(AssemSymbol Symbol);
-//    void removeSymbol(quint16 address);
-
-//    QList<AssemSymbol> getSymbolList() const { return m_Symbols.values(); }
-//    QMap<quint16, AssemSymbol> getSymbolMap() const { return m_Symbols; }
+    void requestDisassembly() { emit doDisassemble(m_eps->getEntryPointAddresses()); }
 
 private:
 
-//    QMap<quint16,AssemSymbol> m_Symbols;
-    QString m_filename;
+    EntryPoints *m_eps;
+    AssemblerSymbols *m_as;
+
+    GenericFile *m_file;
+
+    quint16 m_defaultAddress;
 };
 
 #endif // BINARYFILEMETADATA_H
