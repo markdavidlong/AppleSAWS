@@ -42,6 +42,8 @@ DisassemblerMetadataDialog::~DisassemblerMetadataDialog()
 
 void DisassemblerMetadataDialog::showEvent(QShowEvent *){
     ui->entryTable->resizeRowsToContents();
+    ui->symbolTable->resizeRowsToContents();
+
 }
 
 void DisassemblerMetadataDialog::setRelocatable(bool relocatable)
@@ -97,7 +99,7 @@ void DisassemblerMetadataDialog::handleAddSymbolButton()
     lid.setWindowTitle("Add Symbol");
     if (lid.exec() == Accepted)
     {
-        AssemSymbol as;
+        AssemblerSymbol as;
         as.address = lid.getAddress();
         as.name = lid.getInfo();
         m_as->addSymbol(as);
@@ -113,7 +115,7 @@ void DisassemblerMetadataDialog::handleRemoveSymbolButton()
 
 void DisassemblerMetadataDialog::processSymbols()
 {
-
+    m_as->doTestData();
 }
 
 void DisassemblerMetadataDialog::processEntryPoints()

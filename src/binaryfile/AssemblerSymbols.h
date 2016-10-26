@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QDataStream>
 
-struct AssemSymbol {
+struct AssemblerSymbol {
     quint16 address;
     QString name;
 };
@@ -17,11 +17,11 @@ public:
 
     bool hasAssemSymbolAtAddress(quint16 address);
 
-    const AssemSymbol &at(int location) const { return m_assemblerSymbols.at(location); }
-    AssemSymbol &symbolRefAt(int location) { return m_assemblerSymbols[location]; }
-    AssemSymbol &operator[](int location) { return m_assemblerSymbols[location]; }
+    const AssemblerSymbol &at(int location) const { return m_assemblerSymbols.at(location); }
+    AssemblerSymbol &symbolRefAt(int location) { return m_assemblerSymbols[location]; }
+    AssemblerSymbol &operator[](int location) { return m_assemblerSymbols[location]; }
 
-    void editSymbol(int at, AssemSymbol newSymbol);
+    void editSymbol(int at, AssemblerSymbol newSymbol);
 
     QDataStream &read(QDataStream &dataStream);
     QDataStream &write(QDataStream &dataStream) const;
@@ -31,17 +31,17 @@ public:
     void doTestData();
 
 signals:
-    void symbolAdded(AssemSymbol &AssemSymbol, int location);
+    void symbolAdded(AssemblerSymbol &AssemblerSymbol, int location);
     void symbolAddedAt(int location);
     void symbolRemovedAt(int location);
     void symbolChangedAt(int location);
 
 public slots:
-    void addSymbol(AssemSymbol ep);
+    void addSymbol(AssemblerSymbol ep);
     void removeSymbolAt(int location);
 
 protected:
-    QList<AssemSymbol> m_assemblerSymbols;
+    QList<AssemblerSymbol> m_assemblerSymbols;
 };
 
 QDataStream &operator<<(QDataStream &out, const AssemblerSymbols &model);

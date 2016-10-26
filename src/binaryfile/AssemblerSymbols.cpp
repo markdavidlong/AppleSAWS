@@ -8,17 +8,17 @@ AssemblerSymbols::AssemblerSymbols(QObject *parent) : QObject(parent)
 bool AssemblerSymbols::hasAssemSymbolAtAddress(quint16 address)
 {
     // Assume list m_assemblerSymbols is sorted by address (it should be)
-    QListIterator<AssemSymbol> it(m_assemblerSymbols);
+    QListIterator<AssemblerSymbol> it(m_assemblerSymbols);
     while (it.hasNext())
     {
-        AssemSymbol ep = it.next();
+        AssemblerSymbol ep = it.next();
         if (ep.address == address) return true;
         if (ep.address > address) return false;
     }
     return false;
 }
 
-void AssemblerSymbols::editSymbol(int location, AssemSymbol newSymbol)
+void AssemblerSymbols::editSymbol(int location, AssemblerSymbol newSymbol)
 {
 
     if (m_assemblerSymbols.at(location).address == newSymbol.address)
@@ -33,7 +33,7 @@ void AssemblerSymbols::editSymbol(int location, AssemSymbol newSymbol)
     }
 }
 
-void AssemblerSymbols::addSymbol(AssemSymbol ep)
+void AssemblerSymbols::addSymbol(AssemblerSymbol ep)
 {
     if (hasAssemSymbolAtAddress(ep.address)) return;
 
@@ -88,14 +88,14 @@ QDataStream &operator>>(QDataStream &in, AssemblerSymbols&model)
     return model.read(in);
 }
 
-QDataStream &operator<<(QDataStream &out, const AssemSymbol &model)
+QDataStream &operator<<(QDataStream &out, const AssemblerSymbol &model)
 {
     out << model.address;
     out << model.name;
     return out;
 }
 
-QDataStream &operator>>(QDataStream &in, AssemSymbol &model)
+QDataStream &operator>>(QDataStream &in, AssemblerSymbol &model)
 {
     in >> model.address;
     in >> model.name;
@@ -108,15 +108,15 @@ QDataStream &operator>>(QDataStream &in, AssemSymbol &model)
 
 void AssemblerSymbols::doTestData()
 {
-    AssemSymbol ep;
-    ep.address = 0x0010;
-    ep.name = "Test Entry Symbol 1";
+    AssemblerSymbol ep;
+    ep.address = 0x0100;
+    ep.name = "Test Symbol 1";
     addSymbol(ep);
-    ep.address = 0x0020;
-    ep.name = "Test Entry Symbol 2";
+    ep.address = 0x0200;
+    ep.name = "Test Symbol 2";
     addSymbol(ep);
-    ep.address = 0x0030;
-    ep.name = "Test Entry Symbol 3";
+    ep.address = 0x0300;
+    ep.name = "Test Symbol 3";
     addSymbol(ep);
 
 }
