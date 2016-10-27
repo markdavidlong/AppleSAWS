@@ -2,6 +2,7 @@
 
 #include <QFile>
 #include <QDataStream>
+#include <QFileInfo>
 #include <QDebug>
 
 #include "tracksectorlist.h"
@@ -28,6 +29,8 @@ DiskFile::~DiskFile()
 
 bool DiskFile::read(QString filename)
 {
+    m_imageName = QFileInfo(filename).fileName();
+
     QFile infile(filename);
     QCryptographicHash hash(QCryptographicHash::Md5);
 

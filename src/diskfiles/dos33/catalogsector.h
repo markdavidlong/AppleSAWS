@@ -31,6 +31,8 @@ public:
 
     void dumpFDEs();
 
+    Sector *getSector() const { return m_data; }
+
 private:
     FileDescriptiveEntry makeFDE(int offset);
 

@@ -39,6 +39,8 @@ signals:
     void diskFileUnloading(DiskFile *file);
     void diskFileUnloaded();
 
+protected slots:
+    void showDiskExplorer();
 private:
     Ui::MainWindow *ui;
     HRCGControlsInfo *m_hrcgDialog;

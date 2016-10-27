@@ -39,12 +39,14 @@ public:
 
     QByteArray fileHash() const { return m_hash; }
 
-
+    QString getDiskImageName() const { return m_imageName; }
 private:
 
     QMap< int, QMap< int, Sector> > m_contents;
     QMap<FileDescriptiveEntry,GenericFile *> m_files;
     QByteArray m_hash;
+
+    QString m_imageName;
 
 };
 

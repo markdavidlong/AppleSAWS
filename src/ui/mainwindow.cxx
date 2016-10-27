@@ -19,7 +19,9 @@
 #include <QTextDocument>
 #include <QSettings>
 #include <QString>
+#include <QDebug>
 
+#include "DiskExplorerMapWidget.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -44,12 +46,16 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this, SIGNAL(diskFileUnloading(DiskFile*)),
             ui->catalogWidget, SLOT(unloadDisk(DiskFile*)));
 
+    connect(this->ui->action_Disk_Explorer, SIGNAL(triggered(bool)),
+            SLOT(showDiskExplorer()));
+
 
     m_hrcgDialog = new HRCGControlsInfo(this);
     connect(ui->action_HRCG_Commands, SIGNAL(triggered()), m_hrcgDialog, SLOT(show()));
 
     m_hexConverter = new HexConverter(this);
     connect(ui->action_Hex_Converter, SIGNAL(triggered()), m_hexConverter, SLOT(show()));
+
 }
 
 MainWindow::~MainWindow()
@@ -78,6 +84,9 @@ void MainWindow::loadDiskFile(QString filename)
         delete m_disk;
         m_disk = 0;
     }
+
+    showDiskExplorer();
+
 }
 
 void MainWindow::unloadDiskFile()
@@ -111,4 +120,14 @@ void MainWindow::handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescripti
     ViewerBase *vb = new ViewerBase();
     vb->setFile(file);
     vb->show();
+}
+
+void MainWindow::showDiskExplorer()
+{
+    if (m_disk)
+    {
+    DiskExplorerMapWidget *demw = new DiskExplorerMapWidget(35,16,Q_NULLPTR);
+    demw->setDisk(m_disk);
+    demw->show();
+    }
 }

@@ -18,6 +18,7 @@ INCLUDEPATH += src/textfile
 INCLUDEPATH += src/ui/viewers
 INCLUDEPATH += src/imported
 INCLUDEPATH += src/internals
+INCLUDEPATH += src/ui/diskexplorer/
 INCLUDEPATH += src/ui/widgets/
 INCLUDEPATH += src/ui
 
@@ -63,7 +64,9 @@ SOURCES += \
     src/ui/widgets/LocationInfoDialog.cpp \
     src/binaryfile/EntryPoints.cpp \
     src/binaryfile/AssemblerSymbols.cpp \
-    src/binaryfile/AssemblerSymbolModel.cpp
+    src/binaryfile/AssemblerSymbolModel.cpp \
+    src/ui/diskexplorer/DiskExplorer.cpp \
+    src/ui/diskexplorer/DiskExplorerMapWidget.cpp
 
 
 HEADERS += \
@@ -110,7 +113,9 @@ HEADERS += \
     src/binaryfile/EntryPoints.h \
     src/binaryfile/AssemblerSymbols.h \
     src/binaryfile/AssemblerSymbolModel.h \
-    src/binaryfile/MemoryUsageMap.h
+    src/binaryfile/MemoryUsageMap.h \
+    src/ui/diskexplorer/DiskExplorer.h \
+    src/ui/diskexplorer/DiskExplorerMapWidget.h
 
 FORMS += \
     src/ui/catalogwidget.ui \

@@ -150,6 +150,15 @@ QStringList DisassemblerViewer::getDisassemblyStrings(QList<quint16> entryPoints
                 ds = di.disassembledString();
             }
         }
+        QString raw = di.rawDisassembledString();
+        if (raw.contains("RTS")) { ds += "\n"; }  //TODO: Temp for spacing
+        if (raw.contains("JMP")) { ds += "\n"; }  //TODO: Temp for spacing
+        if (raw.contains("???")) { ds += "\n"; }  //TODO: Temp for spacing
+        if (raw.contains("BRA")) { ds += "\n"; }  //TODO: Temp for spacing
+        if (raw.contains("BRK")) { ds += "\n"; }  //TODO: Temp for spacing
+
+
+
         QString newline = QString("%1:  %2 %3").arg(di.hexAddress()).arg(di.hexString()).arg(ds);
         formattedLines.append(newline);
     }
@@ -158,7 +167,7 @@ QStringList DisassemblerViewer::getDisassemblyStrings(QList<quint16> entryPoints
     {
         if (dis.memoryUsageMap()->at(idx).testFlag(Data))
         {
-            QString newline = QString("%1:  %2           %3 (%4)").arg(uint16ToHex(idx))
+            QString newline = QString("%1:  %2                       %3 (%4)").arg(uint16ToHex(idx))
                     .arg(uint8ToHex(m_mem.at(idx)))
                     .arg(makeDescriptorStringForVal(m_mem.at(idx)))
                     .arg(dis.getMnemonicForOp(m_mem.at(idx)));
@@ -166,6 +175,7 @@ QStringList DisassemblerViewer::getDisassemblyStrings(QList<quint16> entryPoints
         }
     }
     qSort(formattedLines);
+
     return formattedLines;
 }
 
@@ -174,26 +184,10 @@ QStringList DisassemblerViewer::getDisassemblyStrings(QList<quint16> entryPoints
 QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     QString retval = QString();
 
-    /*  if (address == 0x0A) { retval = "ASBASIC_USRVEC0"; }
-    else if (address == 0x0B) { retval = "ASBASIC_USRVEC1"; }
-    else if (address == 0x0C) { retval = "ASBASIC_USRVEC2"; }
-    else if (address == 0x0D) { retval = "ASBASIC_GENPURPOSE0"; }
-    else if (address == 0x0E) { retval = "ASBASIC_GENPURPOSE1"; }
-    else if (address == 0x0F) { retval = "ASBASIC_GENPURPOSE2"; }
-    else if (address == 0x10) { retval = "ASBASIC_GENPURPOSE3"; }
-    else if (address == 0x11) { retval = "ASBASIC_GENPURPOSE4"; }
-    else if (address == 0x12) { retval = "ASBASIC_GENPURPOSE5"; }
-    else if (address == 0x13) { retval = "ASBASIC_GENPURPOSE6"; }
-    else if (address == 0x14) { retval = "ASBASIC_GENPURPOSE7"; }
-    else if (address == 0x15) { retval = "ASBASIC_GENPURPOSE8"; }
-    else if (address == 0x16) { retval = "ASBASIC_GENPURPOSE9"; }
-    else if (address == 0x17) { retval = "ASBASIC_GENPURPOSE10"; }
-
-
-    else */ if (address == 0x24) { retval = "DOS_CURSOR_HORIZONTAL"; }
-    else if (address == 0x28) { retval = "DOS_BASL"; }
-    else if (address == 0x29) { retval = "DOS_BASH"; }
-    else if (address == 0x33) { retval = "DOS_PROMPT_CHAR"; }
+    if      (address == 0x24) { retval = "MON.CURSORHORIZ"; }
+    else if (address == 0x28) { retval = "MON.BASL"; }
+    else if (address == 0x29) { retval = "MON.BASH"; }
+    else if (address == 0x33) { retval = "MON.PROMPTCHAR"; }
     else if (address == 0x36) { retval = "DOS_CSWL"; }
     else if (address == 0x37) { retval = "DOS_CSWH"; }
     else if (address == 0x38) { retval = "DOS_KSWL"; }
@@ -204,32 +198,6 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     else if (address == 0x43) { retval = "DOS_BUFFER_ADDR_H"; }
     else if (address == 0x44) { retval = "DOS_NUMERIC_OPERAND_L"; }
     else if (address == 0x45) { retval = "DOS_NUMERIC_OPERAND_H"; }
-    /*
-    else if (address == 0x50) { retval = "ASBASIC_PTR_0L"; }
-    else if (address == 0x51) { retval = "ASBASIC_PTR_0H"; }
-    else if (address == 0x52) { retval = "ASBASIC_PTR_1L"; }
-    else if (address == 0x53) { retval = "ASBASIC_PTR_1H"; }
-    else if (address == 0x54) { retval = "ASBASIC_PTR_2L"; }
-    else if (address == 0x55) { retval = "ASBASIC_PTR_2H"; }
-    else if (address == 0x56) { retval = "ASBASIC_PTR_3L"; }
-    else if (address == 0x57) { retval = "ASBASIC_PTR_3H"; }
-    else if (address == 0x58) { retval = "ASBASIC_PTR_4L"; }
-    else if (address == 0x59) { retval = "ASBASIC_PTR_4H"; }
-    else if (address == 0x5A) { retval = "ASBASIC_PTR_5L"; }
-    else if (address == 0x5B) { retval = "ASBASIC_PTR_5H"; }
-    else if (address == 0x5C) { retval = "ASBASIC_PTR_6L"; }
-    else if (address == 0x5D) { retval = "ASBASIC_PTR_6H"; }
-    else if (address == 0x5E) { retval = "ASBASIC_PTR_7L"; }
-    else if (address == 0x5F) { retval = "ASBASIC_PTR_7H"; }
-    else if (address == 0x60) { retval = "ASBASIC_PTR_8L"; }
-    else if (address == 0x61) { retval = "ASBASIC_PTR_8H"; }
-
-    else if (address == 0x62) { retval = "ASBASIC_MULT_DIV_RESULT0"; }
-    else if (address == 0x63) { retval = "ASBASIC_MULT_DIV_RESULT1"; }
-    else if (address == 0x64) { retval = "ASBASIC_MULT_DIV_RESULT2"; }
-    else if (address == 0x65) { retval = "ASBASIC_MULT_DIV_RESULT3"; }
-    else if (address == 0x66) { retval = "ASBASIC_MULT_DIV_RESULT4"; }
-*/
 
     else if (address == 0x67) { retval = "ASBASIC_PROG_STARTL"; }
     else if (address == 0x68) { retval = "ASBASIC_PROG_STARTH"; }
@@ -275,133 +243,22 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
 
     else if (address == 0x83) { retval = "ASBASIC_LAST_VARVAL_L"; }
     else if (address == 0x84) { retval = "ASBASIC_LAST_VARVAL_H"; }
-    /*
-    else if (address == 0x85) { retval = "ASBASIC_GENPURPOSE10"; }
-    else if (address == 0x86) { retval = "ASBASIC_GENPURPOSE11"; }
-    else if (address == 0x87) { retval = "ASBASIC_GENPURPOSE12"; }
-    else if (address == 0x88) { retval = "ASBASIC_GENPURPOSE13"; }
-    else if (address == 0x89) { retval = "ASBASIC_GENPURPOSE14"; }
-    else if (address == 0x8A) { retval = "ASBASIC_GENPURPOSE15"; }
-    else if (address == 0x8B) { retval = "ASBASIC_GENPURPOSE16"; }
-    else if (address == 0x8C) { retval = "ASBASIC_GENPURPOSE17"; }
-    else if (address == 0x8D) { retval = "ASBASIC_GENPURPOSE18"; }
-    else if (address == 0x8E) { retval = "ASBASIC_GENPURPOSE19"; }
-    else if (address == 0x8F) { retval = "ASBASIC_GENPURPOSE20"; }
-    else if (address == 0x90) { retval = "ASBASIC_GENPURPOSE21"; }
-    else if (address == 0x91) { retval = "ASBASIC_GENPURPOSE22"; }
-    else if (address == 0x92) { retval = "ASBASIC_GENPURPOSE23"; }
-    else if (address == 0x93) { retval = "ASBASIC_GENPURPOSE24"; }
-    else if (address == 0x94) { retval = "ASBASIC_GENPURPOSE25"; }
-    else if (address == 0x95) { retval = "ASBASIC_GENPURPOSE26"; }
-    else if (address == 0x96) { retval = "ASBASIC_GENPURPOSE27"; }
-    else if (address == 0x97) { retval = "ASBASIC_GENPURPOSE28"; }
-    else if (address == 0x98) { retval = "ASBASIC_GENPURPOSE29"; }
-    else if (address == 0x99) { retval = "ASBASIC_GENPURPOSE30"; }
-    else if (address == 0x9A) { retval = "ASBASIC_GENPURPOSE31"; }
-    else if (address == 0x9B) { retval = "ASBASIC_GENPURPOSE32"; }
-    else if (address == 0x9C) { retval = "ASBASIC_GENPURPOSE33"; }
 
-    else if (address == 0x9D) { retval = "ASBASIC_FPACCUM_0"; }
-    else if (address == 0x9E) { retval = "ASBASIC_FPACCUM_1"; }
-    else if (address == 0x9F) { retval = "ASBASIC_FPACCUM_2"; }
-    else if (address == 0xA0) { retval = "ASBASIC_FPACCUM_3"; }
-    else if (address == 0xA1) { retval = "ASBASIC_FPACCUM_4"; }
-    else if (address == 0xA2) { retval = "ASBASIC_FPACCUM_5"; }
-    else if (address == 0xA3) { retval = "ASBASIC_FPACCUM_6"; }
-
-    else if (address == 0xA4) { retval = "ASBASIC_FP_GENUSE"; }
-
-    else if (address == 0xA5) { retval = "ASBASIC_SEC_FPACCUM_0"; }
-    else if (address == 0xA6) { retval = "ASBASIC_SEC_FPACCUM_1"; }
-    else if (address == 0xA7) { retval = "ASBASIC_SEC_FPACCUM_2"; }
-    else if (address == 0xA8) { retval = "ASBASIC_SEC_FPACCUM_3"; }
-    else if (address == 0xA9) { retval = "ASBASIC_SEC_FPACCUM_4"; }
-    else if (address == 0xAA) { retval = "ASBASIC_SEC_FPACCUM_5"; }
-    else if (address == 0xAB) { retval = "ASBASIC_SEC_FPACCUM_6"; }
-
-    else if (address == 0xAC) { retval = "ASBASIC_GENUSE_FLAGS0"; }
-    else if (address == 0xAD) { retval = "ASBASIC_GENUSE_FLAGS1"; }
-    else if (address == 0xAE) { retval = "ASBASIC_GENUSE_FLAGS2"; }
-*/
     else if (address == 0xAF) { retval = "ASBASIC_PROGEND_L"; }
     else if (address == 0xB0) { retval = "ASBASIC_PROGEND_H"; }
-    /*
-    else if (address == 0xB1) { retval = "ASBASIC_CHRGET0"; }
-    else if (address == 0xB2) { retval = "ASBASIC_CHRGET1"; }
-    else if (address == 0xB3) { retval = "ASBASIC_CHRGET2"; }
-    else if (address == 0xB4) { retval = "ASBASIC_CHRGET3"; }
-    else if (address == 0xB5) { retval = "ASBASIC_CHRGET4"; }
-    else if (address == 0xB6) { retval = "ASBASIC_CHRGET5"; }
-    else if (address == 0xB7) { retval = "ASBASIC_CHRGET6"; }
-    else if (address == 0xB8) { retval = "ASBASIC_CHRGET7"; }
-    else if (address == 0xB9) { retval = "ASBASIC_CHRGET8"; }
-    else if (address == 0xBA) { retval = "ASBASIC_CHRGET9"; }
-    else if (address == 0xBB) { retval = "ASBASIC_CHRGET10"; }
-    else if (address == 0xBC) { retval = "ASBASIC_CHRGET11"; }
-    else if (address == 0xBD) { retval = "ASBASIC_CHRGET12"; }
-    else if (address == 0xBE) { retval = "ASBASIC_CHRGET13"; }
-    else if (address == 0xBF) { retval = "ASBASIC_CHRGET14"; }
-    else if (address == 0xC0) { retval = "ASBASIC_CHRGET15"; }
-    else if (address == 0xC1) { retval = "ASBASIC_CHRGET16"; }
-    else if (address == 0xC2) { retval = "ASBASIC_CHRGET17"; }
-    else if (address == 0xC3) { retval = "ASBASIC_CHRGET18"; }
-    else if (address == 0xC4) { retval = "ASBASIC_CHRGET19"; }
-    else if (address == 0xC5) { retval = "ASBASIC_CHRGET20"; }
-    else if (address == 0xC6) { retval = "ASBASIC_CHRGET21"; }
-    else if (address == 0xC7) { retval = "ASBASIC_CHRGET22"; }
-    else if (address == 0xC8) { retval = "ASBASIC_CHRGET23"; }
 
-    else if (address == 0xC9) { retval = "ASBASIC_RNDNUM0"; }
-    else if (address == 0xCA) { retval = "ASBASIC_RNDNUM1"; }
-    else if (address == 0xCB) { retval = "ASBASIC_RNDNUM2"; }
-    else if (address == 0xCC) { retval = "ASBASIC_RNDNUM3"; }
-    else if (address == 0xCD) { retval = "ASBASIC_RNDNUM4"; }
+    else if (address == 0xD6) { retval = "DOS_ASBASIC_LOCK"; }
 
-    else if (address == 0xD0) { retval = "ASBASIC_HGRSCRTCH_0L"; }
-    else if (address == 0xD1) { retval = "ASBASIC_HGRSCRTCH_0H"; }
-    else if (address == 0xD2) { retval = "ASBASIC_HGRSCRTCH_1L"; }
-    else if (address == 0xD3) { retval = "ASBASIC_HGRSCRTCH_1H"; }
-    else if (address == 0xD4) { retval = "ASBASIC_HGRSCRTCH_2L"; }
-    else if (address == 0xD5) { retval = "ASBASIC_HGRSCRTCH_2H"; }
-*/
+    else if (address == 0xE0) { retval = "ASBASIC_HGR_X_L"; }
+    else if (address == 0xE1) { retval = "ASBASIC_HGR_X_H"; }
+    else if (address == 0xE2) { retval = "ASBASIC_HGR_Y"; }
 
-    else if (address == 0xD6) { retval = "DOS_ASBASIC_PROG_PROT_FLAG"; }
-    /*
-    else if (address == 0xD8) { retval = "ASBASIC_ONERR_0L"; }
-    else if (address == 0xD9) { retval = "ASBASIC_ONERR_0H"; }
-    else if (address == 0xDA) { retval = "ASBASIC_ONERR_1L"; }
-    else if (address == 0xDB) { retval = "ASBASIC_ONERR_1H"; }
-    else if (address == 0xDC) { retval = "ASBASIC_ONERR_2L"; }
-    else if (address == 0xDD) { retval = "ASBASIC_ONERR_2H"; }
-    else if (address == 0xDE) { retval = "ASBASIC_ONERR_3L"; }
-    else if (address == 0xDF) { retval = "ASBASIC_ONERR_3H"; }
-*/
-    else if (address == 0xE0) { retval = "ASBASIC_HGR_XCOORD_L"; }
-    else if (address == 0xE1) { retval = "ASBASIC_HGR_XCOORD_H"; }
-    else if (address == 0xE2) { retval = "ASBASIC_HGR_YCOORD"; }
+    else if (address == 0xE4) { retval = "ASBASIC_HGR_COLOR"; }
 
-    else if (address == 0xE4) { retval = "ASBASIC_HGR_COLORBYTE"; }
-    /*
-    else if (address == 0xE5) { retval = "ASBASIC_HGR_GENUSE0"; }
-    else if (address == 0xE6) { retval = "ASBASIC_HGR_GENUSE1"; }
-    else if (address == 0xE7) { retval = "ASBASIC_HGR_GENUSE2"; }
-*/
     else if (address == 0xE8) { retval = "ASBASIC_SHAPETBL_L"; }
     else if (address == 0xE9) { retval = "ASBASIC_SHAPETBL_H"; }
 
     else if (address == 0xEA) { retval = "ASBASIC_HGR_COLLISION_CTR"; }
-    /*
-    else if (address == 0xF0) { retval = "ASBASIC_GENUSE_FLAGS3"; }
-    else if (address == 0xF1) { retval = "ASBASIC_GENUSE_FLAGS4"; }
-    else if (address == 0xF2) { retval = "ASBASIC_GENUSE_FLAGS5"; }
-    else if (address == 0xF3) { retval = "ASBASIC_GENUSE_FLAGS6"; }
-
-    else if (address == 0xF4) { retval = "ASBASIC_ONERR4"; }
-    else if (address == 0xF5) { retval = "ASBASIC_ONERR5"; }
-    else if (address == 0xF6) { retval = "ASBASIC_ONERR6"; }
-    else if (address == 0xF7) { retval = "ASBASIC_ONERR7"; }
-    else if (address == 0xF8) { retval = "ASBASIC_ONERR8"; }
-*/
 
     else if (address == 0x03d0) { retval = "DOS_WARMSTART"; }
     else if (address == 0x03d3) { retval = "DOS_COLDSTART"; }
@@ -413,15 +270,15 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     else if (address == 0x03ef) { retval = "DOS_AUTOSTART_BRK_HANDLER"; }
     else if (address == 0x03f2) { retval = "DOS_AUTOSTART_RESET_HANDLER"; }
     else if (address == 0x03f4) { retval = "DOS_POWERUP_BYTE"; }
-    else if (address == 0x03f5) { retval = "DOS_AMPERSAND_HANDLER"; }
-    else if (address == 0x03f8) { retval = "DOS_CTRL_Y_HANDLER"; }
+    else if (address == 0x03f5) { retval = "AMPR_VEC"; }
+    else if (address == 0x03f8) { retval = "MON_CTRL_Y_VEC"; }
     else if (address == 0x03fb) { retval = "DOS_NMI_HANDLER"; }
     else if (address == 0x03fe) { retval = "DOS_IRQ_HANDLER"; }
 
     else if (address == 0x0400) { retval = "MON_LINE1"; }
 
     else if (address == 0x07f8) { retval = "MON_MSLOT"; }
-    else if (address == 0xc000) { retval = "MON_IOADR/MON_KBD"; }
+    else if (address == 0xc000) { retval = "KEYBOARD"; }
 
     else if (address == 0xc001) { retval = "M80_SET80COL"; }
     else if (address == 0xc002) { retval = "M80_RDMAINRAM"; }
@@ -459,22 +316,22 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
 
     else if (address == 0xc020) { retval = "MON_TAPEOUT"; }
     else if (address == 0xc030) { retval = "MON_SPKR"; }
-    else if (address == 0xc050) { retval = "MON_TXTCLR"; }
-    else if (address == 0xc051) { retval = "MON_TXTSET"; }
-    else if (address == 0xc052) { retval = "MON_MIXCLR"; }
-    else if (address == 0xc053) { retval = "MON_MIXSET"; }
-    else if (address == 0xc054) { retval = "MON_LOWSCR"; }
-    else if (address == 0xc055) { retval = "MON_HISCR"; }
-    else if (address == 0xc056) { retval = "MON_LORES"; }
-    else if (address == 0xc057) { retval = "MON_HIRES"; }
-    else if (address == 0xc058) { retval = "MON_SETAN0"; }
-    else if (address == 0xc059) { retval = "MON_CLRAN0"; }
-    else if (address == 0xc05a) { retval = "MON_SETAN1"; }
-    else if (address == 0xc05b) { retval = "MON_CLRAN1"; }
-    else if (address == 0xc05c) { retval = "MON_SETAN2"; }
-    else if (address == 0xc05d) { retval = "MON_CLRAN2"; }
-    else if (address == 0xc05e) { retval = "MON_SETAN3"; }
-    else if (address == 0xc05f) { retval = "MON_CLRAN3"; }
+    else if (address == 0xc050) { retval = "SW.TXTCLR"; }
+    else if (address == 0xc051) { retval = "SW.TXTSET"; }
+    else if (address == 0xc052) { retval = "SW._MIXCLR"; }
+    else if (address == 0xc053) { retval = "SW.MIXSET"; }
+    else if (address == 0xc054) { retval = "SW.LOWSCR"; }
+    else if (address == 0xc055) { retval = "SW.HISCR"; }
+    else if (address == 0xc056) { retval = "SW.LORES"; }
+    else if (address == 0xc057) { retval = "SW.HIRES"; }
+    else if (address == 0xc058) { retval = "SW.SETAN0"; }
+    else if (address == 0xc059) { retval = "SW.CLRAN0"; }
+    else if (address == 0xc05a) { retval = "SW.SETAN1"; }
+    else if (address == 0xc05b) { retval = "SW.CLRAN1"; }
+    else if (address == 0xc05c) { retval = "SW.SETAN2"; }
+    else if (address == 0xc05d) { retval = "SW.CLRAN2"; }
+    else if (address == 0xc05e) { retval = "SW.SETAN3"; }
+    else if (address == 0xc05f) { retval = "SW.CLRAN3"; }
     else if (address == 0xc060) { retval = "MON_TAPEIN"; }
     else if (address == 0xc064) { retval = "MON_PADDL0"; }
     else if (address == 0xc070) { retval = "MON_PTRIG"; }
@@ -1209,9 +1066,11 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     else if (address == 0xf7d9) { retval = "AS_GETARYPT"; }
     else if (address == 0xf7e7) { retval = "AS_HTAB"; }
 
-    else if (address == 0xf800) { retval = "MON_PLOT"; }
+    else if (address == 0xf800) { retval = "MON.PLOT"; }
     else if (address == 0xf80c) { retval = "MON_RTMASK"; }
     else if (address == 0xf80e) { retval = "MON_PLOT1"; }
+    else if (address == 0xf819) { retval = "MON.HLINE"; }
+    else if (address == 0xf828) { retval = "MON.VLINE"; }
     else if (address == 0xf831) { retval = "MON_RTS1"; }
     else if (address == 0xf832) { retval = "MON_CLRSCR"; }
     else if (address == 0xf836) { retval = "MON_CLRTOP"; }
@@ -1220,8 +1079,8 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     else if (address == 0xf847) { retval = "MON_GBASCALC"; }
     else if (address == 0xf856) { retval = "MON_GBCALC"; }
     else if (address == 0xf85f) { retval = "MON_NXTCOL"; }
-    else if (address == 0xf864) { retval = "MON_SETCOL"; }
-    else if (address == 0xf871) { retval = "MON_SCRN"; }
+    else if (address == 0xf864) { retval = "MON.SETCOL"; }
+    else if (address == 0xf871) { retval = "MON.SCRN"; }
     else if (address == 0xf879) { retval = "MON_SCRN2"; }
     else if (address == 0xf87f) { retval = "MON_RTMSKZ"; }
     else if (address == 0xf882) { retval = "MON_INDS1"; }
@@ -1281,16 +1140,17 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     else if (address == 0xfb09) { retval = "MON_TITLE"; }
     else if (address == 0xfb11) { retval = "MON_XLTBL"; }
     else if (address == 0xfb19) { retval = "MON_RTBL"; }
-    else if (address == 0xfb1e) { retval = "MON_PREAD"; }
+    else if (address == 0xfb1e) { retval = "MON.PREAD"; }
     else if (address == 0xfb25) { retval = "MON_PREAD2"; }
     else if (address == 0xfb2e) { retval = "MON_RTS2D"; }
     else if (address == 0xfb2f) { retval = "MON_INIT"; }
-    else if (address == 0xfb39) { retval = "MON_SETTXT"; }
-    else if (address == 0xfb40) { retval = "MON_SETGR"; }
+    else if (address == 0xfb39) { retval = "MON.SETTXT"; }
+    else if (address == 0xfb40) { retval = "MON.SETGR"; }
     else if (address == 0xfb4b) { retval = "MON_SETWND"; }
-    else if (address == 0xfb5b) { retval = "MON_TABV"; }
+    else if (address == 0xfb5b) { retval = "MON.TABV"; }
     else if (address == 0xfb60) { retval = "MON_APPLEII"; }
     else if (address == 0xfb65) { retval = "MON_STITLE"; }
+    else if (address == 0xfb6A) { retval = "MON.GETLN"; }
     else if (address == 0xfb6f) { retval = "MON_SETPWRC"; }
     else if (address == 0xfb78) { retval = "MON_VIDWAIT"; }
     else if (address == 0xfb88) { retval = "MON_KBDWAIT"; }
@@ -1380,7 +1240,7 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     else if (address == 0xfdda) { retval = "MON_PRBYTE"; }
     else if (address == 0xfde3) { retval = "MON_PRHEX"; }
     else if (address == 0xfde5) { retval = "MON_PRHEXZ"; }
-    else if (address == 0xfded) { retval = "MON_COUT"; }
+    else if (address == 0xfded) { retval = "MON.COUT"; }
     else if (address == 0xfdf0) { retval = "MON_COUT1"; }
     else if (address == 0xfdf6) { retval = "MON_COUTZ"; }
     else if (address == 0xfe00) { retval = "MON_BLI"; }
@@ -1403,10 +1263,10 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     else if (address == 0xfe84) { retval = "MON_SETNORM"; }
     else if (address == 0xfe86) { retval = "MON_SETIFLG"; }
     else if (address == 0xfe89) { retval = "MON_SETKBD"; }
-    else if (address == 0xfe8b) { retval = "MON_INPORT"; }
+    else if (address == 0xfe8b) { retval = "MON.INPORT"; }
     else if (address == 0xfe8d) { retval = "MON_INPRT"; }
     else if (address == 0xfe93) { retval = "MON_SETVID"; }
-    else if (address == 0xfe95) { retval = "MON_OUTPORT"; }
+    else if (address == 0xfe95) { retval = "MON.OUTPORT"; }
     else if (address == 0xfe97) { retval = "MON_OUTPRT"; }
     else if (address == 0xfe9b) { retval = "MON_IOPRT"; }
     else if (address == 0xfea7) { retval = "MON_IOPRT1"; }
@@ -1419,12 +1279,13 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     else if (address == 0xfec2) { retval = "MON_TRACE"; }
     else if (address == 0xfec4) { retval = "MON_STEPZ"; }
     else if (address == 0xfeca) { retval = "MON_USR"; }
-    else if (address == 0xfecd) { retval = "MON_WRITE"; }
+    else if (address == 0xfecd) { retval = "MON.WRITE"; }
     else if (address == 0xfed4) { retval = "MON_WR1"; }
     else if (address == 0xfeed) { retval = "MON_WRBYTE"; }
     else if (address == 0xfeef) { retval = "MON_WRBYT2"; }
     else if (address == 0xfef6) { retval = "MON_CRMON"; }
-    else if (address == 0xfffd) { retval = "MON_READ"; }
+    else if (address == 0xfefd) { retval = "MON.READ"; }
+    else if (address == 0xff02) { retval = "MON.READ2"; }
     else if (address == 0xff0a) { retval = "MON_RD2"; }
     else if (address == 0xff16) { retval = "MON_RD3"; }
     else if (address == 0xff2d) { retval = "MON_PRERR"; }
