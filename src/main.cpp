@@ -2,12 +2,12 @@
 #include <QSettings>
 #include <QString>
 
-#include "mainwindow.h"
 #include "binaryfile.h"
 #include "genericfile.h"
 #include "diskfile.h"
 #include "catalogsector.h"
 #include "applesoftfile.h"
+#include "DiskExplorer.h"
 
 int main(int argc, char** argv)
 {
@@ -15,7 +15,7 @@ int main(int argc, char** argv)
     QCoreApplication::setOrganizationName("AppleSAWS");
     QCoreApplication::setOrganizationDomain("ml.com");
     QCoreApplication::setApplicationName("AppleSAWS");
-    MainWindow w;
+    DiskExplorer w;
     QSettings settings;
     QString lastOpened = settings.value("lastOpened").toString();
     if (!lastOpened.isEmpty())

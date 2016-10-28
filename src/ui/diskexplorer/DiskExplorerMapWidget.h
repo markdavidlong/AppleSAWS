@@ -6,8 +6,12 @@
 #include <QMap>
 #include <QPushButton>
 #include <QColor>
+#include <QGroupBox>
+#include <QLabel>
+
 
 #include "diskfile.h"
+
 
 class DEButton : public QPushButton
 {
@@ -18,6 +22,7 @@ public:
         setTrack(track);
         setSector(sec);
         connect(this,SIGNAL(clicked(bool)),SLOT(handleClick(bool)));
+        m_isHighlighted = false;
     }
     void setTrack(int track) { m_track = track; }
     void setSector(int sector) { m_sector = sector; }
@@ -25,15 +30,36 @@ public:
     int track() const { return m_track; }
     int sector() const { return m_sector; }
 
-    void clearBgColor() { m_backgroundColor = ""; setStyleSheet(makeStyleSheet());}
-    void setBgColor(QColor color) { m_backgroundColor = color.name(); setStyleSheet(makeStyleSheet()); }
+    void clearBgColor() { m_backgroundColor = ""; setText(""); setStyleSheet(makeStyleSheet());}
 
+    void setBgColor(QColor color) {
+        m_fgColor = determineFgColor(color).name();
+        m_backgroundColor = color.name();
+        m_hlColor = color.lighter(155).name();
+        setStyleSheet(makeStyleSheet());
+    }
+
+    bool highlighted() const { return m_isHighlighted; }
+    void setHighlighted(bool highlighted) { m_isHighlighted = highlighted;setStyleSheet(makeStyleSheet()); }
+
+    void reset() { setHighlighted(false); setChecked(false); makeStyleSheet(); qDebug() << "Reset";}
+
+    void resetToDefault() { clearBgColor(); reset(); }
+
+    QColor determineFgColor(QColor bgColor)
+    {
+        if (qGray(bgColor.rgb()) > 128)
+        {
+            return QColor(Qt::black);
+        }
+        return Qt::white;
+    }
 
 signals:
-    void clicked(int track, int sec,bool );
+    void checked(int track, int sec,bool );
 
 private slots:
-    void handleClick(bool checked) { emit clicked(m_track,m_sector,checked); }
+    void handleClick(bool isChecked) { emit checked(m_track,m_sector,isChecked); }
 
     QSize minimumSizeHint() const Q_DECL_OVERRIDE { return QSize(24,24); }
     QSize sizeHint() const Q_DECL_OVERRIDE { return QSize(24,24); }
@@ -41,12 +67,32 @@ private slots:
     int heightForWidth(int width) const Q_DECL_OVERRIDE { return width; }
 
 private:
-    QString makeStyleSheet() const { return QString("background-color:%1;").arg(m_backgroundColor); }
+    QString makeStyleSheet() const {
+        return QString(" QPushButton {  font: 10px; border-width: 1px; color: %1; background-color: %2} "
+                       " QPushButton:checked { font: bold italic 11px; } "
+               ) .arg(m_fgColor)
+                .arg(m_backgroundColor);
+
+
+
+//        return QString(
+//                    "background-color: %1;"
+//                    "font: %2; "
+//                    "border-radius: 0px; "
+//                     "color: %3;"
+//                ).arg(m_isHighlighted?m_hlColor:m_backgroundColor)
+//                 .arg(m_isHighlighted?"bold italic 11px":"10px")
+//                 .arg(m_fgColor)
+//                ;
+    }
+
     int m_track;
     int m_sector;
+    bool m_isHighlighted;
 
-
+    QString m_fgColor;
     QString m_backgroundColor;
+    QString m_hlColor;
 };
 
 
@@ -67,10 +113,14 @@ public:
 
     void setDisk(DiskFile *disk);
 
+    QGroupBox *makeKeyWidget();
+
+    void unloadDisk();
+    void setAllButtonsEnabled(bool enabled);
 signals:
 
 public slots:
-    void handleButtonClick(int track, int sector);
+    void handleButtonCheck(int track, int sector, bool checked);
 
 protected:
     void mapDiskToButtons();
@@ -78,10 +128,20 @@ protected:
 
     void initColors();
 
+    QColor determineFgColor(QColor bgColor)
+    {
+        if (qGray(bgColor.rgb()) > 128)
+        {
+            return QColor(Qt::black);
+        }
+        return Qt::white;
+    }
+
+    QLabel *makeKeyLabel(QWidget *parent, QString name, QColor color);
 private:
 
     QMap<int, QMap<int,DEButton*> > m_buttons;
-    DEButton *m_currentClicked;
+    DEButton *m_currentChecked;
 
     int m_numtracks;
     int m_numsectors;
@@ -101,7 +161,9 @@ private:
     QColor m_typeBFileColor;
     QColor m_typeSFileColor;
 
+    QButtonGroup *m_bgroup;
     DiskFile *m_disk;
+
 };
 
 #endif // DISKEXPLORERMAPWIDGET_H

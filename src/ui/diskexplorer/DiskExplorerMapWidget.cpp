@@ -2,11 +2,11 @@
 
 //#include "vtoc.h"
 //#include "catalogsector.h"
+#include "util.h"
 
-#include <QToolButton>
 #include <QPushButton>
 #include <QGridLayout>
-#include <QLabel>
+#include <QButtonGroup>
 #include <QDebug>
 
 DiskExplorerMapWidget::DiskExplorerMapWidget(int numtracks, int numsectors, QWidget *parent) : QWidget(parent)
@@ -15,28 +15,32 @@ DiskExplorerMapWidget::DiskExplorerMapWidget(int numtracks, int numsectors, QWid
     m_numsectors = numsectors;
 
     setWindowTitle("Disk Explorer");
-    //   m_disk = Q_NULLPTR;
 
-    m_currentClicked = Q_NULLPTR;
+    m_currentChecked = Q_NULLPTR;
 
     initColors();
 
     QGridLayout *layout = new QGridLayout();
     layout->setSizeConstraint(QLayout::SetFixedSize);
-    layout->setHorizontalSpacing(1);
-    layout->setVerticalSpacing(0);
+    layout->setHorizontalSpacing(2);
+    layout->setVerticalSpacing(1);
+
+    m_bgroup = new QButtonGroup(this);
+
     setLayout(layout);
+    QLabel *tracklabel = new QLabel("Track",this);
+    layout->addWidget(tracklabel,0,0,1,m_numtracks+1,Qt::AlignHCenter);
     for (int track= 0; track < numtracks; track++)
     {
         QLabel *label = new QLabel(QString("%1").arg(track));
         label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-        layout->addWidget(label,0,track+1);
+        layout->addWidget(label,1,track+1);
     }
     for (int sec = 0; sec < numsectors; sec++)
     {
         QLabel *label = new QLabel(QString("Sec %1").arg(sec));
         label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-        layout->addWidget(label,sec+1,0);
+        layout->addWidget(label,sec+2,0);
     }
     for (int track = 0; track < 35; track++)
     {
@@ -45,35 +49,41 @@ DiskExplorerMapWidget::DiskExplorerMapWidget(int numtracks, int numsectors, QWid
             DEButton *tb = new DEButton(this,track,sec);
             tb->setObjectName(QString("BtnT%1S%2").arg(track).arg(sec));
             tb->setBgColor(m_defaultColor);
-            connect(tb,SIGNAL(clicked(int,int,bool)),SLOT(handleButtonClick(int,int)));
+            tb->setCheckable(true);
+            m_bgroup->addButton(tb,(track * numsectors) + sec);
+            connect(tb,SIGNAL(checked(int,int,bool)),SLOT(handleButtonCheck(int,int,bool)));
             m_buttons[track][sec] = tb;
 
             tb->setAutoFillBackground(true);
 
-            layout->addWidget(tb,sec+1,track+1);
+            layout->addWidget(tb,sec+2,track+1);
         }
     }
 }
 
-void DiskExplorerMapWidget::handleButtonClick(int track, int sector)
+void DiskExplorerMapWidget::handleButtonCheck(int track, int sector, bool checked)
 {
-    if (m_currentClicked)
+    if (m_currentChecked)
     {
         // Do anything needed to clean up after previous button click
+    //    m_currentClicked->setHighlighted(false);
     }
 
+    qDebug() << "Checked: " << checked << "t/s" << track << sector;
     DEButton *currbutton = buttonAt(track,sector);
 
-    if (currbutton == m_currentClicked)
+    if (currbutton == m_currentChecked)
     {
+     //   currbutton->setHighlighted(false);
         // Handle reclicking on the same button
     }
     else
     {
+       // currbutton->setHighlighted(true);
         // Handle clicking on a new button;
 
     }
-    m_currentClicked = currbutton;
+    m_currentChecked = currbutton;
 }
 
 void DiskExplorerMapWidget::setButtonBgColor(int track, int sector, QColor color)
@@ -85,10 +95,79 @@ void DiskExplorerMapWidget::setDisk(DiskFile *disk)
 {
     if (disk)
     {
-    m_disk = disk;
-    setWindowTitle(QString("Disk Explorer - %1").arg(m_disk->getDiskImageName()));
-    mapDiskToButtons();
+        m_disk = disk;
+        setWindowTitle(QString("Disk Explorer - %1").arg(m_disk->getDiskImageName()));
+        mapDiskToButtons();
     }
+}
+
+void DiskExplorerMapWidget::unloadDisk()
+{
+    if (m_disk)
+    {
+        m_bgroup->setExclusive(false);
+        for (int track = 0; track < m_numtracks; track++)
+        {
+            for (int sec = 0; sec < m_numsectors; sec++)
+            {
+                DEButton *button = buttonAt(track,sec);
+                button->setText("");
+                button->setBgColor(m_defaultColor);
+                button->setChecked(false);
+            }
+        }
+        setAllButtonsEnabled(false);
+    }
+}
+
+void DiskExplorerMapWidget::setAllButtonsEnabled(bool enabled)
+{
+    for (int track = 0; track < m_numtracks; track++)
+    {
+        for (int sec = 0; sec < m_numsectors; sec++)
+        {
+            DEButton *button = buttonAt(track,sec);
+            button->setEnabled(enabled);
+        }
+    }
+}
+
+QLabel *DiskExplorerMapWidget::makeKeyLabel(QWidget *parent, QString name, QColor color)
+{
+    QLabel *label = new QLabel(name,parent);
+    label->setStyleSheet(QString("background-color:%1; color: %2")
+                         .arg(color.name())
+                         .arg(determineFgColor(color).name()));
+    label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    return label;
+}
+
+QGroupBox *DiskExplorerMapWidget::makeKeyWidget()
+{
+    int idx = 0;
+    QGroupBox *groupbox= new QGroupBox(this);
+    groupbox->setTitle("Key");
+    QGridLayout *layout = new QGridLayout();
+    layout->setVerticalSpacing(0);
+    layout->setHorizontalSpacing(0);
+    groupbox->setLayout(layout);
+
+    layout->addWidget(makeKeyLabel(groupbox,"Unused Sector",m_defaultColor),idx++,0);
+    layout->addWidget(makeKeyLabel(groupbox,"Boot Sector",m_bootSectorColor),idx++,0);
+    layout->addWidget(makeKeyLabel(groupbox,"DOS Image",m_dosImageColor),idx++,0);
+    layout->addWidget(makeKeyLabel(groupbox,"VTOC",m_vtocColor),idx++,0);
+    layout->addWidget(makeKeyLabel(groupbox,"Dir Entry",m_dirEntryColor),idx++,0);
+    layout->addWidget(makeKeyLabel(groupbox,"T/S List",m_tsListColor),idx++,0);
+    layout->addWidget(makeKeyLabel(groupbox,"Applesoft File",m_applesoftFileColor),idx++,0);
+    layout->addWidget(makeKeyLabel(groupbox,"Int. Basic File",m_intBasicFileColor),idx++,0);
+    layout->addWidget(makeKeyLabel(groupbox,"Binary File",m_binaryFileColor),idx++,0);
+    layout->addWidget(makeKeyLabel(groupbox,"Text File",m_textFileColor),idx++,0);
+    layout->addWidget(makeKeyLabel(groupbox,"Relocatable File",m_reloFileColor),idx++,0);
+    layout->addWidget(makeKeyLabel(groupbox,"Type-A File",m_typeAFileColor),idx++,0);
+    layout->addWidget(makeKeyLabel(groupbox,"Type-B File",m_typeBFileColor),idx++,0);
+    layout->addWidget(makeKeyLabel(groupbox,"Type-S File",m_typeSFileColor),idx++,0);
+
+    return groupbox;
 }
 
 DEButton *DiskExplorerMapWidget::buttonAt(int track, int sector)
@@ -105,36 +184,47 @@ DEButton *DiskExplorerMapWidget::buttonAt(int track, int sector)
 void DiskExplorerMapWidget::initColors()
 {
     m_defaultColor       = QColor(Qt::lightGray);
-    m_bootSectorColor    = QColor(Qt::darkGreen);
-    m_dosImageColor      = QColor(Qt::green);
-    m_vtocColor          = QColor("#808000");
+    m_bootSectorColor    = QColor("#20b060");
+    m_dosImageColor      = QColor("#30d000");
+    m_vtocColor          = QColor("#efc010");
     m_tsListColor        = QColor("#ff8000");
-    m_dirEntryColor      = QColor("#ffff00");
-    m_applesoftFileColor = QColor(Qt::blue);
-    m_intBasicFileColor  = QColor(Qt::darkBlue);
-    m_binaryFileColor    = QColor(Qt::magenta);
-    m_textFileColor      = QColor("#00ffff");
-    m_reloFileColor      = QColor(Qt::darkMagenta);
-    m_typeAFileColor     = QColor(Qt::red);
-    m_typeBFileColor     = QColor(Qt::darkRed);
-    m_typeSFileColor     = QColor(Qt::darkCyan);
+    m_dirEntryColor      = QColor("#dfdf00");
+    m_applesoftFileColor = QColor("#3030e0");
+    m_intBasicFileColor  = QColor("#00d0d0");
+    m_binaryFileColor    = QColor("#d060d0");
+    m_textFileColor      = QColor("#F05060");
+    m_reloFileColor     = QColor("#d00000");
+    m_typeAFileColor      = QColor("#c040a0");
+    m_typeBFileColor     = QColor("#c03030");
+    m_typeSFileColor     = QColor("#20a0a0");
 }
 
 void DiskExplorerMapWidget::mapDiskToButtons()
 {
+    setAllButtonsEnabled(true);
+    m_bgroup->setExclusive(false);
+
     int idx = 0;
-    for (int sec = 0; sec < m_numsectors; sec++)
+    for (int track = 0; track < 3; track++)
     {
-        buttonAt(0,sec)->setBgColor(m_bootSectorColor);
-        buttonAt(1,sec)->setBgColor(m_dosImageColor);
-        buttonAt(2,sec)->setBgColor(m_dosImageColor);
+        for (int sec = 0; sec < m_numsectors; sec++)
+        {
+            if (track == 0)
+                buttonAt(track,sec)->setBgColor(m_bootSectorColor);
+            else
+                buttonAt(track,sec)->setBgColor(m_dosImageColor);
+            buttonAt(track,sec)->setText(QString("%1").arg(idx++));
+        }
     }
+
     buttonAt(17,0)->setBgColor(m_vtocColor);
+    buttonAt(17,0)->setText(QString("%1").arg(idx++));
 
     foreach (CatalogSector cs, m_disk->getCatalogSectors())
     {
         Sector *sec = cs.getSector();
         buttonAt(sec->track(),sec->sector())->setBgColor(m_dirEntryColor);
+        buttonAt(sec->track(),sec->sector())->setText(QString("%1").arg(idx++));
 
         foreach(FileDescriptiveEntry fde, cs.getFDEs())
         {
@@ -176,7 +266,6 @@ void DiskExplorerMapWidget::mapDiskToButtons()
                 tslse = tsl.getNextTSList().sector;
                 tsl = m_disk->getSector(tsl.getNextTSList()).promoteToTrackSectorList();
             }
-
         }
     }
 }

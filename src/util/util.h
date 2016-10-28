@@ -4,6 +4,7 @@
 #include <QPair>
 #include <QByteArray>
 #include <QDebug>
+#include <QColor>
 
 typedef enum {
     DOSTextFile = 0x00,
@@ -67,9 +68,6 @@ inline QString uint32ToHex(quint32 val) {
     QString retval = QString("%1").arg(val,8,16,QChar('0')).toUpper();
     return retval;
 }
-
-
-
 
 
 
