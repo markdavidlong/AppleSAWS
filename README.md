@@ -13,6 +13,7 @@ Among other things, the app includes:
 * A graphics viewer which can show hires screen dumps as monochrome, with NTSC artifacts, or a hybrid mode where each pixel's natural color is shown in-place (with no white color blending.)
 * An HRCG character set viewer and explorer
 * Exporting files and graphics to the local filesystem (as either .txt or .png files, as appropriate)
+* A disk explorer which allows viewing the disk at the sector level, exploring directory and VTOC structure, and more! **(Currently in progress!)**
 * (Though not useful to most) A maze viewer for the game which I was originally exploring (Datamost's *The Missing Ring*, by Terry Romine, 1982)
 * Probably some other stuff I can't think of at the moment.
 
