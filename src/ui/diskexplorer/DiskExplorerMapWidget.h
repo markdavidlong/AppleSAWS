@@ -117,7 +117,9 @@ public:
 
     void unloadDisk();
     void setAllButtonsEnabled(bool enabled);
+
 signals:
+    void showSectorData(QByteArray data, int track, int sector, QVariant metadata);
 
 public slots:
     void handleButtonCheck(int track, int sector, bool checked);

@@ -63,26 +63,24 @@ DiskExplorerMapWidget::DiskExplorerMapWidget(int numtracks, int numsectors, QWid
 
 void DiskExplorerMapWidget::handleButtonCheck(int track, int sector, bool checked)
 {
+    DEButton *currbutton = buttonAt(track,sector);
+
     if (m_currentChecked)
     {
         // Do anything needed to clean up after previous button click
     //    m_currentClicked->setHighlighted(false);
     }
 
-    qDebug() << "Checked: " << checked << "t/s" << track << sector;
-    DEButton *currbutton = buttonAt(track,sector);
-
-    if (currbutton == m_currentChecked)
+    if (checked)
     {
-     //   currbutton->setHighlighted(false);
-        // Handle reclicking on the same button
+        Sector sec = m_disk->getSector(track,sector);
+        QByteArray data = sec.rawData();
+        emit showSectorData(data,track,sector,QVariant());
     }
-    else
-    {
-       // currbutton->setHighlighted(true);
-        // Handle clicking on a new button;
+    else{
+        emit showSectorData(QByteArray(),-1,-1,QVariant());
+    }
 
-    }
     m_currentChecked = currbutton;
 }
 
@@ -268,5 +266,7 @@ void DiskExplorerMapWidget::mapDiskToButtons()
             }
         }
     }
+    m_bgroup->setExclusive(true);
+
 }
 

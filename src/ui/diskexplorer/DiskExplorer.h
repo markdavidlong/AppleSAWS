@@ -8,6 +8,7 @@
 #include "diskfile.h"
 #include "hrcgcontrolsinfo.h"
 #include "hexconverter.h"
+#include "hexdumpviewer.h"
 
 #include <QFrame>
 
@@ -31,6 +32,7 @@ public slots:
     void showLoadDialog();
 
 private slots:
+    void handleShowSectorData(QByteArray data, int track, int sector, QVariant metadata);
     void handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescriptiveEntry fde);
 
 
@@ -40,11 +42,14 @@ protected:
 private:
     CatalogWidget *m_cw;
     DiskExplorerMapWidget *m_demw;
+    QFrame *m_frame;
+    HexDumpViewer *m_hdv;
 
     DiskFile *m_disk;
 
     HRCGControlsInfo *m_hrcgDialog;
     HexConverter *m_hexConverter;
+
 
     QAction *m_action_Unload_Disk_Image;
 

@@ -23,7 +23,7 @@ public:
 
     void setFile(GenericFile *file) { setFile(file,0); }
     void setFile(GenericFile *file, quint16 offset);
-
+    void setRawData(QByteArray data, quint16 offset = 0);
     virtual bool optionsMenuItems(QMenu *menu);
 
     bool canPrint() const;

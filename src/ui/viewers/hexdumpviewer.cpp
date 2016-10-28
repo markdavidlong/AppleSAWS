@@ -43,8 +43,6 @@ void HexDumpViewer::toggleWordWrap(bool enabled)
 
 
 
-
-
 void HexDumpViewer::showHexAndAsciiValues()
 {
     int offset = ui->textArea->verticalScrollBar()->value();
@@ -130,7 +128,13 @@ void HexDumpViewer::setFile(GenericFile *file, quint16 offset)
     m_data = file->data();
 
     showHexAndAsciiValues();
+}
 
+void HexDumpViewer::setRawData(QByteArray data, quint16 offset)
+{
+    m_offset = offset;
+    m_data =  data;
+    showHexAndAsciiValues();
 }
 
 bool HexDumpViewer::optionsMenuItems(QMenu *menu)

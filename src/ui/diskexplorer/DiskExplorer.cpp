@@ -68,10 +68,13 @@ void DiskExplorer::initUi()
 
     m_cw = new CatalogWidget(widget);
     m_demw = new DiskExplorerMapWidget(35,16,widget);
-    QFrame *frame = new QFrame(widget);
-    frame->setFrameStyle(QFrame::Raised);
-    frame->setStyleSheet("background-color: darkGray");
-    frame->setMinimumSize(200,200);
+    m_frame = new QFrame(widget);
+    m_frame->setFrameStyle(QFrame::Raised);
+    m_frame->setMinimumSize(200,200);
+    QGridLayout *frameLayout = new QGridLayout(this);
+    m_frame->setLayout(frameLayout);
+    m_hdv = new HexDumpViewer(this);
+    frameLayout->addWidget(m_hdv);
 
     layout->setColumnStretch(0,4);
     layout->setColumnStretch(1,1);
@@ -80,13 +83,14 @@ void DiskExplorer::initUi()
     layout->addWidget(m_cw,0,0,2,1);
     layout->addWidget(m_demw,0,1,1,2);
     layout->addWidget(m_demw->makeKeyWidget(),1,1);
-    layout->addWidget(frame,1,2);
+    layout->addWidget(m_frame,1,2);
 
 
     connect(m_cw,SIGNAL(openWithDefaultViewer(DiskFile*,FileDescriptiveEntry)),
             SLOT(handleDiskItemSelectedDefaultOpen(DiskFile*,FileDescriptiveEntry)));
 
-
+    connect(m_demw, SIGNAL(showSectorData(QByteArray,int,int,QVariant)),
+            SLOT(handleShowSectorData(QByteArray,int,int,QVariant)));
 }
 
 
@@ -96,6 +100,7 @@ void DiskExplorer::unloadDiskFile()
     {
         m_cw->unloadDisk(m_disk);
         m_demw->unloadDisk();
+        m_hdv->setRawData(QByteArray(),0);
     }
 }
 
@@ -119,6 +124,14 @@ void DiskExplorer::loadDiskFile(QString filename)
         m_disk = 0;
     }
 
+}
+
+void DiskExplorer::handleShowSectorData(QByteArray data, int track, int sector, QVariant metadata)
+{
+    Q_UNUSED(track)
+    Q_UNUSED(sector)
+    Q_UNUSED(metadata)
+    m_hdv->setRawData(data,0);
 }
 
 void DiskExplorer::showLoadDialog()
