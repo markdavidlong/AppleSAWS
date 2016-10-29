@@ -4,6 +4,7 @@
 #include <QString>
 #include <QVariant>
 #include <QMap>
+#include <QTextCharFormat>
 
 class ApplesoftToken
 {
@@ -24,6 +25,8 @@ public:
 
     static const quint16 StringVarTokenVal    = 0x109;
     static const quint16 StringAryVarTokenVal = 0x10A;
+
+    static const quint16 DefaultTokenVal      = 0xffff;
 
 
 
@@ -147,15 +150,38 @@ public:
     CommandType getCommandType() const { return m_command_type; }
 
     QString getRawPrintableString() const;
-    QString getHtmlPrintableString() const;
+
+    QTextCharFormat textFormat()
+    {
+        return textFormat(m_token_id);
+    }
+
+    QTextCharFormat textFormat(quint16 tokentype) ;
 
     static QString getStringForToken(quint8 token) {
         if (m_tokens.size() == 0) { initializeTokenTable(); }
         return m_tokens[token];
     }
 
+    static QTextCharFormat defaultTextFormat();
 
 private:
+    void makeTextCharFormats();
+
+    enum TextCharFormatType {
+        TCFDefault,
+        TCFCtrlChar,
+        TCFAscii,
+        TCFFunction,
+        TCFOperator,
+        TCFUnusedToken,
+        TCFNumber,
+        TCFString,
+        TCFVariable,
+        TCFDataString,
+        TCFRemString,
+        TCFUnknown
+    };
 
     static QMap<quint16, QString> m_tokens;
 
@@ -164,6 +190,8 @@ private:
     QVariant m_payload;
     TokenType m_token_type;
     CommandType m_command_type;
+
+    QMap<TextCharFormatType,QTextCharFormat> m_textcharformats;
 
     static void initializeTokenTable();
 };

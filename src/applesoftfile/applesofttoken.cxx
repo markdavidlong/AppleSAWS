@@ -5,7 +5,7 @@ QMap<quint16, QString> ApplesoftToken::m_tokens = QMap<quint16, QString>();
 ApplesoftToken::ApplesoftToken()
 {
     if (m_tokens.size() == 0) { initializeTokenTable(); }
-    setTokenId(0xFFFF);
+    setTokenId(DefaultTokenVal);
 }
 
 ApplesoftToken::ApplesoftToken(quint16 id)
@@ -88,29 +88,13 @@ void ApplesoftToken::setValue(QVariant value)
     m_payload = value;
 }
 
-QString ApplesoftToken::getHtmlPrintableString() const
-{
-    QString baseval = getRawPrintableString().toHtmlEscaped();
 
-    if (getTokenId() <= 0x7f)
-        return QString("<font color=\"black\">%1</font>").arg(baseval);
-    if (getTokenId() <= 0xff)
-        return QString("<font color=\"red\">%1</font>").arg(baseval);
-    if (getTokenId() == ApplesoftToken::StringTokenVal)
-        return QString("<font color=\"black\">%1</font>").arg(baseval);
-    if (getTokenId() == ApplesoftToken::DataStringTokenVal)
-        return QString("<font color=\"green\">%1</font>").arg(baseval);
-    if (getTokenId() == ApplesoftToken::RemStringTokenVal)
-        return QString("<font color=\"grey\">%1</font>").arg(baseval);
-    if (getTokenId() == ApplesoftToken::IntegerTokenVal || getTokenId() == ApplesoftToken::FloatAryVarTokenVal)
-        return QString("<font color=\"blue\">%1</font>").arg(baseval);
-
-    return QString("<font color=\"orange\">%1</font>").arg(baseval);
-}
 
 QString ApplesoftToken::getRawPrintableString() const
 {
-    if (m_token_id == 0x00) {
+    if (m_token_id == DefaultTokenVal) {
+        return "";
+    } else if (m_token_id == 0x00) {
         return "";
     } else if (m_token_id <= 0x7f) {
         return QString((m_token_id));
@@ -141,6 +125,44 @@ QString ApplesoftToken::getRawPrintableString() const
     } else {
         return "[temp undefined]";
     }
+}
+
+QTextCharFormat ApplesoftToken::defaultTextFormat()
+{
+    QTextCharFormat tf;  // Default
+    tf.setFontFamily("Typewriter");
+    tf.setFontPointSize(10);
+    tf.setForeground(Qt::red);
+    return tf;
+}
+
+QTextCharFormat ApplesoftToken::textFormat(quint16 tokenType)
+{
+    makeTextCharFormats();
+    return m_textcharformats[TCFDefault];
+}
+
+
+
+void ApplesoftToken::makeTextCharFormats()
+{
+//    TCFDefault,
+//    TCFCtrlChar,
+//    TCFAscii,
+//    TCFFunction,
+//    TCFOperator,
+//    TCFUnusedToken,
+//    TCFNumber,
+//    TCFString,
+//    TCFVariable,
+//    TCFDataString,
+//    TCFRemString,
+//    TCFUnknown
+
+    QTextCharFormat tf = defaultTextFormat();
+
+    m_textcharformats.insert(TCFDefault, tf);
+
 }
 
 void ApplesoftToken::initializeTokenTable()

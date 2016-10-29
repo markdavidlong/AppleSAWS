@@ -3,6 +3,9 @@
 
 #include <QObject>
 #include <QFlags>
+#include <QTextDocument>
+#include <QSharedPointer>
+
 #include "applesoftfile.h"
 
 class ApplesoftFormatter : public QObject
@@ -31,7 +34,9 @@ public:
     void setFile(ApplesoftFile *file);
     FormatOptions flags() { return m_format_options; }
 
-    QString formatText();
+    void formatText();
+    QSharedPointer<QTextDocument> getFormattedDocument() const { return m_formattedDocument; }
+    QString getFormattedText() const { return m_formattedText; }
 
     QList<QPair<quint16, quint16> > flowTargets() const { return m_flowTargets; }
 
@@ -45,6 +50,9 @@ private:
     QList<QPair<quint16, quint16> > m_flowTargets;
 
     ApplesoftFile *m_file;
+
+    QString m_formattedText;
+    QSharedPointer<QTextDocument> m_formattedDocument;
 
 };
 

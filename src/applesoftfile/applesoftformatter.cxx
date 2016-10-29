@@ -1,12 +1,15 @@
 #include "applesoftformatter.h"
 #include "util.h"
+#include <QTextCursor>
+#include <QTextCharFormat>
 
 #define HEXPREFIX "0x"
 
 ApplesoftFormatter::ApplesoftFormatter(QObject *parent) :
     QObject(parent)
 {
-    m_file = 0;
+    m_file = Q_NULLPTR;
+    m_formattedDocument = QSharedPointer<QTextDocument>(new QTextDocument());
 }
 
 void ApplesoftFormatter::setFile(ApplesoftFile *file)
@@ -15,20 +18,27 @@ void ApplesoftFormatter::setFile(ApplesoftFile *file)
     emit newFile(file);
 }
 
-QString ApplesoftFormatter::formatText()
+void ApplesoftFormatter::formatText()
 {
+    m_formattedText.clear();
+    m_formattedDocument->clear();
+
     if (!m_file) {
-        return ("No File");
+        return;
     }
 
-    QString retval;
+    QTextCursor cursor(m_formattedDocument.data());
+
+    QString formattedText;
     m_flowTargets.clear();
 
     foreach (ApplesoftLine line, m_file->getLines()) {
         QString linestring = QString("%1 ").arg(line.linenum,5,10,QChar(' '));
 
         int indentlevel = 1;
-        retval.append(linestring);
+        formattedText.append(linestring);
+        cursor.insertText(linestring, ApplesoftToken::defaultTextFormat());
+
 
         QVectorIterator<ApplesoftToken> tokenIt(line.tokens);
         ApplesoftToken previousToken;
@@ -48,6 +58,8 @@ QString ApplesoftFormatter::formatText()
                 }
                 firstToken = false;
             }
+            cursor.insertText(tokenstr, token.textFormat());
+
 
             //TODO: Move this to the parser.
             //TODO: This doesn't yet handle: ON expr GOTO/GOSUB n1,n2,n3,...
@@ -163,16 +175,16 @@ QString ApplesoftFormatter::formatText()
                 }
             }
 
-            retval.append(tokenstr);
+            formattedText.append(tokenstr);
             previousToken = token;
         }
 
-        retval.append("\n");
+        formattedText.append("\n");
         if (m_format_options.testFlag(ReindentCode))
         {
   //          retval.append("\n");
         }
 
     }
-    return retval;
+    m_formattedText = formattedText;
 }

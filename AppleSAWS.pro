@@ -65,7 +65,8 @@ SOURCES += \
     src/binaryfile/AssemblerSymbols.cpp \
     src/binaryfile/AssemblerSymbolModel.cpp \
     src/ui/diskexplorer/DiskExplorer.cpp \
-    src/ui/diskexplorer/DiskExplorerMapWidget.cpp
+    src/ui/diskexplorer/DiskExplorerMapWidget.cpp \
+    src/applesoftfile/ApplesoftRetokenizer.cpp
 
 
 HEADERS += \
@@ -113,7 +114,8 @@ HEADERS += \
     src/binaryfile/AssemblerSymbolModel.h \
     src/binaryfile/MemoryUsageMap.h \
     src/ui/diskexplorer/DiskExplorer.h \
-    src/ui/diskexplorer/DiskExplorerMapWidget.h
+    src/ui/diskexplorer/DiskExplorerMapWidget.h \
+    src/applesoftfile/ApplesoftRetokenizer.h
 
 FORMS += \
     src/ui/catalogwidget.ui \

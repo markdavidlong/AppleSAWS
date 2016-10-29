@@ -9,6 +9,7 @@
 #include "applesoftline.h"
 #include "genericfile.h"
 #include "applesofttoken.h"
+#include "ApplesoftRetokenizer.h"
 
 
 class ApplesoftFile : public GenericFile
@@ -26,27 +27,14 @@ public:
     QByteArray rawData();
 
 private:
-    void parse(quint16 start_address = 0x0801);
 
     QVector<ApplesoftLine> m_lines;
     int m_data_end;
     quint16 m_length;
+
+    ApplesoftRetokenizer *m_retokenizer;
 };
 
-class Retokenizer {
-public:
-    static void retokenize(ApplesoftLine &line);
-
-protected:
-private:
-    static QVector<ApplesoftToken> retokenizeRems(QVector<ApplesoftToken> &datatokens);
-    static QVector<ApplesoftToken> retokenizeStrings(QVector<ApplesoftToken> &datatokens);
-    static QVector<ApplesoftToken> retokenizeDataStatements(QVector<ApplesoftToken> &datatokens);
-    static QVector<ApplesoftToken> processDataPayload(QVector<ApplesoftToken> &datatokens);
-    static QVector<ApplesoftToken> retokenizeVariables(QVector<ApplesoftToken> &datatokens);
-    static QVector<ApplesoftToken> retokenizeNumbers(QVector<ApplesoftToken> &datatokens);
-    static QVector<ApplesoftToken> retokenizeNegativeNumbers(QVector<ApplesoftToken> &datatokens);
-};
 
 
 #endif // APPLESOFTFILE_H

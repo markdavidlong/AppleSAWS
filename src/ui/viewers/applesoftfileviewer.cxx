@@ -131,7 +131,8 @@ void ApplesoftFileViewer::setIntsAsHex(bool enabled, ReformatRule reformat)
 
 void ApplesoftFileViewer::reformatText()
 {
-    ui->textArea->setText(m_formatter->formatText());
+    m_formatter->formatText();
+    ui->textArea->setText(m_formatter->getFormattedText());
     qDebug() << m_formatter->flowTargets();
 }
 
@@ -150,8 +151,8 @@ void ApplesoftFileViewer::setFile(ApplesoftFile *file) {
     QString title = QString("AppleSoft Viewer: %1").arg(m_file->filename());
     m_title = title;
     setWindowTitle(title);
-
-    ui->textArea->setText(m_formatter->formatText());
+    m_formatter->formatText();
+    ui->textArea->setText(m_formatter->getFormattedText());
 }
 
 void ApplesoftFileViewer::setData(QByteArray data)
