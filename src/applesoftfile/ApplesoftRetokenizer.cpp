@@ -6,17 +6,25 @@
 
 ApplesoftRetokenizer::ApplesoftRetokenizer()
 {
-
+    m_isParsed = false;
 }
 
 void ApplesoftRetokenizer::setData(QByteArray data)
 {
     m_data = data;
     m_data_end = data.length();
+    m_isParsed = false;
 }
 
 void ApplesoftRetokenizer::parse(quint16 start_address)
 {
+    if (m_isParsed)
+    {
+        qWarning("File is already parsed.  Not reparsing.");
+        return;
+    }
+
+    //TODO:  This could be changed to search for hidden space between applesoft lines
     int idx = 0;
     quint8 val = 0;
     m_retokenized_lines.clear();
@@ -46,11 +54,123 @@ void ApplesoftRetokenizer::parse(quint16 start_address)
         m_retokenized_lines.append(line);
     }
 
-     m_data_end = idx;
+    m_data_end = idx;
 
     if (idx < m_data.length()) {
         qDebug() << QString("%1 byte(s) unaccounted for.").arg(m_data.length() - idx);
     }
+
+    retokenizeLinesForFormatting();
+
+    m_isParsed = true;
+}
+
+void ApplesoftRetokenizer::retokenizeLinesForFormatting()
+{
+    QVector<ApplesoftLine> retLines;
+
+    foreach(ApplesoftLine line, m_retokenized_lines)
+    {
+        int indentlevel = 1;
+     //   quint16 linenum = line.linenum;
+
+        bool firstToken = true;
+        ApplesoftToken previousToken;
+        QMutableVectorIterator<ApplesoftToken> tokenIt(line.tokens);
+        while (tokenIt.hasNext())
+        {
+            ApplesoftToken token = tokenIt.next();
+            bool isFlowTarget = false;
+
+            QString tokenstr = token.getRawPrintableString();
+            if (firstToken)
+            {
+                if (!tokenstr.startsWith(" "))
+                {
+                    ApplesoftToken tmptoken(ApplesoftToken::OptFmtLeadingSpaceTokenValue);
+                    tokenIt.remove();
+                    tokenIt.insert(tmptoken);
+                    tokenIt.insert(token);
+                }
+                firstToken = false;
+            }
+
+            quint16 preTokenId = previousToken.getTokenId();
+            if (preTokenId == ApplesoftToken::ASGoto ||
+                preTokenId == ApplesoftToken::ASGosub ||
+                preTokenId == ApplesoftToken::ASThen)
+            {
+                isFlowTarget = false;
+                if (preTokenId == ApplesoftToken::ASGoto || preTokenId == ApplesoftToken::ASGosub)
+                {
+                    isFlowTarget = true;
+                }
+                else if (preTokenId == ApplesoftToken::ASThen
+                         && token.getTokenId() == ApplesoftToken::IntegerTokenVal)
+                {
+                    isFlowTarget = true;
+                }
+                if (isFlowTarget)
+                {
+                    QPair<quint16,quint16> pair;
+                    pair.first = line.linenum;
+                    pair.second = token.getWordValue();
+                    m_flowTargets.append(pair);
+
+                    ApplesoftToken tmptoken(ApplesoftToken::OptFmtFlagFlowTargetNextTokenValue);
+                    tokenIt.remove();
+                    tokenIt.insert(tmptoken);
+                    tokenIt.insert(token);
+                }
+            }
+
+            if (token.getTokenId() == ApplesoftToken::ASReturn)
+            {
+                ApplesoftToken tmptoken(ApplesoftToken::OptFmtReturnLineBreakTokenValue);
+                tokenIt.insert(tmptoken);
+            }
+
+            if (token.getTokenId() == ':')
+            {
+                ApplesoftToken tmptoken(ApplesoftToken::OptFmtIndentLineBreakTokenValue);
+                tokenIt.insert(tmptoken);
+                for (int ind = 0; ind < indentlevel; ind++)
+                {
+                    ApplesoftToken tmptoken(ApplesoftToken::OptFmtIndentTabTokenValue);
+                    tokenIt.insert(tmptoken);
+                }
+                if (!tokenIt.peekNext().getRawPrintableString().startsWith(" "))
+                {
+                    ApplesoftToken tmptoken(ApplesoftToken::OptFmtIndentSpaceTokenValue);
+                    tokenIt.insert(tmptoken);
+                }
+            }
+            if (token.getTokenId() == ApplesoftToken::ASThen)
+            {
+                indentlevel++;
+                if (tokenIt.peekNext().getTokenId() != ApplesoftToken::IntegerTokenVal)
+                {
+                    ApplesoftToken tmptoken(ApplesoftToken::OptFmtIndentLineBreakTokenValue);
+                    tokenIt.insert(tmptoken);
+                    for (int ind = 0; ind < indentlevel; ind++)
+                    {
+                        ApplesoftToken tmptoken(ApplesoftToken::OptFmtIndentTabTokenValue);
+                        tokenIt.insert(tmptoken);
+                    }
+                    if (!tokenIt.peekNext().getRawPrintableString().startsWith(" "))
+                    {
+                        ApplesoftToken tmptoken(ApplesoftToken::OptFmtIndentSpaceTokenValue);
+                        tokenIt.insert(tmptoken);
+                    }
+                }
+            }
+
+            previousToken = token;
+        }
+        retLines.append(line);
+    }
+
+    m_retokenized_lines = retLines;
 }
 
 void ApplesoftRetokenizer::retokenizeLine(ApplesoftLine &line)
@@ -115,35 +235,35 @@ QVector<ApplesoftToken> ApplesoftRetokenizer::retokenizeStrings(QVector<Applesof
         if (token.getTokenId() >= 0x80)
         {
             replacements.append(token);
-         //   continue;
+            //   continue;
         } else
 
-        if (token.getWordValue() == '"')
-        {
-            if (!inString)
+            if (token.getWordValue() == '"')
             {
-                inString = true;
-                buffer.append(token.getWordValue());
-              //  continue;
-            }
-            else
-            {
-                buffer.append(token.getWordValue());
-                ApplesoftToken strtoken(ApplesoftToken::StringTokenVal, buffer);
-                replacements.append(strtoken);
-                buffer.clear();
-                inString = false;
-//                continue;
-            }
-        } else
+                if (!inString)
+                {
+                    inString = true;
+                    buffer.append(token.getWordValue());
+                    //  continue;
+                }
+                else
+                {
+                    buffer.append(token.getWordValue());
+                    ApplesoftToken strtoken(ApplesoftToken::StringTokenVal, buffer);
+                    replacements.append(strtoken);
+                    buffer.clear();
+                    inString = false;
+                    //                continue;
+                }
+            } else
 
-        if (inString)
-        {
-            buffer.append(token.getWordValue());
-            // continue;
-        } else
+                if (inString)
+                {
+                    buffer.append(token.getWordValue());
+                    // continue;
+                } else
 
-        replacements.append(token);
+                    replacements.append(token);
     }
 
     return replacements;
@@ -176,7 +296,7 @@ QVector<ApplesoftToken> ApplesoftRetokenizer::retokenizeDataStatements(QVector<A
     }
     if (inData) {
         QVector<ApplesoftToken> dataTokens;
-        dataTokens = processDataPayload(datatokenbuffer);
+        dataTokens = retokenizeDataPayload(datatokenbuffer);
         replacements.append(dataTokens);
         datatokenbuffer.clear();
         inData = false;
@@ -185,7 +305,7 @@ QVector<ApplesoftToken> ApplesoftRetokenizer::retokenizeDataStatements(QVector<A
 }
 
 
-QVector<ApplesoftToken> ApplesoftRetokenizer::processDataPayload(QVector<ApplesoftToken>& datatokens)
+QVector<ApplesoftToken> ApplesoftRetokenizer::retokenizeDataPayload(QVector<ApplesoftToken>& datatokens)
 {
     QVector<ApplesoftToken> retval;
 
@@ -249,13 +369,13 @@ QVector<ApplesoftToken> ApplesoftRetokenizer::retokenizeVariables(QVector<Apples
     }
     QList<QRegularExpressionMatch> matchstack;
     QRegularExpressionMatchIterator matches = varregexp.globalMatch(parsestring);
- //   qDebug() << parsestring;
+    //   qDebug() << parsestring;
     while (matches.hasNext()) {
         QRegularExpressionMatch rematch = matches.next();
         matchstack.push_front(rematch);
 
-//        qDebug() << "Capture " << " = " << rematch.capturedTexts() << "From: " << rematch.capturedStart()
-//                 << "To: " << rematch.capturedEnd()-1 << "("<<rematch.capturedLength()<<")";
+        //        qDebug() << "Capture " << " = " << rematch.capturedTexts() << "From: " << rematch.capturedStart()
+        //                 << "To: " << rematch.capturedEnd()-1 << "("<<rematch.capturedLength()<<")";
     }
 
     foreach(QRegularExpressionMatch rematch, matchstack)
@@ -320,13 +440,13 @@ QVector<ApplesoftToken> ApplesoftRetokenizer::retokenizeNumbers(QVector<Applesof
     }
     QList<QRegularExpressionMatch> matchstack;
     QRegularExpressionMatchIterator matches = varregexp.globalMatch(parsestring);
-//    qDebug() << parsestring;
+    //    qDebug() << parsestring;
     while (matches.hasNext()) {
         QRegularExpressionMatch rematch = matches.next();
         matchstack.push_front(rematch);
 
-//        qDebug() << "Capture " << " = " << rematch.capturedTexts() << "From: " << rematch.capturedStart()
-//                 << "To: " << rematch.capturedEnd()-1 << "("<<rematch.capturedLength()<<")";
+        //        qDebug() << "Capture " << " = " << rematch.capturedTexts() << "From: " << rematch.capturedStart()
+        //                 << "To: " << rematch.capturedEnd()-1 << "("<<rematch.capturedLength()<<")";
     }
 
     foreach(QRegularExpressionMatch rematch, matchstack)
@@ -395,28 +515,28 @@ QVector<ApplesoftToken> ApplesoftRetokenizer::retokenizeNegativeNumbers(QVector<
         else if (token.getTokenId() == ApplesoftToken::IntVarTokenVal) lastWasInt = true;
         else if (token.getTokenId() == ApplesoftToken::FloatVarTokenVal) lastWasInt = true;
         else if (token.getTokenId() == ')') lastWasInt = true;
-else
-        if (token.getTokenId() == ApplesoftToken::ASMINUS)
-        {
-            if (!lastWasInt && it.hasNext() && it.peekNext().getTokenId() == ApplesoftToken::IntegerTokenVal)
+        else
+            if (token.getTokenId() == ApplesoftToken::ASMINUS)
             {
-                it.remove();
-                token = it.next();
-                it.remove();
-                int val = token.getUnsignedIntegerValue() * -1;
-                token.setValue(val);
-                it.insert(token);
-                lastWasInt = true;
+                if (!lastWasInt && it.hasNext() && it.peekNext().getTokenId() == ApplesoftToken::IntegerTokenVal)
+                {
+                    it.remove();
+                    token = it.next();
+                    it.remove();
+                    int val = token.getUnsignedIntegerValue() * -1;
+                    token.setValue(val);
+                    it.insert(token);
+                    lastWasInt = true;
+                }
+                else
+                {
+                    lastWasInt = false;
+                }
             }
             else
             {
                 lastWasInt = false;
             }
-        }
-        else
-        {
-            lastWasInt = false;
-        }
     }
 
     return tmptokens.toVector();

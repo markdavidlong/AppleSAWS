@@ -35,6 +35,8 @@ void ApplesoftFile::setData(QByteArray data)
     m_retokenizer->parse();
     m_data_end = m_retokenizer->getEndOfDataOffset();
     m_lines = m_retokenizer->getRetokenizedLines();
+
+    m_flowTargets = m_retokenizer->getFlowTargets();
 }
 
 QByteArray ApplesoftFile::rawData() {

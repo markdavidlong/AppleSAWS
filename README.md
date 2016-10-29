@@ -7,7 +7,7 @@ This code is being developed using Qt5, with development work being done on Linu
 
 Among other things, the app includes:
 * Code that reads and parses DOS-format disk images at the disk-structure level. (It's just read-only for now, and ProDOS is on the horizon)
-* An Applesoft parser/retokenizer/reformatter which can show code in its normal form or reindented on multiple lines, and can optionally show integers as hex values inline. The retokenizer creates new tokens for strings, variable names, numeric values, DATA payloads, REM remarks, and other things that are nice to have -- and sets the stage to create an analyzer for deeper processing of the code later on.
+* An Applesoft parser/retokenizer/reformatter which can show code in its normal form or reindented on multiple lines with syntax highlighting, and can optionally show integers as hex values inline. The retokenizer creates new tokens for strings, variable names, numeric values, DATA payloads, REM remarks, and other things that are nice to have -- and sets the stage to create an analyzer for deeper processing of the code later on.
 * A binary file processor with a flow-tracing disassembler, which can show hex dumps and disassembly of code and data blocks (it also temporarily has some common labels for well-known addresses hard-coded into the display, though dynamic labeling of symbols is in the works.) It can also display the relocation table for type-R relocatable files.
 * A Text file viewer.
 * A graphics viewer which can show hires screen dumps as monochrome, with NTSC artifacts, or a hybrid mode where each pixel's natural color is shown in-place (with no white color blending.)
@@ -20,7 +20,7 @@ Among other things, the app includes:
 There is also a Hex/Decimal converter utility and some in-app documentation for HRCG control character codes. Mainly stuff that I found useful at the time I was writing it.
 
 In the pipeline are some more useful features (as I get a chance):
-* Syntax Highlighting
+* Syntax Highlighting **(Currently in progress!)**
 * More low-level disk exploration tools (sector-level stuff, comparing DOS versions between disks, etc.)
 * More analysis of AppleSoft programs (Tracing flow control, find addresses of PEEKS, POKES, CALLS, USRs, and &'s)
 * Processing and analysis of Integer Basic files

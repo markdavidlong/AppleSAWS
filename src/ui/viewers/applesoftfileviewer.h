@@ -48,6 +48,7 @@ protected slots:
     void toggleWordWrap(bool enabled);
     void setIndentCode(bool enabled, ReformatRule reformat = ForceReformat);
     void setIntsAsHex(bool enabled, ReformatRule reformat = ForceReformat);
+    void setBreakAfterReturn(bool enabled, ReformatRule reformat = ForceReformat);
     void launchVarBrowser();
     void reformatText();
 

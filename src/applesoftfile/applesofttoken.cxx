@@ -80,6 +80,9 @@ void ApplesoftToken::setTokenId(quint16 id)
     } else if (id == StringAryVarTokenVal) {
         m_token_type = STRING_ARY_VARIABLE_TOKEN;
         m_command_type = NONE;
+    } else if (id >= 0xe000 && id < 0xf000) {
+        m_token_type = OPTIONAL_FORMAT_TOKEN;
+        m_command_type = OPTIONAL_FORMAT;
     }
 }
 
@@ -122,6 +125,8 @@ QString ApplesoftToken::getRawPrintableString() const
         return getStringValue();
     } else if (m_token_id == StringAryVarTokenVal) {
         return getStringValue();
+    } else if (m_token_id >= 0xe000 && m_token_id < 0xf000) {
+        return "";
     } else {
         return "[temp undefined]";
     }
@@ -130,16 +135,55 @@ QString ApplesoftToken::getRawPrintableString() const
 QTextCharFormat ApplesoftToken::defaultTextFormat()
 {
     QTextCharFormat tf;  // Default
-    tf.setFontFamily("Typewriter");
-    tf.setFontPointSize(10);
-    tf.setForeground(Qt::red);
+//    tf.setFont(QFont("Courier"));
+//    tf.setFontPointSize(10);
+    tf.setForeground(Qt::black);
     return tf;
 }
 
 QTextCharFormat ApplesoftToken::textFormat(quint16 tokenType)
 {
-    makeTextCharFormats();
-    return m_textcharformats[TCFDefault];
+    QTextCharFormat tf = defaultTextFormat();
+
+    if (tokenType < 0x80) // Ascii
+    {
+        tf.setForeground(Qt::black);
+    }
+    else if (tokenType < 0x100) // Applesoft Tokens
+    {
+        tf.setForeground(Qt::black);
+    }
+    else if (tokenType == StringTokenVal)
+    {
+        tf.setForeground(Qt::blue);
+        tf.setFontWeight(QFont::Bold);
+    }
+    else if (tokenType == IntegerTokenVal || tokenType == FloatTokenVal)
+    {
+        tf.setForeground(Qt::darkGreen);
+        tf.setFontWeight(QFont::Bold);
+    }
+    else if (tokenType == StringVarTokenVal ||
+             tokenType == StringAryVarTokenVal ||
+             tokenType == IntVarTokenVal ||
+             tokenType == IntAryVarTokenVal ||
+             tokenType == FloatVarTokenVal ||
+             tokenType == FloatAryVarTokenVal)
+    {
+        tf.setFontWeight(QFont::Bold);
+        tf.setForeground(Qt::darkMagenta);
+    }
+    else if (tokenType == RemStringTokenVal)
+    {
+        tf.setForeground(Qt::darkGray);
+        tf.setFontUnderline(true);
+    }
+    else if (tokenType == DataStringTokenVal)
+    {
+        tf.setForeground(Qt::darkRed);
+    }
+
+    return tf;
 }
 
 
@@ -159,9 +203,6 @@ void ApplesoftToken::makeTextCharFormats()
 //    TCFRemString,
 //    TCFUnknown
 
-    QTextCharFormat tf = defaultTextFormat();
-
-    m_textcharformats.insert(TCFDefault, tf);
 
 }
 

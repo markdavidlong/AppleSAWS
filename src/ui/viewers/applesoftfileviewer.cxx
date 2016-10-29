@@ -30,14 +30,13 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
 
     setIndentCode(settings.value("ASViewer.indentCode",false).toBool(), NoReformat);
     setIntsAsHex(settings.value("ASViewer.intsAsHex",false).toBool(), NoReformat);
+    setBreakAfterReturn(settings.value("ASViewer.breakAfterReturn",false).toBool(), NoReformat);
 }
 
 ApplesoftFileViewer::~ApplesoftFileViewer()
 {
     delete ui;
 }
-
-
 
 bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
 {
@@ -57,6 +56,14 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
     setIndentCode(settings.value("ASViewer.indentCode",false).toBool(),NoReformat);
     connect(action, SIGNAL(toggled(bool)), ui->findText,SLOT(clear()));
     connect(action, SIGNAL(toggled(bool)),SLOT(setIndentCode(bool)));
+    menu->addAction(action);
+
+    action = new QAction("Blank &Line after RETURNs",menu);
+    action->setCheckable(true);
+    action->setChecked(settings.value("ASViewer.breakAfterReturn",false).toBool());
+    setIndentCode(settings.value("ASViewer.breakAfterReturn",false).toBool(),NoReformat);
+    connect(action, SIGNAL(toggled(bool)), ui->findText,SLOT(clear()));
+    connect(action, SIGNAL(toggled(bool)),SLOT(setBreakAfterReturn(bool)));
     menu->addAction(action);
 
     menu->addSeparator();
@@ -113,6 +120,22 @@ void ApplesoftFileViewer::setIndentCode(bool enabled, ReformatRule reformat)
         reformatText();
 }
 
+void ApplesoftFileViewer::setBreakAfterReturn(bool enabled, ReformatRule reformat)
+{
+    if (enabled)
+    {
+        m_formatter->setFlags(m_formatter->flags() | ApplesoftFormatter::BreakAfterReturn);
+    }
+    else
+    {
+        m_formatter->setFlags(m_formatter->flags() & ~ApplesoftFormatter::BreakAfterReturn);
+    }
+    QSettings settings;
+    settings.setValue("ASViewer.breakAfterReturn",enabled);
+    if (reformat == ForceReformat)
+        reformatText();
+}
+
 void ApplesoftFileViewer::setIntsAsHex(bool enabled, ReformatRule reformat)
 {
     if (enabled)
@@ -131,9 +154,15 @@ void ApplesoftFileViewer::setIntsAsHex(bool enabled, ReformatRule reformat)
 
 void ApplesoftFileViewer::reformatText()
 {
-    m_formatter->formatText();
-    ui->textArea->setText(m_formatter->getFormattedText());
-    qDebug() << m_formatter->flowTargets();
+    QTextDocument *doc = ui->textArea->document();
+
+    m_formatter->formatDocument(doc);
+
+    QTextCursor cursor = ui->textArea->textCursor();
+    cursor.movePosition(QTextCursor::Start,QTextCursor::MoveAnchor);
+    ui->textArea->setTextCursor(cursor);
+
+    //qDebug() << m_formatter->flowTargets();
 }
 
 void ApplesoftFileViewer::setFile(GenericFile *file) {
@@ -151,8 +180,11 @@ void ApplesoftFileViewer::setFile(ApplesoftFile *file) {
     QString title = QString("AppleSoft Viewer: %1").arg(m_file->filename());
     m_title = title;
     setWindowTitle(title);
-    m_formatter->formatText();
-    ui->textArea->setText(m_formatter->getFormattedText());
+    QTextDocument *doc = ui->textArea->document();
+    m_formatter->formatDocument(doc);
+    QTextCursor cursor = ui->textArea->textCursor();
+    cursor.movePosition(QTextCursor::Start,QTextCursor::MoveAnchor);
+    ui->textArea->setTextCursor(cursor);
 }
 
 void ApplesoftFileViewer::setData(QByteArray data)

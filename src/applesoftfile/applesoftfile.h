@@ -33,6 +33,9 @@ private:
     quint16 m_length;
 
     ApplesoftRetokenizer *m_retokenizer;
+
+    QList<QPair<quint16, quint16> > m_flowTargets;
+
 };
 
 

@@ -5,6 +5,8 @@
 
 #include <QByteArray>
 #include <QVector>
+#include <QList>
+#include <QPair>
 
 class ApplesoftRetokenizer
 {
@@ -18,8 +20,12 @@ public:
 
     QVector<ApplesoftLine> getRetokenizedLines() { return m_retokenized_lines; }
 
+    QList<QPair<quint16, quint16> >  getFlowTargets() const { return m_flowTargets; }
 
 private:
+    void retokenizeLinesForFormatting();
+
+
     void retokenizeLine(ApplesoftLine &line);
     QVector<ApplesoftToken> retokenizeRems(QVector<ApplesoftToken> &datatokens);
     QVector<ApplesoftToken> retokenizeStrings(QVector<ApplesoftToken> &datatokens);
@@ -29,10 +35,16 @@ private:
     QVector<ApplesoftToken> retokenizeNumbers(QVector<ApplesoftToken> &datatokens);
     QVector<ApplesoftToken> retokenizeNegativeNumbers(QVector<ApplesoftToken> &datatokens);
 
+
     QVector<ApplesoftLine> m_retokenized_lines;
     QByteArray m_data;
 
     quint16 m_data_end;
+
+    bool m_isParsed;
+
+    QList<QPair<quint16, quint16> > m_flowTargets;
+
 };
 
 

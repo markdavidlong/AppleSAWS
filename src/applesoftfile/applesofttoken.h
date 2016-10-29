@@ -6,6 +6,22 @@
 #include <QMap>
 #include <QTextCharFormat>
 
+enum TextCharFormatType {
+    TCFDefault,
+    TCFCtrlChar,
+    TCFAscii,
+    TCFFunction,
+    TCFOperator,
+    TCFUnusedToken,
+    TCFNumber,
+    TCFString,
+    TCFVariable,
+    TCFDataString,
+    TCFRemString,
+    TCFUnknown
+};
+
+
 class ApplesoftToken
 {
 public:
@@ -26,6 +42,15 @@ public:
     static const quint16 StringVarTokenVal    = 0x109;
     static const quint16 StringAryVarTokenVal = 0x10A;
 
+    static const quint16 OptFmtLeadingSpaceTokenValue       = 0xe000;
+    static const quint16 OptFmtIndentLineBreakTokenValue    = 0xe001;
+    static const quint16 OptFmtIndentTabTokenValue          = 0xe002;
+    static const quint16 OptFmtIndentSpaceTokenValue        = 0xe003;
+    static const quint16 OptFmtFlagFlowTargetNextTokenValue = 0xe004;
+    static const quint16 OptFmtReturnLineBreakTokenValue    = 0xe005;
+
+
+    static const quint16 LineNumberTokenVal   = 0xfffe;
     static const quint16 DefaultTokenVal      = 0xffff;
 
 
@@ -117,7 +142,8 @@ public:
         FLOAT_VARIABLE_TOKEN       = 0xB,
         FLOAT_ARY_VARIABLE_TOKEN   = 0xC,
         STRING_VARIABLE_TOKEN      = 0xD,
-        STRING_ARY_VARIABLE_TOKEN  = 0xE
+        STRING_ARY_VARIABLE_TOKEN  = 0xE,
+        OPTIONAL_FORMAT_TOKEN      = 0xF
     } TokenType;
 
     typedef enum {
@@ -125,7 +151,8 @@ public:
         COMMAND,
         OPERATOR,
         FUNCTION,
-        UNDEFINED_COMMAND
+        UNDEFINED_COMMAND,
+        OPTIONAL_FORMAT
     } CommandType;
 
     ApplesoftToken();
@@ -156,32 +183,20 @@ public:
         return textFormat(m_token_id);
     }
 
-    QTextCharFormat textFormat(quint16 tokentype) ;
+    static QTextCharFormat textFormat(quint16 tokentype) ;
 
-    static QString getStringForToken(quint8 token) {
+    QString getStringForToken(quint8 token) {
         if (m_tokens.size() == 0) { initializeTokenTable(); }
         return m_tokens[token];
     }
 
     static QTextCharFormat defaultTextFormat();
 
+    bool isOptFmtToken() const { return (m_token_id >= 0xe000 && m_token_id < 0xf000); }
+
 private:
     void makeTextCharFormats();
 
-    enum TextCharFormatType {
-        TCFDefault,
-        TCFCtrlChar,
-        TCFAscii,
-        TCFFunction,
-        TCFOperator,
-        TCFUnusedToken,
-        TCFNumber,
-        TCFString,
-        TCFVariable,
-        TCFDataString,
-        TCFRemString,
-        TCFUnknown
-    };
 
     static QMap<quint16, QString> m_tokens;
 
@@ -195,7 +210,6 @@ private:
 
     static void initializeTokenTable();
 };
-
 
 
 #endif // APPLESOFTTOKEN_H
