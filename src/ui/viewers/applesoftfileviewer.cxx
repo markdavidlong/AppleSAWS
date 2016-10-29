@@ -211,6 +211,7 @@ void ApplesoftFileViewer::reformatText()
 {
     QTextDocument *doc = ui->textArea->document();
 
+    doc->clear();
     m_formatter->formatDocument(doc);
 
     QTextCursor cursor = ui->textArea->textCursor();

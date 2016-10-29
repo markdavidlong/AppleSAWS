@@ -27,13 +27,13 @@ private:
 
 
     void retokenizeLine(ApplesoftLine &line);
-    QVector<ApplesoftToken> retokenizeRems(QVector<ApplesoftToken> &datatokens);
-    QVector<ApplesoftToken> retokenizeStrings(QVector<ApplesoftToken> &datatokens);
-    QVector<ApplesoftToken> retokenizeDataStatements(QVector<ApplesoftToken> &datatokens);
-    QVector<ApplesoftToken> retokenizeDataPayload(QVector<ApplesoftToken> &datatokens);
-    QVector<ApplesoftToken> retokenizeVariables(QVector<ApplesoftToken> &datatokens);
-    QVector<ApplesoftToken> retokenizeNumbers(QVector<ApplesoftToken> &datatokens);
-    QVector<ApplesoftToken> retokenizeNegativeNumbers(QVector<ApplesoftToken> &datatokens);
+    QList<ApplesoftToken> retokenizeRems(QList<ApplesoftToken> &datatokens);
+    QList<ApplesoftToken> retokenizeStrings(QList<ApplesoftToken> &datatokens);
+    QList<ApplesoftToken> retokenizeDataStatements(QList<ApplesoftToken> &datatokens);
+    QList<ApplesoftToken> retokenizeDataPayload(QList<ApplesoftToken> &datatokens);
+    QList<ApplesoftToken> retokenizeVariables(QList<ApplesoftToken> &datatokens);
+    QList<ApplesoftToken> retokenizeNumbers(QList<ApplesoftToken> &datatokens);
+    QList<ApplesoftToken> retokenizeNegativeNumbers(QList<ApplesoftToken> &datatokens);
 
 
     QVector<ApplesoftLine> m_retokenized_lines;

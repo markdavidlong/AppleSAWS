@@ -304,17 +304,28 @@ void ApplesoftFormatter::formatDocument(QTextDocument *doc)
 
     doc->clear();
     QTextCursor cursor(doc);
+    cursor.beginEditBlock();
+
+    bool synhl = (m_format_options.testFlag(SyntaxHighlighting));
 
     foreach (ApplesoftLine line, m_file->getLines())
     {
         QString linestring = QString("%1 ").arg(line.linenum,5,10,QChar(' '));
-        cursor.insertText(linestring,ApplesoftToken::textFormat(ApplesoftToken::LineNumberTokenVal));
+
+        if (synhl)
+        {
+            cursor.insertText(linestring,ApplesoftToken::textFormat(ApplesoftToken::LineNumberTokenVal));
+        }
+        else
+        {
+            cursor.insertText(linestring,ApplesoftToken::defaultTextFormat());
+        }
 
         QVectorIterator<ApplesoftToken>tokenIt(line.tokens);
+        bool isBranchTarget = false;
         while (tokenIt.hasNext())
         {
             ApplesoftToken token = tokenIt.next();
-            bool isBranchTarget = false;
             if (token.isOptFmtToken())
             {
                 switch (token.getTokenId())
@@ -365,7 +376,11 @@ void ApplesoftFormatter::formatDocument(QTextDocument *doc)
             else
             {
                 QString tokenstr = token.getRawPrintableString();
-                QTextCharFormat fmt = token.textFormat();
+
+
+                QTextCharFormat fmt = ApplesoftToken::defaultTextFormat();
+                if (synhl) fmt = token.textFormat();
+
 
                 if (token.getTokenId() == ApplesoftToken::IntegerTokenVal)
                 {
@@ -388,6 +403,7 @@ void ApplesoftFormatter::formatDocument(QTextDocument *doc)
                             tokenstr = HEXPREFIX+uint32ToHex(ui32val);
                         }
                     } // isShowIntsAsHex
+                    isBranchTarget = false;
                 }
 
                 if (m_format_options.testFlag(ShowCtrlChars))
@@ -412,4 +428,5 @@ void ApplesoftFormatter::formatDocument(QTextDocument *doc)
         cursor.insertBlock();
 
     } // foreach line
+    cursor.endEditBlock();
 }

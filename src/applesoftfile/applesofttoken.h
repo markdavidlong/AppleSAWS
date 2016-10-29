@@ -206,8 +206,6 @@ private:
     TokenType m_token_type;
     CommandType m_command_type;
 
-    QMap<TextCharFormatType,QTextCharFormat> m_textcharformats;
-
     static void initializeTokenTable();
 };
 

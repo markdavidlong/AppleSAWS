@@ -175,20 +175,23 @@ void ApplesoftRetokenizer::retokenizeLinesForFormatting()
 
 void ApplesoftRetokenizer::retokenizeLine(ApplesoftLine &line)
 {
-    line.tokens = retokenizeRems(line.tokens);
-    line.tokens = retokenizeStrings(line.tokens);
-    line.tokens = retokenizeDataStatements(line.tokens);
-    line.tokens = retokenizeVariables(line.tokens);
-    line.tokens = retokenizeNumbers(line.tokens);
-    line.tokens = retokenizeNegativeNumbers(line.tokens);
+    qDebug() << "Retokenize line";
+    QList<ApplesoftToken> tmptokens = QList<ApplesoftToken>::fromVector(line.tokens);
+    tmptokens = retokenizeRems(tmptokens);
+    tmptokens = retokenizeStrings(tmptokens);
+    tmptokens = retokenizeDataStatements(tmptokens);
+    tmptokens = retokenizeVariables(tmptokens);
+    tmptokens = retokenizeNumbers(tmptokens);
+    tmptokens = retokenizeNegativeNumbers(tmptokens);
+    line.tokens = tmptokens.toVector();
 }
 
-QVector<ApplesoftToken> ApplesoftRetokenizer::retokenizeRems(QVector<ApplesoftToken>&datatokens)
+QList<ApplesoftToken> ApplesoftRetokenizer::retokenizeRems(QList<ApplesoftToken>&tmptokens)
 {
     // Handle REMs
     ApplesoftToken token;
-    QVector<ApplesoftToken> replacements;
-    QVector<ApplesoftToken> tmptokens = datatokens;
+    QList<ApplesoftToken> replacements;
+
     QByteArray buffer;
 
     bool inRem = false;
@@ -219,11 +222,11 @@ QVector<ApplesoftToken> ApplesoftRetokenizer::retokenizeRems(QVector<ApplesoftTo
     return replacements;
 }
 
-QVector<ApplesoftToken> ApplesoftRetokenizer::retokenizeStrings(QVector<ApplesoftToken>&datatokens)
+QList<ApplesoftToken> ApplesoftRetokenizer::retokenizeStrings(QList<ApplesoftToken>&tmptokens)
 {
     // Handle Strings
-    QVector<ApplesoftToken> replacements;
-    QVector<ApplesoftToken> tmptokens = datatokens;
+    QList<ApplesoftToken> replacements;
+
     QString buffer;
     ApplesoftToken token;
 
@@ -269,14 +272,14 @@ QVector<ApplesoftToken> ApplesoftRetokenizer::retokenizeStrings(QVector<Applesof
     return replacements;
 }
 
-QVector<ApplesoftToken> ApplesoftRetokenizer::retokenizeDataStatements(QVector<ApplesoftToken>&datatokens)
+QList<ApplesoftToken> ApplesoftRetokenizer::retokenizeDataStatements(QList<ApplesoftToken>&tmptokens)
 {
     // Handle DATAs
-    QVector<ApplesoftToken> tmptokens = datatokens;
-    QVector<ApplesoftToken> replacements;
+
+    QList<ApplesoftToken> replacements;
     ApplesoftToken token;
 
-    QVector<ApplesoftToken> datatokenbuffer;
+    QList<ApplesoftToken> datatokenbuffer;
     bool inData = false;
     while (!tmptokens.isEmpty())
     {
@@ -295,7 +298,7 @@ QVector<ApplesoftToken> ApplesoftRetokenizer::retokenizeDataStatements(QVector<A
         }
     }
     if (inData) {
-        QVector<ApplesoftToken> dataTokens;
+        QList<ApplesoftToken> dataTokens;
         dataTokens = retokenizeDataPayload(datatokenbuffer);
         replacements.append(dataTokens);
         datatokenbuffer.clear();
@@ -305,17 +308,17 @@ QVector<ApplesoftToken> ApplesoftRetokenizer::retokenizeDataStatements(QVector<A
 }
 
 
-QVector<ApplesoftToken> ApplesoftRetokenizer::retokenizeDataPayload(QVector<ApplesoftToken>& datatokens)
+QList<ApplesoftToken> ApplesoftRetokenizer::retokenizeDataPayload(QList<ApplesoftToken>& tmptokens)
 {
-    QVector<ApplesoftToken> retval;
+    QList<ApplesoftToken> retval;
 
     ApplesoftToken token;
 
     QString stringbuffer;
 
-    while (!datatokens.isEmpty())
+    while (!tmptokens.isEmpty())
     {
-        token = datatokens.takeFirst();
+        token = tmptokens.takeFirst();
         if (token.getTokenId() == ApplesoftToken::StringTokenVal)
         {
             ApplesoftToken newToken(ApplesoftToken::DataStringTokenVal, token.getStringValue());
@@ -344,10 +347,9 @@ QVector<ApplesoftToken> ApplesoftRetokenizer::retokenizeDataPayload(QVector<Appl
     }
     return retval;
 }
-QVector<ApplesoftToken> ApplesoftRetokenizer::retokenizeVariables(QVector<ApplesoftToken>&datatokens)
+QList<ApplesoftToken> ApplesoftRetokenizer::retokenizeVariables(QList<ApplesoftToken>&tmptokens)
 {
     // Handle variable names
-    QList<ApplesoftToken> tmptokens = QList<ApplesoftToken>::fromVector(datatokens);
     ApplesoftToken token;
 
     QRegularExpression varregexp("[A-Za-z][A-Za-z0-9]*[$%]?\\(?");
@@ -356,7 +358,7 @@ QVector<ApplesoftToken> ApplesoftRetokenizer::retokenizeVariables(QVector<Apples
     // Parse the tokens to find assist
     for (int idx = 0; idx < tmptokens.count();idx++)
     {
-        token = datatokens.at(idx);
+        token = tmptokens.at(idx);
 
         if (token.getTokenId() < 0x0080 && token.getTokenId() > 0x0000)
         {
@@ -411,14 +413,12 @@ QVector<ApplesoftToken> ApplesoftRetokenizer::retokenizeVariables(QVector<Apples
 
     }
 
-    datatokens = tmptokens.toVector();
-    return datatokens;
+    return tmptokens;
 }
 
-QVector<ApplesoftToken> ApplesoftRetokenizer::retokenizeNumbers(QVector<ApplesoftToken>&datatokens)
+QList<ApplesoftToken> ApplesoftRetokenizer::retokenizeNumbers(QList<ApplesoftToken>&tmptokens)
 {
     // Handle numbers
-    QList<ApplesoftToken> tmptokens = QList<ApplesoftToken>::fromVector(datatokens);
     ApplesoftToken token;
 
     QRegularExpression varregexp("[0-9]+(\\.[0-9]*)?");
@@ -427,7 +427,7 @@ QVector<ApplesoftToken> ApplesoftRetokenizer::retokenizeNumbers(QVector<Applesof
     // Parse the tokens to find assist
     for (int idx = 0; idx < tmptokens.count();idx++)
     {
-        token = datatokens.at(idx);
+        token = tmptokens.at(idx);
 
         if (token.getTokenId() < 0x0080 && token.getTokenId() > 0x0000)
         {
@@ -470,11 +470,10 @@ QVector<ApplesoftToken> ApplesoftRetokenizer::retokenizeNumbers(QVector<Applesof
 
     }
 
-    datatokens = tmptokens.toVector();
-    return datatokens;
+    return tmptokens;
 }
 
-QVector<ApplesoftToken> ApplesoftRetokenizer::retokenizeNegativeNumbers(QVector<ApplesoftToken>&datatokens)
+QList<ApplesoftToken> ApplesoftRetokenizer::retokenizeNegativeNumbers(QList<ApplesoftToken>&tmptokens)
 {
     //TODO:  Code to make determination of negative numbers vs. unary minus/math formulas.
     //  Prefixed '-' tokens for negative numbers should get merged with the integer value token.
@@ -500,7 +499,6 @@ QVector<ApplesoftToken> ApplesoftRetokenizer::retokenizeNegativeNumbers(QVector<
     //      Best bet would be to look at how AppleSoft handles these values.
     //  A = - 0 is the same as 0
 
-    QList<ApplesoftToken> tmptokens = QList<ApplesoftToken>::fromVector(datatokens);
     ApplesoftToken token;
 
     QMutableListIterator<ApplesoftToken>it(tmptokens);
@@ -539,6 +537,6 @@ QVector<ApplesoftToken> ApplesoftRetokenizer::retokenizeNegativeNumbers(QVector<
             }
     }
 
-    return tmptokens.toVector();
+    return tmptokens;
 }
 

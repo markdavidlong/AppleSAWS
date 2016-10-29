@@ -46,7 +46,7 @@ public slots:
 
 protected slots:
     void toggleWordWrap(bool enabled);
-    void setSyntaxHighlighting(bool enabled, ReformatRule reformat);
+    void setSyntaxHighlighting(bool enabled, ReformatRule reformat = ForceReformat);
     void setIndentCode(bool enabled, ReformatRule reformat = ForceReformat);
     void setIntsAsHex(bool enabled, ReformatRule reformat = ForceReformat);
     void setBreakAfterReturn(bool enabled, ReformatRule reformat = ForceReformat);
