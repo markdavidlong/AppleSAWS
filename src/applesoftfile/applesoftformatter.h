@@ -16,13 +16,12 @@ public:
     enum FormatOption {
         NoOptions =        0x00,
 
-        FormatHTML =       0x01,
-        ShowCtrlChars =    0x02,
-        BreakAfterReturn = 0x04,
-        PrettyFlags =      ShowCtrlChars | BreakAfterReturn | FormatHTML,
+        SyntaxHighlighting = 0x01,
+        ShowCtrlChars =     0x02,
+        BreakAfterReturn =  0x04,
 
-        ReindentCode =     0x08,
-        ShowIntsAsHex =    0x10,
+        ReindentCode =      0x08,
+        ShowIntsAsHex =     0x10,
 
         AllFlags = 0xffffffff
     };

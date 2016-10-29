@@ -20,17 +20,25 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
     setWindowTitle(title);
 
     m_formatter = new ApplesoftFormatter(this);
-    m_formatter->setFlags(ApplesoftFormatter::PrettyFlags);
+    m_formatter->setFlags(ApplesoftFormatter::NoOptions);
     connect(ui->findButton,SIGNAL(clicked(bool)), SLOT(findText()));
     m_isFirstFind = true;
     ui->textArea->setUndoRedoEnabled(false);
     ui->textArea->setUndoRedoEnabled(true);
+
+    m_showIntsAction = Q_NULLPTR;
+    m_reindentCodeAction = Q_NULLPTR;
+    m_blankAfterReturnsAction = Q_NULLPTR;
+    m_syntaxHighlightingAction = Q_NULLPTR;
+    m_showVarExplorerAction = Q_NULLPTR;
+    m_wordWrapAction = Q_NULLPTR;
 
     toggleWordWrap(settings.value("ASViewer.WordWrap",true).toBool());
 
     setIndentCode(settings.value("ASViewer.indentCode",false).toBool(), NoReformat);
     setIntsAsHex(settings.value("ASViewer.intsAsHex",false).toBool(), NoReformat);
     setBreakAfterReturn(settings.value("ASViewer.breakAfterReturn",false).toBool(), NoReformat);
+    setSyntaxHighlighting(settings.value("ASViewer.syntaxHighlighting",false).toBool(), NoReformat);
 }
 
 ApplesoftFileViewer::~ApplesoftFileViewer()
@@ -42,44 +50,75 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
 {
     QSettings settings;
 
-    QAction *action = new QAction("Show &Ints as Hex",menu);
-    action->setCheckable(true);
-    action->setChecked(settings.value("ASViewer.intsAsHex",false).toBool());
-    setIntsAsHex(settings.value("ASViewer.intsAsHex",false).toBool(),NoReformat);
-    connect(action, SIGNAL(toggled(bool)), ui->findText,SLOT(clear()));
-    connect(action, SIGNAL(toggled(bool)),SLOT(setIntsAsHex(bool)));
-    menu->addAction(action);
+    if (!m_showIntsAction)
+    {
+        m_showIntsAction = new QAction("Show &Ints as Hex",menu);
+        m_showIntsAction->setCheckable(true);
+        m_showIntsAction->setChecked(settings.value("ASViewer.intsAsHex",false).toBool());
+        setIntsAsHex(settings.value("ASViewer.intsAsHex",false).toBool(),NoReformat);
+        connect(m_showIntsAction, SIGNAL(toggled(bool)), ui->findText,SLOT(clear()));
+        connect(m_showIntsAction, SIGNAL(toggled(bool)),SLOT(setIntsAsHex(bool)));
+    }
+    menu->addAction(m_showIntsAction);
 
-    action = new QAction("&Reindent code",menu);
-    action->setCheckable(true);
-    action->setChecked(settings.value("ASViewer.indentCode",false).toBool());
+    if (!m_reindentCodeAction)
+    {
+    m_reindentCodeAction = new QAction("&Indent code",menu);
+    m_reindentCodeAction->setCheckable(true);
+    m_reindentCodeAction->setChecked(settings.value("ASViewer.indentCode",false).toBool());
     setIndentCode(settings.value("ASViewer.indentCode",false).toBool(),NoReformat);
-    connect(action, SIGNAL(toggled(bool)), ui->findText,SLOT(clear()));
-    connect(action, SIGNAL(toggled(bool)),SLOT(setIndentCode(bool)));
-    menu->addAction(action);
+    connect(m_reindentCodeAction, SIGNAL(toggled(bool)), ui->findText,SLOT(clear()));
+    connect(m_reindentCodeAction, SIGNAL(toggled(bool)),SLOT(setIndentCode(bool)));
+    }
+    menu->addAction(m_reindentCodeAction);
 
-    action = new QAction("Blank &Line after RETURNs",menu);
-    action->setCheckable(true);
-    action->setChecked(settings.value("ASViewer.breakAfterReturn",false).toBool());
+    if (!m_blankAfterReturnsAction)
+    {
+    m_blankAfterReturnsAction = new QAction("Blank &Line after RETURNs",menu);
+    m_blankAfterReturnsAction->setCheckable(true);
+    m_blankAfterReturnsAction->setChecked(settings.value("ASViewer.breakAfterReturn",false).toBool());
     setIndentCode(settings.value("ASViewer.breakAfterReturn",false).toBool(),NoReformat);
-    connect(action, SIGNAL(toggled(bool)), ui->findText,SLOT(clear()));
-    connect(action, SIGNAL(toggled(bool)),SLOT(setBreakAfterReturn(bool)));
-    menu->addAction(action);
+    connect(m_blankAfterReturnsAction, SIGNAL(toggled(bool)), ui->findText,SLOT(clear()));
+    connect(m_blankAfterReturnsAction, SIGNAL(toggled(bool)),SLOT(setBreakAfterReturn(bool)));
+    }
+    menu->addAction(m_blankAfterReturnsAction);
+
+
 
     menu->addSeparator();
 
-    action = new QAction("Show &Variable Explorer...",menu);
-    action->setCheckable(false);
-    connect(action, SIGNAL(triggered(bool)), SLOT(launchVarBrowser()));
-    menu->addAction(action);
+    if (!m_wordWrapAction)
+    {
+    m_wordWrapAction = new QAction("&Word Wrap");
+    m_wordWrapAction->setCheckable(true);
+    m_wordWrapAction->setChecked(settings.value("ASViewer.WordWrap",true).toBool());
+    toggleWordWrap(settings.value("ASViewer.WordWrap",true).toBool());
+    connect(m_wordWrapAction, SIGNAL(toggled(bool)), SLOT(toggleWordWrap(bool)));
+    }
+    menu->addAction(m_wordWrapAction);
+
+    if (!m_syntaxHighlightingAction)
+    {
+    m_syntaxHighlightingAction = new QAction("&Syntax Highlighting",menu);
+    m_syntaxHighlightingAction->setCheckable(true);
+    m_syntaxHighlightingAction->setChecked(settings.value("ASViewer.syntaxHighlighting",false).toBool());
+    setIndentCode(settings.value("ASViewer.syntaxHighlighting",false).toBool(),NoReformat);
+    connect(m_syntaxHighlightingAction, SIGNAL(toggled(bool)), ui->findText,SLOT(clear()));
+    connect(m_syntaxHighlightingAction, SIGNAL(toggled(bool)),SLOT(setSyntaxHighlighting(bool)));
+    }
+    menu->addAction(m_syntaxHighlightingAction);
+
+
 
     menu->addSeparator();
 
-    action = new QAction("&Word Wrap");
-    action->setCheckable(true);
-    action->setChecked(settings.value("ASViewer.WordWrap",true).toBool());
-    connect(action, SIGNAL(toggled(bool)), SLOT(toggleWordWrap(bool)));
-    menu->addAction(action);
+    if (!m_showVarExplorerAction)
+    {
+        m_showVarExplorerAction = new QAction("Show &Variable Explorer...",menu);
+        m_showVarExplorerAction->setCheckable(false);
+        connect(m_showVarExplorerAction, SIGNAL(triggered(bool)), SLOT(launchVarBrowser()));
+    }
+    menu->addAction(m_showVarExplorerAction);
 
     return true;
 }
@@ -132,6 +171,22 @@ void ApplesoftFileViewer::setBreakAfterReturn(bool enabled, ReformatRule reforma
     }
     QSettings settings;
     settings.setValue("ASViewer.breakAfterReturn",enabled);
+    if (reformat == ForceReformat)
+        reformatText();
+}
+
+void ApplesoftFileViewer::setSyntaxHighlighting(bool enabled, ReformatRule reformat)
+{
+    if (enabled)
+    {
+        m_formatter->setFlags(m_formatter->flags() | ApplesoftFormatter::SyntaxHighlighting);
+    }
+    else
+    {
+        m_formatter->setFlags(m_formatter->flags() & ~ApplesoftFormatter::SyntaxHighlighting);
+    }
+    QSettings settings;
+    settings.setValue("ASViewer.syntaxHighlighting",enabled);
     if (reformat == ForceReformat)
         reformatText();
 }

@@ -46,6 +46,7 @@ public slots:
 
 protected slots:
     void toggleWordWrap(bool enabled);
+    void setSyntaxHighlighting(bool enabled, ReformatRule reformat);
     void setIndentCode(bool enabled, ReformatRule reformat = ForceReformat);
     void setIntsAsHex(bool enabled, ReformatRule reformat = ForceReformat);
     void setBreakAfterReturn(bool enabled, ReformatRule reformat = ForceReformat);
@@ -59,6 +60,13 @@ private:
     ApplesoftFormatter *m_formatter;
     bool m_isFirstFind;
     Ui::ApplesoftFileViewer *ui;
+
+    QAction *m_showIntsAction;
+    QAction *m_reindentCodeAction;
+    QAction *m_blankAfterReturnsAction;
+    QAction *m_syntaxHighlightingAction;
+    QAction *m_showVarExplorerAction;
+    QAction *m_wordWrapAction;
 };
 
 #endif // APPLESOFTFILEVIEWER_H
