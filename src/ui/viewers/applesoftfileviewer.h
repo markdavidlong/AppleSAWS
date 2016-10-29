@@ -50,6 +50,7 @@ protected slots:
     void setIndentCode(bool enabled, ReformatRule reformat = ForceReformat);
     void setIntsAsHex(bool enabled, ReformatRule reformat = ForceReformat);
     void setBreakAfterReturn(bool enabled, ReformatRule reformat = ForceReformat);
+    void setShowCtrlChars(bool enabled, ReformatRule reformat = ForceReformat);
     void launchVarBrowser();
     void reformatText();
 
@@ -67,6 +68,7 @@ private:
     QAction *m_syntaxHighlightingAction;
     QAction *m_showVarExplorerAction;
     QAction *m_wordWrapAction;
+    QAction *m_showCtrlCharsAction;
 };
 
 #endif // APPLESOFTFILEVIEWER_H

@@ -49,7 +49,7 @@ public:
     static const quint16 OptFmtFlagFlowTargetNextTokenValue = 0xe004;
     static const quint16 OptFmtReturnLineBreakTokenValue    = 0xe005;
 
-
+    static const quint16 ControlCharTokenVal  = 0xfffd;
     static const quint16 LineNumberTokenVal   = 0xfffe;
     static const quint16 DefaultTokenVal      = 0xffff;
 
@@ -183,6 +183,8 @@ public:
         return textFormat(m_token_id);
     }
 
+    static QTextCharFormat defaultTextFormat();
+    static QTextCharFormat defaultInverseTextFormat();
     static QTextCharFormat textFormat(quint16 tokentype) ;
 
     QString getStringForToken(quint8 token) {
@@ -190,7 +192,6 @@ public:
         return m_tokens[token];
     }
 
-    static QTextCharFormat defaultTextFormat();
 
     bool isOptFmtToken() const { return (m_token_id >= 0xe000 && m_token_id < 0xf000); }
 

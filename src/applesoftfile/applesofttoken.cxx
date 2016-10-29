@@ -135,9 +135,15 @@ QString ApplesoftToken::getRawPrintableString() const
 QTextCharFormat ApplesoftToken::defaultTextFormat()
 {
     QTextCharFormat tf;  // Default
-//    tf.setFont(QFont("Courier"));
-//    tf.setFontPointSize(10);
     tf.setForeground(Qt::black);
+    return tf;
+}
+
+QTextCharFormat ApplesoftToken::defaultInverseTextFormat()
+{
+    QTextCharFormat tf;
+    tf.setForeground(Qt::white);
+    tf.setBackground(Qt::black);
     return tf;
 }
 
@@ -181,6 +187,12 @@ QTextCharFormat ApplesoftToken::textFormat(quint16 tokenType)
     else if (tokenType == DataStringTokenVal)
     {
         tf.setForeground(Qt::darkRed);
+    }
+    else if (tokenType == ControlCharTokenVal)
+    {
+        // Inverse of StringTokenVal
+        tf.setForeground(Qt::white);
+        tf.setBackground(Qt::blue);
     }
 
     return tf;

@@ -175,7 +175,6 @@ void ApplesoftRetokenizer::retokenizeLinesForFormatting()
 
 void ApplesoftRetokenizer::retokenizeLine(ApplesoftLine &line)
 {
-    qDebug() << "Retokenize line";
     QList<ApplesoftToken> tmptokens = QList<ApplesoftToken>::fromVector(line.tokens);
     tmptokens = retokenizeRems(tmptokens);
     tmptokens = retokenizeStrings(tmptokens);

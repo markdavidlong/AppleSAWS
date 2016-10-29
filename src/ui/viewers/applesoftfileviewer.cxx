@@ -20,7 +20,7 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
     setWindowTitle(title);
 
     m_formatter = new ApplesoftFormatter(this);
-    m_formatter->setFlags(ApplesoftFormatter::NoOptions);
+    m_formatter->setFlags(ApplesoftFormatter::ShowCtrlChars);
     connect(ui->findButton,SIGNAL(clicked(bool)), SLOT(findText()));
     m_isFirstFind = true;
     ui->textArea->setUndoRedoEnabled(false);
@@ -32,13 +32,15 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
     m_syntaxHighlightingAction = Q_NULLPTR;
     m_showVarExplorerAction = Q_NULLPTR;
     m_wordWrapAction = Q_NULLPTR;
+    m_showCtrlCharsAction = Q_NULLPTR;
 
     toggleWordWrap(settings.value("ASViewer.WordWrap",true).toBool());
 
     setIndentCode(settings.value("ASViewer.indentCode",false).toBool(), NoReformat);
     setIntsAsHex(settings.value("ASViewer.intsAsHex",false).toBool(), NoReformat);
     setBreakAfterReturn(settings.value("ASViewer.breakAfterReturn",false).toBool(), NoReformat);
-    setSyntaxHighlighting(settings.value("ASViewer.syntaxHighlighting",false).toBool(), NoReformat);
+    setSyntaxHighlighting(settings.value("ASViewer.syntaxHighlighting",true).toBool(), NoReformat);
+    setShowCtrlChars(settings.value("ASViewer.showCtrlChars",true).toBool(), NoReformat);
 }
 
 ApplesoftFileViewer::~ApplesoftFileViewer()
@@ -52,7 +54,7 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
 
     if (!m_showIntsAction)
     {
-        m_showIntsAction = new QAction("Show &Ints as Hex",menu);
+        m_showIntsAction = new QAction("Show Ints as &Hex",menu);
         m_showIntsAction->setCheckable(true);
         m_showIntsAction->setChecked(settings.value("ASViewer.intsAsHex",false).toBool());
         setIntsAsHex(settings.value("ASViewer.intsAsHex",false).toBool(),NoReformat);
@@ -83,6 +85,16 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
     }
     menu->addAction(m_blankAfterReturnsAction);
 
+    if (!m_showCtrlCharsAction)
+    {
+    m_showCtrlCharsAction = new QAction("Show &Control Characters",menu);
+    m_showCtrlCharsAction->setCheckable(true);
+    m_showCtrlCharsAction->setChecked(settings.value("ASViewer.showCtrlChars",false).toBool());
+    setIndentCode(settings.value("ASViewer.showCtrlChars",false).toBool(),NoReformat);
+    connect(m_showCtrlCharsAction, SIGNAL(toggled(bool)), ui->findText,SLOT(clear()));
+    connect(m_showCtrlCharsAction, SIGNAL(toggled(bool)),SLOT(setShowCtrlChars(bool)));
+    }
+    menu->addAction(m_showCtrlCharsAction);
 
 
     menu->addSeparator();
@@ -171,6 +183,22 @@ void ApplesoftFileViewer::setBreakAfterReturn(bool enabled, ReformatRule reforma
     }
     QSettings settings;
     settings.setValue("ASViewer.breakAfterReturn",enabled);
+    if (reformat == ForceReformat)
+        reformatText();
+}
+
+void ApplesoftFileViewer::setShowCtrlChars(bool enabled, ReformatRule reformat)
+{
+    if (enabled)
+    {
+        m_formatter->setFlags(m_formatter->flags() | ApplesoftFormatter::ShowCtrlChars);
+    }
+    else
+    {
+        m_formatter->setFlags(m_formatter->flags() & ~ApplesoftFormatter::ShowCtrlChars);
+    }
+    QSettings settings;
+    settings.setValue("ASViewer.showCtrlChars",enabled);
     if (reformat == ForceReformat)
         reformatText();
 }
