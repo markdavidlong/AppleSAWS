@@ -175,11 +175,12 @@ void HiresScreenWidget::drawPixmap()
                 drawMonoLine(pmpainter, yoff*2, bits);
                 if (!m_showScanLines) drawMonoLine(pmpainter, yoff*2+1, bits);
             }
-            else
+            else if (m_viewMode == NTSCColor)
             {
                 drawNtscLine(pmpainter, yoff*2, bits);
                 if (!m_showScanLines) drawNtscLine(pmpainter, yoff*2+1, bits);
             }
+
 
             chunkCount++;
             if (chunkCount == 3) {
@@ -215,6 +216,9 @@ void HiresScreenWidget::drawPixmap()
                 doubleScan = 1;
             }
 
+            qDebug() << (byte & 0x01) << (byte & 0x02) << (byte & 0x04) << (byte & 0x08)
+                     << (byte & 0x10) << (byte & 0x20) << (byte & 0x40) << "HI: " << (byte & 0x80);
+
             pmpainter.setPen(xoff & 0x01?oddColor:evenColor);
             pmpainter.setBrush(xoff & 0x01?oddColor:evenColor);
 
@@ -238,7 +242,6 @@ void HiresScreenWidget::drawPixmap()
             pmpainter.setPen(xoff & 0x01?oddColor:evenColor);
             pmpainter.setBrush(xoff & 0x01?oddColor:evenColor);
 
-
             if (byte & 0x10) { pmpainter.drawRect((cOffset+xoff*2)+8,yoff,1,doubleScan); }
 
             pmpainter.setPen(xoff & 0x01?evenColor:oddColor);
@@ -249,8 +252,7 @@ void HiresScreenWidget::drawPixmap()
             pmpainter.setPen(xoff & 0x01?oddColor:evenColor);
             pmpainter.setBrush(xoff & 0x01?oddColor:evenColor);
 
-
-            if (byte & 0x40) { pmpainter.drawRect((cOffset+xoff*2)+12,yoff,cOffset?0:1,doubleScan); }
+            if (byte & 0x40) { pmpainter.drawRect((cOffset+xoff*2)+12,yoff,1,doubleScan); }
 
 
 
@@ -318,6 +320,25 @@ void HiresScreenWidget::drawMonoLine(QPainter &painter, int lineNum, QBitArray d
 
         if (data.at(idx))
             painter.drawPoint(idx,lineNum);
+    }
+}
+
+void HiresScreenWidget::drawPerPositionColorLine(QPainter &painter, int lineNum, QBitArray data) {
+    painter.setPen(Qt::black);
+    painter.drawLine(0,lineNum,data.count(),lineNum);
+
+    QList<QColor> colorlist;
+    colorlist << QColor(orangeColor) << QColor(purpleColor) << QColor(blueColor) << QColor(greenColor);
+
+    for (int idx = 0; idx < data.count(); idx++)
+    {
+        painter.setPen(colorlist[idx % 4]);
+        painter.setBrush(colorlist[idx % 4]);
+
+        if (data.at(idx))
+        {
+            painter.drawPoint(idx,lineNum);
+        }
     }
 }
 
