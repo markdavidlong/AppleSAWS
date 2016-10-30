@@ -16,7 +16,7 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
     m_afdv = Q_NULLPTR;
 
     QSettings settings;
-    QString title = QString("AppleSoft Viewer");
+    QString title = QString("Applesoft Viewer");
     m_title = title;
     setWindowTitle(title);
 
@@ -266,7 +266,7 @@ void ApplesoftFileViewer::setFile(ApplesoftFile *file) {
     m_file = file;
     m_formatter->setFile(file);
 
-    QString title = QString("AppleSoft Viewer: %1").arg(m_file->filename());
+    QString title = QString("Applesoft Viewer: %1").arg(m_file->filename());
     m_title = title;
     setWindowTitle(title);
     QTextDocument *doc = ui->textArea->document();
@@ -349,14 +349,23 @@ void ApplesoftFileViewer::doPrint()
     QPrinter printer;
 
     QPrintDialog dialog(&printer, this);
-    dialog.setWindowTitle(tr("Print AppleSoft File"));
+    dialog.setWindowTitle(tr("Print Applesoft File"));
     if (ui->textArea->textCursor().hasSelection())
         dialog.addEnabledOption(QAbstractPrintDialog::PrintSelection);
     if (dialog.exec() != QDialog::Accepted) {
         return;
     }
 
-    ui->textArea->print(&printer);
+    QTextDocument printDoc;
+    QFont printFont("Courier",10);
+    printDoc.setDefaultFont(printFont);
+    QTextOption printOptions;
+    printOptions.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
+    printDoc.setDefaultTextOption(printOptions);
+    m_formatter->formatDocument(&printDoc);
+    printDoc.print(&printer);
+
+    //ui->textArea->document()->print(&printer);
 }
 
 bool ApplesoftFileViewer::canExport() const { return true; }
@@ -367,7 +376,7 @@ void ApplesoftFileViewer::doExport()
     QDir savename = QDir(defaultPath).filePath(m_file->filename()+".txt");
 
     QString saveName = QFileDialog::getSaveFileName(this,
-       tr("Export AppleSoft"), savename.path(), tr("Text Files (*.txt)"));
+       tr("Export Applesoft"), savename.path(), tr("Text Files (*.txt)"));
 
     if (saveName == "") return;  // User cancelled
 

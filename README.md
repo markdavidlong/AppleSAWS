@@ -22,7 +22,7 @@ There is also a Hex/Decimal converter utility and some in-app documentation for 
 In the pipeline are some more useful features (as I get a chance):
 * Syntax Highlighting **(Currently in progress!)**
 * More low-level disk exploration tools (sector-level stuff, comparing DOS versions between disks, etc.)
-* More analysis of AppleSoft programs (Tracing flow control; determining unaccessable lines of code; finding addresses of PEEKS, POKES, CALLS, USRs, and &'s)
+* More analysis of Applesoft programs (Tracing flow control; determining unaccessable lines of code; finding addresses of PEEKS, POKES, CALLS, USRs, and &'s)
 * Processing and analysis of Integer Basic files
 * Much more robust disassembly tools:
   * Handling differences between 6502/65C02/65816 ops, as well as "undocumented" ops on the original 6502

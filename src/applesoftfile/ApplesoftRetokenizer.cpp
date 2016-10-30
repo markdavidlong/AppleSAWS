@@ -495,7 +495,7 @@ QList<ApplesoftToken> ApplesoftRetokenizer::retokenizeNegativeNumbers(QList<Appl
     //  A = 1 - - 4 should
     //  A = 1 - - - 4 should, probably, but it's errorprone to say the least,
     //      as are any multiple arbitrary +/-'s.  Have to hope for the best here.
-    //      Best bet would be to look at how AppleSoft handles these values.
+    //      Best bet would be to look at how Applesoft handles these values.
     //  A = - 0 is the same as 0
 
     ApplesoftToken token;
