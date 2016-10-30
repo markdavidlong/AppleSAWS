@@ -72,18 +72,6 @@ private:
                        " QPushButton:checked { font: bold italic 11px; } "
                ) .arg(m_fgColor)
                 .arg(m_backgroundColor);
-
-
-
-//        return QString(
-//                    "background-color: %1;"
-//                    "font: %2; "
-//                    "border-radius: 0px; "
-//                     "color: %3;"
-//                ).arg(m_isHighlighted?m_hlColor:m_backgroundColor)
-//                 .arg(m_isHighlighted?"bold italic 11px":"10px")
-//                 .arg(m_fgColor)
-//                ;
     }
 
     int m_track;
@@ -97,7 +85,7 @@ private:
 
 
 
-
+typedef QPair<int,int> DETSPair;
 
 class DiskExplorerMapWidget : public QWidget
 {
@@ -112,11 +100,12 @@ public:
     }
 
     void setDisk(DiskFile *disk);
+    void unloadDisk();
+
+    void setAllButtonsEnabled(bool enabled);
 
     QGroupBox *makeKeyWidget();
-
-    void unloadDisk();
-    void setAllButtonsEnabled(bool enabled);
+    QWidget *getStatusWidget() const { return m_statusWidget; }
 
 signals:
     void showSectorData(QByteArray data, int track, int sector, QVariant metadata);
@@ -140,6 +129,10 @@ protected:
     }
 
     QLabel *makeKeyLabel(QWidget *parent, QString name, QColor color);
+    void showEvent(QShowEvent *);
+    void makeStatusWidget();
+    QString getSectorDescription(int track, int sector);
+
 private:
 
     QMap<int, QMap<int,DEButton*> > m_buttons;
@@ -166,6 +159,13 @@ private:
     QButtonGroup *m_bgroup;
     DiskFile *m_disk;
 
+    bool m_deferredSetup;
+
+    QLabel *m_diskLabel;
+    QLabel *m_trackSectorLabel;
+    QWidget *m_statusWidget;
+
+    QMap< DETSPair, QString> m_sectorDescriptions;
 };
 
 #endif // DISKEXPLORERMAPWIDGET_H

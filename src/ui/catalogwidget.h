@@ -25,7 +25,7 @@ public slots:
     void unloadDisk(DiskFile *disk);
 
 signals:
-    void newFileSelected(FileDescriptiveEntry *entry);
+    void newFileSelected(DiskFile *disk, FileDescriptiveEntry entry);
     void openWithDefaultViewer(DiskFile *disk, FileDescriptiveEntry fde);
 
 protected:
@@ -33,6 +33,7 @@ protected:
 
 private slots:
     void itemClicked(QListWidgetItem *item);
+    void itemDoubleClicked(QListWidgetItem *item);
 
 private:
 

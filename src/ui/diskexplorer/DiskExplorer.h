@@ -59,6 +59,8 @@ private:
     QWidget *m_key;
     QGridLayout *m_gridLayout;
 
+    QWidget *m_demwStatusWidget;
+
     DiskFile *m_disk;
 
     HRCGControlsInfo *m_hrcgDialog;

@@ -17,7 +17,7 @@ CatalogWidget::CatalogWidget(QWidget *parent) :
     ui->catalog_list->setFont(QFont("monospace"));
 
     connect(ui->catalog_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
-            SLOT(itemClicked(QListWidgetItem*)));
+            SLOT(itemDoubleClicked(QListWidgetItem*)));
 }
 
 CatalogWidget::~CatalogWidget()
@@ -107,10 +107,18 @@ void CatalogWidget::unloadDisk(DiskFile *disk)
     ui->volume_label->clear();
 }
 
-void CatalogWidget::itemClicked(QListWidgetItem *item)
+void CatalogWidget::itemDoubleClicked(QListWidgetItem *item)
 {
     int idx = item->data(0x0100).toInt();
     FileDescriptiveEntry fde = m_disk->getAllFDEs()[idx];
  //   qDebug() << "Default File " << AppleString(fde.filename).printable().trimmed();
     emit openWithDefaultViewer(m_disk,fde);
+}
+
+void CatalogWidget::itemClicked(QListWidgetItem *item)
+{
+    int idx = item->data(0x0100).toInt();
+    FileDescriptiveEntry fde = m_disk->getAllFDEs()[idx];
+ //   qDebug() << "Default File " << AppleString(fde.filename).printable().trimmed();
+    emit newFileSelected(m_disk,fde);
 }

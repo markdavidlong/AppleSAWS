@@ -8,11 +8,16 @@
 #include <QGridLayout>
 #include <QButtonGroup>
 #include <QDebug>
+#include <QHBoxLayout>
 
 DiskExplorerMapWidget::DiskExplorerMapWidget(int numtracks, int numsectors, QWidget *parent) : QWidget(parent)
 {
     m_numtracks = numtracks;
     m_numsectors = numsectors;
+    m_diskLabel = Q_NULLPTR;
+    m_statusWidget = Q_NULLPTR;
+
+    m_deferredSetup = false;
 
     setWindowTitle("Disk Explorer");
 
@@ -59,6 +64,52 @@ DiskExplorerMapWidget::DiskExplorerMapWidget(int numtracks, int numsectors, QWid
             layout->addWidget(tb,sec+2,track+1);
         }
     }
+
+    makeStatusWidget();
+}
+
+void DiskExplorerMapWidget::makeStatusWidget()
+{
+    QWidget *statusWidget = new QWidget(this);
+    QHBoxLayout *hbl = new QHBoxLayout(this);
+    statusWidget->setLayout(hbl);
+
+    m_trackSectorLabel = new QLabel(this);
+    m_trackSectorLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    m_trackSectorLabel->setText("No Track/Sector selected");
+    hbl->insertWidget(0,m_trackSectorLabel,0,Qt::AlignLeft | Qt::AlignVCenter);
+
+    m_diskLabel = new QLabel(this);
+    m_diskLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    m_diskLabel->setText("[No Disk]");
+    hbl->insertWidget(1,m_diskLabel,0,Qt::AlignLeft | Qt::AlignVCenter);
+
+    m_statusWidget = statusWidget;
+}
+
+QString DiskExplorerMapWidget::getSectorDescription(int track, int sector)
+{
+    if (track == 0) {
+        return "Boot Sector";
+    }
+    else if (track <= 2)
+    {
+        return "DOS Image";
+    }
+    else if (track == 17 && sector == 0)
+    {
+        return "VTOC";
+    }
+    else
+    {
+        QString desc = "xxx";
+        if (m_sectorDescriptions.contains(DETSPair(track,sector)))
+        {
+            desc = m_sectorDescriptions[DETSPair(track,sector)];
+        }
+        return desc.simplified();
+    }
+
 }
 
 void DiskExplorerMapWidget::handleButtonCheck(int track, int sector, bool checked)
@@ -68,7 +119,7 @@ void DiskExplorerMapWidget::handleButtonCheck(int track, int sector, bool checke
     if (m_currentChecked)
     {
         // Do anything needed to clean up after previous button click
-    //    m_currentClicked->setHighlighted(false);
+        //    m_currentClicked->setHighlighted(false);
     }
 
     if (checked)
@@ -76,9 +127,15 @@ void DiskExplorerMapWidget::handleButtonCheck(int track, int sector, bool checke
         Sector sec = m_disk->getSector(track,sector);
         QByteArray data = sec.rawData();
         emit showSectorData(data,track,sector,QVariant());
+        m_trackSectorLabel->setText(
+                    QString("Track: %1 Sector: %2 (%3)")
+                            .arg(track)
+                            .arg(sector)
+                            .arg(getSectorDescription(track,sector)));
     }
     else{
         emit showSectorData(QByteArray(),-1,-1,QVariant());
+        m_trackSectorLabel->setText("No Track/Sector selected");
     }
 
     m_currentChecked = currbutton;
@@ -93,9 +150,23 @@ void DiskExplorerMapWidget::setDisk(DiskFile *disk)
 {
     if (disk)
     {
+        m_sectorDescriptions.clear();
+
         m_disk = disk;
         setWindowTitle(QString("Disk Explorer - %1").arg(m_disk->getDiskImageName()));
-        mapDiskToButtons();
+        m_diskLabel->setText(disk->getDiskImageName());
+
+        if (!isHidden())
+        {
+            if (m_disk)
+            {
+                mapDiskToButtons();
+            }
+        }
+        else
+        {
+            m_deferredSetup =  true;
+        }
     }
 }
 
@@ -103,6 +174,7 @@ void DiskExplorerMapWidget::unloadDisk()
 {
     if (m_disk)
     {
+        m_sectorDescriptions.clear();
         m_bgroup->setExclusive(false);
         for (int track = 0; track < m_numtracks; track++)
         {
@@ -218,9 +290,14 @@ void DiskExplorerMapWidget::mapDiskToButtons()
     buttonAt(17,0)->setBgColor(m_vtocColor);
     buttonAt(17,0)->setText(QString("%1").arg(idx++));
 
+    int catseccount = 0;
     foreach (CatalogSector cs, m_disk->getCatalogSectors())
     {
         Sector *sec = cs.getSector();
+
+        QString desc = QString("Catalog Sector #%1").arg(++catseccount);
+        m_sectorDescriptions.insert(DETSPair(sec->track(),sec->sector()),desc);
+
         buttonAt(sec->track(),sec->sector())->setBgColor(m_dirEntryColor);
         buttonAt(sec->track(),sec->sector())->setText(QString("%1").arg(idx++));
 
@@ -232,18 +309,31 @@ void DiskExplorerMapWidget::mapDiskToButtons()
             int tsltr = fde.firstTSListSector.track;
             int tslse = fde.firstTSListSector.sector;
 
+            int tslcount = 0;
             while (tsltr != 0)
             {
+                tslcount++;
                 buttonAt(tsltr,tslse)->setBgColor(m_tsListColor);
                 buttonAt(tsltr,tslse)->setText(QString("%1").arg(idx));
                 qDebug() << "Button" << idx << "=" << tsltr << "," << tslse << "   " << fde.filename.printable() << "TSL";
 
+                QString description = QString("T/S List #%1 for %2").arg(tslcount).arg(fde.filename.printable());
+                m_sectorDescriptions.insert(DETSPair(tsltr,tslse),description);
+
                 idx++;
 
+                int sectorcount = 0;
                 foreach(TSPair tsp, tsl.getDataTSPairs())
                 {
                     int se = tsp.sector;
                     int tr = tsp.track;
+
+                    QString description = QString("Sector #%1.%2 of %3")
+                            .arg(tslcount)
+                            .arg(++sectorcount)
+                            .arg(fde.filename.printable());
+                    m_sectorDescriptions.insert(DETSPair(tr,se),description);
+
                     QColor color;
                     if (fde.fileType() == "I") color = m_intBasicFileColor;
                     else if (fde.fileType() == "A") color = m_applesoftFileColor;
@@ -270,3 +360,14 @@ void DiskExplorerMapWidget::mapDiskToButtons()
 
 }
 
+void DiskExplorerMapWidget::showEvent(QShowEvent *)
+{
+    if (m_deferredSetup)
+    {
+        if (m_disk)
+        {
+            mapDiskToButtons();
+        }
+        m_deferredSetup = false;
+    }
+}

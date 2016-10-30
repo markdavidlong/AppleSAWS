@@ -7,6 +7,7 @@
 #include <QFileDialog>
 #include <QShowEvent>
 #include <QDebug>
+#include <QStatusBar>
 
 #include "genericfile.h"
 #include "viewerbase.h"
@@ -27,6 +28,8 @@ DiskExplorer::~DiskExplorer()
 
 void DiskExplorer::initUi()
 {
+
+
     QMenuBar *menuBar = new QMenuBar(this);
     setMenuBar(menuBar);
     QMenu *menu = new QMenu(tr("&File"),this);
@@ -40,8 +43,6 @@ void DiskExplorer::initUi()
     m_action_Unload_Disk_Image->setEnabled(false);
     menu->addAction(m_action_Unload_Disk_Image);
     connect(m_action_Unload_Disk_Image, SIGNAL(triggered()), SLOT(unloadDiskFile()));
-
-
 
     menu->addSeparator();
 
@@ -78,13 +79,11 @@ void DiskExplorer::initUi()
     m_hexConverter = new HexConverter(this);
     connect(action_Hex_Converter, SIGNAL(triggered()), m_hexConverter, SLOT(show()));
 
-
     QWidget *widget = new QWidget(0);
     m_gridLayout = new QGridLayout();
     m_gridLayout->setVerticalSpacing(4);
     m_gridLayout->setHorizontalSpacing(4);
     widget->setLayout(m_gridLayout);
-    //m_gridLayout->setSizeConstraint(QLayout::SetFixedSize);
     m_cw = new CatalogWidget(widget);
     m_demw = new DiskExplorerMapWidget(35,16,widget);
     m_frame = new QFrame(widget);
@@ -111,6 +110,14 @@ void DiskExplorer::initUi()
 
     connect(m_demw, SIGNAL(showSectorData(QByteArray,int,int,QVariant)),
             SLOT(handleShowSectorData(QByteArray,int,int,QVariant)));
+
+
+    QStatusBar *statusBar = new QStatusBar(this);
+    setStatusBar(statusBar);
+
+    m_demwStatusWidget = m_demw->getStatusWidget();
+    statusBar->addPermanentWidget(m_demwStatusWidget);
+
 
     setDiskToolsVisible(false);
 }
@@ -145,7 +152,6 @@ void DiskExplorer::loadDiskFile(QString filename)
         delete m_disk;
         m_disk = 0;
     }
-
 }
 
 void DiskExplorer::handleShowSectorData(QByteArray data, int track, int sector, QVariant metadata)
@@ -197,6 +203,8 @@ void DiskExplorer::setDiskToolsVisible(bool visible)
         m_gridLayout->setColumnStretch(2,0);
     }
 
+    if (m_demwStatusWidget) { m_demwStatusWidget->setVisible(visible); }
+
     m_demw->setVisible(visible);
     m_frame->setVisible(visible);
     m_hdv->setVisible(visible);
@@ -210,6 +218,7 @@ void DiskExplorer::setDiskToolsVisible(bool visible)
 
 void DiskExplorer::handleViewerClosing(ViewerBase *viewer)
 {
+    qDebug() << "Removing viewer " << viewer;
     m_viewerList.removeAll(viewer);
 }
 
@@ -224,6 +233,7 @@ void DiskExplorer::showEvent(QShowEvent *event)
     if (m_horizSizePref == -1)
     {
         m_horizSizePref = this->width();
+        qDebug() << "New Horiz Size Pref = " << m_horizSizePref;
     }
 }
 
