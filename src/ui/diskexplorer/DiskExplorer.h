@@ -46,6 +46,7 @@ protected:
 
     void showEvent(QShowEvent *event);
     void closeEvent(QCloseEvent *);
+    void resizeEvent(QResizeEvent *);
 
 protected slots:
     void doResize();
@@ -72,6 +73,8 @@ private:
     int m_horizSizePref;
 
     QList<ViewerBase*> m_viewerList;
+
+    bool m_toolsHidden;
 };
 
 #endif // DISKEXPLORER_H

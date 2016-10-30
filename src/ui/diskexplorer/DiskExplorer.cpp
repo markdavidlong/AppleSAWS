@@ -17,6 +17,7 @@ DiskExplorer::DiskExplorer(QWidget *parent) : QMainWindow(parent)
     m_action_Unload_Disk_Image = 0;
     m_disk = 0;
     m_horizSizePref = -1;
+    m_toolsHidden = true;
 
     resize(300,800);
     initUi();
@@ -190,6 +191,7 @@ void DiskExplorer::handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescrip
 
 void DiskExplorer::setDiskToolsVisible(bool visible)
 {
+    m_toolsHidden = !visible;
     if (visible)
     {
         m_gridLayout->setColumnStretch(0,4);
@@ -233,7 +235,6 @@ void DiskExplorer::showEvent(QShowEvent *event)
     if (m_horizSizePref == -1)
     {
         m_horizSizePref = this->width();
-        qDebug() << "New Horiz Size Pref = " << m_horizSizePref;
     }
 }
 
@@ -248,5 +249,11 @@ void DiskExplorer::closeEvent(QCloseEvent *)
     }
 }
 
-
+void DiskExplorer::resizeEvent(QResizeEvent *)
+{
+    if (m_toolsHidden)
+    {
+        m_horizSizePref = this->width();
+    }
+}
 
