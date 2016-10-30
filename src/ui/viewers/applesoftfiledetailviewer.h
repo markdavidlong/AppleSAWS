@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "applesoftline.h"
 #include "applesofttoken.h"
+#include <QDebug>
 
 namespace Ui {
 class ApplesoftFileDetailViewer;
@@ -18,7 +19,7 @@ public:
     ~ApplesoftFileDetailViewer();
 
     void setLineData(QVector<ApplesoftLine> lineData);
-
+    void foo() { qDebug() << "AFDV::foo!"; }
 private:
     void  process();
 

@@ -1,11 +1,11 @@
 #include "applesoftfileviewer.h"
 #include "ui_applesoftfileviewer.h"
 #include "applesoftformatter.h"
-#include "applesoftfiledetailviewer.h"
 #include <QDebug>
 #include <QSettings>
 #include <QPrinter>
 #include <QPrintDialog>
+#include <QCloseEvent>
 
 
 ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
@@ -13,6 +13,7 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
     ui(new Ui::ApplesoftFileViewer)
 {
     ui->setupUi(this);
+    m_afdv = Q_NULLPTR;
 
     QSettings settings;
     QString title = QString("AppleSoft Viewer");
@@ -46,6 +47,10 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
 ApplesoftFileViewer::~ApplesoftFileViewer()
 {
     delete ui;
+    if (m_afdv)
+    {   m_afdv->foo();
+        delete m_afdv;
+    }
 }
 
 bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
@@ -283,10 +288,14 @@ void ApplesoftFileViewer::setText(QString text)
 
 void ApplesoftFileViewer::launchVarBrowser()
 {
-    ApplesoftFileDetailViewer *afdv = new ApplesoftFileDetailViewer();
-
-    afdv->setLineData(m_file->getLines());
-    afdv->show();
+    if (!m_afdv)
+    {
+        m_afdv = new ApplesoftFileDetailViewer();
+        qDebug() << "m_afdv = " << m_afdv;
+        m_afdv->setLineData(m_file->getLines());
+        m_afdv->setWindowTitle(QString("Variables - %1").arg(m_file->filename()));
+    }
+    m_afdv->show();
 }
 
 void ApplesoftFileViewer::findText()

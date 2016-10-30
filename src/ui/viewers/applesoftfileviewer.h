@@ -8,6 +8,8 @@
 #include "applesoftfile.h"
 #include "applesoftformatter.h"
 #include "viewerbase.h"
+#include "applesoftfiledetailviewer.h"
+
 
 namespace Ui {
 class ApplesoftFileViewer;
@@ -26,8 +28,6 @@ public:
 
      ApplesoftFileViewer(QWidget *parent = 0);
     ~ApplesoftFileViewer();
-
-   // void setFormatter(ApplesoftFormatter *formatter);
 
     virtual bool optionsMenuItems(QMenu *menu);
 
@@ -61,7 +61,7 @@ private:
     ApplesoftFormatter *m_formatter;
     bool m_isFirstFind;
     Ui::ApplesoftFileViewer *ui;
-
+    ApplesoftFileDetailViewer *m_afdv;
     QAction *m_showIntsAction;
     QAction *m_reindentCodeAction;
     QAction *m_blankAfterReturnsAction;

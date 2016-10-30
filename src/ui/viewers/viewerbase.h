@@ -23,6 +23,9 @@ public:
 
     void setFile(GenericFile *file);
 
+signals:
+    void viewerClosing(ViewerBase *me);
+
 public slots:
     void showViewer(QString descriptor);
 

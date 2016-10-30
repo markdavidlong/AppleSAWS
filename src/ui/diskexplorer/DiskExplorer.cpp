@@ -5,6 +5,8 @@
 #include <QAction>
 #include <QSettings>
 #include <QFileDialog>
+#include <QShowEvent>
+#include <QDebug>
 
 #include "genericfile.h"
 #include "viewerbase.h"
@@ -13,8 +15,14 @@ DiskExplorer::DiskExplorer(QWidget *parent) : QMainWindow(parent)
 {
     m_action_Unload_Disk_Image = 0;
     m_disk = 0;
+    m_horizSizePref = -1;
 
+    resize(300,800);
     initUi();
+}
+
+DiskExplorer::~DiskExplorer()
+{
 }
 
 void DiskExplorer::initUi()
@@ -33,6 +41,8 @@ void DiskExplorer::initUi()
     menu->addAction(m_action_Unload_Disk_Image);
     connect(m_action_Unload_Disk_Image, SIGNAL(triggered()), SLOT(unloadDiskFile()));
 
+
+
     menu->addSeparator();
 
     QAction *action_Quit = new QAction(tr("&Quit"),this);
@@ -44,6 +54,16 @@ void DiskExplorer::initUi()
 
     QAction *action_Hex_Converter = new QAction(tr("&Hex Converter..."),this);
     menu->addAction(action_Hex_Converter);
+
+    menu->addSeparator();
+
+    m_setDiskToolsVisibleAction = new QAction(tr("Show &Disk tools"),this);
+    m_setDiskToolsVisibleAction->setCheckable(true);
+    m_setDiskToolsVisibleAction->setChecked(false);
+    connect(m_setDiskToolsVisibleAction, SIGNAL(toggled(bool)),
+            SLOT(setDiskToolsVisible(bool)));
+    menu->addAction(m_setDiskToolsVisibleAction);
+
 
     menu = new QMenu(tr("&Misc"),this);
     menuBar->addMenu(menu);
@@ -59,38 +79,40 @@ void DiskExplorer::initUi()
     connect(action_Hex_Converter, SIGNAL(triggered()), m_hexConverter, SLOT(show()));
 
 
-    QWidget *widget = new QWidget(this);
-    this->setCentralWidget(widget);
-    QGridLayout *layout = new QGridLayout();
-    layout->setVerticalSpacing(4);
-    layout->setHorizontalSpacing(4);
-    widget->setLayout(layout);
-
+    QWidget *widget = new QWidget(0);
+    m_gridLayout = new QGridLayout();
+    m_gridLayout->setVerticalSpacing(4);
+    m_gridLayout->setHorizontalSpacing(4);
+    widget->setLayout(m_gridLayout);
+    //m_gridLayout->setSizeConstraint(QLayout::SetFixedSize);
     m_cw = new CatalogWidget(widget);
     m_demw = new DiskExplorerMapWidget(35,16,widget);
     m_frame = new QFrame(widget);
     m_frame->setFrameStyle(QFrame::Raised);
     m_frame->setMinimumSize(200,200);
-    QGridLayout *frameLayout = new QGridLayout(this);
+    QGridLayout *frameLayout = new QGridLayout(0);
     m_frame->setLayout(frameLayout);
     m_hdv = new HexDumpViewer(this);
     frameLayout->addWidget(m_hdv);
 
-    layout->setColumnStretch(0,4);
-    layout->setColumnStretch(1,1);
-    layout->setColumnStretch(2,4);
+    m_gridLayout->setColumnStretch(0,4);
+    m_gridLayout->setColumnStretch(1,1);
+    m_gridLayout->setColumnStretch(2,4);
 
-    layout->addWidget(m_cw,0,0,2,1);
-    layout->addWidget(m_demw,0,1,1,2);
-    layout->addWidget(m_demw->makeKeyWidget(),1,1);
-    layout->addWidget(m_frame,1,2);
-
+    m_gridLayout->addWidget(m_cw,0,0,2,1);
+    m_gridLayout->addWidget(m_demw,0,1,1,2);
+    m_key = m_demw->makeKeyWidget();
+    m_gridLayout->addWidget(m_key,1,1);
+    m_gridLayout->addWidget(m_frame,1,2);
+    this->setCentralWidget(widget);
 
     connect(m_cw,SIGNAL(openWithDefaultViewer(DiskFile*,FileDescriptiveEntry)),
             SLOT(handleDiskItemSelectedDefaultOpen(DiskFile*,FileDescriptiveEntry)));
 
     connect(m_demw, SIGNAL(showSectorData(QByteArray,int,int,QVariant)),
             SLOT(handleShowSectorData(QByteArray,int,int,QVariant)));
+
+    setDiskToolsVisible(false);
 }
 
 
@@ -153,6 +175,68 @@ void DiskExplorer::handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescrip
     file->setFilename(AppleString(fde.filename).printable().trimmed());
 
     ViewerBase *vb = new ViewerBase();
+    qDebug() << "Adding viewer" << vb;
+    m_viewerList.append(vb);
+    connect(vb,SIGNAL(viewerClosing(ViewerBase*)), SLOT(handleViewerClosing(ViewerBase*)));
     vb->setFile(file);
     vb->show();
 }
+
+void DiskExplorer::setDiskToolsVisible(bool visible)
+{
+    if (visible)
+    {
+        m_gridLayout->setColumnStretch(0,4);
+        m_gridLayout->setColumnStretch(1,1);
+        m_gridLayout->setColumnStretch(2,4);
+    }
+    else
+    {
+        m_gridLayout->setColumnStretch(0,0);
+        m_gridLayout->setColumnStretch(1,0);
+        m_gridLayout->setColumnStretch(2,0);
+    }
+
+    m_demw->setVisible(visible);
+    m_frame->setVisible(visible);
+    m_hdv->setVisible(visible);
+    m_key->setVisible(visible);
+
+    if (!visible)
+    {
+        QTimer::singleShot(100, this, SLOT(doResize()));
+    }
+}
+
+void DiskExplorer::handleViewerClosing(ViewerBase *viewer)
+{
+    m_viewerList.removeAll(viewer);
+}
+
+void DiskExplorer::doResize()
+{
+    resize(m_horizSizePref, this->height());
+}
+
+void DiskExplorer::showEvent(QShowEvent *event)
+{
+    Q_UNUSED(event);
+    if (m_horizSizePref == -1)
+    {
+        m_horizSizePref = this->width();
+    }
+}
+
+void DiskExplorer::closeEvent(QCloseEvent *)
+{
+    foreach (ViewerBase *viewer, m_viewerList)
+    {
+        if (viewer)
+        {
+            viewer->deleteLater();
+        }
+    }
+}
+
+
+

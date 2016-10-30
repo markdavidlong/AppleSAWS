@@ -21,15 +21,10 @@ ViewerBase::ViewerBase(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ViewerBase)
 {
+    setAttribute(Qt::WA_DeleteOnClose);
+
     m_stack = new QStackedWidget(this);
     ui->setupUi(this);
-
-//    QScrollArea *scroller = new QScrollArea(this);
-//    scroller->setWidgetResizable(true);
-//    setCentralWidget(scroller);
-//    scroller->setWidget(m_stack);
-
-
 
     setCentralWidget(m_stack);
 
@@ -49,6 +44,7 @@ ViewerBase::ViewerBase(QWidget *parent) :
 
 ViewerBase::~ViewerBase()
 {
+    emit viewerClosing(this);
     delete ui;
 }
 
