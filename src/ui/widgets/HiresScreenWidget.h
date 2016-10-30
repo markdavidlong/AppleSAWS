@@ -123,7 +123,6 @@ protected slots:
     void handleShowScanLinesAction(bool toggled);
 
 private:
- //   void makeOffsetTable();
     void makeAddressTables();
     QColor getColorFromBits(QBitArray bits, quint8 phase);
     void drawNtscLine(QPainter &painter,int linenum, QBitArray data);
