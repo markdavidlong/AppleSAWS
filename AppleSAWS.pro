@@ -115,7 +115,8 @@ HEADERS += \
     src/binaryfile/MemoryUsageMap.h \
     src/ui/diskexplorer/DiskExplorer.h \
     src/ui/diskexplorer/DiskExplorerMapWidget.h \
-    src/applesoftfile/ApplesoftRetokenizer.h
+    src/applesoftfile/ApplesoftRetokenizer.h \
+    src/util/AppleColors.h
 
 FORMS += \
     src/ui/catalogwidget.ui \
