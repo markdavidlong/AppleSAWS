@@ -33,10 +33,10 @@ DisassemblerMetadataDialog::~DisassemblerMetadataDialog()
     delete ui;
 }
 
-void DisassemblerMetadataDialog::showEvent(QShowEvent *){
+void DisassemblerMetadataDialog::showEvent(QShowEvent *)
+{
     ui->entryTable->resizeRowsToContents();
     ui->symbolTable->resizeRowsToContents();
-
 }
 
 void DisassemblerMetadataDialog::setRelocatable(bool relocatable)
@@ -61,7 +61,6 @@ void DisassemblerMetadataDialog::handleProcessButton()
     m_bfm->requestDisassembly();
 }
 
-
 void DisassemblerMetadataDialog::handleAddEntryPointButton()
 {
     LocationInfoDialog lid(this);
@@ -78,13 +77,8 @@ void DisassemblerMetadataDialog::handleAddEntryPointButton()
 
 void DisassemblerMetadataDialog::handleRemoveEntryPointButton()
 {
-//    QModelIndexList selection = ui->entryTable->selectedIndexes();
-//    if (selection.count())
-//    {
-//        m_epmodel->removeSelection(selection);
-//    }
-}
 
+}
 
 void DisassemblerMetadataDialog::handleAddSymbolButton()
 {
