@@ -14,9 +14,9 @@ void RelocatableFile::setData(QByteArray data)
 {
  //   qDebug() << "setData()";
     if (data.length() >= 6) {
-        m_starting_ram_address = (quint8) m_data[0] + ((quint8) m_data[1] * 256);
-        m_ram_image_length = (quint8) m_data[2] + ((quint8) m_data[3] * 256);
-        m_code_image_length = (quint8) m_data[4] + ((quint8) m_data[5] * 256);
+        m_starting_ram_address = makeWord(m_data[0],m_data[1]);
+        m_ram_image_length = makeWord(m_data[2],m_data[3]);
+        m_code_image_length = makeWord(m_data[4],m_data[5]);
 
         int offset = 0;
 

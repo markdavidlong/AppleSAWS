@@ -1,5 +1,6 @@
 #include <QDebug>
 #include "binaryfile.h"
+#include "util.h"
 
 BinaryFile::BinaryFile(QByteArray data) : GenericFile(data)
 {
@@ -15,8 +16,8 @@ void BinaryFile::setData(QByteArray data)
     if (data.length() >= 4) {
         QByteArray metadata = data.left(4);
         m_data = data.mid(4);
-        setAddress((quint8) metadata[0] + ((quint8) metadata[1]*256));
-        m_length =  (quint8) metadata[2] + ((quint8) metadata[3]*256);
+        setAddress(makeWord(metadata[0],metadata[1]));
+        m_length = makeWord(metadata[2],metadata[3]);
     }    
 }
 

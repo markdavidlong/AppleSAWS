@@ -1,5 +1,6 @@
 #include "ApplesoftRetokenizer.h"
 #include "applesofttoken.h"
+#include "util.h"
 
 #include <QDebug>
 #include <QRegularExpression>
@@ -33,12 +34,13 @@ void ApplesoftRetokenizer::parse(quint16 start_address)
     while (idx < m_data.length()) {
         ApplesoftLine line;
         line.address = current_address;
-        line.next_address = (quint8) m_data[idx] + (((quint8) m_data[idx+1]) *256);
 
+        line.next_address = makeWord(m_data[idx],m_data[idx+1]);
         idx++; idx++;
-        line.linenum = (quint8) m_data[idx] + (((quint8) m_data[idx+1])*256);
 
+        line.linenum = makeWord(m_data[idx],m_data[idx+1]);
         idx++; idx++;
+
         if (line.next_address == 0x00) { break; }
         do {
             val = m_data[idx++];

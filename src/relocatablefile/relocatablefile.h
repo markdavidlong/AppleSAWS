@@ -5,6 +5,7 @@
 #include <QByteArray>
 
 #include "genericfile.h"
+#include "util.h"
 
 
 typedef enum { RFS1Byte, RFS2Byte } FieldSize;
@@ -27,7 +28,7 @@ public:
     void init(quint8 rld, quint8 fo_low, quint8 fo_hi, quint8 lbsym) {
         m_rld_flag = rld;
         m_halfword_or_sym_num = lbsym;
-        m_field_offset = (quint8) fo_low + ((quint8) fo_hi * 256);
+        m_field_offset = makeWord(fo_low,fo_hi);
     }
 
     void init(quint8 rld, quint16 fo, quint8 lbsym) {

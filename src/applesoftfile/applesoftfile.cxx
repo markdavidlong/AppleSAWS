@@ -1,4 +1,5 @@
 #include "applesoftfile.h"
+#include "util.h"
 #include <QDebug>
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
@@ -28,7 +29,7 @@ void ApplesoftFile::setData(QByteArray data)
 
     quint8 addlo = m_data.at(0);
     quint8 addhi = m_data.at(1);
-    m_length = addlo + (addhi * 256);
+    m_length = makeWord(addlo,addhi);
     m_data.remove(0,2);
 
     m_retokenizer->setData(m_data);

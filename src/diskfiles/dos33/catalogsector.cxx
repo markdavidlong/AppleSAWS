@@ -36,7 +36,8 @@ FileDescriptiveEntry CatalogSector::makeFDE(int offset)
     fde.firstTSListSector.track = m_data->rawData()[offset + 0x00];
     fde.firstTSListSector.sector = m_data->rawData()[offset + 0x01];
     fde.fileTypeAndFlags = m_data->rawData()[offset + 0x02];
-    fde.lengthInSectors = m_data->rawData()[offset + 0x21] + (m_data->rawData()[offset + 0x22] * 256);
+    //fde.lengthInSectors = m_data->rawData()[offset + 0x21] + (m_data->rawData()[offset + 0x22] * 256);
+    fde.lengthInSectors = makeWord( m_data->rawData()[offset + 0x21], m_data->rawData()[offset + 0x22]);
     for (int idx = 0x03; idx <= 0x20; idx++) {
         fde.filename.append(m_data->rawData()[idx+offset]);
     }

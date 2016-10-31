@@ -33,10 +33,11 @@ void CatalogWidget::prepForNewDisk(QString filename, DiskFile *disk)
 
 QString CatalogWidget::createToolTip(FileDescriptiveEntry &fde) {
     QString retval;
-//qDebug() << AppleString(fde.filename).printable().trimmed();
     retval += AppleString(fde.filename).printable().trimmed() + "\n";
     retval += QString("Type: %1\n").arg(fde.fileType());
-    retval += QString("Sectors: %1 (%2 bytes)\n").arg(fde.lengthInSectors).arg(fde.lengthInSectors*256);
+    retval += QString("Sectors: %1 (%2 bytes)\n")
+              .arg(fde.lengthInSectors)
+              .arg(fde.lengthInSectors*256);
     retval += QString("%1\n").arg(fde.isLocked()?"Locked":"Unlocked");
 
     GenericFile *file = m_disk->getFile(fde);
@@ -80,7 +81,8 @@ void CatalogWidget::processNewlyLoadedDisk(QString diskfilename, DiskFile *disk)
         foreach(FileDescriptiveEntry fde, m_disk->getAllFDEs()) {
             QString filetype = fde.fileType();
             QString filename = AppleString(fde.filename).printable().trimmed();
-            int size = fde.lengthInSectors;
+            quint16 size = fde.lengthInSectors;
+            qDebug() << "SIZE: " << size;
             bool locked = fde.isLocked();
             QString sizeStr = QString("%1").arg(size,5,10,QChar(' ')).toUpper();
             QString text = QString("%1 %2 %3 %4").arg(locked?"*":" ").arg(sizeStr).arg(filetype).arg(filename);

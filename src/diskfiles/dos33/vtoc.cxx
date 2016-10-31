@@ -4,6 +4,7 @@
 #include <QString>
 
 #include "sector.h"
+#include "util.h"
 
 VTOC::VTOC(Sector *data)
 {
@@ -43,7 +44,8 @@ quint8 VTOC::sectorsPerDisk() {
 }
 
 qint16 VTOC::bytesPerSector() {
-    return m_data->rawData()[0x36] + (256 * m_data->rawData()[0x37]);
+    return makeWord(m_data->rawData()[0x36],
+                    m_data->rawData()[0x37]);
 }
 
 bool VTOC::isSectorInUse(TSPair ts) {
@@ -51,7 +53,8 @@ bool VTOC::isSectorInUse(TSPair ts) {
     quint8 sec = ts.sector;
     quint8 baseaddr = (track * 4) + 0x38;
 
-    quint16 word = (((quint16) m_data->rawData()[baseaddr]) *256) + (quint8) m_data->rawData()[baseaddr+1];
+    //quint16 word = (((quint16) m_data->rawData()[baseaddr]) *256) + (quint8) m_data->rawData()[baseaddr+1];
+    quint16 word = makeWord(m_data->rawData()[baseaddr+1],m_data->rawData()[baseaddr]);
     quint16 bitpos = (quint16) 0x01 << (quint16) sec;
 
     return !(word & bitpos);
