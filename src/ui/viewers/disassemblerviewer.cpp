@@ -291,6 +291,7 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
 
     else if (address == 0xc008) { retval = "M80_SETSTDSZ"; }
     else if (address == 0xc009) { retval = "M80_SETALTZP"; }
+    else if (address == 0xc00A) { retval = "M80_SETINTC3ROM"; }
     else if (address == 0xc00B) { retval = "M80_SETSLOTC3ROM"; }
     else if (address == 0xc00C) { retval = "M80_CLR80VID"; }
     else if (address == 0xc00D) { retval = "M80_SET80VID"; }
@@ -304,18 +305,28 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     else if (address == 0xc013) { retval = "M80_RDRAMRD"; }
     else if (address == 0xc014) { retval = "M80_RDRAMWRT"; }
 
-    else if (address == 0xc015) { retval = "MON_RDCXROM"; }
+    else if (address == 0xc015) { retval = "RDCXROM"; }
+    else if (address == 0xc016) { retval = "RDALTZP"; }
+    else if (address == 0xc017) { retval = "RDC3ROM"; }
+
     else if (address == 0xc018) { retval = "MON_RD80STORE"; }
 
-    else if (address == 0xc019) { retval = "M80_RDVBLBAR"; }
-    else if (address == 0xc01A) { retval = "M80_RDTEXT"; }
+    else if (address == 0xc019) { retval = "RDVBLBAR"; }
+    else if (address == 0xc01A) { retval = "RDTEXT"; }
+    else if (address == 0xc01B) { retval = "RDMIXED"; }
 
-    else if (address == 0xc01c) { retval = "MON_RDPAGE2"; }
+    else if (address == 0xc01c) { retval = "RDPAGE2"; }
+    else if (address == 0xc01D) { retval = "RDHIRES"; }
+    else if (address == 0xc01E) { retval = "RDALTCHAR"; }
 
-    else if (address == 0xc01f) { retval = "M80_RD80VID"; }
+    else if (address == 0xc01f) { retval = "RD80VID"; }
 
-    else if (address == 0xc020) { retval = "MON_TAPEOUT"; }
-    else if (address == 0xc030) { retval = "MON_SPKR"; }
+    else if (address == 0xc020) { retval = "TAPEOUT"; }
+
+    else if (address == 0xc030) { retval = "SPKR"; }
+
+    else if (address == 0xc040) { retval = "STROBE"; }
+
     else if (address == 0xc050) { retval = "SW.TXTCLR"; }
     else if (address == 0xc051) { retval = "SW.TXTSET"; }
     else if (address == 0xc052) { retval = "SW._MIXCLR"; }
@@ -335,6 +346,142 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address) {
     else if (address == 0xc060) { retval = "MON_TAPEIN"; }
     else if (address == 0xc064) { retval = "MON_PADDL0"; }
     else if (address == 0xc070) { retval = "MON_PTRIG"; }
+
+    else if (address == 0xc080) { retval = "RDRAMBANK2_NOWRITE"; }
+    else if (address == 0xc081) { retval = "RDROM_WRBANK2"; }
+    else if (address == 0xc082) { retval = "RDROM_NOWRITE"; }
+    else if (address == 0xc083) { retval = "RDWRBANK2"; }
+    else if (address == 0xc084) { retval = "RDRAM_NOWRITE"; }
+    else if (address == 0xc085) { retval = "READROM_WRBANK2"; }
+    else if (address == 0xc086) { retval = "RDROM_NOWRITE"; }
+    else if (address == 0xc087) { retval = "RDWRBANK2"; }
+    else if (address == 0xc088) { retval = "RDBANK1_NOWRITE"; }
+    else if (address == 0xc089) { retval = "RDROM_WRBANK1"; }
+    else if (address == 0xc08A) { retval = "RDROM_NOWRITE"; }
+    else if (address == 0xc08B) { retval = "RDWRBANK1"; }
+    else if (address == 0xc08C) { retval = "RDBANK1_NOWRITE"; }
+    else if (address == 0xc08D) { retval = "RDROM_WRBANK1"; }
+    else if (address == 0xc08E) { retval = "RDROM_NOWRITE"; }
+    else if (address == 0xc08F) { retval = "RDWR_BANK1"; }
+
+    else if (address == 0xc090) { retval = "SLOT1_ROM0"; }
+    else if (address == 0xc091) { retval = "SLOT1_ROM1"; }
+    else if (address == 0xc092) { retval = "SLOT1_ROM2"; }
+    else if (address == 0xc093) { retval = "SLOT1_ROM3"; }
+    else if (address == 0xc094) { retval = "SLOT1_ROM4"; }
+    else if (address == 0xc095) { retval = "SLOT1_ROM5"; }
+    else if (address == 0xc096) { retval = "SLOT1_ROM6"; }
+    else if (address == 0xc097) { retval = "SLOT1_ROM7"; }
+    else if (address == 0xc098) { retval = "SLOT1_ROM8"; }
+    else if (address == 0xc099) { retval = "SLOT1_ROM9"; }
+    else if (address == 0xc09A) { retval = "SLOT1_ROMA"; }
+    else if (address == 0xc09B) { retval = "SLOT1_ROMB"; }
+    else if (address == 0xc09C) { retval = "SLOT1_ROMC"; }
+    else if (address == 0xc09D) { retval = "SLOT1_ROMD"; }
+    else if (address == 0xc09E) { retval = "SLOT1_ROME"; }
+    else if (address == 0xc09F) { retval = "SLOT1_ROMF"; }
+
+    else if (address == 0xc0A0) { retval = "SLOT2_ROM0"; }
+    else if (address == 0xc0A1) { retval = "SLOT2_ROM1"; }
+    else if (address == 0xc0A2) { retval = "SLOT2_ROM2"; }
+    else if (address == 0xc0A3) { retval = "SLOT2_ROM3"; }
+    else if (address == 0xc0A4) { retval = "SLOT2_ROM4"; }
+    else if (address == 0xc0A5) { retval = "SLOT2_ROM5"; }
+    else if (address == 0xc0A6) { retval = "SLOT2_ROM6"; }
+    else if (address == 0xc0A7) { retval = "SLOT2_ROM7"; }
+    else if (address == 0xc0A8) { retval = "SLOT2_ROM8"; }
+    else if (address == 0xc0A9) { retval = "SLOT2_ROM9"; }
+    else if (address == 0xc0AA) { retval = "SLOT2_ROMA"; }
+    else if (address == 0xc0AB) { retval = "SLOT2_ROMB"; }
+    else if (address == 0xc0AC) { retval = "SLOT2_ROMC"; }
+    else if (address == 0xc0AD) { retval = "SLOT2_ROMD"; }
+    else if (address == 0xc0AE) { retval = "SLOT2_ROME"; }
+    else if (address == 0xc0AF) { retval = "SLOT2_ROMF"; }
+
+    else if (address == 0xc0B0) { retval = "SLOT3_ROM0"; }
+    else if (address == 0xc0B1) { retval = "SLOT3_ROM1"; }
+    else if (address == 0xc0B2) { retval = "SLOT3_ROM2"; }
+    else if (address == 0xc0B3) { retval = "SLOT3_ROM3"; }
+    else if (address == 0xc0B4) { retval = "SLOT3_ROM4"; }
+    else if (address == 0xc0B5) { retval = "SLOT3_ROM5"; }
+    else if (address == 0xc0B6) { retval = "SLOT3_ROM6"; }
+    else if (address == 0xc0B7) { retval = "SLOT3_ROM7"; }
+    else if (address == 0xc0B8) { retval = "SLOT3_ROM8"; }
+    else if (address == 0xc0B9) { retval = "SLOT3_ROM9"; }
+    else if (address == 0xc0BA) { retval = "SLOT3_ROMA"; }
+    else if (address == 0xc0BB) { retval = "SLOT3_ROMB"; }
+    else if (address == 0xc0BC) { retval = "SLOT3_ROMC"; }
+    else if (address == 0xc0BD) { retval = "SLOT3_ROMD"; }
+    else if (address == 0xc0BE) { retval = "SLOT3_ROME"; }
+    else if (address == 0xc0BF) { retval = "SLOT3_ROMF"; }
+
+    else if (address == 0xc0C0) { retval = "SLOT4_ROM0"; }
+    else if (address == 0xc0C1) { retval = "SLOT4_ROM1"; }
+    else if (address == 0xc0C2) { retval = "SLOT4_ROM2"; }
+    else if (address == 0xc0C3) { retval = "SLOT4_ROM3"; }
+    else if (address == 0xc0C4) { retval = "SLOT4_ROM4"; }
+    else if (address == 0xc0C5) { retval = "SLOT4_ROM5"; }
+    else if (address == 0xc0C6) { retval = "SLOT4_ROM6"; }
+    else if (address == 0xc0C7) { retval = "SLOT4_ROM7"; }
+    else if (address == 0xc0C8) { retval = "SLOT4_ROM8"; }
+    else if (address == 0xc0C9) { retval = "SLOT4_ROM9"; }
+    else if (address == 0xc0CA) { retval = "SLOT4_ROMA"; }
+    else if (address == 0xc0CB) { retval = "SLOT4_ROMB"; }
+    else if (address == 0xc0CC) { retval = "SLOT4_ROMC"; }
+    else if (address == 0xc0CD) { retval = "SLOT4_ROMD"; }
+    else if (address == 0xc0CE) { retval = "SLOT4_ROME"; }
+    else if (address == 0xc0CF) { retval = "SLOT4_ROMF"; }
+
+    else if (address == 0xc0D0) { retval = "SLOT5_ROM0"; }
+    else if (address == 0xc0D1) { retval = "SLOT5_ROM1"; }
+    else if (address == 0xc0D2) { retval = "SLOT5_ROM2"; }
+    else if (address == 0xc0D3) { retval = "SLOT5_ROM3"; }
+    else if (address == 0xc0D4) { retval = "SLOT5_ROM4"; }
+    else if (address == 0xc0D5) { retval = "SLOT5_ROM5"; }
+    else if (address == 0xc0D6) { retval = "SLOT5_ROM6"; }
+    else if (address == 0xc0D7) { retval = "SLOT5_ROM7"; }
+    else if (address == 0xc0D8) { retval = "SLOT5_ROM8"; }
+    else if (address == 0xc0D9) { retval = "SLOT5_ROM9"; }
+    else if (address == 0xc0DA) { retval = "SLOT5_ROMA"; }
+    else if (address == 0xc0DB) { retval = "SLOT5_ROMB"; }
+    else if (address == 0xc0DC) { retval = "SLOT5_ROMC"; }
+    else if (address == 0xc0DD) { retval = "SLOT5_ROMD"; }
+    else if (address == 0xc0DE) { retval = "SLOT5_ROME"; }
+    else if (address == 0xc0DF) { retval = "SLOT5_ROMF"; }
+
+    else if (address == 0xc0E0) { retval = "SLOT6_ROM0"; }
+    else if (address == 0xc0E1) { retval = "SLOT6_ROM1"; }
+    else if (address == 0xc0E2) { retval = "SLOT6_ROM2"; }
+    else if (address == 0xc0E3) { retval = "SLOT6_ROM3"; }
+    else if (address == 0xc0E4) { retval = "SLOT6_ROM4"; }
+    else if (address == 0xc0E5) { retval = "SLOT6_ROM5"; }
+    else if (address == 0xc0E6) { retval = "SLOT6_ROM6"; }
+    else if (address == 0xc0E7) { retval = "SLOT6_ROM7"; }
+    else if (address == 0xc0E8) { retval = "SLOT6_ROM8"; }
+    else if (address == 0xc0E9) { retval = "SLOT6_ROM9"; }
+    else if (address == 0xc0EA) { retval = "SLOT6_ROMA"; }
+    else if (address == 0xc0EB) { retval = "SLOT6_ROMB"; }
+    else if (address == 0xc0EC) { retval = "SLOT6_ROMC"; }
+    else if (address == 0xc0ED) { retval = "SLOT6_ROMD"; }
+    else if (address == 0xc0EE) { retval = "SLOT6_ROME"; }
+    else if (address == 0xc0EF) { retval = "SLOT6_ROMF"; }
+
+    else if (address == 0xc0F0) { retval = "SLOT7_ROM0"; }
+    else if (address == 0xc0F1) { retval = "SLOT7_ROM1"; }
+    else if (address == 0xc0F2) { retval = "SLOT7_ROM2"; }
+    else if (address == 0xc0F3) { retval = "SLOT7_ROM3"; }
+    else if (address == 0xc0F4) { retval = "SLOT7_ROM4"; }
+    else if (address == 0xc0F5) { retval = "SLOT7_ROM5"; }
+    else if (address == 0xc0F6) { retval = "SLOT7_ROM6"; }
+    else if (address == 0xc0F7) { retval = "SLOT7_ROM7"; }
+    else if (address == 0xc0F8) { retval = "SLOT7_ROM8"; }
+    else if (address == 0xc0F9) { retval = "SLOT7_ROM9"; }
+    else if (address == 0xc0FA) { retval = "SLOT7_ROMA"; }
+    else if (address == 0xc0FB) { retval = "SLOT7_ROMB"; }
+    else if (address == 0xc0FC) { retval = "SLOT7_ROMC"; }
+    else if (address == 0xc0FD) { retval = "SLOT7_ROMD"; }
+    else if (address == 0xc0FE) { retval = "SLOT7_ROME"; }
+    else if (address == 0xc0FF) { retval = "SLOT7_ROMF"; }
 
     else if (address == 0xc100) { retval = "M80_BFUNCPG"; }
     else if (address == 0xc107) { retval = "M80_B.FUNCK"; }
