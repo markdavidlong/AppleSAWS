@@ -104,8 +104,8 @@ void DisassemblerViewer::handleDisassembleRequest(QList<quint16> addresses)
 {
     QStringList strings;
 
-    strings += getDisassemblyStrings(addresses);
-
+    disassemble(addresses);
+    strings += getDisassemblyStrings();
     qSort(strings);
     strings.removeDuplicates();
 
@@ -126,7 +126,11 @@ void DisassemblerViewer::handleDisassembleRequest(QList<quint16> addresses)
 }
 
 
-QStringList DisassemblerViewer::getDisassemblyStrings(QList<quint16> entryPoints) {
+QStringList DisassemblerViewer::getDisassemblyStrings() {
+    return m_disassemblyStrings;
+}
+
+void DisassemblerViewer::disassemble(QList<quint16> entryPoints) {
 
     Disassembler dis(m_mem.values());
 
@@ -136,6 +140,7 @@ QStringList DisassemblerViewer::getDisassemblyStrings(QList<quint16> entryPoints
                                                     m_file->address()+length,
                                                     entryPoints);
     dis.setUnknownToData(m_file->address(),m_file->address()+length);
+    m_jumpLines = dis.getJumpLines();
 
     QStringList formattedLines;
 
@@ -168,15 +173,15 @@ QStringList DisassemblerViewer::getDisassemblyStrings(QList<quint16> entryPoints
         if (dis.memoryUsageMap()->at(idx).testFlag(Data))
         {
             QString newline = QString("%1:  %2                       %3 (%4)").arg(uint16ToHex(idx))
-                    .arg(uint8ToHex(m_mem.at(idx)))
-                    .arg(makeDescriptorStringForVal(m_mem.at(idx)))
-                    .arg(dis.getMnemonicForOp(m_mem.at(idx)));
+                              .arg(uint8ToHex(m_mem.at(idx)))
+                              .arg(makeDescriptorStringForVal(m_mem.at(idx)))
+                              .arg(dis.getMnemonicForOp(m_mem.at(idx)));
             formattedLines.append(newline);
         }
     }
     qSort(formattedLines);
 
-    return formattedLines;
+    m_disassemblyStrings = formattedLines;
 }
 
 
@@ -1500,12 +1505,9 @@ void DisassemblerViewer::showMetadataDialog()
 void DisassemblerViewer::setData(QByteArray data)
 {
     ui->textArea->setText(data);
+    ui->textArea->setJumpLines(&m_jumpLines);
 }
 
-void DisassemblerViewer::setText(QString text)
-{
-    ui->textArea->setHtml(text);
-}
 
 bool DisassemblerViewer::canPrint() const { return true; }
 
@@ -1556,30 +1558,30 @@ QString DisassemblerViewer::makeDescriptorStringForVal(quint8 val)
 {
     QString retval;
 
-//    QString zone;
-//    if (val <= 0x3f) zone = "Inverse";
-//    else if (val <= 0x7f) zone = "Flash";
-//    else if (val <= 0x9f) zone = "(Alt) Normal";
-//    else zone = "Normal";
+    //    QString zone;
+    //    if (val <= 0x3f) zone = "Inverse";
+    //    else if (val <= 0x7f) zone = "Flash";
+    //    else if (val <= 0x9f) zone = "(Alt) Normal";
+    //    else zone = "Normal";
 
-//    quint8 baseascii = val;
-//    if (val <= 0x1f) baseascii += 0x40;
-//    else if (val <= 0x5f) baseascii += 0;
-//    else if (val <= 0xbf) baseascii -= 0x40;
-//    else  baseascii -= 80;
+    //    quint8 baseascii = val;
+    //    if (val <= 0x1f) baseascii += 0x40;
+    //    else if (val <= 0x5f) baseascii += 0;
+    //    else if (val <= 0xbf) baseascii -= 0x40;
+    //    else  baseascii -= 80;
 
-//    QString ch = QChar(baseascii);
-//    if (val == 0xff) ch = "[DEL]";
+    //    QString ch = QChar(baseascii);
+    //    if (val == 0xff) ch = "[DEL]";
 
-//    QString appleAscii = QString("%1 %2").arg(ch).arg(zone);
+    //    QString appleAscii = QString("%1 %2").arg(ch).arg(zone);
 
-//    if (val < 0x20)
-//    {
-//        QString ctrl = QString(" / (^%1)").arg(QChar(val+0x40));
-//        appleAscii.append(ctrl);
-//    }
+    //    if (val < 0x20)
+    //    {
+    //        QString ctrl = QString(" / (^%1)").arg(QChar(val+0x40));
+    //        appleAscii.append(ctrl);
+    //    }
 
-//    retval = QString("; %1 / %2").arg(val).arg(appleAscii);
+    //    retval = QString("; %1 / %2").arg(val).arg(appleAscii);
     retval = QString("; %1").arg(val);
     return retval;
 }

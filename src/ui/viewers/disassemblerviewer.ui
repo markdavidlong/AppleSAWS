@@ -15,7 +15,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="QTextBrowser" name="textArea">
+    <widget class="FlowLineTextBrowser" name="textArea">
      <property name="font">
       <font>
        <family>Courier</family>
@@ -35,6 +35,11 @@
    <extends>QWidget</extends>
    <header>viewerbase.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>FlowLineTextBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header>FlowLineTextBrowser.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -9,6 +9,7 @@
 #include "relocatablefile.h"
 #include "fileviewerinterface.h"
 #include "DisassemblerMetadataDialog.h"
+#include "JumpLineManager.h"
 
 namespace Ui {
 class DisassemblerViewer;
@@ -25,7 +26,6 @@ public:
     void setFile(BinaryFile *file);
     void setFile(RelocatableFile *file);
     void setData(QByteArray data);
-    void setText(QString text);
 
     QString getPotentialLabel(quint16 address);
     virtual bool optionsMenuItems(QMenu *);
@@ -35,7 +35,8 @@ public:
 
     QString makeDescriptorStringForVal(quint8 val);
 
-    QStringList getDisassemblyStrings(QList<quint16> entryPoints);
+    void disassemble(QList<quint16> entryPoints);
+    QStringList getDisassemblyStrings();
 
 public slots:
     void setFile(GenericFile *file);
@@ -60,6 +61,9 @@ private:
     Memory m_mem;
 
     bool m_isRelo;
+
+    QStringList m_disassemblyStrings;
+    JumpLines m_jumpLines;
 };
 
 #endif // DISASSEMBLERVIEWER_H

@@ -3,12 +3,14 @@
 
 #include "MemoryUsageMap.h"
 #include "util.h"
+#include "JumpLineManager.h"
 
 #include <QByteArray>
 #include <QStringList>
 #include <QHash>
 #include <QDebug>
 #include <QStack>
+
 
 enum AddressMode {
     AM_InvalidOp,
@@ -163,6 +165,9 @@ private:
 class Disassembler
 {
 public:
+
+
+
     Disassembler(QByteArray memimage);
 
     enum ProcessorType {
@@ -184,11 +189,15 @@ public:
         return m_opcodeinfo[opcode].mnemonic();
     }
 
-private:
+    JumpLines getJumpLines() const { return m_jumplines; }
 
+private:
     bool disassembleOp(quint16 address, DisassembledItem &retval, MemoryUsageMap *memuse = Q_NULLPTR);
     void makeOpcodeTable();
 
+
+    quint16 m_from;
+    quint16 m_to;
 
     QHash<quint8,AssyInstruction> m_opcodeinfo;
     QByteArray m_memimage;
@@ -196,6 +205,10 @@ private:
     AddressStack m_stack;
 
     MemoryUsageMap m_memusagemap;
+
+    JumpLineManager m_jlm;
+
+    JumpLines m_jumplines;
 
 };
 

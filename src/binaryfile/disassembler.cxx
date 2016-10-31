@@ -15,6 +15,8 @@ Disassembler::Disassembler(QByteArray memimage)
 QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to,
                                                   QList<quint16> entryPoints,
                                                   bool processRecursively) {
+    m_from = from;
+    m_to = to;
     QList<DisassembledItem> retval;
     qDebug() << "\n\n*****************\n\nDisassemble: From"<<uint16ToHex(from)<<"to"<<uint16ToHex(to);
     //#define OLDDISSEM
@@ -64,12 +66,12 @@ QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to,
             {
                 qDebug() << "Is Branch";
                 m_stack.push(item.targetAddress());
-//                if (!m_jumps.contains(item.targetAddress()))
-//                {
-//                    m_jumps.append(item.targetAddress());
-//                    qDebug() << "Appending branch" << uint16ToHex(item.targetAddress()) << "to jump table";
+                //                if (!m_jumps.contains(item.targetAddress()))
+                //                {
+                //                    m_jumps.append(item.targetAddress());
+                //                    qDebug() << "Appending branch" << uint16ToHex(item.targetAddress()) << "to jump table";
 
-//                }
+                //                }
             }
 
             if (item.isJsr() && !item.canNotFollow())
@@ -77,7 +79,7 @@ QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to,
                 if (item.targetAddress() <= to) //TODO: Remove this to not limit disassembly to program range
                 {
                     if (m_stack.push(item.targetAddress()))
-                    //if (!m_jumps.contains(item.targetAddress()))
+                        //if (!m_jumps.contains(item.targetAddress()))
                     {
                         qDebug() << "Appending" << uint16ToHex(item.targetAddress()) << "to jump table";
 
@@ -148,6 +150,12 @@ QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to,
     //    }
     //    qDebug() << "Operations Args:" << hexdump;
 
+    if (processRecursively)
+    {
+      //  m_jlm.dumpJumps();
+      m_jumplines = m_jlm.buildJumpLines();
+      qDebug() << "Num Channels: " << m_jlm.getNumJumpLineChannels();
+    }
 
     return retval;
 }
@@ -165,7 +173,10 @@ bool Disassembler::disassembleOp(quint16 address, DisassembledItem &retval, Memo
     retval.setInstruction(op);
 
     if (opcode == 0x6C || opcode == 0x7c) // Indirect jumps
+    {
+        m_jlm.addJump(address,address,IsUnknownJump,m_from,m_to);
         retval.setCanNotFollow(true);
+    }
 
     QString disassemblyLine;
     QString hexValueString;
@@ -254,6 +265,10 @@ bool Disassembler::disassembleOp(quint16 address, DisassembledItem &retval, Memo
             quint16 offsetAddress = address+2+offset;
 
             retval.setTargetAddress(offsetAddress);
+            if (opcode == 0x80) // BRA
+                m_jlm.addJump(address,offsetAddress,IsBRA,m_from,m_to);
+            else
+                m_jlm.addJump(address,offsetAddress,IsBranch,m_from,m_to);
 
             disassemblyLine = QString("%1 _ARG16_ {%2%3}").arg(op.mnemonic())
                               .arg((offset<0)?"-":"+")
@@ -301,16 +316,19 @@ bool Disassembler::disassembleOp(quint16 address, DisassembledItem &retval, Memo
 
     if (opcode == 0x20 || opcode == 0x4c) {
         retval.setTargetAddress(makeWord(hexValues[1],hexValues[2]));
-    }
 
-    if (opcode == 0x4c)
-    {
-         qDebug() << "JMP: Adding flow address "
-                  << uint16ToHex(makeWord(hexValues[1],hexValues[2])) << "to jump table";
-
-         m_stack.push(argval);
-        retval.setCanNotFollow(true);
-
+        if (opcode == 0x4c) // JMP
+        {
+            qDebug() << "JMP: Adding flow address "
+                     << uint16ToHex(makeWord(hexValues[1],hexValues[2])) << "to jump table";
+            m_jlm.addJump(address,argval,IsJMP,m_from,m_to);
+            m_stack.push(argval);
+            retval.setCanNotFollow(true);
+        }
+        else // JSR
+        {
+            m_jlm.addJump(address,argval,IsJSR,m_from,m_to);
+        }
     }
 
     retval.setAddress(address);

@@ -66,7 +66,9 @@ SOURCES += \
     src/binaryfile/AssemblerSymbolModel.cpp \
     src/ui/diskexplorer/DiskExplorer.cpp \
     src/ui/diskexplorer/DiskExplorerMapWidget.cpp \
-    src/applesoftfile/ApplesoftRetokenizer.cpp
+    src/applesoftfile/ApplesoftRetokenizer.cpp \
+    src/internals/JumpLineManager.cpp \
+    src/ui/widgets/FlowLineTextBrowser.cpp
 
 
 HEADERS += \
@@ -116,7 +118,9 @@ HEADERS += \
     src/ui/diskexplorer/DiskExplorer.h \
     src/ui/diskexplorer/DiskExplorerMapWidget.h \
     src/applesoftfile/ApplesoftRetokenizer.h \
-    src/util/AppleColors.h
+    src/util/AppleColors.h \
+    src/internals/JumpLineManager.h \
+    src/ui/widgets/FlowLineTextBrowser.h
 
 FORMS += \
     src/ui/catalogwidget.ui \
