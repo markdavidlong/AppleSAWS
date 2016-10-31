@@ -10,6 +10,13 @@ struct FileDescriptiveEntry {
     int fileTypeAndFlags;
     AppleString filename;
     quint16 lengthInSectors;
+    bool deleted;
+
+    FileDescriptiveEntry() {
+        fileTypeAndFlags = 0;
+        lengthInSectors = 0;
+        deleted = false;
+    }
 
     bool operator<(const FileDescriptiveEntry& f1) const {
         return f1.filename < filename;

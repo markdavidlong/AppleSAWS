@@ -56,7 +56,10 @@ void ViewerBase::setFile(GenericFile *file)
     QString defaultViewerDescriptor;
 
     HexDumpViewer *hdv = new HexDumpViewer(0);
-    hdv->setFile(file);
+    if (dynamic_cast<ApplesoftFile*>(file))
+        hdv->setFile(file,0x801);  //TODO: Double check this offset.
+    else
+        hdv->setFile(file);
     descriptor = ("Hex Dump Viewer");
     addViewer(descriptor,hdv);
     defaultViewerDescriptor = descriptor;

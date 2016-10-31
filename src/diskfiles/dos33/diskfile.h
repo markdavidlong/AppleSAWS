@@ -47,6 +47,7 @@ private:
     QByteArray m_hash;
 
     QString m_imageName;
+    quint8 m_sectors_per_track;
 
 };
 

@@ -30,6 +30,14 @@ DiskFile::~DiskFile()
 bool DiskFile::read(QString filename)
 {
     m_imageName = QFileInfo(filename).fileName();
+    if (m_imageName.toUpper().contains(".D13"))
+    {
+        m_sectors_per_track = 13;
+    }
+    else
+    {
+        m_sectors_per_track = 16;
+    }
 
     QFile infile(filename);
     QCryptographicHash hash(QCryptographicHash::Md5);
@@ -40,7 +48,7 @@ bool DiskFile::read(QString filename)
         QDataStream qds(contents);
         for (int track = 0; track < 35; track++)
         {
-            for (int sector = 0; sector < 16; sector++)
+            for (int sector = 0; sector < m_sectors_per_track; sector++)
             {
                 char buffer[256];
                 if (qds.readRawData(buffer,256) == 256)

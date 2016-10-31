@@ -59,7 +59,7 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
 
     if (!m_showIntsAction)
     {
-        m_showIntsAction = new QAction("Show Ints as &Hex",menu);
+        m_showIntsAction = new QAction("Show Ints as &Hex",this);
         m_showIntsAction->setCheckable(true);
         m_showIntsAction->setChecked(settings.value("ASViewer.intsAsHex",false).toBool());
         setIntsAsHex(settings.value("ASViewer.intsAsHex",false).toBool(),NoReformat);
@@ -70,7 +70,7 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
 
     if (!m_reindentCodeAction)
     {
-    m_reindentCodeAction = new QAction("&Indent code",menu);
+    m_reindentCodeAction = new QAction("&Indent code",this);
     m_reindentCodeAction->setCheckable(true);
     m_reindentCodeAction->setChecked(settings.value("ASViewer.indentCode",false).toBool());
     setIndentCode(settings.value("ASViewer.indentCode",false).toBool(),NoReformat);
@@ -81,7 +81,7 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
 
     if (!m_blankAfterReturnsAction)
     {
-    m_blankAfterReturnsAction = new QAction("Blank &Line after RETURNs",menu);
+    m_blankAfterReturnsAction = new QAction("Blank &Line after RETURNs",this);
     m_blankAfterReturnsAction->setCheckable(true);
     m_blankAfterReturnsAction->setChecked(settings.value("ASViewer.breakAfterReturn",false).toBool());
     setIndentCode(settings.value("ASViewer.breakAfterReturn",false).toBool(),NoReformat);
@@ -92,7 +92,7 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
 
     if (!m_showCtrlCharsAction)
     {
-    m_showCtrlCharsAction = new QAction("Show &Control Characters",menu);
+    m_showCtrlCharsAction = new QAction("Show &Control Characters",this);
     m_showCtrlCharsAction->setCheckable(true);
     m_showCtrlCharsAction->setChecked(settings.value("ASViewer.showCtrlChars",false).toBool());
     setIndentCode(settings.value("ASViewer.showCtrlChars",false).toBool(),NoReformat);
@@ -106,7 +106,7 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
 
     if (!m_wordWrapAction)
     {
-    m_wordWrapAction = new QAction("&Word Wrap");
+    m_wordWrapAction = new QAction("&Word Wrap",this);
     m_wordWrapAction->setCheckable(true);
     m_wordWrapAction->setChecked(settings.value("ASViewer.WordWrap",true).toBool());
     toggleWordWrap(settings.value("ASViewer.WordWrap",true).toBool());
@@ -116,7 +116,7 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
 
     if (!m_syntaxHighlightingAction)
     {
-    m_syntaxHighlightingAction = new QAction("&Syntax Highlighting",menu);
+    m_syntaxHighlightingAction = new QAction("&Syntax Highlighting",this);
     m_syntaxHighlightingAction->setCheckable(true);
     m_syntaxHighlightingAction->setChecked(settings.value("ASViewer.syntaxHighlighting",false).toBool());
     setIndentCode(settings.value("ASViewer.syntaxHighlighting",false).toBool(),NoReformat);
@@ -131,7 +131,7 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
 
     if (!m_showVarExplorerAction)
     {
-        m_showVarExplorerAction = new QAction("Show &Variable Explorer...",menu);
+        m_showVarExplorerAction = new QAction("Show &Variable Explorer...",this);
         m_showVarExplorerAction->setCheckable(false);
         connect(m_showVarExplorerAction, SIGNAL(triggered(bool)), SLOT(launchVarBrowser()));
     }

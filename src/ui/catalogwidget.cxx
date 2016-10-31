@@ -82,7 +82,6 @@ void CatalogWidget::processNewlyLoadedDisk(QString diskfilename, DiskFile *disk)
             QString filetype = fde.fileType();
             QString filename = AppleString(fde.filename).printable().trimmed();
             quint16 size = fde.lengthInSectors;
-            qDebug() << "SIZE: " << size;
             bool locked = fde.isLocked();
             QString sizeStr = QString("%1").arg(size,5,10,QChar(' ')).toUpper();
             QString text = QString("%1 %2 %3 %4").arg(locked?"*":" ").arg(sizeStr).arg(filetype).arg(filename);
