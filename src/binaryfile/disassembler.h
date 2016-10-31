@@ -8,6 +8,7 @@
 #include <QStringList>
 #include <QHash>
 #include <QDebug>
+#include <QStack>
 
 enum AddressMode {
     AM_InvalidOp,
@@ -27,6 +28,30 @@ enum AddressMode {
     AM_ZeroPageIndirect,            // (zp)
     AM_ZeroPageIndirectIndexedWithY // (zp),y
 };
+//////////////////////////////////////////////////////////////////////////////
+
+class AddressStack
+{
+    public:
+    AddressStack() { }
+
+    bool push(quint16 address, bool force = false) {
+        if (force || (!m_stack.contains(address)))
+        {
+            qDebug() << "  PUSH: " << uint16ToHex(address);
+            m_stack.push(address);
+            return true;
+        }
+        return false;
+    }
+
+    bool isEmpty() { return m_stack.isEmpty(); }
+    quint16 pop() { return m_stack.pop(); }
+
+    private:
+    QStack<quint16> m_stack;
+};
+
 //////////////////////////////////////////////////////////////////////////////
 
 struct AssyInstruction {
@@ -93,7 +118,7 @@ public:
     bool stopsProcessing() {
         if (isReturn()) qDebug() << "Is Return";
         if (isInvalidOp()) qDebug() << "Is Invalid Op" << uint8ToHex(m_instruction.opcode());
-        if (canNotFollow()) qDebug() << "Can not follow indirect jump";
+        if (canNotFollow()) qDebug() << "Not following jump";
         if (isBreak()) qDebug() << "Is Break";
         return isBreak() || isInvalidOp() || isReturn() || canNotFollow(); }
 
@@ -168,7 +193,7 @@ private:
     QHash<quint8,AssyInstruction> m_opcodeinfo;
     QByteArray m_memimage;
 
-    QList<quint16> m_jumps;
+    AddressStack m_stack;
 
     MemoryUsageMap m_memusagemap;
 

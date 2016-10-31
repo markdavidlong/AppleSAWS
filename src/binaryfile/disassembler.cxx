@@ -8,14 +8,17 @@ Disassembler::Disassembler(QByteArray memimage)
 {
     m_memimage = memimage, makeOpcodeTable();
     m_memusagemap.clearData();
+
 }
+
 
 QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to,
                                                   QList<quint16> entryPoints,
                                                   bool processRecursively) {
     QList<DisassembledItem> retval;
-    qDebug() << "Disassemble: From"<<uint16ToHex(from)<<"to"<<uint16ToHex(to);
+    qDebug() << "\n\n*****************\n\nDisassemble: From"<<uint16ToHex(from)<<"to"<<uint16ToHex(to);
     //#define OLDDISSEM
+
 #ifdef OLDDISSEM
     for (int idx = from; idx <= to; )
     {
@@ -34,10 +37,11 @@ QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to,
 
     bool stopping = false;
     quint16 next = from;
-    if (entryPoints.count())
+    while (entryPoints.count())
     {
         next = entryPoints.takeFirst();
-        m_jumps.append(entryPoints);
+        //m_jumps.append(entryPoints);
+        m_stack.push(next);
     }
 
     while (!stopping)
@@ -59,19 +63,31 @@ QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to,
             if (item.isBranch())
             {
                 qDebug() << "Is Branch";
-                if (!m_jumps.contains(item.targetAddress()))
-                {
-                    m_jumps.append(item.targetAddress());
-                }
+                m_stack.push(item.targetAddress());
+//                if (!m_jumps.contains(item.targetAddress()))
+//                {
+//                    m_jumps.append(item.targetAddress());
+//                    qDebug() << "Appending branch" << uint16ToHex(item.targetAddress()) << "to jump table";
+
+//                }
             }
 
             if (item.isJsr() && !item.canNotFollow())
             {
                 if (item.targetAddress() <= to) //TODO: Remove this to not limit disassembly to program range
-                    if (!m_jumps.contains(item.targetAddress()))
+                {
+                    if (m_stack.push(item.targetAddress()))
+                    //if (!m_jumps.contains(item.targetAddress()))
                     {
-                        m_jumps.append(item.targetAddress());
+                        qDebug() << "Appending" << uint16ToHex(item.targetAddress()) << "to jump table";
+
+                        //m_jumps.append(item.targetAddress());
                     }
+                    else
+                    {
+                        qDebug() << "Not adding" << uint16ToHex(item.targetAddress()) << "to jump table";
+                    }
+                }
             }
 
             if (next <= to) //TODO: Remove this to not limit disassembly to program range
@@ -99,19 +115,21 @@ QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to,
     m_memusagemap.merge(memuse);
 
     if (processRecursively)
-    while (m_jumps.size())
-    {
-        quint16 num = m_jumps.takeFirst();
-        if (!m_memusagemap[num].testFlag(Operation))
+        //while (m_jumps.size())
+        while (!m_stack.isEmpty())
         {
-            if (num >= from && num <= to) // TODO: remove this to not limit disassembly to program range
+            //    quint16 num = m_jumps.takeFirst();
+            quint16 num = m_stack.pop();
+            if (!m_memusagemap[num].testFlag(Operation))
             {
-                qDebug() << "Calling recursively to"<<uint16ToHex(num);
-                retval.append(disassemble(from,to,QList<quint16>() << num,false));
-                qDebug() << "Return from recursive call.";
+                if (num >= from && num <= to) // TODO: remove this to not limit disassembly to program range
+                {
+                    qDebug() << "Calling recursively to"<<uint16ToHex(num);
+                    retval.append(disassemble(from,to,QList<quint16>() << num,false));
+                    qDebug() << "Return from recursive call.";
+                }
             }
         }
-    }
 
 #endif
     qSort(retval);
@@ -173,7 +191,11 @@ bool Disassembler::disassembleOp(quint16 address, DisassembledItem &retval, Memo
     if (op.numArgs() == 1)
         argval = (quint8) hexValues[1];
     else if (op.numArgs() == 2)
-        argval = (quint8) hexValues[1] + ((quint8) hexValues[2] * 256);
+    {
+        argval = makeWord(hexValues[1],hexValues[2]);
+    }
+
+
 
     for (int idx = 0; idx < hexValues.length(); idx++) {
         hexValueString.append(QString("%1 ").arg((quint8) hexValues[idx],2,16,QChar('0')));
@@ -184,109 +206,112 @@ bool Disassembler::disassembleOp(quint16 address, DisassembledItem &retval, Memo
 
     // Disassemble instruction
     switch (op.addressMode()) {
-    case AM_InvalidOp: {
-        disassemblyLine = op.mnemonic();
-        retval.setIsInvalidOp(true);
-        break;
-    }
-    case AM_Absolute:{
-        disassemblyLine = QString("%1 _ARG16_").arg(op.mnemonic());
-        retval.setRawArgument(argval);
-        break;
-    }
-    case AM_AbsoluteIndexedIndirect:{
-        disassemblyLine = QString("%1 (_ARG16_,x)").arg(op.mnemonic());
-        retval.setRawArgument(argval);
-        break;
-    }
-    case AM_AbsoluteIndexedWithX:{
-        disassemblyLine = QString("%1 _ARG16_,x").arg(op.mnemonic());
-        retval.setRawArgument(argval);
-        break;
-    }
-    case AM_AbsoluteIndexedWithY:{
-        disassemblyLine = QString("%1 _ARG16_,y").arg(op.mnemonic());
-        retval.setRawArgument(argval);
-        break;
-    }
-    case AM_AbsoluteIndirect:{
-        disassemblyLine = QString("%1 (_ARG16_)").arg(op.mnemonic());
-        retval.setRawArgument(argval);
-        break;
-    }
-    case AM_Immediate:{
-        disassemblyLine = QString("%1 #%2").arg(op.mnemonic()).arg((quint8) hexValues[1],2,16,QChar('0')).toUpper();
-        retval.setRawArgument(argval);
-        break;
-    }
-    case AM_Implied:{
-        disassemblyLine = op.mnemonic();
-        break;
-    }
-    case AM_Accumulator:{
-        disassemblyLine = op.mnemonic();
-        break;
-    }
-    case AM_ProgramCounterRelative:{
-        qint8 offset = (qint8) hexValues[1];
-        quint16 offsetAddress = address+2+offset;
+        case AM_InvalidOp: {
+            disassemblyLine = op.mnemonic();
+            retval.setIsInvalidOp(true);
+            break;
+        }
+        case AM_Absolute:{
+            disassemblyLine = QString("%1 _ARG16_").arg(op.mnemonic());
+            retval.setRawArgument(argval);
+            break;
+        }
+        case AM_AbsoluteIndexedIndirect:{
+            disassemblyLine = QString("%1 (_ARG16_,x)").arg(op.mnemonic());
+            retval.setRawArgument(argval);
+            break;
+        }
+        case AM_AbsoluteIndexedWithX:{
+            disassemblyLine = QString("%1 _ARG16_,x").arg(op.mnemonic());
+            retval.setRawArgument(argval);
+            break;
+        }
+        case AM_AbsoluteIndexedWithY:{
+            disassemblyLine = QString("%1 _ARG16_,y").arg(op.mnemonic());
+            retval.setRawArgument(argval);
+            break;
+        }
+        case AM_AbsoluteIndirect:{
+            disassemblyLine = QString("%1 (_ARG16_)").arg(op.mnemonic());
+            retval.setRawArgument(argval);
+            break;
+        }
+        case AM_Immediate:{
+            disassemblyLine = QString("%1 #%2").arg(op.mnemonic()).arg((quint8) hexValues[1],2,16,QChar('0')).toUpper();
+            retval.setRawArgument(argval);
+            break;
+        }
+        case AM_Implied:{
+            disassemblyLine = op.mnemonic();
+            break;
+        }
+        case AM_Accumulator:{
+            disassemblyLine = op.mnemonic();
+            break;
+        }
+        case AM_ProgramCounterRelative:{
+            qint8 offset = (qint8) hexValues[1];
+            quint16 offsetAddress = address+2+offset;
 
-        retval.setTargetAddress(offsetAddress);
+            retval.setTargetAddress(offsetAddress);
 
-        disassemblyLine = QString("%1 _ARG16_ {%2%3}").arg(op.mnemonic())
-                .arg((offset<0)?"-":"+")
-                .arg(abs(offset));
-        retval.setRawArgument(offsetAddress);
-        break;
-    }
-    case AM_ZeroPage:{
-        disassemblyLine = QString("%1 _ARG8_").arg(op.mnemonic());
-        retval.setRawArgument(argval);
-        break;
-    }
-    case AM_ZeroPageIndirectIndexedWithY:{
-        disassemblyLine = QString("%1 (_ARG8_),Y").arg(op.mnemonic());
-        retval.setRawArgument(argval);
-        break;
-    }
-    case AM_ZeroPageIndexedIndirect:{
-        disassemblyLine = QString("%1 (_ARG8_,x)").arg(op.mnemonic());
-        retval.setRawArgument(argval);
-        break;
-    }
-    case AM_ZeroPageIndexedWithX:{
-        disassemblyLine = QString("%1 _ARG8_,x").arg(op.mnemonic());
-        retval.setRawArgument(argval);
-        break;
-    }
-    case AM_ZeroPageIndexedWithY:{
-        disassemblyLine = QString("%1 _ARG8_,y").arg(op.mnemonic());
-        retval.setRawArgument(argval);
-        break;
-    }
-    case AM_ZeroPageIndirect:{
-        disassemblyLine = QString("%1 (_ARG8_)").arg(op.mnemonic());
-        retval.setRawArgument(argval);
-        break;
-    }
-    default:{
-        disassemblyLine = op.mnemonic();
-        retval.setIsInvalidOp(true);
-        qDebug() << "Unhandled Address Mode: " << op.addressMode();
-        break;
-    }
+            disassemblyLine = QString("%1 _ARG16_ {%2%3}").arg(op.mnemonic())
+                              .arg((offset<0)?"-":"+")
+                              .arg(abs(offset));
+            retval.setRawArgument(offsetAddress);
+            break;
+        }
+        case AM_ZeroPage:{
+            disassemblyLine = QString("%1 _ARG8_").arg(op.mnemonic());
+            retval.setRawArgument(argval);
+            break;
+        }
+        case AM_ZeroPageIndirectIndexedWithY:{
+            disassemblyLine = QString("%1 (_ARG8_),Y").arg(op.mnemonic());
+            retval.setRawArgument(argval);
+            break;
+        }
+        case AM_ZeroPageIndexedIndirect:{
+            disassemblyLine = QString("%1 (_ARG8_,x)").arg(op.mnemonic());
+            retval.setRawArgument(argval);
+            break;
+        }
+        case AM_ZeroPageIndexedWithX:{
+            disassemblyLine = QString("%1 _ARG8_,x").arg(op.mnemonic());
+            retval.setRawArgument(argval);
+            break;
+        }
+        case AM_ZeroPageIndexedWithY:{
+            disassemblyLine = QString("%1 _ARG8_,y").arg(op.mnemonic());
+            retval.setRawArgument(argval);
+            break;
+        }
+        case AM_ZeroPageIndirect:{
+            disassemblyLine = QString("%1 (_ARG8_)").arg(op.mnemonic());
+            retval.setRawArgument(argval);
+            break;
+        }
+        default:{
+            disassemblyLine = op.mnemonic();
+            retval.setIsInvalidOp(true);
+            qDebug() << "Unhandled Address Mode: " << op.addressMode();
+            break;
+        }
     }
 
     if (opcode == 0x20 || opcode == 0x4c) {
-        retval.setTargetAddress(hexValues[2]*256 + hexValues[1]);
+        retval.setTargetAddress(makeWord(hexValues[1],hexValues[2]));
     }
 
     if (opcode == 0x4c)
     {
-        qDebug() << "JMP: Setting next flow address to"<<uint16ToHex(hexValues[2]*256 + hexValues[1]);
-        retval.setNextFlowAddress(hexValues[2]*256 + hexValues[1]);
-    }
+         qDebug() << "JMP: Adding flow address "
+                  << uint16ToHex(makeWord(hexValues[1],hexValues[2])) << "to jump table";
 
+         m_stack.push(argval);
+        retval.setCanNotFollow(true);
+
+    }
 
     retval.setAddress(address);
     retval.setDisassembledString(disassemblyLine.toUpper());
@@ -865,30 +890,31 @@ AssyInstruction::AssyInstruction(quint8 opcode, QString mnemonic, AddressMode am
 
 quint8 AssyInstruction::numArgs() {
     switch (m_addressMode) {
-    case AM_Absolute:
-    case AM_AbsoluteIndexedIndirect:
-    case AM_AbsoluteIndexedWithX:
-    case AM_AbsoluteIndexedWithY:
-    case AM_AbsoluteIndirect:
-        return 2;
-    case AM_ProgramCounterRelative:
-    case AM_ZeroPage:
-    case AM_ZeroPageIndirectIndexedWithY:
-    case AM_ZeroPageIndexedIndirect:
-    case AM_ZeroPageIndexedWithX:
-    case AM_ZeroPageIndexedWithY:
-    case AM_ZeroPageIndirect:
-    case AM_Immediate:
-        return 1;
-    case AM_InvalidOp:
-    case AM_Implied:
-    case AM_Accumulator:
-    default:
-        return 0;
+        case AM_Absolute:
+        case AM_AbsoluteIndexedIndirect:
+        case AM_AbsoluteIndexedWithX:
+        case AM_AbsoluteIndexedWithY:
+        case AM_AbsoluteIndirect:
+            return 2;
+        case AM_ProgramCounterRelative:
+        case AM_ZeroPage:
+        case AM_ZeroPageIndirectIndexedWithY:
+        case AM_ZeroPageIndexedIndirect:
+        case AM_ZeroPageIndexedWithX:
+        case AM_ZeroPageIndexedWithY:
+        case AM_ZeroPageIndirect:
+        case AM_Immediate:
+            return 1;
+        case AM_InvalidOp:
+        case AM_Implied:
+        case AM_Accumulator:
+        default:
+            return 0;
     }
 }
 
 DisassembledItem::DisassembledItem(AssyInstruction instr) {
+    m_canNotFollow = false;
     setInstruction(instr);
 }
 

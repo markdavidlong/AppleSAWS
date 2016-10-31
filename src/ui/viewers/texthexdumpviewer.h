@@ -39,6 +39,7 @@ public slots:
 protected:
     QString makeTextStr(QByteArray data);
     QString makeHexStr(QByteArray data);
+
 private:
     Ui::TextHexDumpViewer *ui;
 

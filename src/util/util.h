@@ -69,7 +69,10 @@ inline QString uint32ToHex(quint32 val) {
     return retval;
 }
 
-
+inline quint16 makeWord(quint8 lo, quint8 hi)
+{
+    return hi*256 + lo;
+}
 
 
 

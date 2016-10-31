@@ -111,7 +111,7 @@ void ViewerBase::setFile(GenericFile *file)
     }
     else if (dynamic_cast<TextFile*>(file))
     {
-        BinaryFile *bf = dynamic_cast<BinaryFile*>(file);
+        TextFile *bf = dynamic_cast<TextFile*>(file);
 
         TextHexDumpViewer *thdv = new TextHexDumpViewer();
         thdv->setFile(bf);
