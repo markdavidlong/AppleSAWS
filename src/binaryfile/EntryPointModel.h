@@ -18,8 +18,7 @@ public:
     void setEntryPointsData(EntryPoints *points);
 
     // Header:
-    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;//DONE
-
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
     // Basic functionality:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -43,7 +42,7 @@ public:
 
 protected slots:
     void handlePointAddition(int location) { insertRows(location,1); }
-    void handlePointRemoval(int location) { removeRows(location, 1); }
+//    void handlePointRemoval(int location) { removeRows(location, 1); }
     void handlePointChange(int location)
     {
         QModelIndex ind = createIndex(location,0);

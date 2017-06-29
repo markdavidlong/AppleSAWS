@@ -29,8 +29,6 @@ DiskExplorer::~DiskExplorer()
 
 void DiskExplorer::initUi()
 {
-
-
     QMenuBar *menuBar = new QMenuBar(this);
     setMenuBar(menuBar);
     QMenu *menu = new QMenu(tr("&File"),this);
@@ -38,18 +36,23 @@ void DiskExplorer::initUi()
 
     QAction *action_Load_Disk_Image = new QAction(tr("&Load Disk Image..."),this);
     menu->addAction(action_Load_Disk_Image);
-    connect(action_Load_Disk_Image, SIGNAL(triggered()), SLOT(showLoadDialog()));
+
+    connect(action_Load_Disk_Image, &QAction::triggered,
+            this, &DiskExplorer::showLoadDialog);
 
     m_action_Unload_Disk_Image = new QAction(tr("&Unload Disk Image"),this);
     m_action_Unload_Disk_Image->setEnabled(false);
     menu->addAction(m_action_Unload_Disk_Image);
-    connect(m_action_Unload_Disk_Image, SIGNAL(triggered()), SLOT(unloadDiskFile()));
+
+    connect(m_action_Unload_Disk_Image, &QAction::triggered,
+            this, &DiskExplorer::unloadDiskFile);
 
     menu->addSeparator();
 
     QAction *action_Quit = new QAction(tr("&Quit"),this);
     menu->addAction(action_Quit);
-    connect(action_Quit, SIGNAL(triggered()), qApp, SLOT(quit()));
+
+    connect(action_Quit, &QAction::triggered, qApp, &QApplication::quit);
 
     menu = new QMenu(tr("&Util"),this);
     menuBar->addMenu(menu);
@@ -62,8 +65,9 @@ void DiskExplorer::initUi()
     m_setDiskToolsVisibleAction = new QAction(tr("Show &Disk tools"),this);
     m_setDiskToolsVisibleAction->setCheckable(true);
     m_setDiskToolsVisibleAction->setChecked(false);
-    connect(m_setDiskToolsVisibleAction, SIGNAL(toggled(bool)),
-            SLOT(setDiskToolsVisible(bool)));
+
+    connect(m_setDiskToolsVisibleAction, &QAction::triggered, this, &DiskExplorer::setDiskToolsVisible);
+
     menu->addAction(m_setDiskToolsVisibleAction);
 
 
@@ -72,13 +76,17 @@ void DiskExplorer::initUi()
 
     QAction *action_HRCG_Commands = new QAction(tr("&HRCG Commands..."),this);
     menu->addAction(action_HRCG_Commands);
-
-
     m_hrcgDialog = new HRCGControlsInfo(this);
-    connect(action_HRCG_Commands, SIGNAL(triggered()), m_hrcgDialog, SLOT(show()));
+    connect(action_HRCG_Commands, &QAction::triggered, m_hrcgDialog, &HRCGControlsInfo::show);
 
     m_hexConverter = new HexConverter(this);
-    connect(action_Hex_Converter, SIGNAL(triggered()), m_hexConverter, SLOT(show()));
+    connect(action_Hex_Converter, &QAction::triggered, m_hexConverter, &HexConverter::show);
+
+    QAction *action_Ascii_Info = new QAction(tr("&ASCII Table..."),this);
+    menu->addAction(action_Ascii_Info);
+    m_AsciiInfoDialog = new AsciiInfoDialog(this);
+    connect(action_Ascii_Info, &QAction::triggered, m_AsciiInfoDialog, &AsciiInfoDialog::show);
+
 
     QWidget *widget = new QWidget(0);
     m_gridLayout = new QGridLayout();
@@ -106,19 +114,16 @@ void DiskExplorer::initUi()
     m_gridLayout->addWidget(m_frame,1,2);
     this->setCentralWidget(widget);
 
-    connect(m_cw,SIGNAL(openWithDefaultViewer(DiskFile*,FileDescriptiveEntry)),
-            SLOT(handleDiskItemSelectedDefaultOpen(DiskFile*,FileDescriptiveEntry)));
-
-    connect(m_demw, SIGNAL(showSectorData(QByteArray,int,int,QVariant)),
-            SLOT(handleShowSectorData(QByteArray,int,int,QVariant)));
-
+    connect(m_cw, &CatalogWidget::openWithDefaultViewer,
+            this, &DiskExplorer::handleDiskItemSelectedDefaultOpen);
+    connect(m_demw, &DiskExplorerMapWidget::showSectorData,
+            this, &DiskExplorer::handleShowSectorData);
 
     QStatusBar *statusBar = new QStatusBar(this);
     setStatusBar(statusBar);
 
     m_demwStatusWidget = m_demw->getStatusWidget();
     statusBar->addPermanentWidget(m_demwStatusWidget);
-
 
     setDiskToolsVisible(false);
 }
@@ -184,7 +189,9 @@ void DiskExplorer::handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescrip
     ViewerBase *vb = new ViewerBase();
     qDebug() << "Adding viewer" << vb;
     m_viewerList.append(vb);
-    connect(vb,SIGNAL(viewerClosing(ViewerBase*)), SLOT(handleViewerClosing(ViewerBase*)));
+
+    connect(vb,&ViewerBase::viewerClosing,
+            this, &DiskExplorer::handleViewerClosing);
     vb->setFile(file);
     vb->show();
 }

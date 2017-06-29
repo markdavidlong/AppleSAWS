@@ -56,7 +56,7 @@ DiskExplorerMapWidget::DiskExplorerMapWidget(int numtracks, int numsectors, QWid
             tb->setBgColor(m_defaultColor);
             tb->setCheckable(true);
             m_bgroup->addButton(tb,(track * numsectors) + sec);
-            connect(tb,SIGNAL(checked(int,int,bool)),SLOT(handleButtonCheck(int,int,bool)));
+            connect(tb, &DEButton::checked, this, &DiskExplorerMapWidget::handleButtonCheck);
             m_buttons[track][sec] = tb;
 
             tb->setAutoFillBackground(true);
@@ -315,7 +315,7 @@ void DiskExplorerMapWidget::mapDiskToButtons()
                 tslcount++;
                 buttonAt(tsltr,tslse)->setBgColor(m_tsListColor);
                 buttonAt(tsltr,tslse)->setText(QString("%1").arg(idx));
-                qDebug() << "Button" << idx << "=" << tsltr << "," << tslse << "   " << fde.filename.printable() << "TSL";
+                //qDebug() << "Button" << idx << "=" << tsltr << "," << tslse << "   " << fde.filename.printable() << "TSL";
 
                 QString description = QString("T/S List #%1 for %2").arg(tslcount).arg(fde.filename.printable());
                 m_sectorDescriptions.insert(DETSPair(tsltr,tslse),description);
@@ -346,7 +346,7 @@ void DiskExplorerMapWidget::mapDiskToButtons()
                     else qDebug() << "Unknown file type: " << fde.fileType();
                     buttonAt(tr,se)->setBgColor(color);
                     setButtonText(tr,se,QString("%1").arg(idx));
-                    qDebug() << "Button" << idx << "=" << tr << "," << se << "   " << fde.filename.printable();
+                    //qDebug() << "Button" << idx << "=" << tr << "," << se << "   " << fde.filename.printable();
                     //  fde.dump();
                     idx++;
                 }

@@ -6,6 +6,7 @@ LocationInfoDialog::LocationInfoDialog(QWidget *parent) :
     ui(new Ui::LocationInfoDialog)
 {
     ui->setupUi(this);
+    showSizeWidgets(false);
 }
 
 LocationInfoDialog::~LocationInfoDialog()
@@ -26,4 +27,15 @@ quint16 LocationInfoDialog::getAddress()
 QString LocationInfoDialog::getInfo()
 {
     return ui->infoEdit->text();
+}
+
+int LocationInfoDialog::getSymbolSize()
+{
+    return ui->sizeCombo->currentIndex();
+}
+
+void LocationInfoDialog::showSizeWidgets(bool show)
+{
+    ui->sizeCombo->setHidden(!show);
+    ui->sizeLabel->setHidden(!show);
 }

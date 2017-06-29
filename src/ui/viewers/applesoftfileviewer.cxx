@@ -22,7 +22,7 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
 
     m_formatter = new ApplesoftFormatter(this);
     m_formatter->setFlags(ApplesoftFormatter::ShowCtrlChars);
-    connect(ui->findButton,SIGNAL(clicked(bool)), SLOT(findText()));
+    connect(ui->findButton, &QToolButton::clicked, this, &ApplesoftFileViewer::findText);
     m_isFirstFind = true;
     ui->textArea->setUndoRedoEnabled(false);
     ui->textArea->setUndoRedoEnabled(true);
@@ -46,11 +46,11 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
 
 ApplesoftFileViewer::~ApplesoftFileViewer()
 {
-    delete ui;
     if (m_afdv)
-    {   m_afdv->foo();
-        delete m_afdv;
+    {
+        m_afdv->deleteLater();
     }
+    delete ui;
 }
 
 bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
@@ -63,8 +63,11 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
         m_showIntsAction->setCheckable(true);
         m_showIntsAction->setChecked(settings.value("ASViewer.intsAsHex",false).toBool());
         setIntsAsHex(settings.value("ASViewer.intsAsHex",false).toBool(),NoReformat);
-        connect(m_showIntsAction, SIGNAL(toggled(bool)), ui->findText,SLOT(clear()));
-        connect(m_showIntsAction, SIGNAL(toggled(bool)),SLOT(setIntsAsHex(bool)));
+
+        connect(m_showIntsAction, &QAction::toggled, ui->findText, &QLineEdit::clear);
+        connect(m_showIntsAction, &QAction::toggled,
+                this, static_cast< void (ApplesoftFileViewer::*)(bool)>(&ApplesoftFileViewer::setIntsAsHex));
+
     }
     menu->addAction(m_showIntsAction);
 
@@ -74,8 +77,11 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
     m_reindentCodeAction->setCheckable(true);
     m_reindentCodeAction->setChecked(settings.value("ASViewer.indentCode",false).toBool());
     setIndentCode(settings.value("ASViewer.indentCode",false).toBool(),NoReformat);
-    connect(m_reindentCodeAction, SIGNAL(toggled(bool)), ui->findText,SLOT(clear()));
-    connect(m_reindentCodeAction, SIGNAL(toggled(bool)),SLOT(setIndentCode(bool)));
+
+    connect(m_reindentCodeAction, &QAction::toggled, ui->findText, &QLineEdit::clear);
+    connect(m_reindentCodeAction, &QAction::toggled,
+            this, static_cast< void (ApplesoftFileViewer::*)(bool)>(&ApplesoftFileViewer::setIndentCode));
+
     }
     menu->addAction(m_reindentCodeAction);
 
@@ -85,8 +91,10 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
     m_blankAfterReturnsAction->setCheckable(true);
     m_blankAfterReturnsAction->setChecked(settings.value("ASViewer.breakAfterReturn",false).toBool());
     setIndentCode(settings.value("ASViewer.breakAfterReturn",false).toBool(),NoReformat);
-    connect(m_blankAfterReturnsAction, SIGNAL(toggled(bool)), ui->findText,SLOT(clear()));
-    connect(m_blankAfterReturnsAction, SIGNAL(toggled(bool)),SLOT(setBreakAfterReturn(bool)));
+
+    connect(m_blankAfterReturnsAction, &QAction::toggled, ui->findText, &QLineEdit::clear);
+    connect(m_blankAfterReturnsAction, &QAction::toggled,
+            this, static_cast< void (ApplesoftFileViewer::*)(bool)>(&ApplesoftFileViewer::setBreakAfterReturn));
     }
     menu->addAction(m_blankAfterReturnsAction);
 
@@ -96,8 +104,10 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
     m_showCtrlCharsAction->setCheckable(true);
     m_showCtrlCharsAction->setChecked(settings.value("ASViewer.showCtrlChars",false).toBool());
     setIndentCode(settings.value("ASViewer.showCtrlChars",false).toBool(),NoReformat);
-    connect(m_showCtrlCharsAction, SIGNAL(toggled(bool)), ui->findText,SLOT(clear()));
-    connect(m_showCtrlCharsAction, SIGNAL(toggled(bool)),SLOT(setShowCtrlChars(bool)));
+
+    connect(m_showCtrlCharsAction, &QAction::toggled, ui->findText, &QLineEdit::clear);
+    connect(m_showCtrlCharsAction, &QAction::toggled,
+            this, static_cast<void (ApplesoftFileViewer::*)(bool)>(&ApplesoftFileViewer::setShowCtrlChars));
     }
     menu->addAction(m_showCtrlCharsAction);
 
@@ -110,7 +120,7 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
     m_wordWrapAction->setCheckable(true);
     m_wordWrapAction->setChecked(settings.value("ASViewer.WordWrap",true).toBool());
     toggleWordWrap(settings.value("ASViewer.WordWrap",true).toBool());
-    connect(m_wordWrapAction, SIGNAL(toggled(bool)), SLOT(toggleWordWrap(bool)));
+    connect(m_wordWrapAction, &QAction::triggered, this, &ApplesoftFileViewer::toggleWordWrap);
     }
     menu->addAction(m_wordWrapAction);
 
@@ -120,8 +130,10 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
     m_syntaxHighlightingAction->setCheckable(true);
     m_syntaxHighlightingAction->setChecked(settings.value("ASViewer.syntaxHighlighting",false).toBool());
     setIndentCode(settings.value("ASViewer.syntaxHighlighting",false).toBool(),NoReformat);
-    connect(m_syntaxHighlightingAction, SIGNAL(toggled(bool)), ui->findText,SLOT(clear()));
-    connect(m_syntaxHighlightingAction, SIGNAL(toggled(bool)),SLOT(setSyntaxHighlighting(bool)));
+
+    connect(m_syntaxHighlightingAction, &QAction::toggled, ui->findText, &QLineEdit::clear);
+    connect(m_syntaxHighlightingAction, &QAction::toggled,
+            this, static_cast<void (ApplesoftFileViewer::*)(bool)>(&ApplesoftFileViewer::setSyntaxHighlighting));
     }
     menu->addAction(m_syntaxHighlightingAction);
 
@@ -133,7 +145,7 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
     {
         m_showVarExplorerAction = new QAction("Show &Variable Explorer...",this);
         m_showVarExplorerAction->setCheckable(false);
-        connect(m_showVarExplorerAction, SIGNAL(triggered(bool)), SLOT(launchVarBrowser()));
+        connect(m_showVarExplorerAction, &QAction::triggered, this, &ApplesoftFileViewer::launchVarBrowser);
     }
     menu->addAction(m_showVarExplorerAction);
 
@@ -206,6 +218,11 @@ void ApplesoftFileViewer::setShowCtrlChars(bool enabled, ReformatRule reformat)
     settings.setValue("ASViewer.showCtrlChars",enabled);
     if (reformat == ForceReformat)
         reformatText();
+}
+
+void ApplesoftFileViewer::setSyntaxHighlighting(bool enabled)
+{
+    setSyntaxHighlighting(enabled, ForceReformat);
 }
 
 void ApplesoftFileViewer::setSyntaxHighlighting(bool enabled, ReformatRule reformat)
@@ -290,9 +307,8 @@ void ApplesoftFileViewer::launchVarBrowser()
 {
     if (!m_afdv)
     {
-        m_afdv = new ApplesoftFileDetailViewer();
+        m_afdv = new ApplesoftFileDetailViewer(m_file);
         qDebug() << "m_afdv = " << m_afdv;
-        m_afdv->setLineData(m_file->getLines());
         m_afdv->setWindowTitle(QString("Variables - %1").arg(m_file->filename()));
     }
     m_afdv->show();

@@ -2,6 +2,7 @@
 
 GenericFile::GenericFile(QByteArray data)
 {
+    m_diskfile = 0;
     if (!data.isEmpty()) {
         setData(data);
     }

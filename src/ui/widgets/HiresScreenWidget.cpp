@@ -53,13 +53,29 @@ HiresScreenWidget::HiresScreenWidget(QWidget *parent) :
     m_showScanLinesAction->setCheckable(true);
     m_showScanLinesAction->setChecked(m_showScanLines);
 
+    m_prevPageAction = new QAction("Previous Data Page");
+    m_prevPageAction->setEnabled(false);
+    m_prevPageAction->setShortcut(QKeySequence(Qt::Key_Left | Qt::CTRL));
 
-    connect(m_ntscAction, SIGNAL(toggled(bool)), this, SLOT(handleNtscAction(bool)));
-    connect(m_monochromeAction, SIGNAL(toggled(bool)), this, SLOT(handleMonochromeAction(bool)));
-    connect(m_perPixelColorAction, SIGNAL(toggled(bool)), this, SLOT(handlePerPixelColorAction(bool)));
+    m_nextPageAction = new QAction("Next Data Page");
+    m_nextPageAction->setEnabled(false);
+    m_nextPageAction->setShortcut(QKeySequence(Qt::Key_Right | Qt::CTRL));
 
-    connect(m_showScanLinesAction, SIGNAL(toggled(bool)), this, SLOT(handleShowScanLinesAction(bool)));
+    connect(m_ntscAction, &QAction::toggled, this, &HiresScreenWidget::handleNtscAction);
+    connect(m_monochromeAction, &QAction::toggled, this, &HiresScreenWidget::handleMonochromeAction);
+    connect(m_perPixelColorAction, &QAction::toggled, this, &HiresScreenWidget::handlePerPixelColorAction);
 
+
+    connect(m_showScanLinesAction, &QAction::toggled,
+            this, &HiresScreenWidget::handleShowScanLinesAction);
+
+    connect(m_prevPageAction, &QAction::triggered,
+            this, &HiresScreenWidget::handlePrevPageAction);
+    connect(m_nextPageAction, &QAction::triggered,
+            this, &HiresScreenWidget::handleNextPageAction);
+
+
+    m_offset = 0;
 }
 
 void HiresScreenWidget::handleNtscAction(bool toggled) {
@@ -124,6 +140,8 @@ void HiresScreenWidget::drawPixmap()
 {
     QPainter pmpainter(&m_pixmap);
 
+    QByteArray workingdata = m_data.mid(m_offset);
+
     pmpainter.setBrush(Qt::black);
     pmpainter.setPen(Qt::black);
     pmpainter.drawRect(0,0,m_pixmap.width(),m_pixmap.height());
@@ -136,7 +154,7 @@ void HiresScreenWidget::drawPixmap()
         quint8 chunkCount = 0;
 
         int idx = 0;
-        while (idx < qMin(m_data.size(),8192)) {
+        while (idx < qMin(workingdata.size(),8192)) {
             ColRow cr = getColRowFromAppleAddress(idx);
 
             int yoff = cr.row();
@@ -148,7 +166,7 @@ void HiresScreenWidget::drawPixmap()
             for (int jdx = 0; jdx < 40; jdx++)
             {
 
-                quint8 byte = m_data[idx++];
+                quint8 byte = workingdata[idx++];
                 QBitArray dataBits = byteToBits(byte);
 
                 bool highBit = dataBits.at(0);
@@ -195,10 +213,10 @@ void HiresScreenWidget::drawPixmap()
         pmpainter.setPen(Qt::white);
         pmpainter.setBrush(Qt::white);
 
-        for (int idx = 0; idx <  qMin(m_data.size(),8192) ; idx++) {
+        for (int idx = 0; idx <  qMin(workingdata.size(),8192) ; idx++) {
             ColRow cr = getColRowFromAppleAddress(idx);
 
-            quint8 byte = m_data[idx];
+            quint8 byte = workingdata[idx];
 
             bool highBit = byte & 0x80;
 
@@ -269,6 +287,42 @@ void HiresScreenWidget::setUnpackedData(QByteArray unpackedData)
     setData(packedData);
 }
 
+void HiresScreenWidget::setOffset(quint16 offset)
+{
+    m_offset = offset;
+    emit newOffset(m_offset);
+    update();
+}
+
+quint16 HiresScreenWidget::offset() const { return m_offset; }
+
+void HiresScreenWidget::handlePrevPageAction(bool)
+{
+    if (m_offset >= 8192)
+    {
+        setOffset(m_offset - 8192);
+        m_nextPageAction->setEnabled(true);
+    }
+
+    if (m_offset == 0) { m_prevPageAction->setEnabled(false); }
+}
+
+void HiresScreenWidget::handleNextPageAction(bool)
+{
+    if (m_offset+8192 <= m_data.size())
+    {
+        setOffset(m_offset+8192);
+        m_prevPageAction->setEnabled(true);
+    }
+
+    if (m_offset+8192 > m_data.size())
+    {
+        m_nextPageAction->setEnabled(false);
+    }
+}
+
+
+
 QByteArray HiresScreenWidget::packData(QByteArray unpackedData)
 {
     QByteArray packedData;
@@ -308,6 +362,20 @@ int HiresScreenWidget::getLineAddressOffset(int line)
 
 void HiresScreenWidget::setData(QByteArray data) {
     m_data = data;
+
+    if (data.size() > 8192)
+    {
+        m_nextPageAction->setEnabled(true);
+        m_prevPageAction->setEnabled(false);
+        m_offset = 0;
+    }
+    else
+    {
+        m_nextPageAction->setEnabled(false);
+        m_prevPageAction->setEnabled(false);
+        m_offset = 0;
+    }
+
 
     repaint();
 }
@@ -477,6 +545,9 @@ void HiresScreenWidget::contextMenuEvent(QContextMenuEvent *event) {
     menu.addAction(m_perPixelColorAction);
     menu.addSeparator();
     menu.addAction(m_showScanLinesAction);
+    menu.addSeparator();
+    menu.addAction(prevPageAction());
+    menu.addAction(nextPageAction());
     menu.exec(event->globalPos());
 }
 

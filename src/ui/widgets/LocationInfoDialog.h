@@ -19,6 +19,9 @@ public:
     void setInfoLabelString(QString label);
     quint16 getAddress();
     QString getInfo();
+    int getSymbolSize();
+
+    void showSizeWidgets(bool show);
 
 protected:
 

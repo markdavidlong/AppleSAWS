@@ -11,7 +11,7 @@
 #include "sector.h"
 #include "vtoc.h"
 
-#include "genericfile.h"
+class GenericFile;
 
 class DiskFile
 {
@@ -40,6 +40,9 @@ public:
     QByteArray fileHash() const { return m_hash; }
 
     QString getDiskImageName() const { return m_imageName; }
+    QString getFullDiskImageName() const { return m_fullImageName; }
+    QString getMetaDataPath() const;
+
 private:
 
     QMap< int, QMap< int, Sector> > m_contents;
@@ -47,6 +50,8 @@ private:
     QByteArray m_hash;
 
     QString m_imageName;
+    QString m_fullImageName;
+
     quint8 m_sectors_per_track;
 
 };

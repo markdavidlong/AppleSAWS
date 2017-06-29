@@ -39,6 +39,9 @@ private slots:
     void updateLineAreaWidth();
     void updateLineArea(const QRect &, int);
 
+public slots:
+    void setLineAreaVisible(bool visible);
+
 private:
     LineArea *m_lineArea;
 

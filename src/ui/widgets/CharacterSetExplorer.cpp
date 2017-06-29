@@ -7,8 +7,11 @@ CharacterSetExplorer::CharacterSetExplorer(QWidget *parent) :
 {
     m_unpackedScreen.fill(0,8192);
     ui->setupUi(this);
-    connect(ui->insertChar, SIGNAL(clicked(bool)), SLOT(handleInsertCharButton()));
-    connect(ui->inputText, SIGNAL(textChanged(QString)), SLOT(handleTextChanged(QString)));
+
+    connect(ui->insertChar, &QPushButton::clicked,
+            this, &CharacterSetExplorer::handleInsertCharButton);
+    connect(ui->inputText, &QLineEdit::textChanged,
+            this, &CharacterSetExplorer::handleTextChanged);
 }
 
 void CharacterSetExplorer::setCharSet(CharacterSet &charset)

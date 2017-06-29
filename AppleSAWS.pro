@@ -2,6 +2,10 @@
 QT += core gui printsupport
 CONFIG += c++11
 
+MOC_DIR = ./.build
+UI_DIR = ./.build
+OBJECTS_DIR = ./.build
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = AppleSAWS
@@ -120,7 +124,8 @@ HEADERS += \
     src/applesoftfile/ApplesoftRetokenizer.h \
     src/util/AppleColors.h \
     src/internals/JumpLineManager.h \
-    src/ui/widgets/FlowLineTextBrowser.h
+    src/ui/widgets/FlowLineTextBrowser.h \
+    src/ui/widgets/asciiinfodialog.h
 
 FORMS += \
     src/ui/catalogwidget.ui \
@@ -134,4 +139,5 @@ FORMS += \
     src/ui/viewers/viewerbase.ui \
     src/ui/widgets/CharacterSetExplorer.ui \
     src/ui/widgets/DisassemblerMetadataDialog.ui \
-    src/ui/widgets/LocationInfoDialog.ui
+    src/ui/widgets/LocationInfoDialog.ui \
+    src/ui/widgets/asciiinfodialog.ui

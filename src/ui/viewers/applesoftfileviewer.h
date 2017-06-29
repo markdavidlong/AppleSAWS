@@ -46,11 +46,20 @@ public slots:
 
 protected slots:
     void toggleWordWrap(bool enabled);
-    void setSyntaxHighlighting(bool enabled, ReformatRule reformat = ForceReformat);
-    void setIndentCode(bool enabled, ReformatRule reformat = ForceReformat);
-    void setIntsAsHex(bool enabled, ReformatRule reformat = ForceReformat);
-    void setBreakAfterReturn(bool enabled, ReformatRule reformat = ForceReformat);
-    void setShowCtrlChars(bool enabled, ReformatRule reformat = ForceReformat);
+    void setSyntaxHighlighting(bool enabled);
+    void setSyntaxHighlighting(bool enabled, ReformatRule reformat);
+
+    void setIndentCode(bool enabled) { setIndentCode(enabled, ForceReformat); }
+    void setIndentCode(bool enabled, ReformatRule reformat);
+
+    void setIntsAsHex(bool enabled) { setIntsAsHex(enabled, ForceReformat); }
+    void setIntsAsHex(bool enabled, ReformatRule reformat);
+
+    void setBreakAfterReturn(bool enabled) { setBreakAfterReturn(enabled,ForceReformat); }
+    void setBreakAfterReturn(bool enabled, ReformatRule reformat);
+
+    void setShowCtrlChars(bool enabled) { setShowCtrlChars(enabled,ForceReformat); }
+    void setShowCtrlChars(bool enabled, ReformatRule reformat);
     void launchVarBrowser();
     void reformatText();
 

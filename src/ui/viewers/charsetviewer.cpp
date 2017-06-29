@@ -68,20 +68,20 @@ bool CharSetViewer::optionsMenuItems(QMenu *menu)
     action->setCheckable(true);
     action->setChecked(settings.value("CharSetViewer.ShowGrid",true).toBool());
     showGrid(settings.value("CharSetViewer.ShowGrid",true).toBool());
-    connect(action, SIGNAL(toggled(bool)),SLOT(showGrid(bool)));
+    connect(action, &QAction::toggled, this, &CharSetViewer::showGrid);
     menu->addAction(action);
 
     action = new QAction("&Enable Bit Shift",menu);
     action->setCheckable(true);
     action->setChecked(settings.value("CharSetViewer.EnableBitShift",true).toBool());
     enableBitShift(settings.value("CharSetViewer.EnableBitShift",true).toBool());
-    connect(action, SIGNAL(toggled(bool)),SLOT(enableBitShift(bool)));
+    connect(action, &QAction::toggled, this, &CharSetViewer::enableBitShift);
     menu->addAction(action);
 
     menu->addSeparator();
 
     action = new QAction("&Character Set Explorer...");
-    connect(action, SIGNAL(triggered(bool)), SLOT(showExplorer()));
+    connect(action, &QAction::triggered, this, &CharSetViewer::showExplorer);
     menu->addAction(action);
 
     return true;
@@ -91,7 +91,7 @@ void CharSetViewer::showExplorer()
 {
     if (!m_cse) {
         m_cse = new CharacterSetExplorer(this);
-        connect(m_cse, SIGNAL(destroyed(QObject*)), SLOT(cleanupExplorer()));
+        connect(m_cse, &CharacterSetExplorer::destroyed, this, &CharSetViewer::cleanupExplorer);
         m_cse->setCharSet(m_charset);
     }
     m_cse->show();

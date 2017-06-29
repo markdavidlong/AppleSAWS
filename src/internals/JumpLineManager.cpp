@@ -4,7 +4,7 @@ JumpLineManager::JumpLineManager(quint16 from, quint16 to)
     : m_start(from),
       m_end(to)
 {
-    qDebug() << "JumpLineManager(from:"<<uint16ToHex(m_start)<<", to:"<<uint16ToHex(m_end) << ")";
+    //qDebug() << "JumpLineManager(from:"<<uint16ToHex(m_start)<<", to:"<<uint16ToHex(m_end) << ")";
 
 }
 
@@ -20,12 +20,12 @@ void JumpLineManager::addJump(quint16 src, quint16 dest, JumpType type, quint16 
         }
         else
         {
-            qDebug() << "JumpLineManager::addJump: Not adding duplicate jump:" << uint16ToHex(src) << "," << uint16ToHex(dest);
+            //qDebug() << "JumpLineManager::addJump: Not adding duplicate jump:" << uint16ToHex(src) << "," << uint16ToHex(dest);
         }
     }
     else
     {
-        qDebug() << "JumpLineManager::addJump: Address range is out of bounds";
+   //     qDebug() << "JumpLineManager::addJump: Address range is out of bounds";
 
     }
 }
@@ -36,7 +36,7 @@ void JumpLineManager::dumpJumps() const {
 
 void JumpLineManager::dumpJumps(JumpMap map) const
 {
-    qDebug() << "JumpLineManager::dumpJumps()\n  JumpTable:";
+    //qDebug() << "JumpLineManager::dumpJumps()\n  JumpTable:";
     QMapIterator<TJump,JumpType> it(map);
     while (it.hasNext())
     {
@@ -47,14 +47,14 @@ void JumpLineManager::dumpJumps(JumpMap map) const
         if (it.value() == IsBranch) { jumptypelabel = "Branch"; }
         if (it.value() == IsJSR) { jumptypelabel = "JSR"; }
         if (it.value() == IsBRA) { jumptypelabel = "BRA"; }
-        qDebug() << "    Jump from" << uint16ToHex(it.key().first) << "to"
-                 << uint16ToHex(it.key().second) << jumptypelabel;
+        //qDebug() << "    Jump from" << uint16ToHex(it.key().first) << "to"
+         //        << uint16ToHex(it.key().second) << jumptypelabel;
     }
 }
 
 JumpLines JumpLineManager::buildJumpLines()
 {
-qDebug() << "A";
+//qDebug() << "A";
 
     m_channelsAtAddress.clear();
     m_jumplines.m_maxChannel = 0;
@@ -74,7 +74,7 @@ qDebug() << "A";
         m_jumplines.jumpLines.append(jl);
         m_jumplines.m_maxChannel = qMax(m_jumplines.m_maxChannel, channel);
     }
-    qDebug() << "A";
+    //qDebug() << "A";
 
 
     return m_jumplines;
@@ -85,7 +85,7 @@ qDebug() << "A";
 
 int JumpLineManager::findBestChannel(JumpLine &jl)
 {
-    qDebug() << "findBestChannel()";
+    //qDebug() << "findBestChannel()";
     if (m_jumplines.jumpLines.count() == 0)
     {
         return 0;
@@ -95,7 +95,7 @@ int JumpLineManager::findBestChannel(JumpLine &jl)
     bool foundChannel = false;
     while (!foundChannel)
     {
-        qDebug() << "Tryning potential channel" << potentialChannel;
+        //qDebug() << "Tryning potential channel" << potentialChannel;
         bool matched = false;
         for (quint16 addr = jl.min(); addr <= jl.max(); addr++)
         {
@@ -129,12 +129,12 @@ void JumpLineManager::setChannelForJumpLine(int channel, JumpLine &jl)
 
 void JumpLineManager::dumpJumpLines() const
 {
-    foreach (JumpLine jl, m_jumplines.jumpLines)
-    {
-        qDebug() << " JumpLine from:" << uint16ToHex(jl.from)
-                 << " to:" << uint16ToHex(jl.to)
-                 << "channel: " << jl.channel << " type:" << jl.type;
-    }
+    //foreach (JumpLine jl, m_jumplines.jumpLines)
+   // {
+        //qDebug() << " JumpLine from:" << uint16ToHex(jl.from)
+         //        << " to:" << uint16ToHex(jl.to)
+          //       << "channel: " << jl.channel << " type:" << jl.type;
+   // }
 }
 
 bool JumpLineManager::doJumpsIntersect(TJump &A, TJump &B) const

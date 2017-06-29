@@ -13,10 +13,6 @@ FlowLineTextBrowser::FlowLineTextBrowser(QWidget *parent) : QTextBrowser(parent)
     m_lineArea = new LineArea(this);
     m_jl = Q_NULLPTR;
 
-    //this->verticalScrollBar()->setSliderPosition(this->verticalScrollBar()->sliderPosition());
-
-    // connect(this->document(), SIGNAL(blockCountChanged(int)), SLOT(updateLineAreaWidth(int)));
-    connect(this, SIGNAL(updateRequest(QRect,int)), SLOT(updateLineArea(QRect,int)));
     updateLineAreaWidth();
 }
 
@@ -37,7 +33,7 @@ int FlowLineTextBrowser::getFirstVisibleBlock(QTextBlock *firstBlock) const
 
         if (r1.contains(r2, true) || r1.intersects(r2))
         {
-            qDebug() << r2;
+   //         qDebug() << r2;
             if (firstBlock)
                 *firstBlock = block;
             return i;
@@ -69,7 +65,7 @@ void FlowLineTextBrowser::lineAreaPaintEvent(QPaintEvent *event)
     QTextBlock block;
     getFirstVisibleBlock(&block);
 
-    qDebug() << block.text();
+ //   qDebug() << block.text();
     bool foundFirst = false;
     quint16 linenum;
 
@@ -116,6 +112,23 @@ void FlowLineTextBrowser::lineAreaPaintEvent(QPaintEvent *event)
 
             foreach (JumpLine jl, jllist)
             {
+                if (jl.type == IsBranch || jl.type == IsBRA)
+                {
+                    painter.setPen(Qt::yellow);
+                    painter.setBrush(Qt::yellow);
+
+                }
+                else if (jl.type == IsJMP)
+                {
+                    painter.setPen(Qt::white);
+                    painter.setBrush(Qt::white);
+
+                }
+                else
+                {
+                    painter.setPen(Qt::red);
+                    painter.setBrush(Qt::red);
+                }
                 int offset = getChannelOffset(jl.channel);
                 if (!inBlankLine)
                 {
@@ -297,3 +310,5 @@ void FlowLineTextBrowser::updateLineArea(const QRect &rect, int dy)
     if (rect.contains(viewport()->rect()))
         updateLineAreaWidth();
 }
+
+void FlowLineTextBrowser::setLineAreaVisible(bool visible) { m_lineArea->setVisible(visible); }

@@ -1,4 +1,5 @@
 #include "EntryPoints.h"
+#include <QDebug>
 
 EntryPoints::EntryPoints(QObject *parent) : QObject(parent)
 {
@@ -51,7 +52,6 @@ void EntryPoints::addPoint(EntryPoint ep)
 void EntryPoints::removePointAt(int location)
 {
     m_entryPoints.removeAt(location);
-    emit pointRemovedAt(location);
 }
 
 //---------------------------------------------------------------------------

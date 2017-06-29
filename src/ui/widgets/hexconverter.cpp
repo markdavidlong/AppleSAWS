@@ -13,11 +13,11 @@ HexConverter::HexConverter(QWidget *parent) :
     ui->uint16LineEdit->setValidator(new QIntValidator(0,65535,this));
     ui->int16LineEdit->setValidator(new QIntValidator(-32768,32767,this));
 
-    connect(ui->hexLineEdit, SIGNAL(textEdited(QString)), SLOT(calcFromNewHex(QString)));
-    connect(ui->uint8LineEdit, SIGNAL(textEdited(QString)), SLOT(calcFromNewUint8(QString)));
-    connect(ui->int8LineEdit, SIGNAL(textEdited(QString)), SLOT(calcFromNewInt8(QString)));
-    connect(ui->uint16LineEdit, SIGNAL(textEdited(QString)), SLOT(calcFromNewUint16(QString)));
-    connect(ui->int16LineEdit, SIGNAL(textEdited(QString)), SLOT(calcFromNewInt16(QString)));
+    connect(ui->hexLineEdit, &QLineEdit::textEdited, this, &HexConverter::calcFromNewHex);
+    connect(ui->uint8LineEdit, &QLineEdit::textEdited, this, &HexConverter::calcFromNewUint8);
+    connect(ui->int8LineEdit, &QLineEdit::textEdited, this, &HexConverter::calcFromNewInt8);
+    connect(ui->uint16LineEdit, &QLineEdit::textEdited, this, &HexConverter::calcFromNewUint16);
+    connect(ui->int16LineEdit, &QLineEdit::textEdited, this, &HexConverter::calcFromNewInt16);
 }
 
 HexConverter::~HexConverter()

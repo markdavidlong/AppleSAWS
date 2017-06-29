@@ -1,8 +1,24 @@
 #include "AssemblerSymbols.h"
 
+
 AssemblerSymbols::AssemblerSymbols(QObject *parent) : QObject(parent)
 {
 
+}
+
+int AssemblerSymbols::locationOfSymbolAtAddress(quint16 address)
+{
+    // Assume list m_assemblerSymbols is sorted by address (it should be)
+    QListIterator<AssemblerSymbol> it(m_assemblerSymbols);
+    int idx = 0;
+    while (it.hasNext())
+    {
+        AssemblerSymbol ep = it.next();
+        if (ep.address == address) return idx;
+        if (ep.address > address) return -1;
+        idx++;
+    }
+    return -1;
 }
 
 bool AssemblerSymbols::hasAssemSymbolAtAddress(quint16 address)
@@ -51,7 +67,6 @@ void AssemblerSymbols::addSymbol(AssemblerSymbol ep)
 void AssemblerSymbols::removeSymbolAt(int location)
 {
     m_assemblerSymbols.removeAt(location);
-    emit symbolRemovedAt(location);
 }
 
 //---------------------------------------------------------------------------
@@ -92,6 +107,7 @@ QDataStream &operator<<(QDataStream &out, const AssemblerSymbol &model)
 {
     out << model.address;
     out << model.name;
+    out << (qint32) model.symbolsize;
     return out;
 }
 
@@ -99,7 +115,9 @@ QDataStream &operator>>(QDataStream &in, AssemblerSymbol &model)
 {
     in >> model.address;
     in >> model.name;
-
+    qint32 size;
+    in >> size;
+    model.symbolsize = (SymbolSize) size;
     return in;
 }
 

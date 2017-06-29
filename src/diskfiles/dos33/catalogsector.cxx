@@ -13,8 +13,6 @@ CatalogSector::CatalogSector(Sector *data)
         FileDescriptiveEntry fde = makeFDE(idx*0x23+0x0B);
         if (fde.firstTSListSector != TSPair(0,0)) {
             m_fdes.append(fde);
-//            qDebug() << "FDE #"<<idx;
-//            fde.dump();
         }
     }
 }

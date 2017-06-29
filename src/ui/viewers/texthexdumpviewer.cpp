@@ -124,7 +124,8 @@ bool TextHexDumpViewer::optionsMenuItems(QMenu *menu)
     QAction *action = new QAction("&Word Wrap");
     action->setCheckable(true);
     action->setChecked(settings.value("TexHexViewer.WordWrap",true).toBool());
-    connect(action, SIGNAL(toggled(bool)), SLOT(toggleWordWrap(bool)));
+    connect(action, &QAction::toggled,
+            this, &TextHexDumpViewer::toggleWordWrap);
     menu->addAction(action);
 
     return true;

@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <QMenu>
 #include <QAction>
+#include <QPalette>
 
 CatalogWidget::CatalogWidget(QWidget *parent) :
     QWidget(parent),
@@ -15,9 +16,11 @@ CatalogWidget::CatalogWidget(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->catalog_list->setFont(QFont("monospace"));
+    ui->noteButton->setText(QChar(0x270d));
+    ui->noteButton->setFont(QFont("sans",16,QFont::Bold));
 
-    connect(ui->catalog_list, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
-            SLOT(itemDoubleClicked(QListWidgetItem*)));
+    connect(ui->catalog_list, &QListWidget::itemDoubleClicked,
+            this, &CatalogWidget::itemDoubleClicked);
 }
 
 CatalogWidget::~CatalogWidget()
@@ -86,6 +89,17 @@ void CatalogWidget::processNewlyLoadedDisk(QString diskfilename, DiskFile *disk)
             QString sizeStr = QString("%1").arg(size,5,10,QChar(' ')).toUpper();
             QString text = QString("%1 %2 %3 %4").arg(locked?"*":" ").arg(sizeStr).arg(filetype).arg(filename);
             QListWidgetItem *item = new QListWidgetItem(text);
+
+            if (filetype == "A")      { item->setForeground(Qt::blue); }
+            else if (filetype == "I") { item->setForeground(Qt::darkYellow); }
+            else if (filetype == "B") { item->setForeground(Qt::darkGreen); }
+            else if (filetype == "T") { item->setForeground(Qt::red); }
+            else if (filetype == "R") { item->setForeground(Qt::darkRed); }
+            else if (filetype == "S") { item->setForeground(Qt::magenta); }
+            else if (filetype == "a") { item->setForeground(Qt::darkBlue); }
+            else if (filetype == "b") { item->setForeground(Qt::darkMagenta); }
+            else { item->setForeground(Qt::black); }
+
             item->setToolTip(createToolTip(fde));
             item->setData(0x0100,idx);
             ui->catalog_list->addItem(item);
@@ -95,6 +109,20 @@ void CatalogWidget::processNewlyLoadedDisk(QString diskfilename, DiskFile *disk)
             }
             idx++;
         }
+//        QFont italfont = ui->catalog_list->font();
+//        italfont.setItalic(true);
+//        QListWidgetItem *item = new QListWidgetItem("Boot Sector");
+//        item->setForeground(Qt::black);
+//        item->setFont(italfont);
+//        item->setData(0x0100,-1);
+//        ui->catalog_list->addItem(item);
+
+//        item = new QListWidgetItem("DOS Image");
+//        item->setForeground(Qt::black);
+//        item->setFont(italfont);
+//        item->setData(0x0100,-2);
+//        ui->catalog_list->addItem(item);
+
         ui->catalog_list->resize(maxrect.width(),ui->catalog_list->size().height());
     }
 }
@@ -111,9 +139,23 @@ void CatalogWidget::unloadDisk(DiskFile *disk)
 void CatalogWidget::itemDoubleClicked(QListWidgetItem *item)
 {
     int idx = item->data(0x0100).toInt();
-    FileDescriptiveEntry fde = m_disk->getAllFDEs()[idx];
+    if (idx >= 0)
+    {
+        FileDescriptiveEntry fde = m_disk->getAllFDEs()[idx];
  //   qDebug() << "Default File " << AppleString(fde.filename).printable().trimmed();
-    emit openWithDefaultViewer(m_disk,fde);
+        emit openWithDefaultViewer(m_disk,fde);
+    }
+    else
+    {
+        if (idx == -1) // Boot Sector
+        {
+
+        }
+        else if (idx == -2) // DOS Image
+        {
+
+        }
+    }
 }
 
 void CatalogWidget::itemClicked(QListWidgetItem *item)

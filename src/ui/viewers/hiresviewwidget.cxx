@@ -1,5 +1,6 @@
 #include "hiresviewwidget.h"
 #include "binaryfile.h"
+#include "util.h"
 
 #include <QPainter>
 #include <QMap>
@@ -7,6 +8,7 @@
 #include <QResizeEvent>
 #include <QSettings>
 #include <QGridLayout>
+#include <QLabel>
 
 #include <math.h>
 
@@ -18,6 +20,15 @@ HiresViewWidget::HiresViewWidget(QWidget *parent) :
     setLayout(gv);
     hrsw = new HiresScreenWidget(this);
     gv->addWidget(hrsw);
+    m_offsetLabel = new QLabel(this);
+    m_offsetLabel->setText("");
+    gv->addWidget(m_offsetLabel,1,0);
+    gv->setRowStretch(0,10000);
+    gv->setRowStretch(1,1);
+
+    connect(hrsw, &HiresScreenWidget::newOffset,
+            this, &HiresViewWidget::handleNewOffset);
+    handleNewOffset(0);
 
     resize(561,384);
 }
@@ -38,6 +49,10 @@ bool HiresViewWidget::optionsMenuItems(QMenu *menu)
     menu->addAction(hrsw->perPixelColorAction());
     menu->addSeparator();
     menu->addAction(hrsw->showScanLinesAction());
+    menu->addSeparator();
+    menu->addAction(hrsw->prevPageAction());
+    menu->addAction(hrsw->nextPageAction());
+
     return true;
 }
 
@@ -97,5 +112,11 @@ void HiresViewWidget::doExport()
 
     QPixmap pm = hrsw->getPixmap();
     pm.save(savename.path());
+}
+
+void HiresViewWidget::handleNewOffset(quint16 offset)
+{
+    QString text = QString("Offset: %1 (0x%2)").arg(offset).arg(uint16ToHex(offset));
+    m_offsetLabel->setText(text);
 }
 

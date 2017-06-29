@@ -203,7 +203,7 @@ void MazeViewer::drawMaze()
             }
 
             painter.setPen(Qt::black);
-            quint8 cv = getCellDesc(idx,jdx);
+            //quint8 cv = getCellDesc(idx,jdx);
             quint8 tr = getCellInventory(idx,jdx);
             QString trs = inventoryToString(tr);
             quint8 mo = getCellMonsters(idx,jdx);

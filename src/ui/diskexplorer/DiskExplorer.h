@@ -10,6 +10,7 @@
 #include "hexconverter.h"
 #include "hexdumpviewer.h"
 #include "viewerbase.h"
+#include "asciiinfodialog.h"
 
 #include <QFrame>
 #include <QTimer>
@@ -66,6 +67,7 @@ private:
 
     HRCGControlsInfo *m_hrcgDialog;
     HexConverter *m_hexConverter;
+    AsciiInfoDialog *m_AsciiInfoDialog;
 
 
     QAction *m_action_Unload_Disk_Image;

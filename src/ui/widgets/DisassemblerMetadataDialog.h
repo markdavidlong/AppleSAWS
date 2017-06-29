@@ -9,6 +9,7 @@
 #include "LocationInfoDialog.h"
 
 #include <QDialog>
+#include <QItemSelection>
 
 namespace Ui {
 class DisassemblerMetadataDialog;
@@ -22,13 +23,10 @@ public:
     explicit DisassemblerMetadataDialog(BinaryFileMetadata *bfm, QWidget *parent = 0);
     ~DisassemblerMetadataDialog();
 
-    void setRelocatable(bool relocatable);
-
 protected:
     void showEvent(QShowEvent *);
 
 protected slots:
-    void handleCancelButton();
     void handleExitButton();
     void handleProcessButton();
 
@@ -37,6 +35,9 @@ protected slots:
 
     void handleAddSymbolButton();
     void handleRemoveSymbolButton();
+
+    void handleEntryPointSelectionChanged(QItemSelection selected, QItemSelection deselected);
+    void handleSymbolSelectionChanged(QItemSelection selected, QItemSelection deselected);
 
 
 private:

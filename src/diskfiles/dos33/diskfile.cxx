@@ -4,6 +4,7 @@
 #include <QDataStream>
 #include <QFileInfo>
 #include <QDebug>
+#include <QDir>
 
 #include "tracksectorlist.h"
 #include "applesoftfile.h"
@@ -29,6 +30,7 @@ DiskFile::~DiskFile()
 
 bool DiskFile::read(QString filename)
 {
+    m_fullImageName = filename;
     m_imageName = QFileInfo(filename).fileName();
     if (m_imageName.toUpper().contains(".D13"))
     {
@@ -132,6 +134,7 @@ GenericFile *DiskFile::getFile(FileDescriptiveEntry fde)
         }
         m_files[fde] = retval;
     }
+    if (retval) { retval->setDiskFile(this); }
     return retval;
 }
 
@@ -165,5 +168,14 @@ QList<FileDescriptiveEntry> DiskFile::getAllFDEs() {
         retval.append(fdes);
     }
     return retval;
+}
+
+QString DiskFile::getMetaDataPath() const {
+    QString path = QString("%1.metadata/").arg(getFullDiskImageName());
+
+    QDir dir(path);
+    dir.mkpath(".");
+
+    return path;
 }
 

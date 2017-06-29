@@ -15,9 +15,9 @@ void AssemblerSymbolModel::setAssemblerSymbolsData(AssemblerSymbols *symbols)
 
     if (assemblerSymbols)
     {
-        connect(assemblerSymbols,SIGNAL(symbolAddedAt(int)),SLOT(handleSymbolAddition(int)));
-        connect(assemblerSymbols,SIGNAL(symbolChangedAt(int)),SLOT(handleSymbolChange(int)));
-        connect(assemblerSymbols,SIGNAL(symbolRemovedAt(int)),SLOT(handleSymbolRemoval(int)));
+        connect(assemblerSymbols, &AssemblerSymbols::symbolAddedAt, this, &AssemblerSymbolModel::handleSymbolAddition);
+        connect(assemblerSymbols, &AssemblerSymbols::symbolChangedAt, this, &AssemblerSymbolModel::handleSymbolChange);
+        connect(assemblerSymbols, &AssemblerSymbols::symbolRemovedAt, this, &AssemblerSymbolModel::handleSymbolRemoval);
     }
 
 }
@@ -57,7 +57,7 @@ int AssemblerSymbolModel::rowCount(const QModelIndex &parent) const
 int AssemblerSymbolModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return 1;
+    return 2;
 }
 
 QVariant AssemblerSymbolModel::data(const QModelIndex &index, int role) const
@@ -67,6 +67,19 @@ QVariant AssemblerSymbolModel::data(const QModelIndex &index, int role) const
     if (role == Qt::DisplayRole)
     {
         if (index.column() == 0)
+        {
+            QString val;
+            if (assemblerSymbols->at(index.row()).symbolsize == SizeWord)
+            {
+                val = "WORD";
+            }
+            else if (assemblerSymbols->at(index.row()).symbolsize == SizeByte)
+            {
+                val = "BYTE";
+            }
+            return val;
+        }
+        else if (index.column() == 1)
         {
             return assemblerSymbols->at(index.row()).name;
         }
@@ -79,9 +92,9 @@ bool AssemblerSymbolModel::setData(const QModelIndex &index, const QVariant &val
     if (!assemblerSymbols) return false;
 
     if (data(index, role) != value) {
-        if (index.column() == 0)
+        if (index.column() == 1)
         {
-           assemblerSymbols->symbolRefAt(index.row()).name = value.toString();
+            assemblerSymbols->symbolRefAt(index.row()).name = value.toString();
         }
         emit dataChanged(index, index, QVector<int>() << role);
         return true;
@@ -92,7 +105,7 @@ bool AssemblerSymbolModel::setData(const QModelIndex &index, const QVariant &val
 Qt::ItemFlags AssemblerSymbolModel::flags(const QModelIndex &index) const
 {
     Q_UNUSED(index);
-    if (index.column() == 0)
+    if (index.column() == 1)
         return Qt::ItemIsEditable | QAbstractTableModel::flags(index);
     else
         return QAbstractTableModel::flags(index);
@@ -108,14 +121,16 @@ bool AssemblerSymbolModel::insertRows(int row, int count, const QModelIndex &par
 bool AssemblerSymbolModel::removeRows(int row, int count, const QModelIndex &parent)
 {
     if (!assemblerSymbols) return false;
+    bool success = false;
 
     beginRemoveRows(parent, row, row + count - 1);
     for (int idx = 0; idx < count; idx++)
     {
         assemblerSymbols->removeSymbolAt(row);
+        success = true;
     }
     endRemoveRows();
-    return false;
+    return success;
 }
 
 

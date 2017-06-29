@@ -17,10 +17,9 @@ void EntryPointModel::setEntryPointsData(EntryPoints *points)
 
     if (entryPoints)
     {
-        connect(entryPoints,SIGNAL(pointAddedAt(int)),SLOT(handlePointAddition(int)));
-        connect(entryPoints,SIGNAL(pointChangedAt(int)),SLOT(handlePointChange(int)));
-        connect(entryPoints,SIGNAL(pointRemovedAt(int)),SLOT(handlePointRemoval(int)));
- //       insertRows(0,entryPoints->numEntryPoints());
+        connect(entryPoints, &EntryPoints::pointAddedAt,   this, &EntryPointModel::handlePointAddition);
+        connect(entryPoints, &EntryPoints::pointChangedAt, this, &EntryPointModel::handlePointChange);
+
     }
 
 }
@@ -110,15 +109,26 @@ bool EntryPointModel::insertRows(int row, int count, const QModelIndex &parent)
 
 bool EntryPointModel::removeRows(int row, int count, const QModelIndex &parent)
 {
+    qDebug() << __FILE__ << __LINE__;
+
     if (!entryPoints) return false;
+    qDebug() << __FILE__ << __LINE__;
+    bool success = false;
+    qDebug() << __FILE__ << __LINE__;
 
     beginRemoveRows(parent, row, row + count - 1);
+    qDebug() << __FILE__ << __LINE__;
     for (int idx = 0; idx < count; idx++)
     {
+        qDebug() << __FILE__ << __LINE__;
         entryPoints->removePointAt(row);
+        qDebug() << __FILE__ << __LINE__;
+        success = true;
     }
+    qDebug() << __FILE__ << __LINE__;
     endRemoveRows();
-    return false;
+    qDebug() << __FILE__ << __LINE__;
+    return success;
 }
 
 

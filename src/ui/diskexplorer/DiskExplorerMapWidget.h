@@ -21,7 +21,7 @@ public:
     {
         setTrack(track);
         setSector(sec);
-        connect(this,SIGNAL(clicked(bool)),SLOT(handleClick(bool)));
+        connect(this, &DEButton::clicked, this, &DEButton::handleClick);
         m_isHighlighted = false;
     }
     void setTrack(int track) { m_track = track; }

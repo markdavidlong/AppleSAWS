@@ -4,10 +4,18 @@
 #include <QObject>
 #include <QDataStream>
 
+typedef enum {
+    SizeUnknown = 0,
+    SizeByte = 1,
+    SizeWord = 2
+} SymbolSize;
+
 struct AssemblerSymbol {
     quint16 address;
     QString name;
+    SymbolSize symbolsize;
 };
+
 
 class AssemblerSymbols : public QObject
 {
@@ -30,6 +38,7 @@ public:
 
     void doTestData();
 
+    int locationOfSymbolAtAddress(quint16 address);
 signals:
     void symbolAdded(AssemblerSymbol &AssemblerSymbol, int location);
     void symbolAddedAt(int location);

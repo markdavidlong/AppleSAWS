@@ -83,19 +83,23 @@ public:
      QAction *ntscAction()          { return m_ntscAction; }
      QAction *perPixelColorAction() { return m_perPixelColorAction; }
      QAction *showScanLinesAction() { return m_showScanLinesAction; }
+     QAction *prevPageAction() { return m_prevPageAction; }
+     QAction *nextPageAction() { return m_nextPageAction; }
 
      ColRow getColRowFromAppleAddress(quint16 address);
      ColRow getColRowFromRawAddress(quint16 address);
 
      QPixmap getPixmap() const { return m_pixmap; }
 
+     quint16 offset() const;
 signals:
+    void newOffset(quint16 offset);
 
 public slots:
     void setData(QByteArray data);
     void setMode(ViewMode);
     void setUnpackedData(QByteArray unpackedData);
-
+    void setOffset(quint16 offset);
 protected:
     int getLineAddressOffset(int line);
     QByteArray packData(QByteArray unpackedData);
@@ -105,6 +109,9 @@ protected slots:
     void handleMonochromeAction(bool toggled);
     void handlePerPixelColorAction(bool toggled);
     void handleShowScanLinesAction(bool toggled);
+
+    void handlePrevPageAction(bool);
+    void handleNextPageAction(bool);
 
 private:
     void makeAddressTables();
@@ -124,12 +131,16 @@ private:
     QAction *m_ntscAction;
     QAction *m_perPixelColorAction;
     QAction *m_showScanLinesAction;
+    QAction *m_prevPageAction;
+    QAction *m_nextPageAction;
     QActionGroup *formatGroup;
 
     bool m_showScanLines;
 
     static QVector<ColRow> m_rawAddressToColRowList;
     static QVector<ColRow> m_appleAddressToColRowList;
+
+    quint16 m_offset;
 };
 
 #endif // HIRESSCREENWIDGET_H

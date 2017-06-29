@@ -59,7 +59,7 @@ void ViewerBase::setFile(GenericFile *file)
     if (dynamic_cast<ApplesoftFile*>(file))
         hdv->setFile(file,0x801);  //TODO: Double check this offset.
     else
-        hdv->setFile(file);
+        hdv->setFile(file,m_file->address());
     descriptor = ("Hex Dump Viewer");
     addViewer(descriptor,hdv);
     defaultViewerDescriptor = descriptor;
@@ -132,7 +132,8 @@ void ViewerBase::setFile(GenericFile *file)
         defaultViewerDescriptor = descriptor;
 
     }
-    connect(m_viewercombo, SIGNAL(currentIndexChanged(QString)), SLOT(showViewer(QString)));
+    connect(m_viewercombo, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
+            this, &ViewerBase::showViewer);
     showViewer(defaultViewerDescriptor);
 }
 
@@ -151,18 +152,20 @@ void ViewerBase::addViewer(QString descriptor, FileViewerInterface *viewer)
     }
 }
 
-void ViewerBase::showViewer(QString descriptor)
+void ViewerBase::showViewer(const QString& descriptor)
 {
     FileViewerInterface *fvi = m_viewers[descriptor];
     if (fvi)
     {
         ui->actionExport->disconnect(SIGNAL(triggered(bool)));
         ui->actionExport->setEnabled(fvi->canExport());
-        connect(ui->actionExport, SIGNAL(triggered(bool)), fvi, SLOT(doExport()));
+        connect(ui->actionExport, &QAction::triggered,
+                fvi, &FileViewerInterface::doExport);
 
         ui->action_Print->disconnect(SIGNAL(triggered(bool)));
         ui->action_Print->setEnabled(fvi->canPrint());
-        connect(ui->action_Print, SIGNAL(triggered(bool)), fvi, SLOT(doPrint()));
+        connect(ui->action_Print, &QAction::triggered,
+                fvi, &FileViewerInterface::doPrint);
 
         m_optionMenu->clear();
         m_viewercombo->setCurrentText(descriptor);
