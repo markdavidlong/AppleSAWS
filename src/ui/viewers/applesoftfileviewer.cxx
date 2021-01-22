@@ -1,11 +1,13 @@
 #include "applesoftfileviewer.h"
 #include "ui_applesoftfileviewer.h"
 #include "applesoftformatter.h"
+#include "util.h"
 #include <QDebug>
 #include <QSettings>
 #include <QPrinter>
 #include <QPrintDialog>
 #include <QCloseEvent>
+#include <QFontDialog>
 
 
 ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
@@ -14,6 +16,11 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
 {
     ui->setupUi(this);
     m_afdv = Q_NULLPTR;
+
+
+    QFont textAreaFont;
+    textAreaFont.setStyleHint(QFont::Monospace);
+    textAreaFont.setPointSize(12);
 
     QSettings settings;
     QString title = QString("Applesoft Viewer");
@@ -34,6 +41,7 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
     m_showVarExplorerAction = Q_NULLPTR;
     m_wordWrapAction = Q_NULLPTR;
     m_showCtrlCharsAction = Q_NULLPTR;
+    m_setFontAction = Q_NULLPTR;
 
     toggleWordWrap(settings.value("ASViewer.WordWrap",true).toBool());
 
@@ -42,6 +50,8 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
     setBreakAfterReturn(settings.value("ASViewer.breakAfterReturn",false).toBool(), NoReformat);
     setSyntaxHighlighting(settings.value("ASViewer.syntaxHighlighting",true).toBool(), NoReformat);
     setShowCtrlChars(settings.value("ASViewer.showCtrlChars",true).toBool(), NoReformat);
+
+    setTextFont(fontFromSettings("ASViewer.textFont", textAreaFont), NoReformat);
 }
 
 ApplesoftFileViewer::~ApplesoftFileViewer()
@@ -149,6 +159,26 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
     }
     menu->addAction(m_showVarExplorerAction);
 
+    menu->addSeparator();
+
+    if (!m_setFontAction)
+    {
+        m_setFontAction = new QAction("Set &Font...",this);
+        connect(m_setFontAction, &QAction::triggered, this, [this] {
+            bool ok;
+            QFont font = QFontDialog::getFont(&ok,
+                                              ui->textArea->font(),
+                                              this, "Set Font",
+                                              QFontDialog::MonospacedFonts);
+            if (ok) {
+                setTextFont(font,ForceReformat);
+                fontToSettings("ASViewer.textFont",font);
+            }
+
+        });
+    }
+    menu->addAction(m_setFontAction);
+
     return true;
 }
 
@@ -255,6 +285,15 @@ void ApplesoftFileViewer::setIntsAsHex(bool enabled, ReformatRule reformat)
     settings.setValue("ASViewer.intsAsHex",enabled);
     if (reformat == ForceReformat)
         reformatText();
+}
+
+void ApplesoftFileViewer::setTextFont(const QFont &font, ReformatRule reformat)
+{
+    ui->textArea->setFont(font);
+    if (reformat == ForceReformat)
+    {
+        reformatText();
+    }
 }
 
 void ApplesoftFileViewer::reformatText()
@@ -373,7 +412,9 @@ void ApplesoftFileViewer::doPrint()
     }
 
     QTextDocument printDoc;
-    QFont printFont("Courier",10);
+    QFont printFont;
+    printFont.setStyleHint(QFont::Monospace);
+    printFont.setPointSize(10);
     printDoc.setDefaultFont(printFont);
     QTextOption printOptions;
     printOptions.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);

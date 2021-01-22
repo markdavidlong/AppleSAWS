@@ -54,7 +54,8 @@ bool VTOC::isSectorInUse(TSPair ts) {
     quint8 baseaddr = (track * 4) + 0x38;
 
     //quint16 word = (((quint16) m_data->rawData()[baseaddr]) *256) + (quint8) m_data->rawData()[baseaddr+1];
-    quint16 word = makeWord(m_data->rawData()[baseaddr+1],m_data->rawData()[baseaddr]);
+    quint16 word = makeWord(m_data->rawData()[baseaddr+1],
+                            m_data->rawData()[baseaddr]);
     quint16 bitpos = (quint16) 0x01 << (quint16) sec;
 
     return !(word & bitpos);

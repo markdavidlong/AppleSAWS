@@ -24,14 +24,7 @@
     <number>1</number>
    </property>
    <item row="0" column="0" colspan="2">
-    <widget class="QTextBrowser" name="textArea">
-     <property name="font">
-      <font>
-       <family>Courier 10 Pitch</family>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-    </widget>
+    <widget class="QTextBrowser" name="textArea"/>
    </item>
   </layout>
  </widget>

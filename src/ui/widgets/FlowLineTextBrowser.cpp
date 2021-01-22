@@ -18,7 +18,6 @@ FlowLineTextBrowser::FlowLineTextBrowser(QWidget *parent) : QTextBrowser(parent)
 
 int FlowLineTextBrowser::getFirstVisibleBlock(QTextBlock *firstBlock) const
 {
-
     QTextCursor curs = QTextCursor(this->document());
     curs.movePosition(QTextCursor::Start);
     for(int i=0; i < this->document()->blockCount(); ++i)
@@ -44,8 +43,8 @@ int FlowLineTextBrowser::getFirstVisibleBlock(QTextBlock *firstBlock) const
 
     if (firstBlock)
         *firstBlock = QTextBlock();
-    return 0;
 
+    return 0;
 }
 
 void FlowLineTextBrowser::showEvent(QShowEvent *)

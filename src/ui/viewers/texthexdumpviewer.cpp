@@ -14,6 +14,11 @@ TextHexDumpViewer::TextHexDumpViewer(QWidget *parent) :
 {
     m_file = Q_NULLPTR;
     ui->setupUi(this);
+    QFont textAreaFont;
+    textAreaFont.setStyleHint(QFont::Monospace);
+    ui->textArea->setFont(textAreaFont);
+
+
     m_offset = 0;
 
     QString title = QString("Text/Hex File Viewer");

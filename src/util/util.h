@@ -5,6 +5,8 @@
 #include <QByteArray>
 #include <QDebug>
 #include <QColor>
+#include <QFont>
+#include <QSettings>
 
 typedef enum {
     DOSTextFile = 0x00,
@@ -21,7 +23,7 @@ typedef enum {
 typedef enum {
     Inverse    = 0x00,  // 0x00 -- 0x3F
     Flash      = 0x01,  // 0x40 -- 0x7F
-    Normal     = 0x02,  // 0x80 -- 0xBF
+    NormalLow     = 0x02,  // 0x80 -- 0xBF
     NormalHigh = 0x04   // 0xC0 -- 0xFF
 } TextAttribute;
 
@@ -74,6 +76,20 @@ inline quint16 makeWord(quint8 lo, quint8 hi)
     return hi*256 + lo;
 }
 
+inline QFont fontFromSettings(QString key, QFont &defaultfont)
+{
+    QSettings settings;
+    QString result = settings.value(key, defaultfont.toString()).toString();
+    QFont retval;
+    retval.fromString(result);
+    return retval;
+}
+
+inline void fontToSettings(const QString &key, const QFont &font)
+{
+    QSettings settings;
+    settings.setValue(key, font.toString());
+}
 
 
 #endif // UTIL_H

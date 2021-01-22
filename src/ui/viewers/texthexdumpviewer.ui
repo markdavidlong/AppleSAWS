@@ -15,14 +15,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="QTextBrowser" name="textArea">
-     <property name="font">
-      <font>
-       <family>Courier</family>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
-    </widget>
+    <widget class="QTextBrowser" name="textArea"/>
    </item>
   </layout>
  </widget>

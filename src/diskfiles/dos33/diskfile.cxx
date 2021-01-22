@@ -9,6 +9,7 @@
 #include "tracksectorlist.h"
 #include "applesoftfile.h"
 #include "binaryfile.h"
+#include "IntBasicFile.h"
 #include "relocatablefile.h"
 #include "textfile.h"
 
@@ -127,6 +128,10 @@ GenericFile *DiskFile::getFile(FileDescriptiveEntry fde)
         else if ((fde.fileType() == "T"))
         {
             retval = new TextFile(data);
+        }
+        else if ((fde.fileType() == "I"))
+        {
+            retval = new IntBasicFile(data);
         }
         else
         {

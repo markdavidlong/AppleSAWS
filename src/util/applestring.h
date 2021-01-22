@@ -13,10 +13,16 @@ public:
     AppleChar() { m_val = 0; }
     AppleChar(quint8 ch) { m_val = ch; }
 
-    QChar printable() const;
+    QChar printable() const { return printable(m_val); }
 
-    TextAttribute getAttribute() const;
-    TextSet getTextSet() const;
+    TextAttribute getAttribute() const { return getAttribute(m_val); }
+    TextSet getTextSet() const { return getTextSet(m_val); }
+
+    static TextAttribute getAttribute(quint8 val) ;
+    static TextSet getTextSet(quint8 val) ;
+    static QChar printable(quint8 val) ;
+    static QString getHtmlString(quint8 val);
+
 
 private:
     quint8 m_val;
@@ -31,3 +37,4 @@ public:
 };
 
 #endif // APPLESTRING_H
+

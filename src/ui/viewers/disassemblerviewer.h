@@ -45,6 +45,8 @@ public slots:
     void doPrint();
     void doExport();
     void handleDisassembleRequest(QList<quint16> addresses);
+protected:
+    void setTextFont(const QFont &font);
 protected slots:
     void showMetadataDialog();
 private:
@@ -55,6 +57,7 @@ private:
 
     QAction *m_wordWrapAction;
     QAction *m_showMetadataAction;
+    QAction *m_setFontAction;
 
     BinaryFileMetadata *m_bfm;
 

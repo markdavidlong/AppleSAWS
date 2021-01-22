@@ -51,15 +51,6 @@
    </item>
    <item row="1" column="0">
     <widget class="QTextBrowser" name="textArea">
-     <property name="font">
-      <font>
-       <family>Misc Fixed</family>
-       <pointsize>14</pointsize>
-       <weight>50</weight>
-       <bold>false</bold>
-       <stylestrategy>PreferAntialias</stylestrategy>
-      </font>
-     </property>
      <property name="acceptDrops">
       <bool>false</bool>
      </property>

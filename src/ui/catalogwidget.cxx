@@ -4,6 +4,7 @@
 #include "binaryfile.h"
 #include "applesoftfile.h"
 #include "genericfile.h"
+#include "IntBasicFile.h"
 #include <QUrl>
 #include <QDebug>
 #include <QMenu>
@@ -15,7 +16,9 @@ CatalogWidget::CatalogWidget(QWidget *parent) :
     ui(new Ui::CatalogWidget)
 {
     ui->setupUi(this);
-    ui->catalog_list->setFont(QFont("monospace"));
+    QFont catalogFont;
+    catalogFont.setStyleHint(QFont::Monospace);
+    ui->catalog_list->setFont(catalogFont);
     ui->noteButton->setText(QChar(0x270d));
     ui->noteButton->setFont(QFont("sans",16,QFont::Bold));
 

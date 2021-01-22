@@ -9,6 +9,7 @@
 #include <QMenu>
 #include <QAction>
 #include <QDebug>
+#include <QFontDialog>
 
 
 DisassemblerViewer::DisassemblerViewer(QWidget *parent) :
@@ -16,16 +17,24 @@ DisassemblerViewer::DisassemblerViewer(QWidget *parent) :
     ui(new Ui::DisassemblerViewer)
 {
     ui->setupUi(this);
+    QFont textAreaFont;
+    textAreaFont.setStyleHint(QFont::Monospace);
+
+
     m_isRelo = false;
     m_dmd = Q_NULLPTR;
     m_wordWrapAction = Q_NULLPTR;
     m_showMetadataAction = Q_NULLPTR;
+    m_setFontAction = Q_NULLPTR;
+
 
     QString title = QString("Disassembly Viewer");
     setWindowTitle(title);
 
     QSettings settings;
     toggleWordWrap(settings.value("DisassemblerViewer.WordWrap",true).toBool());
+
+    setTextFont(fontFromSettings("DisassemblerViewer.textFont", textAreaFont));
 }
 
 DisassemblerViewer::~DisassemblerViewer()
@@ -33,6 +42,10 @@ DisassemblerViewer::~DisassemblerViewer()
     delete ui;
 }
 
+void DisassemblerViewer::setTextFont(const QFont &font)
+{
+    ui->textArea->setFont(font);
+}
 void DisassemblerViewer::setFile(GenericFile *file)
 {
 
@@ -108,7 +121,8 @@ void DisassemblerViewer::handleDisassembleRequest(QList<quint16> addresses)
 
     disassemble(addresses);
     strings += getDisassemblyStrings();
-    qSort(strings);
+   // qSort(strings);
+    strings.sort();
     strings.removeDuplicates();
 
     if (m_isRelo)
@@ -137,9 +151,11 @@ void DisassemblerViewer::disassemble(QList<quint16> entryPoints) {
     Disassembler dis(m_mem.values());
 
     int length = m_file->length();
+    int end = m_file->address()+length;
+    if (end > 0xffff) { end = 0xffff; }
 
     QList<DisassembledItem> lines = dis.disassemble(m_file->address(),
-                                                    m_file->address()+length,
+                                                    end,
                                                     entryPoints);
     dis.setUnknownToData(m_file->address(),m_file->address()+length);
     m_jumpLines = dis.getJumpLines();
@@ -152,7 +168,7 @@ void DisassemblerViewer::disassemble(QList<quint16> entryPoints) {
             QString potentialLabel = getPotentialLabel(di.arg16());
             if (!potentialLabel.isEmpty()) {
                 if (ds.contains("_ARG16_")) { ds.replace("_ARG16_",potentialLabel); }
-                else if (ds.contains("_ARG8_")) { ds.replace("_ARG8_",potentialLabel); }
+                if (ds.contains("_ARG8_")) { ds.replace("_ARG8_",potentialLabel); }
             } else {
                 ds = di.disassembledString();
             }
@@ -187,12 +203,12 @@ void DisassemblerViewer::disassemble(QList<quint16> entryPoints) {
                             .arg(uint8ToHex(m_mem.at(idx)))
                             .arg(m_bfm->assemblerSymbols()->at(loc).name);;
                 }
-                else if (m_bfm->assemblerSymbols()->at(loc).symbolsize == SizeWord)
+                if (m_bfm->assemblerSymbols()->at(loc).symbolsize == SizeWord)
                 {
                     newline = QString("%1: .Word $%2               ; %3").arg(uint16ToHex(idx))
                             .arg(uint16ToHex(m_mem.at(idx) + (m_mem.at(idx+1)*256)))
                             .arg(m_bfm->assemblerSymbols()->at(loc).name);
-                            idx++;
+                    idx++;
                 }
                 else
                 {
@@ -206,10 +222,11 @@ void DisassemblerViewer::disassemble(QList<quint16> entryPoints) {
 
             if (usedefault)
             {
-            newline = QString("%1:  %2                       %3 (%4)").arg(uint16ToHex(idx))
-                              .arg(uint8ToHex(m_mem.at(idx)))
-                              .arg(makeDescriptorStringForVal(m_mem.at(idx)))
-                              .arg(dis.getMnemonicForOp(m_mem.at(idx)));
+                newline = QString("%1:  %2                       %3\t(%4)\t'%5'").arg(uint16ToHex(idx))
+                        .arg(uint8ToHex(m_mem.at(idx)))
+                        .arg(makeDescriptorStringForVal(m_mem.at(idx)))
+                        .arg(dis.getMnemonicForOp(m_mem.at(idx)))
+                        .arg(AppleChar::printable(m_mem.at(idx)));
             }
             formattedLines.append(newline);
         }
@@ -221,1285 +238,1284 @@ void DisassemblerViewer::disassemble(QList<quint16> entryPoints) {
 
 
 
-QString DisassemblerViewer::getPotentialLabel(quint16 address) {
-    QString retval = QString();
+QString DisassemblerViewer::getPotentialLabel(quint16 address)
+{
+    if (address == 0x24) { return "MON.CURSORHORIZ"; }
+    if (address == 0x28) { return "MON.BASL"; }
+    if (address == 0x29) { return "MON.BASH"; }
+    if (address == 0x33) { return "MON.PROMPTCHAR"; }
+    if (address == 0x36) { return "DOS.CSWL"; }
+    if (address == 0x37) { return "DOS.CSWH"; }
+    if (address == 0x38) { return "DOS.KSWL"; }
+    if (address == 0x39) { return "DOS.KSWH"; }
+    if (address == 0x40) { return "DOS.FILE_BUFFER_L"; }
+    if (address == 0x41) { return "DOS.FILE_BUFFER_H"; }
+    if (address == 0x42) { return "DOS.BUFFER_ADDR_L"; }
+    if (address == 0x43) { return "DOS.BUFFER_ADDR_H"; }
+    if (address == 0x44) { return "DOS.NUMERIC_OPERAND_L"; }
+    if (address == 0x45) { return "DOS.NUMERIC_OPERAND_H"; }
 
-    if      (address == 0x24) { retval = "MON.CURSORHORIZ"; }
-    else if (address == 0x28) { retval = "MON.BASL"; }
-    else if (address == 0x29) { retval = "MON.BASH"; }
-    else if (address == 0x33) { retval = "MON.PROMPTCHAR"; }
-    else if (address == 0x36) { retval = "DOS.CSWL"; }
-    else if (address == 0x37) { retval = "DOS.CSWH"; }
-    else if (address == 0x38) { retval = "DOS.KSWL"; }
-    else if (address == 0x39) { retval = "DOS.KSWH"; }
-    else if (address == 0x40) { retval = "DOS.FILE_BUFFER_L"; }
-    else if (address == 0x41) { retval = "DOS.FILE_BUFFER_H"; }
-    else if (address == 0x42) { retval = "DOS.BUFFER_ADDR_L"; }
-    else if (address == 0x43) { retval = "DOS.BUFFER_ADDR_H"; }
-    else if (address == 0x44) { retval = "DOS.NUMERIC_OPERAND_L"; }
-    else if (address == 0x45) { retval = "DOS.NUMERIC_OPERAND_H"; }
+    if (address == 0x67) { return "AS.PROG_STARTL"; }
+    if (address == 0x68) { return "AS.PROG_STARTH"; }
 
-    else if (address == 0x67) { retval = "AS.PROG_STARTL"; }
-    else if (address == 0x68) { retval = "AS.PROG_STARTH"; }
+    if (address == 0x69) { return "AS.VAR_STARTL"; }
+    if (address == 0x6A) { return "AS.VAR_STARTH"; }
 
-    else if (address == 0x69) { retval = "AS.VAR_STARTL"; }
-    else if (address == 0x6A) { retval = "AS.VAR_STARTH"; }
+    if (address == 0x6B) { return "AS.ARRAY_STARTL"; }
+    if (address == 0x6C) { return "AS.ARRAY_STARTH"; }
 
-    else if (address == 0x6B) { retval = "AS.ARRAY_STARTL"; }
-    else if (address == 0x6C) { retval = "AS.ARRAY_STARTH"; }
+    if (address == 0x6D) { return "AS.NUMSTORE_ENDL"; }
+    if (address == 0x6E) { return "AS.NUMSTORE_ENDH"; }
 
-    else if (address == 0x6D) { retval = "AS.NUMSTORE_ENDL"; }
-    else if (address == 0x6E) { retval = "AS.NUMSTORE_ENDH"; }
+    if (address == 0x6F) { return "AS.STRING_STARTL"; }
+    if (address == 0x70) { return "AS.STRING_STARTH"; }
 
-    else if (address == 0x6F) { retval = "AS.STRING_STARTL"; }
-    else if (address == 0x70) { retval = "AS.STRING_STARTH"; }
+    if (address == 0x71) { return "AS.PTR_9L"; }
+    if (address == 0x72) { return "AS.PTR_9H"; }
 
-    else if (address == 0x71) { retval = "AS.PTR_9L"; }
-    else if (address == 0x72) { retval = "AS.PTR_9H"; }
+    if (address == 0x73) { return "AS.HIMEM_L"; }
+    if (address == 0x74) { return "AS.HIMEM_H"; }
 
-    else if (address == 0x73) { retval = "AS.HIMEM_L"; }
-    else if (address == 0x74) { retval = "AS.HIMEM_H"; }
+    if (address == 0x75) { return "AS.CURR_LINENUM_L"; }
+    if (address == 0x76) { return "AS.CURR_LINENUM_H"; }
 
-    else if (address == 0x75) { retval = "AS.CURR_LINENUM_L"; }
-    else if (address == 0x76) { retval = "AS.CURR_LINENUM_H"; }
+    if (address == 0x77) { return "AS.INTR_LINENUM_L"; }
+    if (address == 0x78) { return "AS.INTR_LINENUM_H"; }
 
-    else if (address == 0x77) { retval = "AS.INTR_LINENUM_L"; }
-    else if (address == 0x78) { retval = "AS.INTR_LINENUM_H"; }
+    if (address == 0x79) { return "AS.NEXT_STATEMENT_L"; }
+    if (address == 0x7A) { return "AS.NEXT_STATEMENT_H"; }
 
-    else if (address == 0x79) { retval = "AS.NEXT_STATEMENT_L"; }
-    else if (address == 0x7A) { retval = "AS.NEXT_STATEMENT_H"; }
+    if (address == 0x7B) { return "AS.DATA_LINENUM_L"; }
+    if (address == 0x7C) { return "AS.DATA_LINENUM_H"; }
 
-    else if (address == 0x7B) { retval = "AS.DATA_LINENUM_L"; }
-    else if (address == 0x7C) { retval = "AS.DATA_LINENUM_H"; }
+    if (address == 0x7D) { return "AS.DATA_ADDR_L"; }
+    if (address == 0x7E) { return "AS.DATA_ADDR_H"; }
 
-    else if (address == 0x7D) { retval = "AS.DATA_ADDR_L"; }
-    else if (address == 0x7E) { retval = "AS.DATA_ADDR_H"; }
+    if (address == 0x7F) { return "AS.INPUT_SRC_L"; }
+    if (address == 0x80) { return "AS.INPUT_SRC_H"; }
 
-    else if (address == 0x7F) { retval = "AS.INPUT_SRC_L"; }
-    else if (address == 0x80) { retval = "AS.INPUT_SRC_H"; }
+    if (address == 0x81) { return "AS.LAST_VARNAME_L"; }
+    if (address == 0x82) { return "AS.LAST_VARNAME_H"; }
 
-    else if (address == 0x81) { retval = "AS.LAST_VARNAME_L"; }
-    else if (address == 0x82) { retval = "AS.LAST_VARNAME_H"; }
+    if (address == 0x83) { return "AS.LAST_VARVAL_L"; }
+    if (address == 0x84) { return "AS.LAST_VARVAL_H"; }
 
-    else if (address == 0x83) { retval = "AS.LAST_VARVAL_L"; }
-    else if (address == 0x84) { retval = "AS.LAST_VARVAL_H"; }
+    if (address == 0xAF) { return "AS.PROGEND_L"; }
+    if (address == 0xB0) { return "AS.PROGEND_H"; }
 
-    else if (address == 0xAF) { retval = "AS.PROGEND_L"; }
-    else if (address == 0xB0) { retval = "AS.PROGEND_H"; }
+    if (address == 0xD6) { return "DOS.AS.LOCK"; }
 
-    else if (address == 0xD6) { retval = "DOS.AS.LOCK"; }
+    if (address == 0xE0) { return "AS.HGR_X_L"; }
+    if (address == 0xE1) { return "AS.HGR_X_H"; }
+    if (address == 0xE2) { return "AS.HGR_Y"; }
 
-    else if (address == 0xE0) { retval = "AS.HGR_X_L"; }
-    else if (address == 0xE1) { retval = "AS.HGR_X_H"; }
-    else if (address == 0xE2) { retval = "AS.HGR_Y"; }
+    if (address == 0xE4) { return "AS.HGR_COLOR"; }
 
-    else if (address == 0xE4) { retval = "AS.HGR_COLOR"; }
+    if (address == 0xE8) { return "AS.SHAPETBL_L"; }
+    if (address == 0xE9) { return "AS.SHAPETBL_H"; }
 
-    else if (address == 0xE8) { retval = "AS.SHAPETBL_L"; }
-    else if (address == 0xE9) { retval = "AS.SHAPETBL_H"; }
+    if (address == 0xEA) { return "AS.HGR_COLLISION_CTR"; }
 
-    else if (address == 0xEA) { retval = "AS.HGR_COLLISION_CTR"; }
+    if (address == 0x03d0) { return "DOS.WARMSTART"; }
+    if (address == 0x03d3) { return "DOS.COLDSTART"; }
+    if (address == 0x03d6) { return "DOS.FILE_MANAGER"; }
+    if (address == 0x03d9) { return "DOS.RWTS"; }
+    if (address == 0x03dc) { return "DOS.FM_PARAM_LIST_LOCATE"; }
+    if (address == 0x03e3) { return "DOS.RWTS_PARAM_LIST_LOCATE"; }
+    if (address == 0x03ea) { return "DOS.REPLACE_DOS_INTERCEPTS"; }
+    if (address == 0x03ef) { return "DOS.AUTOSTART_BRK_HANDLER"; }
+    if (address == 0x03f2) { return "DOS.AUTOSTART_RESET_HANDLER"; }
+    if (address == 0x03f4) { return "DOS.POWERUP_BYTE"; }
+    if (address == 0x03f5) { return "AMPR_VEC"; }
+    if (address == 0x03f8) { return "MON.CTRL_Y_VEC"; }
+    if (address == 0x03fb) { return "DOS.NMI_HANDLER"; }
+    if (address == 0x03fe) { return "DOS.IRQ_HANDLER"; }
 
-    else if (address == 0x03d0) { retval = "DOS.WARMSTART"; }
-    else if (address == 0x03d3) { retval = "DOS.COLDSTART"; }
-    else if (address == 0x03d6) { retval = "DOS.FILE_MANAGER"; }
-    else if (address == 0x03d9) { retval = "DOS.RWTS"; }
-    else if (address == 0x03dc) { retval = "DOS.FM_PARAM_LIST_LOCATE"; }
-    else if (address == 0x03e3) { retval = "DOS.RWTS_PARAM_LIST_LOCATE"; }
-    else if (address == 0x03ea) { retval = "DOS.REPLACE_DOS_INTERCEPTS"; }
-    else if (address == 0x03ef) { retval = "DOS.AUTOSTART_BRK_HANDLER"; }
-    else if (address == 0x03f2) { retval = "DOS.AUTOSTART_RESET_HANDLER"; }
-    else if (address == 0x03f4) { retval = "DOS.POWERUP_BYTE"; }
-    else if (address == 0x03f5) { retval = "AMPR_VEC"; }
-    else if (address == 0x03f8) { retval = "MON.CTRL_Y_VEC"; }
-    else if (address == 0x03fb) { retval = "DOS.NMI_HANDLER"; }
-    else if (address == 0x03fe) { retval = "DOS.IRQ_HANDLER"; }
+    if (address == 0x0400) { return "MON.LINE1"; }
 
-    else if (address == 0x0400) { retval = "MON.LINE1"; }
+    if (address == 0x07f8) { return "MON.MSLOT"; }
+    if (address == 0xc000) { return "KEYBOARD"; }
 
-    else if (address == 0x07f8) { retval = "MON.MSLOT"; }
-    else if (address == 0xc000) { retval = "KEYBOARD"; }
+    if (address == 0xc001) { return "M80_SET80COL"; }
+    if (address == 0xc002) { return "M80_RDMAINRAM"; }
+    if (address == 0xc003) { return "M80_RDCARDRAM"; }
+    if (address == 0xc004) { return "M80_WRMAINRAM"; }
+    if (address == 0xc005) { return "M80_WRCARDRAM"; }
 
-    else if (address == 0xc001) { retval = "M80_SET80COL"; }
-    else if (address == 0xc002) { retval = "M80_RDMAINRAM"; }
-    else if (address == 0xc003) { retval = "M80_RDCARDRAM"; }
-    else if (address == 0xc004) { retval = "M80_WRMAINRAM"; }
-    else if (address == 0xc005) { retval = "M80_WRCARDRAM"; }
+    if (address == 0xc006) { return "MON.SETSLOTCXROM"; }
+    if (address == 0xc007) { return "MON.SETINTCXROM"; }
 
-    else if (address == 0xc006) { retval = "MON.SETSLOTCXROM"; }
-    else if (address == 0xc007) { retval = "MON.SETINTCXROM"; }
+    if (address == 0xc008) { return "M80_SETSTDSZ"; }
+    if (address == 0xc009) { return "M80_SETALTZP"; }
+    if (address == 0xc00A) { return "M80_SETINTC3ROM"; }
+    if (address == 0xc00B) { return "M80_SETSLOTC3ROM"; }
+    if (address == 0xc00C) { return "M80_CLR80VID"; }
+    if (address == 0xc00D) { return "M80_SET80VID"; }
+    if (address == 0xc00E) { return "M80_CLRALTCHAR"; }
+    if (address == 0xc00F) { return "M80_SETALTCHAR"; }
 
-    else if (address == 0xc008) { retval = "M80_SETSTDSZ"; }
-    else if (address == 0xc009) { retval = "M80_SETALTZP"; }
-    else if (address == 0xc00A) { retval = "M80_SETINTC3ROM"; }
-    else if (address == 0xc00B) { retval = "M80_SETSLOTC3ROM"; }
-    else if (address == 0xc00C) { retval = "M80_CLR80VID"; }
-    else if (address == 0xc00D) { retval = "M80_SET80VID"; }
-    else if (address == 0xc00E) { retval = "M80_CLRALTCHAR"; }
-    else if (address == 0xc00F) { retval = "M80_SETALTCHAR"; }
+    if (address == 0xc010) { return "MON.KBDSTRB"; }
 
-    else if (address == 0xc010) { retval = "MON.KBDSTRB"; }
+    if (address == 0xc011) { return "M80_RDLCBNK2"; }
+    if (address == 0xc012) { return "M80_RDLCRAM"; }
+    if (address == 0xc013) { return "M80_RDRAMRD"; }
+    if (address == 0xc014) { return "M80_RDRAMWRT"; }
 
-    else if (address == 0xc011) { retval = "M80_RDLCBNK2"; }
-    else if (address == 0xc012) { retval = "M80_RDLCRAM"; }
-    else if (address == 0xc013) { retval = "M80_RDRAMRD"; }
-    else if (address == 0xc014) { retval = "M80_RDRAMWRT"; }
+    if (address == 0xc015) { return "RDCXROM"; }
+    if (address == 0xc016) { return "RDALTZP"; }
+    if (address == 0xc017) { return "RDC3ROM"; }
 
-    else if (address == 0xc015) { retval = "RDCXROM"; }
-    else if (address == 0xc016) { retval = "RDALTZP"; }
-    else if (address == 0xc017) { retval = "RDC3ROM"; }
+    if (address == 0xc018) { return "MON.RD80STORE"; }
 
-    else if (address == 0xc018) { retval = "MON.RD80STORE"; }
+    if (address == 0xc019) { return "RDVBLBAR"; }
+    if (address == 0xc01A) { return "RDTEXT"; }
+    if (address == 0xc01B) { return "RDMIXED"; }
 
-    else if (address == 0xc019) { retval = "RDVBLBAR"; }
-    else if (address == 0xc01A) { retval = "RDTEXT"; }
-    else if (address == 0xc01B) { retval = "RDMIXED"; }
+    if (address == 0xc01c) { return "RDPAGE2"; }
+    if (address == 0xc01D) { return "RDHIRES"; }
+    if (address == 0xc01E) { return "RDALTCHAR"; }
 
-    else if (address == 0xc01c) { retval = "RDPAGE2"; }
-    else if (address == 0xc01D) { retval = "RDHIRES"; }
-    else if (address == 0xc01E) { retval = "RDALTCHAR"; }
+    if (address == 0xc01f) { return "RD80VID"; }
 
-    else if (address == 0xc01f) { retval = "RD80VID"; }
+    if (address == 0xc020) { return "TAPEOUT"; }
 
-    else if (address == 0xc020) { retval = "TAPEOUT"; }
+    if (address == 0xc030) { return "SPKR"; }
 
-    else if (address == 0xc030) { retval = "SPKR"; }
+    if (address == 0xc040) { return "STROBE"; }
 
-    else if (address == 0xc040) { retval = "STROBE"; }
+    if (address == 0xc050) { return "SW.TXTCLR"; }
+    if (address == 0xc051) { return "SW.TXTSET"; }
+    if (address == 0xc052) { return "SW.MIXCLR"; }
+    if (address == 0xc053) { return "SW.MIXSET"; }
+    if (address == 0xc054) { return "SW.LOWSCR"; }
+    if (address == 0xc055) { return "SW.HISCR"; }
+    if (address == 0xc056) { return "SW.LORES"; }
+    if (address == 0xc057) { return "SW.HIRES"; }
+    if (address == 0xc058) { return "SW.SETAN0"; }
+    if (address == 0xc059) { return "SW.CLRAN0"; }
+    if (address == 0xc05a) { return "SW.SETAN1"; }
+    if (address == 0xc05b) { return "SW.CLRAN1"; }
+    if (address == 0xc05c) { return "SW.SETAN2"; }
+    if (address == 0xc05d) { return "SW.CLRAN2"; }
+    if (address == 0xc05e) { return "SW.SETAN3"; }
+    if (address == 0xc05f) { return "SW.CLRAN3"; }
+    if (address == 0xc060) { return "MON.TAPEIN"; }
+    if (address == 0xc064) { return "MON.PADDL0"; }
+    if (address == 0xc070) { return "MON.PTRIG"; }
 
-    else if (address == 0xc050) { retval = "SW.TXTCLR"; }
-    else if (address == 0xc051) { retval = "SW.TXTSET"; }
-    else if (address == 0xc052) { retval = "SW.MIXCLR"; }
-    else if (address == 0xc053) { retval = "SW.MIXSET"; }
-    else if (address == 0xc054) { retval = "SW.LOWSCR"; }
-    else if (address == 0xc055) { retval = "SW.HISCR"; }
-    else if (address == 0xc056) { retval = "SW.LORES"; }
-    else if (address == 0xc057) { retval = "SW.HIRES"; }
-    else if (address == 0xc058) { retval = "SW.SETAN0"; }
-    else if (address == 0xc059) { retval = "SW.CLRAN0"; }
-    else if (address == 0xc05a) { retval = "SW.SETAN1"; }
-    else if (address == 0xc05b) { retval = "SW.CLRAN1"; }
-    else if (address == 0xc05c) { retval = "SW.SETAN2"; }
-    else if (address == 0xc05d) { retval = "SW.CLRAN2"; }
-    else if (address == 0xc05e) { retval = "SW.SETAN3"; }
-    else if (address == 0xc05f) { retval = "SW.CLRAN3"; }
-    else if (address == 0xc060) { retval = "MON.TAPEIN"; }
-    else if (address == 0xc064) { retval = "MON.PADDL0"; }
-    else if (address == 0xc070) { retval = "MON.PTRIG"; }
+    if (address == 0xc080) { return "RDRAMBANK2_NOWRITE"; }
+    if (address == 0xc081) { return "RDROM_WRBANK2"; }
+    if (address == 0xc082) { return "RDROM_NOWRITE"; }
+    if (address == 0xc083) { return "RDWRBANK2"; }
+    if (address == 0xc084) { return "RDRAM_NOWRITE"; }
+    if (address == 0xc085) { return "READROM_WRBANK2"; }
+    if (address == 0xc086) { return "RDROM_NOWRITE"; }
+    if (address == 0xc087) { return "RDWRBANK2"; }
+    if (address == 0xc088) { return "RDBANK1_NOWRITE"; }
+    if (address == 0xc089) { return "RDROM_WRBANK1"; }
+    if (address == 0xc08A) { return "RDROM_NOWRITE"; }
+    if (address == 0xc08B) { return "RDWRBANK1"; }
+    if (address == 0xc08C) { return "RDBANK1_NOWRITE"; }
+    if (address == 0xc08D) { return "RDROM_WRBANK1"; }
+    if (address == 0xc08E) { return "RDROM_NOWRITE"; }
+    if (address == 0xc08F) { return "RDWR_BANK1"; }
 
-    else if (address == 0xc080) { retval = "RDRAMBANK2_NOWRITE"; }
-    else if (address == 0xc081) { retval = "RDROM_WRBANK2"; }
-    else if (address == 0xc082) { retval = "RDROM_NOWRITE"; }
-    else if (address == 0xc083) { retval = "RDWRBANK2"; }
-    else if (address == 0xc084) { retval = "RDRAM_NOWRITE"; }
-    else if (address == 0xc085) { retval = "READROM_WRBANK2"; }
-    else if (address == 0xc086) { retval = "RDROM_NOWRITE"; }
-    else if (address == 0xc087) { retval = "RDWRBANK2"; }
-    else if (address == 0xc088) { retval = "RDBANK1_NOWRITE"; }
-    else if (address == 0xc089) { retval = "RDROM_WRBANK1"; }
-    else if (address == 0xc08A) { retval = "RDROM_NOWRITE"; }
-    else if (address == 0xc08B) { retval = "RDWRBANK1"; }
-    else if (address == 0xc08C) { retval = "RDBANK1_NOWRITE"; }
-    else if (address == 0xc08D) { retval = "RDROM_WRBANK1"; }
-    else if (address == 0xc08E) { retval = "RDROM_NOWRITE"; }
-    else if (address == 0xc08F) { retval = "RDWR_BANK1"; }
+    if (address == 0xc090) { return "SLOT1_ROM0"; }
+    if (address == 0xc091) { return "SLOT1_ROM1"; }
+    if (address == 0xc092) { return "SLOT1_ROM2"; }
+    if (address == 0xc093) { return "SLOT1_ROM3"; }
+    if (address == 0xc094) { return "SLOT1_ROM4"; }
+    if (address == 0xc095) { return "SLOT1_ROM5"; }
+    if (address == 0xc096) { return "SLOT1_ROM6"; }
+    if (address == 0xc097) { return "SLOT1_ROM7"; }
+    if (address == 0xc098) { return "SLOT1_ROM8"; }
+    if (address == 0xc099) { return "SLOT1_ROM9"; }
+    if (address == 0xc09A) { return "SLOT1_ROMA"; }
+    if (address == 0xc09B) { return "SLOT1_ROMB"; }
+    if (address == 0xc09C) { return "SLOT1_ROMC"; }
+    if (address == 0xc09D) { return "SLOT1_ROMD"; }
+    if (address == 0xc09E) { return "SLOT1_ROME"; }
+    if (address == 0xc09F) { return "SLOT1_ROMF"; }
 
-    else if (address == 0xc090) { retval = "SLOT1_ROM0"; }
-    else if (address == 0xc091) { retval = "SLOT1_ROM1"; }
-    else if (address == 0xc092) { retval = "SLOT1_ROM2"; }
-    else if (address == 0xc093) { retval = "SLOT1_ROM3"; }
-    else if (address == 0xc094) { retval = "SLOT1_ROM4"; }
-    else if (address == 0xc095) { retval = "SLOT1_ROM5"; }
-    else if (address == 0xc096) { retval = "SLOT1_ROM6"; }
-    else if (address == 0xc097) { retval = "SLOT1_ROM7"; }
-    else if (address == 0xc098) { retval = "SLOT1_ROM8"; }
-    else if (address == 0xc099) { retval = "SLOT1_ROM9"; }
-    else if (address == 0xc09A) { retval = "SLOT1_ROMA"; }
-    else if (address == 0xc09B) { retval = "SLOT1_ROMB"; }
-    else if (address == 0xc09C) { retval = "SLOT1_ROMC"; }
-    else if (address == 0xc09D) { retval = "SLOT1_ROMD"; }
-    else if (address == 0xc09E) { retval = "SLOT1_ROME"; }
-    else if (address == 0xc09F) { retval = "SLOT1_ROMF"; }
+    if (address == 0xc0A0) { return "SLOT2_ROM0"; }
+    if (address == 0xc0A1) { return "SLOT2_ROM1"; }
+    if (address == 0xc0A2) { return "SLOT2_ROM2"; }
+    if (address == 0xc0A3) { return "SLOT2_ROM3"; }
+    if (address == 0xc0A4) { return "SLOT2_ROM4"; }
+    if (address == 0xc0A5) { return "SLOT2_ROM5"; }
+    if (address == 0xc0A6) { return "SLOT2_ROM6"; }
+    if (address == 0xc0A7) { return "SLOT2_ROM7"; }
+    if (address == 0xc0A8) { return "SLOT2_ROM8"; }
+    if (address == 0xc0A9) { return "SLOT2_ROM9"; }
+    if (address == 0xc0AA) { return "SLOT2_ROMA"; }
+    if (address == 0xc0AB) { return "SLOT2_ROMB"; }
+    if (address == 0xc0AC) { return "SLOT2_ROMC"; }
+    if (address == 0xc0AD) { return "SLOT2_ROMD"; }
+    if (address == 0xc0AE) { return "SLOT2_ROME"; }
+    if (address == 0xc0AF) { return "SLOT2_ROMF"; }
 
-    else if (address == 0xc0A0) { retval = "SLOT2_ROM0"; }
-    else if (address == 0xc0A1) { retval = "SLOT2_ROM1"; }
-    else if (address == 0xc0A2) { retval = "SLOT2_ROM2"; }
-    else if (address == 0xc0A3) { retval = "SLOT2_ROM3"; }
-    else if (address == 0xc0A4) { retval = "SLOT2_ROM4"; }
-    else if (address == 0xc0A5) { retval = "SLOT2_ROM5"; }
-    else if (address == 0xc0A6) { retval = "SLOT2_ROM6"; }
-    else if (address == 0xc0A7) { retval = "SLOT2_ROM7"; }
-    else if (address == 0xc0A8) { retval = "SLOT2_ROM8"; }
-    else if (address == 0xc0A9) { retval = "SLOT2_ROM9"; }
-    else if (address == 0xc0AA) { retval = "SLOT2_ROMA"; }
-    else if (address == 0xc0AB) { retval = "SLOT2_ROMB"; }
-    else if (address == 0xc0AC) { retval = "SLOT2_ROMC"; }
-    else if (address == 0xc0AD) { retval = "SLOT2_ROMD"; }
-    else if (address == 0xc0AE) { retval = "SLOT2_ROME"; }
-    else if (address == 0xc0AF) { retval = "SLOT2_ROMF"; }
+    if (address == 0xc0B0) { return "SLOT3_ROM0"; }
+    if (address == 0xc0B1) { return "SLOT3_ROM1"; }
+    if (address == 0xc0B2) { return "SLOT3_ROM2"; }
+    if (address == 0xc0B3) { return "SLOT3_ROM3"; }
+    if (address == 0xc0B4) { return "SLOT3_ROM4"; }
+    if (address == 0xc0B5) { return "SLOT3_ROM5"; }
+    if (address == 0xc0B6) { return "SLOT3_ROM6"; }
+    if (address == 0xc0B7) { return "SLOT3_ROM7"; }
+    if (address == 0xc0B8) { return "SLOT3_ROM8"; }
+    if (address == 0xc0B9) { return "SLOT3_ROM9"; }
+    if (address == 0xc0BA) { return "SLOT3_ROMA"; }
+    if (address == 0xc0BB) { return "SLOT3_ROMB"; }
+    if (address == 0xc0BC) { return "SLOT3_ROMC"; }
+    if (address == 0xc0BD) { return "SLOT3_ROMD"; }
+    if (address == 0xc0BE) { return "SLOT3_ROME"; }
+    if (address == 0xc0BF) { return "SLOT3_ROMF"; }
 
-    else if (address == 0xc0B0) { retval = "SLOT3_ROM0"; }
-    else if (address == 0xc0B1) { retval = "SLOT3_ROM1"; }
-    else if (address == 0xc0B2) { retval = "SLOT3_ROM2"; }
-    else if (address == 0xc0B3) { retval = "SLOT3_ROM3"; }
-    else if (address == 0xc0B4) { retval = "SLOT3_ROM4"; }
-    else if (address == 0xc0B5) { retval = "SLOT3_ROM5"; }
-    else if (address == 0xc0B6) { retval = "SLOT3_ROM6"; }
-    else if (address == 0xc0B7) { retval = "SLOT3_ROM7"; }
-    else if (address == 0xc0B8) { retval = "SLOT3_ROM8"; }
-    else if (address == 0xc0B9) { retval = "SLOT3_ROM9"; }
-    else if (address == 0xc0BA) { retval = "SLOT3_ROMA"; }
-    else if (address == 0xc0BB) { retval = "SLOT3_ROMB"; }
-    else if (address == 0xc0BC) { retval = "SLOT3_ROMC"; }
-    else if (address == 0xc0BD) { retval = "SLOT3_ROMD"; }
-    else if (address == 0xc0BE) { retval = "SLOT3_ROME"; }
-    else if (address == 0xc0BF) { retval = "SLOT3_ROMF"; }
+    if (address == 0xc0C0) { return "SLOT4_ROM0"; }
+    if (address == 0xc0C1) { return "SLOT4_ROM1"; }
+    if (address == 0xc0C2) { return "SLOT4_ROM2"; }
+    if (address == 0xc0C3) { return "SLOT4_ROM3"; }
+    if (address == 0xc0C4) { return "SLOT4_ROM4"; }
+    if (address == 0xc0C5) { return "SLOT4_ROM5"; }
+    if (address == 0xc0C6) { return "SLOT4_ROM6"; }
+    if (address == 0xc0C7) { return "SLOT4_ROM7"; }
+    if (address == 0xc0C8) { return "SLOT4_ROM8"; }
+    if (address == 0xc0C9) { return "SLOT4_ROM9"; }
+    if (address == 0xc0CA) { return "SLOT4_ROMA"; }
+    if (address == 0xc0CB) { return "SLOT4_ROMB"; }
+    if (address == 0xc0CC) { return "SLOT4_ROMC"; }
+    if (address == 0xc0CD) { return "SLOT4_ROMD"; }
+    if (address == 0xc0CE) { return "SLOT4_ROME"; }
+    if (address == 0xc0CF) { return "SLOT4_ROMF"; }
 
-    else if (address == 0xc0C0) { retval = "SLOT4_ROM0"; }
-    else if (address == 0xc0C1) { retval = "SLOT4_ROM1"; }
-    else if (address == 0xc0C2) { retval = "SLOT4_ROM2"; }
-    else if (address == 0xc0C3) { retval = "SLOT4_ROM3"; }
-    else if (address == 0xc0C4) { retval = "SLOT4_ROM4"; }
-    else if (address == 0xc0C5) { retval = "SLOT4_ROM5"; }
-    else if (address == 0xc0C6) { retval = "SLOT4_ROM6"; }
-    else if (address == 0xc0C7) { retval = "SLOT4_ROM7"; }
-    else if (address == 0xc0C8) { retval = "SLOT4_ROM8"; }
-    else if (address == 0xc0C9) { retval = "SLOT4_ROM9"; }
-    else if (address == 0xc0CA) { retval = "SLOT4_ROMA"; }
-    else if (address == 0xc0CB) { retval = "SLOT4_ROMB"; }
-    else if (address == 0xc0CC) { retval = "SLOT4_ROMC"; }
-    else if (address == 0xc0CD) { retval = "SLOT4_ROMD"; }
-    else if (address == 0xc0CE) { retval = "SLOT4_ROME"; }
-    else if (address == 0xc0CF) { retval = "SLOT4_ROMF"; }
+    if (address == 0xc0D0) { return "SLOT5_ROM0"; }
+    if (address == 0xc0D1) { return "SLOT5_ROM1"; }
+    if (address == 0xc0D2) { return "SLOT5_ROM2"; }
+    if (address == 0xc0D3) { return "SLOT5_ROM3"; }
+    if (address == 0xc0D4) { return "SLOT5_ROM4"; }
+    if (address == 0xc0D5) { return "SLOT5_ROM5"; }
+    if (address == 0xc0D6) { return "SLOT5_ROM6"; }
+    if (address == 0xc0D7) { return "SLOT5_ROM7"; }
+    if (address == 0xc0D8) { return "SLOT5_ROM8"; }
+    if (address == 0xc0D9) { return "SLOT5_ROM9"; }
+    if (address == 0xc0DA) { return "SLOT5_ROMA"; }
+    if (address == 0xc0DB) { return "SLOT5_ROMB"; }
+    if (address == 0xc0DC) { return "SLOT5_ROMC"; }
+    if (address == 0xc0DD) { return "SLOT5_ROMD"; }
+    if (address == 0xc0DE) { return "SLOT5_ROME"; }
+    if (address == 0xc0DF) { return "SLOT5_ROMF"; }
 
-    else if (address == 0xc0D0) { retval = "SLOT5_ROM0"; }
-    else if (address == 0xc0D1) { retval = "SLOT5_ROM1"; }
-    else if (address == 0xc0D2) { retval = "SLOT5_ROM2"; }
-    else if (address == 0xc0D3) { retval = "SLOT5_ROM3"; }
-    else if (address == 0xc0D4) { retval = "SLOT5_ROM4"; }
-    else if (address == 0xc0D5) { retval = "SLOT5_ROM5"; }
-    else if (address == 0xc0D6) { retval = "SLOT5_ROM6"; }
-    else if (address == 0xc0D7) { retval = "SLOT5_ROM7"; }
-    else if (address == 0xc0D8) { retval = "SLOT5_ROM8"; }
-    else if (address == 0xc0D9) { retval = "SLOT5_ROM9"; }
-    else if (address == 0xc0DA) { retval = "SLOT5_ROMA"; }
-    else if (address == 0xc0DB) { retval = "SLOT5_ROMB"; }
-    else if (address == 0xc0DC) { retval = "SLOT5_ROMC"; }
-    else if (address == 0xc0DD) { retval = "SLOT5_ROMD"; }
-    else if (address == 0xc0DE) { retval = "SLOT5_ROME"; }
-    else if (address == 0xc0DF) { retval = "SLOT5_ROMF"; }
+    if (address == 0xc0E0) { return "SLOT6_ROM0"; }
+    if (address == 0xc0E1) { return "SLOT6_ROM1"; }
+    if (address == 0xc0E2) { return "SLOT6_ROM2"; }
+    if (address == 0xc0E3) { return "SLOT6_ROM3"; }
+    if (address == 0xc0E4) { return "SLOT6_ROM4"; }
+    if (address == 0xc0E5) { return "SLOT6_ROM5"; }
+    if (address == 0xc0E6) { return "SLOT6_ROM6"; }
+    if (address == 0xc0E7) { return "SLOT6_ROM7"; }
+    if (address == 0xc0E8) { return "SLOT6_ROM8"; }
+    if (address == 0xc0E9) { return "SLOT6_ROM9"; }
+    if (address == 0xc0EA) { return "SLOT6_ROMA"; }
+    if (address == 0xc0EB) { return "SLOT6_ROMB"; }
+    if (address == 0xc0EC) { return "SLOT6_ROMC"; }
+    if (address == 0xc0ED) { return "SLOT6_ROMD"; }
+    if (address == 0xc0EE) { return "SLOT6_ROME"; }
+    if (address == 0xc0EF) { return "SLOT6_ROMF"; }
 
-    else if (address == 0xc0E0) { retval = "SLOT6_ROM0"; }
-    else if (address == 0xc0E1) { retval = "SLOT6_ROM1"; }
-    else if (address == 0xc0E2) { retval = "SLOT6_ROM2"; }
-    else if (address == 0xc0E3) { retval = "SLOT6_ROM3"; }
-    else if (address == 0xc0E4) { retval = "SLOT6_ROM4"; }
-    else if (address == 0xc0E5) { retval = "SLOT6_ROM5"; }
-    else if (address == 0xc0E6) { retval = "SLOT6_ROM6"; }
-    else if (address == 0xc0E7) { retval = "SLOT6_ROM7"; }
-    else if (address == 0xc0E8) { retval = "SLOT6_ROM8"; }
-    else if (address == 0xc0E9) { retval = "SLOT6_ROM9"; }
-    else if (address == 0xc0EA) { retval = "SLOT6_ROMA"; }
-    else if (address == 0xc0EB) { retval = "SLOT6_ROMB"; }
-    else if (address == 0xc0EC) { retval = "SLOT6_ROMC"; }
-    else if (address == 0xc0ED) { retval = "SLOT6_ROMD"; }
-    else if (address == 0xc0EE) { retval = "SLOT6_ROME"; }
-    else if (address == 0xc0EF) { retval = "SLOT6_ROMF"; }
+    if (address == 0xc0F0) { return "SLOT7_ROM0"; }
+    if (address == 0xc0F1) { return "SLOT7_ROM1"; }
+    if (address == 0xc0F2) { return "SLOT7_ROM2"; }
+    if (address == 0xc0F3) { return "SLOT7_ROM3"; }
+    if (address == 0xc0F4) { return "SLOT7_ROM4"; }
+    if (address == 0xc0F5) { return "SLOT7_ROM5"; }
+    if (address == 0xc0F6) { return "SLOT7_ROM6"; }
+    if (address == 0xc0F7) { return "SLOT7_ROM7"; }
+    if (address == 0xc0F8) { return "SLOT7_ROM8"; }
+    if (address == 0xc0F9) { return "SLOT7_ROM9"; }
+    if (address == 0xc0FA) { return "SLOT7_ROMA"; }
+    if (address == 0xc0FB) { return "SLOT7_ROMB"; }
+    if (address == 0xc0FC) { return "SLOT7_ROMC"; }
+    if (address == 0xc0FD) { return "SLOT7_ROMD"; }
+    if (address == 0xc0FE) { return "SLOT7_ROME"; }
+    if (address == 0xc0FF) { return "SLOT7_ROMF"; }
 
-    else if (address == 0xc0F0) { retval = "SLOT7_ROM0"; }
-    else if (address == 0xc0F1) { retval = "SLOT7_ROM1"; }
-    else if (address == 0xc0F2) { retval = "SLOT7_ROM2"; }
-    else if (address == 0xc0F3) { retval = "SLOT7_ROM3"; }
-    else if (address == 0xc0F4) { retval = "SLOT7_ROM4"; }
-    else if (address == 0xc0F5) { retval = "SLOT7_ROM5"; }
-    else if (address == 0xc0F6) { retval = "SLOT7_ROM6"; }
-    else if (address == 0xc0F7) { retval = "SLOT7_ROM7"; }
-    else if (address == 0xc0F8) { retval = "SLOT7_ROM8"; }
-    else if (address == 0xc0F9) { retval = "SLOT7_ROM9"; }
-    else if (address == 0xc0FA) { retval = "SLOT7_ROMA"; }
-    else if (address == 0xc0FB) { retval = "SLOT7_ROMB"; }
-    else if (address == 0xc0FC) { retval = "SLOT7_ROMC"; }
-    else if (address == 0xc0FD) { retval = "SLOT7_ROMD"; }
-    else if (address == 0xc0FE) { retval = "SLOT7_ROME"; }
-    else if (address == 0xc0FF) { retval = "SLOT7_ROMF"; }
-
-    else if (address == 0xc100) { retval = "M80_BFUNCPG"; }
-    else if (address == 0xc107) { retval = "M80_B.FUNCK"; }
-    else if (address == 0xc10E) { retval = "M80_B.FUNCNE"; }
-    else if (address == 0xc11f) { retval = "M80_B.OLDFUNC"; }
-    else if (address == 0xc129) { retval = "M80_F.CLREOP"; }
-    else if (address == 0xc12d) { retval = "M80_CLEOP1"; }
-    else if (address == 0xc143) { retval = "M80_F.HOME"; }
-    else if (address == 0xc14d) { retval = "M80_F.SCROLL"; }
-    else if (address == 0xc153) { retval = "M80_SCRL1"; }
-    else if (address == 0xc169) { retval = "M80_SCRL2"; }
-    else if (address == 0xc172) { retval = "M80_SCRL3"; }
-    else if (address == 0xc17d) { retval = "M80_F.CLREOL"; }
-    else if (address == 0xc181) { retval = "M80_CLEOL2"; }
-    else if (address == 0xc18a) { retval = "M80_F.SETWND"; }
-    else if (address == 0xc19c) { retval = "M80_F.CLEOLZ"; }
-    else if (address == 0xc1a1) { retval = "M80_F.GORET"; }
-    else if (address == 0xc1a4) { retval = "M80_B.FUNCO"; }
-    else if (address == 0xc1c5) { retval = "M80_NOI"; }
-    else if (address == 0xc1cd) { retval = "M80_B.SCROLL"; }
-    else if (address == 0xc1d3) { retval = "M80_B.CLREOL"; }
-    else if (address == 0xc1d9) { retval = "M80_B.CLEOLZ"; }
-    else if (address == 0xc1e1) { retval = "M80_B.CLREOP"; }
-    else if (address == 0xc1e7) { retval = "M80_B.SETWND"; }
-    else if (address == 0xc1ea) { retval = "M80_B.RESET"; }
-    else if (address == 0xc1ed) { retval = "M80_B.HOME"; }
-    else if (address == 0xc1ff) { retval = "M80_B.VECTOR"; }
-    else if (address == 0xc20e) { retval = "M80_B.GETCH"; }
-    else if (address == 0xc211) { retval = "M80_B.FUNC1"; }
-    else if (address == 0xc219) { retval = "M80_B.SETWNDX"; }
-    else if (address == 0xc221) { retval = "M80_B.SETWND2"; }
-    else if (address == 0xc22e) { retval = "M80_GOBACK"; }
-    else if (address == 0xc234) { retval = "M80_B.RESETX"; }
-    else if (address == 0xc252) { retval = "M80_BLAST"; }
-    else if (address == 0xc261) { retval = "M80_DIAGS"; }
-    else if (address == 0xc264) { retval = "M80_RESETRET"; }
-    else if (address == 0xc26e) { retval = "M80_B.ESCFIX"; }
-    else if (address == 0xc272) { retval = "M80_B.ESCFIX2"; }
-    else if (address == 0xc27a) { retval = "M80_B.ESCFIX3"; }
-    else if (address == 0xc27d) { retval = "M80_GORETN"; }
-    else if (address == 0xc280) { retval = "M80_ESCIN"; }
-    else if (address == 0xc284) { retval = "M80_ESCOUT"; }
-    else if (address == 0xc288) { retval = "M80_B.KEYIN"; }
-    else if (address == 0xc29c) { retval = "M80_B.KEYIN2"; }
-    else if (address == 0xc2b5) { retval = "M80_GOTKEY"; }
-    else if (address == 0xc2c6) { retval = "M80_KEYDLY"; }
-    else if (address == 0xc2cc) { retval = "M80_IK1"; }
-    else if (address == 0xc2ce) { retval = "M80_IK2"; }
-    else if (address == 0xc2d5) { retval = "M80_IK2A"; }
-    else if (address == 0xc2db) { retval = "M80_IK3"; }
-    else if (address == 0xc2e6) { retval = "M80_KDRETN"; }
-    else if (address == 0xc2e9) { retval = "M80_KDRETY"; }
-    else if (address == 0xc2ea) { retval = "M80_KDRET"; }
-    else if (address == 0xc2eb) { retval = "M80_F.RETURN"; }
-    else if (address == 0xc2f1) { retval = "M80_F.RET1"; }
-    else if (address == 0xc2f4) { retval = "M80_X.CLEOLZ"; }
-    else if (address == 0xc2f6) { retval = "M80_X.CLEOL2"; }
-    else if (address == 0xc300) { retval = "M80_CN00/M80_BASICINT"; }
-    else if (address == 0xc305) { retval = "M80_BASICIN"; }
-    else if (address == 0xc307) { retval = "M80_BASICOUT"; }
-    else if (address == 0xc317) { retval = "M80_BASICENT"; }
-    else if (address == 0xc336) { retval = "M80_BASICENT2"; }
-    else if (address == 0xc348) { retval = "M80_JBASINIT"; }
-    else if (address == 0xc34b) { retval = "M80_JPINIT"; }
-    else if (address == 0xc351) { retval = "M80_JPREAD"; }
-    else if (address == 0xc357) { retval = "M80_JPWRITE"; }
-    else if (address == 0xc35d) { retval = "M80_JPSTAT"; }
-    else if (address == 0xc363) { retval = "M80_MOVE"; }
-    else if (address == 0xc378) { retval = "M80_MOVEC2M"; }
-    else if (address == 0xc37b) { retval = "M80_MOVESTRT"; }
-    else if (address == 0xc380) { retval = "M80_MOVELOOP"; }
-    else if (address == 0xc38a) { retval = "M80_NXTA1"; }
-    else if (address == 0xc398) { retval = "M80_C01"; }
-    else if (address == 0xc3a3) { retval = "M80_C03"; }
-    else if (address == 0xc3ac) { retval = "M80_MOVERET"; }
-    else if (address == 0xc3b0) { retval = "M80_XFER"; }
-    else if (address == 0xc3c5) { retval = "M80_XFERC2M"; }
-    else if (address == 0xc3cd) { retval = "M80_XFERAZP"; }
-    else if (address == 0xc3dc) { retval = "M80_XFERSZP"; }
-    else if (address == 0xc3eb) { retval = "M80_SETCB"; }
-    else if (address == 0xc803) { retval = "M80_BASICINIT"; }
-    else if (address == 0xc813) { retval = "M80_HANG"; }
-    else if (address == 0xc816) { retval = "M80_BINIT1"; }
-    else if (address == 0xc831) { retval = "M80_BINIT1A"; }
-    else if (address == 0xc850) { retval = "M80_BINIT2"; }
-    else if (address == 0xc85d) { retval = "M80_CLEARIT"; }
-    else if (address == 0xc866) { retval = "M80_C8BASIC"; }
-    else if (address == 0xc874) { retval = "M80_C8B2"; }
-    else if (address == 0xc87e) { retval = "M80_C8B3"; }
-    else if (address == 0xc890) { retval = "M80_C8B4"; }
-    else if (address == 0xc896) { retval = "M80_BOUT"; }
-    else if (address == 0xc8a1) { retval = "M80_BPRINT"; }
-    else if (address == 0xc8b4) { retval = "M80_KBDWAIT"; }
-    else if (address == 0xc8c0) { retval = "M80_NOWAIT"; }
-    else if (address == 0xc8cc) { retval = "M80_BPNCTL"; }
-    else if (address == 0xc8e2) { retval = "M80_BIORET"; }
-    else if (address == 0xc8f6) { retval = "M80_BINPUT"; }
-    else if (address == 0xc905) { retval = "M80_B.INPUT"; }
-    else if (address == 0xc918) { retval = "M80_ESCAPING"; }
-    else if (address == 0xc929) { retval = "M80_ESC1"; }
-    else if (address == 0xc92b) { retval = "M80_ESC2"; }
-    else if (address == 0xc935) { retval = "M80_ESC3"; }
-    else if (address == 0xc945) { retval = "M80_ESCSPEC"; }
-    else if (address == 0xc954) { retval = "M80_ESCSPEC2"; }
-    else if (address == 0xc960) { retval = "M80_ESCNONE"; }
-    else if (address == 0xc963) { retval = "M80_ESCSPEC3"; }
-    else if (address == 0xc972) { retval = "M80_ESCTAB"; }
-    else if (address == 0xc983) { retval = "M80_ESCCHAR"; }
-    else if (address == 0xc994) { retval = "M80_PSTATUS"; }
-    else if (address == 0xc99e) { retval = "M80_PSTATUS2"; }
-    else if (address == 0xc9b0) { retval = "M80_PSTATUS3"; }
-    else if (address == 0xc9b4) { retval = "M80_PSTATUS4"; }
-    else if (address == 0xc9b7) { retval = "M80_NOESC"; }
-    else if (address == 0xc9c6) { retval = "M80_B.NOPICK"; }
-    else if (address == 0xc9df) { retval = "M80_B.CHKCAN"; }
-    else if (address == 0xc9f7) { retval = "M80_B.FLIP"; }
-    else if (address == 0xca02) { retval = "M80_B.CANLIT"; }
-    else if (address == 0xca0a) { retval = "M80_B.FIXCHR"; }
-    else if (address == 0xca24) { retval = "M80_B.INRET"; }
-    else if (address == 0xca27) { retval = "M80_GETPRIOR"; }
-    else if (address == 0xca49) { retval = "M80_GPX"; }
-    else if (address == 0xca4a) { retval = "M80_PREAD"; }
-    else if (address == 0xca4f) { retval = "M80_PREADRET2"; }
-    else if (address == 0xca51) { retval = "M80_PWRITE"; }
-    else if (address == 0xca62) { retval = "M80_PIGOOD"; }
-    else if (address == 0xca74) { retval = "M80_PREAD"; }
-    else if (address == 0xca8a) { retval = "M80_PREADRET2"; }
-    else if (address == 0xca8e) { retval = "M80_PWRITE"; }
-    else if (address == 0xca9e) { retval = "M80_PWRITE2"; }
-    else if (address == 0xcaaf) { retval = "M80_GETY"; }
-    else if (address == 0xcacb) { retval = "M80_PWRITE3"; }
-    else if (address == 0xcadc) { retval = "M80_STARTXY"; }
-    else if (address == 0xcaeb) { retval = "M80_PWRITE4"; }
-    else if (address == 0xcb09) { retval = "M80_PWWRAP"; }
-    else if (address == 0xcb0f) { retval = "M80_PWRITERET"; }
-    else if (address == 0xcb15) { retval = "M80_GETKEY"; }
-    else if (address == 0xcb1b) { retval = "M80_GETK2"; }
-    else if (address == 0xcb24) { retval = "M80_TESTCARD"; }
-    else if (address == 0xcb48) { retval = "M80_STAY2"; }
-    else if (address == 0xcb4d) { retval = "M80_STAY80"; }
-    else if (address == 0xcb4e) { retval = "M80_TESTFAIL"; }
-    else if (address == 0xcb51) { retval = "M80_BASCALC"; }
-    else if (address == 0xcb54) { retval = "M80_BASCALCZ"; }
-    else if (address == 0xcb55) { retval = "M80_BSCLC1"; }
-    else if (address == 0xcb5b) { retval = "M80_BSCLC1A"; }
-    else if (address == 0xcb6d) { retval = "M80_BSCLC2"; }
-    else if (address == 0xcb7e) { retval = "M80_BASCLC3"; }
-    else if (address == 0xcb97) { retval = "M80_BASCLCX"; }
-    else if (address == 0xcb99) { retval = "M80_CTLCHAR"; }
-    else if (address == 0xcbab) { retval = "M80_CTLCHARX"; }
-    else if (address == 0xcbae) { retval = "M80_CTLGO"; }
-    else if (address == 0xcbb2) { retval = "M80_CTLRET"; }
-    else if (address == 0xcbb6) { retval = "M80_CTLXFER"; }
-    else if (address == 0xcbbc) { retval = "M80_X.BELL"; }
-    else if (address == 0xcbce) { retval = "M80_BELL2"; }
-    else if (address == 0xcbcf) { retval = "M80_WAIT"; }
-    else if (address == 0xcbd0) { retval = "M80_WAIT2"; }
-    else if (address == 0xcbd1) { retval = "M80_WAIT3"; }
-    else if (address == 0xcbdb) { retval = "M80_X.BS"; }
-    else if (address == 0xcbe2) { retval = "M80_BS40"; }
-    else if (address == 0xcbeb) { retval = "M80_BSDONE"; }
-    else if (address == 0xcbec) { retval = "M80_X.CR"; }
-    else if (address == 0xcbfd) { retval = "M80_X.CRPAS"; }
-    else if (address == 0xcc0c) { retval = "M80_X.CRRET"; }
-    else if (address == 0xcc0d) { retval = "M80_X.EM"; }
-    else if (address == 0xcc1a) { retval = "M80_X.SUB"; }
-    else if (address == 0xcc1d) { retval = "M80_X.SUB80"; }
-    else if (address == 0xcc1f) { retval = "M80_X.SUBLP"; }
-    else if (address == 0xcc26) { retval = "M80_X.FS"; }
-    else if (address == 0xcc33) { retval = "M80_X.FSRET"; }
-    else if (address == 0xcc34) { retval = "M80_X.US"; }
-    else if (address == 0xcc40) { retval = "M80_X.US1"; }
-    else if (address == 0xcc45) { retval = "M80_X.US2"; }
-    else if (address == 0xcc48) { retval = "M80_X.USRET"; }
-    else if (address == 0xcc49) { retval = "M80_X.SO"; }
-    else if (address == 0xcc52) { retval = "M80_X.SI"; }
-    else if (address == 0xcc59) { retval = "M80_STUFFINV"; }
-    else if (address == 0xcc5f) { retval = "M80_CTLADL"; }
-    else if (address == 0xcc78) { retval = "M80_CTLADH"; }
-    else if (address == 0xcc91) { retval = "M80_X.LF"; }
-    else if (address == 0xcc9e) { retval = "M80_X.LF2"; }
-    else if (address == 0xcca4) { retval = "M80_SCROLLUP"; }
-    else if (address == 0xccaa) { retval = "M80_SCROLLDN"; }
-    else if (address == 0xccae) { retval = "M80_SCROLL1"; }
-    else if (address == 0xccb8) { retval = "M80_SCROLL2"; }
-    else if (address == 0xccd1) { retval = "M80_SCRLSUB"; }
-    else if (address == 0xccdd) { retval = "M80_MSCROL0"; }
-    else if (address == 0xcce1) { retval = "M80_MSCROL1"; }
-    else if (address == 0xccf9) { retval = "M80_MSCRL2"; }
-    else if (address == 0xcd02) { retval = "M80_MSCRLRET"; }
-    else if (address == 0xcd09) { retval = "M80_ONEMORE"; }
-    else if (address == 0xcd10) { retval = "M80_MSCRLRTS"; }
-    else if (address == 0xcd11) { retval = "M80_X.SCRLRET"; }
-    else if (address == 0xcd17) { retval = "M80_X.SCRLRET2"; }
-    else if (address == 0xcd20) { retval = "M80_X.LFRET"; }
-    else if (address == 0xcd23) { retval = "M80_X.VT"; }
-    else if (address == 0xcd2c) { retval = "M80_X.VTLOOP"; }
-    else if (address == 0xcd32) { retval = "M80_X.VTNEXT"; }
-    else if (address == 0xcd42) { retval = "M80_X.FF"; }
-    else if (address == 0xcd48) { retval = "M80_X.GS"; }
-    else if (address == 0xcd4e) { retval = "M80_X.GSEOLZ"; }
-    else if (address == 0xcd54) { retval = "M80_X.GS2"; }
-    else if (address == 0xcd59) { retval = "M80_X.DC1"; }
-    else if (address == 0xcd64) { retval = "M80_X.DC1B"; }
-    else if (address == 0xcd76) { retval = "M80_X.DC1RTS"; }
-    else if (address == 0xcd77) { retval = "M80_X.DC2"; }
-    else if (address == 0xcd88) { retval = "M80_X.DC2B"; }
-    else if (address == 0xcd90) { retval = "M80_X.NAK"; }
-    else if (address == 0xcd9a) { retval = "M80_X.NAKRET/M80_DC2RET"; }
-    else if (address == 0xcd9b) { retval = "M80_FULL80"; }
-    else if (address == 0xcdaa) { retval = "M80_QUIT"; }
-    else if (address == 0xcdc0) { retval = "M80_QUIT2"; }
-    else if (address == 0xcddb) { retval = "M80_SCRN84"; }
-    else if (address == 0xcdea) { retval = "M80_SCR40"; }
-    else if (address == 0xce01) { retval = "M80_SCR40RET"; }
-    else if (address == 0xce0a) { retval = "M80_ATEFOR"; }
-    else if (address == 0xce13) { retval = "M80_ATEFOR1"; }
-    else if (address == 0xce22) { retval = "M80_GET84"; }
-    else if (address == 0xce32) { retval = "M80_SCRN48"; }
-    else if (address == 0xce3e) { retval = "M80_SCR80"; }
-    else if (address == 0xce55) { retval = "M80_SCR80RET"; }
-    else if (address == 0xce58) { retval = "M80_SCRNRET"; }
-    else if (address == 0xce63) { retval = "M80_FORATE"; }
-    else if (address == 0xce6f) { retval = "M80_FORATE1"; }
-    else if (address == 0xce91) { retval = "M80_CLRHALF"; }
-    else if (address == 0xce9b) { retval = "M80_CLRHALF2"; }
-    else if (address == 0xcea3) { retval = "M80_DO48"; }
-    else if (address == 0xceaf) { retval = "M80_SETCH"; }
-    else if (address == 0xced9) { retval = "M80_SETCHRTS"; }
-    else if (address == 0xcedd) { retval = "M80_INVERT"; }
-    else if (address == 0xcef2) { retval = "M80_STORCHAR"; }
-    else if (address == 0xcef9) { retval = "M80_STOR2"; }
-    else if (address == 0xcf00) { retval = "M80_SEV"; }
-    else if (address == 0xcf01) { retval = "M80_PICK"; }
-    else if (address == 0xcf06) { retval = "M80_SCREENIT"; }
-    else if (address == 0xcf1e) { retval = "M80_SCRN2"; }
-    else if (address == 0xcf2a) { retval = "M80_STOR80"; }
-    else if (address == 0xcf37) { retval = "M80_SCRN3"; }
-    else if (address == 0xcf40) { retval = "M80_SCRN40"; }
-    else if (address == 0xcf4a) { retval = "M80_STOR40"; }
-    else if (address == 0xcf4e) { retval = "M80_STPKEXIT"; }
-    else if (address == 0xcf52) { retval = "M80_ESCON"; }
-    else if (address == 0xcf65) { retval = "M80_ESCOFF"; }
-    else if (address == 0xcf6e) { retval = "M80_ESCRET"; }
-    else if (address == 0xcf78) { retval = "M80_COPYROM"; }
-    else if (address == 0xcf95) { retval = "M80_COPYROM2"; }
-    else if (address == 0xcfb3) { retval = "M80_LCB2ROM"; }
-    else if (address == 0xcfb9) { retval = "M80_LCB1"; }
-    else if (address == 0xcfc2) { retval = "M80_LCB1ROM"; }
-    else if (address == 0xcfc5) { retval = "M80_COPYRET"; }
-    else if (address == 0xcfc8) { retval = "M80_PSETUP"; }
-    else if (address == 0xcfd2) { retval = "M80_PSETUP2"; }
-    else if (address == 0xcfdf) { retval = "M80_PSETUPRET"; }
-    else if (address == 0xcfea) { retval = "M80_F.TABLE"; }
-    else if (address == 0xcff0) { retval = "M80_PLUSMINUS1"; }
-    else if (address == 0xcff3) { retval = "M80_B.TABLE"; }
-    else if (address == 0xcff9) { retval = "M80_WNDTAB"; }
-    else if (address == 0xcffd) { retval = "M80_ZZEND"; }
+    if (address == 0xc100) { return "M80_BFUNCPG"; }
+    if (address == 0xc107) { return "M80_B.FUNCK"; }
+    if (address == 0xc10E) { return "M80_B.FUNCNE"; }
+    if (address == 0xc11f) { return "M80_B.OLDFUNC"; }
+    if (address == 0xc129) { return "M80_F.CLREOP"; }
+    if (address == 0xc12d) { return "M80_CLEOP1"; }
+    if (address == 0xc143) { return "M80_F.HOME"; }
+    if (address == 0xc14d) { return "M80_F.SCROLL"; }
+    if (address == 0xc153) { return "M80_SCRL1"; }
+    if (address == 0xc169) { return "M80_SCRL2"; }
+    if (address == 0xc172) { return "M80_SCRL3"; }
+    if (address == 0xc17d) { return "M80_F.CLREOL"; }
+    if (address == 0xc181) { return "M80_CLEOL2"; }
+    if (address == 0xc18a) { return "M80_F.SETWND"; }
+    if (address == 0xc19c) { return "M80_F.CLEOLZ"; }
+    if (address == 0xc1a1) { return "M80_F.GORET"; }
+    if (address == 0xc1a4) { return "M80_B.FUNCO"; }
+    if (address == 0xc1c5) { return "M80_NOI"; }
+    if (address == 0xc1cd) { return "M80_B.SCROLL"; }
+    if (address == 0xc1d3) { return "M80_B.CLREOL"; }
+    if (address == 0xc1d9) { return "M80_B.CLEOLZ"; }
+    if (address == 0xc1e1) { return "M80_B.CLREOP"; }
+    if (address == 0xc1e7) { return "M80_B.SETWND"; }
+    if (address == 0xc1ea) { return "M80_B.RESET"; }
+    if (address == 0xc1ed) { return "M80_B.HOME"; }
+    if (address == 0xc1ff) { return "M80_B.VECTOR"; }
+    if (address == 0xc20e) { return "M80_B.GETCH"; }
+    if (address == 0xc211) { return "M80_B.FUNC1"; }
+    if (address == 0xc219) { return "M80_B.SETWNDX"; }
+    if (address == 0xc221) { return "M80_B.SETWND2"; }
+    if (address == 0xc22e) { return "M80_GOBACK"; }
+    if (address == 0xc234) { return "M80_B.RESETX"; }
+    if (address == 0xc252) { return "M80_BLAST"; }
+    if (address == 0xc261) { return "M80_DIAGS"; }
+    if (address == 0xc264) { return "M80_RESETRET"; }
+    if (address == 0xc26e) { return "M80_B.ESCFIX"; }
+    if (address == 0xc272) { return "M80_B.ESCFIX2"; }
+    if (address == 0xc27a) { return "M80_B.ESCFIX3"; }
+    if (address == 0xc27d) { return "M80_GORETN"; }
+    if (address == 0xc280) { return "M80_ESCIN"; }
+    if (address == 0xc284) { return "M80_ESCOUT"; }
+    if (address == 0xc288) { return "M80_B.KEYIN"; }
+    if (address == 0xc29c) { return "M80_B.KEYIN2"; }
+    if (address == 0xc2b5) { return "M80_GOTKEY"; }
+    if (address == 0xc2c6) { return "M80_KEYDLY"; }
+    if (address == 0xc2cc) { return "M80_IK1"; }
+    if (address == 0xc2ce) { return "M80_IK2"; }
+    if (address == 0xc2d5) { return "M80_IK2A"; }
+    if (address == 0xc2db) { return "M80_IK3"; }
+    if (address == 0xc2e6) { return "M80_KDRETN"; }
+    if (address == 0xc2e9) { return "M80_KDRETY"; }
+    if (address == 0xc2ea) { return "M80_KDRET"; }
+    if (address == 0xc2eb) { return "M80_F.RETURN"; }
+    if (address == 0xc2f1) { return "M80_F.RET1"; }
+    if (address == 0xc2f4) { return "M80_X.CLEOLZ"; }
+    if (address == 0xc2f6) { return "M80_X.CLEOL2"; }
+    if (address == 0xc300) { return "M80_CN00/M80_BASICINT"; }
+    if (address == 0xc305) { return "M80_BASICIN"; }
+    if (address == 0xc307) { return "M80_BASICOUT"; }
+    if (address == 0xc317) { return "M80_BASICENT"; }
+    if (address == 0xc336) { return "M80_BASICENT2"; }
+    if (address == 0xc348) { return "M80_JBASINIT"; }
+    if (address == 0xc34b) { return "M80_JPINIT"; }
+    if (address == 0xc351) { return "M80_JPREAD"; }
+    if (address == 0xc357) { return "M80_JPWRITE"; }
+    if (address == 0xc35d) { return "M80_JPSTAT"; }
+    if (address == 0xc363) { return "M80_MOVE"; }
+    if (address == 0xc378) { return "M80_MOVEC2M"; }
+    if (address == 0xc37b) { return "M80_MOVESTRT"; }
+    if (address == 0xc380) { return "M80_MOVELOOP"; }
+    if (address == 0xc38a) { return "M80_NXTA1"; }
+    if (address == 0xc398) { return "M80_C01"; }
+    if (address == 0xc3a3) { return "M80_C03"; }
+    if (address == 0xc3ac) { return "M80_MOVERET"; }
+    if (address == 0xc3b0) { return "M80_XFER"; }
+    if (address == 0xc3c5) { return "M80_XFERC2M"; }
+    if (address == 0xc3cd) { return "M80_XFERAZP"; }
+    if (address == 0xc3dc) { return "M80_XFERSZP"; }
+    if (address == 0xc3eb) { return "M80_SETCB"; }
+    if (address == 0xc803) { return "M80_BASICINIT"; }
+    if (address == 0xc813) { return "M80_HANG"; }
+    if (address == 0xc816) { return "M80_BINIT1"; }
+    if (address == 0xc831) { return "M80_BINIT1A"; }
+    if (address == 0xc850) { return "M80_BINIT2"; }
+    if (address == 0xc85d) { return "M80_CLEARIT"; }
+    if (address == 0xc866) { return "M80_C8BASIC"; }
+    if (address == 0xc874) { return "M80_C8B2"; }
+    if (address == 0xc87e) { return "M80_C8B3"; }
+    if (address == 0xc890) { return "M80_C8B4"; }
+    if (address == 0xc896) { return "M80_BOUT"; }
+    if (address == 0xc8a1) { return "M80_BPRINT"; }
+    if (address == 0xc8b4) { return "M80_KBDWAIT"; }
+    if (address == 0xc8c0) { return "M80_NOWAIT"; }
+    if (address == 0xc8cc) { return "M80_BPNCTL"; }
+    if (address == 0xc8e2) { return "M80_BIORET"; }
+    if (address == 0xc8f6) { return "M80_BINPUT"; }
+    if (address == 0xc905) { return "M80_B.INPUT"; }
+    if (address == 0xc918) { return "M80_ESCAPING"; }
+    if (address == 0xc929) { return "M80_ESC1"; }
+    if (address == 0xc92b) { return "M80_ESC2"; }
+    if (address == 0xc935) { return "M80_ESC3"; }
+    if (address == 0xc945) { return "M80_ESCSPEC"; }
+    if (address == 0xc954) { return "M80_ESCSPEC2"; }
+    if (address == 0xc960) { return "M80_ESCNONE"; }
+    if (address == 0xc963) { return "M80_ESCSPEC3"; }
+    if (address == 0xc972) { return "M80_ESCTAB"; }
+    if (address == 0xc983) { return "M80_ESCCHAR"; }
+    if (address == 0xc994) { return "M80_PSTATUS"; }
+    if (address == 0xc99e) { return "M80_PSTATUS2"; }
+    if (address == 0xc9b0) { return "M80_PSTATUS3"; }
+    if (address == 0xc9b4) { return "M80_PSTATUS4"; }
+    if (address == 0xc9b7) { return "M80_NOESC"; }
+    if (address == 0xc9c6) { return "M80_B.NOPICK"; }
+    if (address == 0xc9df) { return "M80_B.CHKCAN"; }
+    if (address == 0xc9f7) { return "M80_B.FLIP"; }
+    if (address == 0xca02) { return "M80_B.CANLIT"; }
+    if (address == 0xca0a) { return "M80_B.FIXCHR"; }
+    if (address == 0xca24) { return "M80_B.INRET"; }
+    if (address == 0xca27) { return "M80_GETPRIOR"; }
+    if (address == 0xca49) { return "M80_GPX"; }
+    if (address == 0xca4a) { return "M80_PREAD"; }
+    if (address == 0xca4f) { return "M80_PREADRET2"; }
+    if (address == 0xca51) { return "M80_PWRITE"; }
+    if (address == 0xca62) { return "M80_PIGOOD"; }
+    if (address == 0xca74) { return "M80_PREAD"; }
+    if (address == 0xca8a) { return "M80_PREADRET2"; }
+    if (address == 0xca8e) { return "M80_PWRITE"; }
+    if (address == 0xca9e) { return "M80_PWRITE2"; }
+    if (address == 0xcaaf) { return "M80_GETY"; }
+    if (address == 0xcacb) { return "M80_PWRITE3"; }
+    if (address == 0xcadc) { return "M80_STARTXY"; }
+    if (address == 0xcaeb) { return "M80_PWRITE4"; }
+    if (address == 0xcb09) { return "M80_PWWRAP"; }
+    if (address == 0xcb0f) { return "M80_PWRITERET"; }
+    if (address == 0xcb15) { return "M80_GETKEY"; }
+    if (address == 0xcb1b) { return "M80_GETK2"; }
+    if (address == 0xcb24) { return "M80_TESTCARD"; }
+    if (address == 0xcb48) { return "M80_STAY2"; }
+    if (address == 0xcb4d) { return "M80_STAY80"; }
+    if (address == 0xcb4e) { return "M80_TESTFAIL"; }
+    if (address == 0xcb51) { return "M80_BASCALC"; }
+    if (address == 0xcb54) { return "M80_BASCALCZ"; }
+    if (address == 0xcb55) { return "M80_BSCLC1"; }
+    if (address == 0xcb5b) { return "M80_BSCLC1A"; }
+    if (address == 0xcb6d) { return "M80_BSCLC2"; }
+    if (address == 0xcb7e) { return "M80_BASCLC3"; }
+    if (address == 0xcb97) { return "M80_BASCLCX"; }
+    if (address == 0xcb99) { return "M80_CTLCHAR"; }
+    if (address == 0xcbab) { return "M80_CTLCHARX"; }
+    if (address == 0xcbae) { return "M80_CTLGO"; }
+    if (address == 0xcbb2) { return "M80_CTLRET"; }
+    if (address == 0xcbb6) { return "M80_CTLXFER"; }
+    if (address == 0xcbbc) { return "M80_X.BELL"; }
+    if (address == 0xcbce) { return "M80_BELL2"; }
+    if (address == 0xcbcf) { return "M80_WAIT"; }
+    if (address == 0xcbd0) { return "M80_WAIT2"; }
+    if (address == 0xcbd1) { return "M80_WAIT3"; }
+    if (address == 0xcbdb) { return "M80_X.BS"; }
+    if (address == 0xcbe2) { return "M80_BS40"; }
+    if (address == 0xcbeb) { return "M80_BSDONE"; }
+    if (address == 0xcbec) { return "M80_X.CR"; }
+    if (address == 0xcbfd) { return "M80_X.CRPAS"; }
+    if (address == 0xcc0c) { return "M80_X.CRRET"; }
+    if (address == 0xcc0d) { return "M80_X.EM"; }
+    if (address == 0xcc1a) { return "M80_X.SUB"; }
+    if (address == 0xcc1d) { return "M80_X.SUB80"; }
+    if (address == 0xcc1f) { return "M80_X.SUBLP"; }
+    if (address == 0xcc26) { return "M80_X.FS"; }
+    if (address == 0xcc33) { return "M80_X.FSRET"; }
+    if (address == 0xcc34) { return "M80_X.US"; }
+    if (address == 0xcc40) { return "M80_X.US1"; }
+    if (address == 0xcc45) { return "M80_X.US2"; }
+    if (address == 0xcc48) { return "M80_X.USRET"; }
+    if (address == 0xcc49) { return "M80_X.SO"; }
+    if (address == 0xcc52) { return "M80_X.SI"; }
+    if (address == 0xcc59) { return "M80_STUFFINV"; }
+    if (address == 0xcc5f) { return "M80_CTLADL"; }
+    if (address == 0xcc78) { return "M80_CTLADH"; }
+    if (address == 0xcc91) { return "M80_X.LF"; }
+    if (address == 0xcc9e) { return "M80_X.LF2"; }
+    if (address == 0xcca4) { return "M80_SCROLLUP"; }
+    if (address == 0xccaa) { return "M80_SCROLLDN"; }
+    if (address == 0xccae) { return "M80_SCROLL1"; }
+    if (address == 0xccb8) { return "M80_SCROLL2"; }
+    if (address == 0xccd1) { return "M80_SCRLSUB"; }
+    if (address == 0xccdd) { return "M80_MSCROL0"; }
+    if (address == 0xcce1) { return "M80_MSCROL1"; }
+    if (address == 0xccf9) { return "M80_MSCRL2"; }
+    if (address == 0xcd02) { return "M80_MSCRLRET"; }
+    if (address == 0xcd09) { return "M80_ONEMORE"; }
+    if (address == 0xcd10) { return "M80_MSCRLRTS"; }
+    if (address == 0xcd11) { return "M80_X.SCRLRET"; }
+    if (address == 0xcd17) { return "M80_X.SCRLRET2"; }
+    if (address == 0xcd20) { return "M80_X.LFRET"; }
+    if (address == 0xcd23) { return "M80_X.VT"; }
+    if (address == 0xcd2c) { return "M80_X.VTLOOP"; }
+    if (address == 0xcd32) { return "M80_X.VTNEXT"; }
+    if (address == 0xcd42) { return "M80_X.FF"; }
+    if (address == 0xcd48) { return "M80_X.GS"; }
+    if (address == 0xcd4e) { return "M80_X.GSEOLZ"; }
+    if (address == 0xcd54) { return "M80_X.GS2"; }
+    if (address == 0xcd59) { return "M80_X.DC1"; }
+    if (address == 0xcd64) { return "M80_X.DC1B"; }
+    if (address == 0xcd76) { return "M80_X.DC1RTS"; }
+    if (address == 0xcd77) { return "M80_X.DC2"; }
+    if (address == 0xcd88) { return "M80_X.DC2B"; }
+    if (address == 0xcd90) { return "M80_X.NAK"; }
+    if (address == 0xcd9a) { return "M80_X.NAKRET/M80_DC2RET"; }
+    if (address == 0xcd9b) { return "M80_FULL80"; }
+    if (address == 0xcdaa) { return "M80_QUIT"; }
+    if (address == 0xcdc0) { return "M80_QUIT2"; }
+    if (address == 0xcddb) { return "M80_SCRN84"; }
+    if (address == 0xcdea) { return "M80_SCR40"; }
+    if (address == 0xce01) { return "M80_SCR40RET"; }
+    if (address == 0xce0a) { return "M80_ATEFOR"; }
+    if (address == 0xce13) { return "M80_ATEFOR1"; }
+    if (address == 0xce22) { return "M80_GET84"; }
+    if (address == 0xce32) { return "M80_SCRN48"; }
+    if (address == 0xce3e) { return "M80_SCR80"; }
+    if (address == 0xce55) { return "M80_SCR80RET"; }
+    if (address == 0xce58) { return "M80_SCRNRET"; }
+    if (address == 0xce63) { return "M80_FORATE"; }
+    if (address == 0xce6f) { return "M80_FORATE1"; }
+    if (address == 0xce91) { return "M80_CLRHALF"; }
+    if (address == 0xce9b) { return "M80_CLRHALF2"; }
+    if (address == 0xcea3) { return "M80_DO48"; }
+    if (address == 0xceaf) { return "M80_SETCH"; }
+    if (address == 0xced9) { return "M80_SETCHRTS"; }
+    if (address == 0xcedd) { return "M80_INVERT"; }
+    if (address == 0xcef2) { return "M80_STORCHAR"; }
+    if (address == 0xcef9) { return "M80_STOR2"; }
+    if (address == 0xcf00) { return "M80_SEV"; }
+    if (address == 0xcf01) { return "M80_PICK"; }
+    if (address == 0xcf06) { return "M80_SCREENIT"; }
+    if (address == 0xcf1e) { return "M80_SCRN2"; }
+    if (address == 0xcf2a) { return "M80_STOR80"; }
+    if (address == 0xcf37) { return "M80_SCRN3"; }
+    if (address == 0xcf40) { return "M80_SCRN40"; }
+    if (address == 0xcf4a) { return "M80_STOR40"; }
+    if (address == 0xcf4e) { return "M80_STPKEXIT"; }
+    if (address == 0xcf52) { return "M80_ESCON"; }
+    if (address == 0xcf65) { return "M80_ESCOFF"; }
+    if (address == 0xcf6e) { return "M80_ESCRET"; }
+    if (address == 0xcf78) { return "M80_COPYROM"; }
+    if (address == 0xcf95) { return "M80_COPYROM2"; }
+    if (address == 0xcfb3) { return "M80_LCB2ROM"; }
+    if (address == 0xcfb9) { return "M80_LCB1"; }
+    if (address == 0xcfc2) { return "M80_LCB1ROM"; }
+    if (address == 0xcfc5) { return "M80_COPYRET"; }
+    if (address == 0xcfc8) { return "M80_PSETUP"; }
+    if (address == 0xcfd2) { return "M80_PSETUP2"; }
+    if (address == 0xcfdf) { return "M80_PSETUPRET"; }
+    if (address == 0xcfea) { return "M80_F.TABLE"; }
+    if (address == 0xcff0) { return "M80_PLUSMINUS1"; }
+    if (address == 0xcff3) { return "M80_B.TABLE"; }
+    if (address == 0xcff9) { return "M80_WNDTAB"; }
+    if (address == 0xcffd) { return "M80_ZZEND"; }
 
 
-    else if (address == 0xcfff) { retval = "MON.CLRROM"; }
-    else if (address == 0xe000) { retval = "MON.BASIC"; }
-    else if (address == 0xe003) { retval = "MON.BASIC2"; }
+    if (address == 0xcfff) { return "MON.CLRROM"; }
+    if (address == 0xe000) { return "MON.BASIC"; }
+    if (address == 0xe003) { return "MON.BASIC2"; }
 
-    else if (address == 0xd365) { retval = "AS.GTFORPNT"; }
-    else if (address == 0xd39e) { retval = "AS.BLTU"; }
-    else if (address == 0xd39a) { retval = "AS.BLTU2"; }
-    else if (address == 0xd3d6) { retval = "AS.CHKMEM"; }
-    else if (address == 0xd3e3) { retval = "AS.REASON"; }
-    else if (address == 0xd410) { retval = "AS.MEMERR"; }
-    else if (address == 0xd412) { retval = "AS.ERROR"; }
-    else if (address == 0xd431) { retval = "AS.PRINT_ERROR_LINNUM"; }
-    else if (address == 0xd43c) { retval = "AS.RESTART"; }
-    else if (address == 0xd45c) { retval = "AS.NUMBERED_LINE"; }
-    else if (address == 0xd4b5) { retval = "AS.PUT_NEW_LINE"; }
-    else if (address == 0xd4f2) { retval = "AS.FIX_LINKS"; }
-    else if (address == 0xd52c) { retval = "AS.INLIN"; }
-    else if (address == 0xd52e) { retval = "AS.INLIN2"; }
-    else if (address == 0xd553) { retval = "AS.INCHR"; }
-    else if (address == 0xd559) { retval = "AS.PARSE_INPUT_LINE"; }
-    else if (address == 0xd56c) { retval = "AS.PARSE"; }
-    else if (address == 0xd61a) { retval = "AS.FNDLIN"; }
-    else if (address == 0xd61e) { retval = "AS.FL1"; }
-    else if (address == 0xd648) { retval = "AS.RTS1"; }
-    else if (address == 0xd649) { retval = "AS.NEW"; }
-    else if (address == 0xd64b) { retval = "AS.SCRTCH"; }
-    else if (address == 0xd665) { retval = "AS.SETPTRS"; }
-    else if (address == 0xd66a) { retval = "AS.CLEAR"; }
-    else if (address == 0xd66c) { retval = "AS.CLEARC"; }
-    else if (address == 0xd683) { retval = "AS.STKINI"; }
-    else if (address == 0xd696) { retval = "AS.RTS2"; }
-    else if (address == 0xd697) { retval = "AS.STXTPT"; }
-    else if (address == 0xd6a5) { retval = "AS.LIST"; }
-    else if (address == 0xd6da) { retval = "AS.LIST0"; }
-    else if (address == 0xd6fe) { retval = "AS.LIST1"; }
-    else if (address == 0xd702) { retval = "AS.LIST2"; }
-    else if (address == 0xd724) { retval = "AS.LIST3"; }
-    else if (address == 0xd72c) { retval = "AS.GETCHR"; }
-    else if (address == 0xd734) { retval = "AS.LIST4"; }
-    else if (address == 0xd766) { retval = "AS.FOR"; }
-    else if (address == 0xd7af) { retval = "AS.STEP"; }
-    else if (address == 0xd7d2) { retval = "AS.NEWSTT"; }
-    else if (address == 0xd805) { retval = "AS.TRACE_"; }
-    else if (address == 0xd826) { retval = "AS.GOEND"; }
-    else if (address == 0xd828) { retval = "AS.EXECUTE_STATEMENT"; }
-    else if (address == 0xd82a) { retval = "AS.EXECUTE_STATEMENT1"; }
-    else if (address == 0xd842) { retval = "AS.COLON_"; }
-    else if (address == 0xd846) { retval = "AS.SYNERR1"; }
-    else if (address == 0xd849) { retval = "AS.RESTORE"; }
-    else if (address == 0xd853) { retval = "AS.SETDA"; }
-    else if (address == 0xd857) { retval = "AS.RTS3"; }
-    else if (address == 0xd858) { retval = "AS.ISCNTC"; }
-    else if (address == 0xd863) { retval = "AS.CONTROL_C_TYPED"; }
-    else if (address == 0xd86e) { retval = "AS.STOP"; }
-    else if (address == 0xd870) { retval = "AS.END"; }
-    else if (address == 0xd871) { retval = "AS.END2"; }
-    else if (address == 0xd88a) { retval = "AS.END4"; }
-    else if (address == 0xd896) { retval = "AS.CONT"; }
-    else if (address == 0xd8af) { retval = "AS.RTS4"; }
-    else if (address == 0xd8b0) { retval = "AS.SAVE"; }
-    else if (address == 0xd8c9) { retval = "AS.LOAD"; }
-    else if (address == 0xd8F0) { retval = "AS.VARTIO"; }
-    else if (address == 0xd901) { retval = "AS.PROGIO"; }
-    else if (address == 0xd912) { retval = "AS.RUN"; }
-    else if (address == 0xd921) { retval = "AS.GOSUB"; }
-    else if (address == 0xd935) { retval = "AS.GO_TO_LINE"; }
-    else if (address == 0xd93e) { retval = "AS.GOTO"; }
-    else if (address == 0xd96a) { retval = "AS.RTS5"; }
-    else if (address == 0xd96b) { retval = "AS.POP"; }
-    else if (address == 0xd97c) { retval = "AS.UNDERR"; }
-    else if (address == 0xd981) { retval = "AS.SYNERR2"; }
-    else if (address == 0xd984) { retval = "AS.RETURN"; }
-    else if (address == 0xd995) { retval = "AS.DATA"; }
-    else if (address == 0xd998) { retval = "AS.ADDON"; }
-    else if (address == 0xd9a2) { retval = "AS.RTS6"; }
-    else if (address == 0xd9a3) { retval = "AS.DATAN"; }
-    else if (address == 0xd9a6) { retval = "AS.REMN"; }
-    else if (address == 0xd9c5) { retval = "AS.PULL3"; }
-    else if (address == 0xd9c9) { retval = "AS.IF"; }
-    else if (address == 0xd9dc) { retval = "AS.REM"; }
-    else if (address == 0xd9e1) { retval = "AS.IFTRUE"; }
-    else if (address == 0xd9ec) { retval = "AS.ONGOTO"; }
-    else if (address == 0xd9f4) { retval = "AS.ON1"; }
-    else if (address == 0xd9f8) { retval = "AS.ON2"; }
-    else if (address == 0xda0b) { retval = "AS.RTS7"; }
-    else if (address == 0xda0c) { retval = "AS.LINGET"; }
-    else if (address == 0xda46) { retval = "AS.LET"; }
-    else if (address == 0xda63) { retval = "AS.LET2"; }
-    else if (address == 0xda7a) { retval = "AS.LET_STRING"; }
-    else if (address == 0xda7b) { retval = "AS.PUTSTR"; }
-    else if (address == 0xdacf) { retval = "AS.PR_SPRING"; }
-    else if (address == 0xdad5) { retval = "AS.PRINT"; }
-    else if (address == 0xdad7) { retval = "AS.PRINT2"; }
-    else if (address == 0xdafb) { retval = "AS.CRDO"; }
-    else if (address == 0xdb00) { retval = "AS.NEGATE"; }
-    else if (address == 0xdb02) { retval = "AS.PR_RTS8"; }
-    else if (address == 0xdb03) { retval = "AS.PR_COMMA"; }
-    else if (address == 0xdb16) { retval = "AS.PR_TAB_OR_SPC"; }
-    else if (address == 0xdb2c) { retval = "AS.NXSPC"; }
-    else if (address == 0xdb2f) { retval = "AS.PR_NEXT_CHAR"; }
-    else if (address == 0xdb35) { retval = "AS.DOSPC"; }
-    else if (address == 0xdb3a) { retval = "AS.STROUT"; }
-    else if (address == 0xdb3d) { retval = "AS.STRPRT"; }
-    else if (address == 0xdb57) { retval = "AS.OUTSP"; }
-    else if (address == 0xdb5a) { retval = "AS.OUTQUES"; }
-    else if (address == 0xdb5c) { retval = "AS.OUTDO"; }
-    else if (address == 0xdb71) { retval = "AS.INPUTERR"; }
-    else if (address == 0xdb7b) { retval = "AS.READERR"; }
-    else if (address == 0xdb7f) { retval = "AS.ERLIN"; }
-    else if (address == 0xdb86) { retval = "AS.INPERR"; }
-    else if (address == 0xdb87) { retval = "AS.RESPERR"; }
-    else if (address == 0xdba0) { retval = "AS.GET"; }
-    else if (address == 0xdbb2) { retval = "AS.INPUT"; }
-    else if (address == 0xdbdc) { retval = "AS.NXIN"; }
-    else if (address == 0xdbe2) { retval = "AS.READ"; }
-    else if (address == 0xdbe9) { retval = "AS.INPUT_FLAG_ZERO"; }
-    else if (address == 0xdbeb) { retval = "AS.PROCESS_INPUT_LIST"; }
-    else if (address == 0xdbf1) { retval = "AS.PROCESS_INPUT_ITEM"; }
-    else if (address == 0xdC2b) { retval = "AS.INSTART"; }
-    else if (address == 0xdC69) { retval = "AS.INPUT_DATA"; }
-    else if (address == 0xdC72) { retval = "AS.INPUT_MORE"; }
-    else if (address == 0xdC99) { retval = "AS.INPFIN"; }
-    else if (address == 0xdCa0) { retval = "AS.FINDATA"; }
-    else if (address == 0xdCC6) { retval = "AS.INPDONE"; }
-    else if (address == 0xdcdf) { retval = "AS.ERR_EXTRA"; }
-    else if (address == 0xdcef) { retval = "AS.ERR_REENTRY"; }
-    else if (address == 0xdcf9) { retval = "AS.NEXT"; }
-    else if (address == 0xdcff) { retval = "AS.NEXT1"; }
-    else if (address == 0xdd02) { retval = "AS.NEXT2"; }
-    else if (address == 0xdd0d) { retval = "AS.GERR"; }
-    else if (address == 0xdd0f) { retval = "AS.NEXT3"; }
-    else if (address == 0xdd67) { retval = "AS.FRMNUM"; }
-    else if (address == 0xdd6a) { retval = "AS.CHKNUM"; }
-    else if (address == 0xdd6c) { retval = "AS.CHKSTR"; }
-    else if (address == 0xdd6d) { retval = "AS.CHKVAL"; }
-    else if (address == 0xdd78) { retval = "AS.JERROR"; }
-    else if (address == 0xdd7b) { retval = "AS.FRMEVL"; }
-    else if (address == 0xdd86) { retval = "AS.FRMEVL1"; }
-    else if (address == 0xdd95) { retval = "AS.FRMEVL2"; }
-    else if (address == 0xddcd) { retval = "AS.FRM_PRECEDENCE_TEST"; }
-    else if (address == 0xddd6) { retval = "AS.NXOP"; }
-    else if (address == 0xddd7) { retval = "AS.SAVOP"; }
-    else if (address == 0xdde4) { retval = "AS.FRM_RELATIONAL"; }
-    else if (address == 0xddf6) { retval = "AS.FRM_PREFNC"; }
-    else if (address == 0xddfd) { retval = "AS.FRM_RECURSE"; }
-    else if (address == 0xde0d) { retval = "AS.SNTXERR"; }
-    else if (address == 0xde10) { retval = "AS.FRM_STACK1"; }
-    else if (address == 0xde15) { retval = "AS.FRM_STACK2"; }
-    else if (address == 0xde20) { retval = "AS.FRM_STACK3"; }
-    else if (address == 0xde35) { retval = "AS.NOTMATH"; }
-    else if (address == 0xde38) { retval = "AS.GOEX"; }
-    else if (address == 0xde3a) { retval = "AS.FRM_PERFORM1"; }
-    else if (address == 0xde43) { retval = "AS.FRM_PERFORM2"; }
-    else if (address == 0xde5d) { retval = "AS.EXIT"; }
-    else if (address == 0xde60) { retval = "AS.FRM_ELEMENT"; }
-    else if (address == 0xde81) { retval = "AS.STRTXT"; }
-    else if (address == 0xde90) { retval = "AS.NOT_"; }
-    else if (address == 0xde98) { retval = "AS.EQUOP"; }
-    else if (address == 0xdea4) { retval = "AS.FN_"; }
-    else if (address == 0xdeab) { retval = "AS.SGN_"; }
-    else if (address == 0xdeb2) { retval = "AS.PARCHK"; }
-    else if (address == 0xdeb8) { retval = "AS.CHKCLS"; }
-    else if (address == 0xdebb) { retval = "AS.CHKOPN"; }
-    else if (address == 0xdebe) { retval = "AS.CHKCOM"; }
-    else if (address == 0xdec0) { retval = "AS.SYNCHR"; }
-    else if (address == 0xdec9) { retval = "AS.SYNERR"; }
-    else if (address == 0xdece) { retval = "AS.MIN"; }
-    else if (address == 0xded0) { retval = "AS.EQUL"; }
-    else if (address == 0xded5) { retval = "AS.FRM_VARIABLE"; }
-    else if (address == 0xded7) { retval = "AS.FRM_VARIABLE_CALL"; }
-    else if (address == 0xdef9) { retval = "AS.SCREEN"; }
-    else if (address == 0xdf0c) { retval = "AS.UNARY"; }
-    else if (address == 0xdf4f) { retval = "AS.OR"; }
-    else if (address == 0xdf55) { retval = "AS.AND"; }
-    else if (address == 0xdf5d) { retval = "AS.FALSE"; }
-    else if (address == 0xdf60) { retval = "AS.TRUE"; }
-    else if (address == 0xdf65) { retval = "AS.RELOPS"; }
-    else if (address == 0xdf7d) { retval = "AS.STRCMP"; }
-    else if (address == 0xdfaa) { retval = "AS.STRCMP1"; }
-    else if (address == 0xdfb0) { retval = "AS.NUMCMP"; }
-    else if (address == 0xdfb5) { retval = "AS.STRCMP2"; }
-    else if (address == 0xdfc1) { retval = "AS.CMPDONE"; }
-    else if (address == 0xdfcd) { retval = "AS.PDL"; }
-    else if (address == 0xdfd6) { retval = "AS.NXDIM"; }
-    else if (address == 0xdfd9) { retval = "AS.DIM"; }
-    else if (address == 0xdfe3) { retval = "AS.PTRGET"; }
-    else if (address == 0xdfe8) { retval = "AS.PTRGET2"; }
-    else if (address == 0xdfea) { retval = "AS.PTRGET3"; }
-    else if (address == 0xdff4) { retval = "AS.BADNAM"; }
-    else if (address == 0xdff7) { retval = "AS.NAMOK"; }
-    else if (address == 0xe007) { retval = "AS.PTRGET4"; }
-    else if (address == 0xe07d) { retval = "AS.ISLETC"; }
-    else if (address == 0xe087) { retval = "AS.NAME_NOT_FOUND"; }
-    else if (address == 0xe09c) { retval = "AS.MAKE_NEW_VARIABLE"; }
-    else if (address == 0xe0de) { retval = "AS.SET_VARPNT_AND_YA"; }
-    else if (address == 0xe0ed) { retval = "AS.GETARY"; }
-    else if (address == 0xe0ef) { retval = "AS.GETARY2"; }
-    else if (address == 0xe102) { retval = "AS.MAKINT"; }
-    else if (address == 0xe108) { retval = "AS.MKINT"; }
-    else if (address == 0xe10c) { retval = "AS.AYINT"; }
-    else if (address == 0xe119) { retval = "AS.MI1"; }
-    else if (address == 0xe11b) { retval = "AS.MI2"; }
-    else if (address == 0xe11e) { retval = "AS.ARRAY"; }
-    else if (address == 0xe196) { retval = "AS.SUBERR"; }
-    else if (address == 0xe199) { retval = "AS.IQERR"; }
-    else if (address == 0xe19b) { retval = "AS.JER"; }
-    else if (address == 0xe19e) { retval = "AS.USE_OLD_ARRAY"; }
-    else if (address == 0xe1b8) { retval = "AS.MAKE_NEW_ARRAY"; }
-    else if (address == 0xe24b) { retval = "AS.FIND_ARRAY_ELEMENT"; }
-    else if (address == 0xe253) { retval = "AS.FAE1"; }
-    else if (address == 0xe269) { retval = "AS.GSE"; }
-    else if (address == 0xe26c) { retval = "AS.GME"; }
-    else if (address == 0xe26f) { retval = "AS.FAE2"; }
-    else if (address == 0xe270) { retval = "AS.FAE3"; }
-    else if (address == 0xe2ac) { retval = "AS.RTS9"; }
-    else if (address == 0xe2ad) { retval = "AS.MULTIPLY_SUBSCRIPT"; }
-    else if (address == 0xe2b6) { retval = "AS.MULTIPLY_SUBS1"; }
-    else if (address == 0xe2de) { retval = "AS.FRE"; }
-    else if (address == 0xe2f2) { retval = "AS.GIVAYF"; }
-    else if (address == 0xe2ff) { retval = "AS.POS"; }
-    else if (address == 0xe301) { retval = "AS.SNGFLT"; }
-    else if (address == 0xe306) { retval = "AS.ERRDIR"; }
-    else if (address == 0xe30e) { retval = "AS.UNDFNC"; }
-    else if (address == 0xe313) { retval = "AS.DEF"; }
-    else if (address == 0xe341) { retval = "AS.FNC_"; }
-    else if (address == 0xe354) { retval = "AS.FUNCT"; }
-    else if (address == 0xe3af) { retval = "AS.FNCDATA"; }
-    else if (address == 0xe3c5) { retval = "AS.STR"; }
-    else if (address == 0xe3d5) { retval = "AS.STRINI"; }
-    else if (address == 0xe3dd) { retval = "AS.STRSPA"; }
-    else if (address == 0xe3e7) { retval = "AS.STRLIT"; }
-    else if (address == 0xe3ed) { retval = "AS.STRLT2"; }
-    else if (address == 0xe42a) { retval = "AS.PUTNEW"; }
-    else if (address == 0xe432) { retval = "AS.JERR"; }
-    else if (address == 0xe435) { retval = "AS.PUTEMP"; }
-    else if (address == 0xe452) { retval = "AS.GETSPA"; }
-    else if (address == 0xe484) { retval = "AS.GARBAG"; }
-    else if (address == 0xe488) { retval = "AS.FIND_HIGHEST_STRING"; }
-    else if (address == 0xe519) { retval = "AS.CHECK_SIMPLE_VARIABLE"; }
-    else if (address == 0xe523) { retval = "AS.CHECK_VARIABLE"; }
-    else if (address == 0xe552) { retval = "AS.CHECK_BUMP"; }
-    else if (address == 0xe55d) { retval = "AS.CHECK_EXIT"; }
-    else if (address == 0xe562) { retval = "AS.MOVE_HIGHEST_STRING_TO_TOP"; }
-    else if (address == 0xe597) { retval = "AS.CAT"; }
-    else if (address == 0xe5d4) { retval = "AS.MOVINS"; }
-    else if (address == 0xe5e2) { retval = "AS.MOVSTR"; }
-    else if (address == 0xe5e6) { retval = "AS.MOVSTR1"; }
-    else if (address == 0xe5fd) { retval = "AS.FRESTR"; }
-    else if (address == 0xe600) { retval = "AS.FREFAC"; }
-    else if (address == 0xe604) { retval = "AS.FRETMP"; }
-    else if (address == 0xe635) { retval = "AS.FRETMS"; }
-    else if (address == 0xe646) { retval = "AS.CHRSTR"; }
-    else if (address == 0xe65a) { retval = "AS.LEFTSTR"; }
-    else if (address == 0xe660) { retval = "AS.SUBSTRING1"; }
-    else if (address == 0xe667) { retval = "AS.SUBSTRING2"; }
-    else if (address == 0xe668) { retval = "AS.SUBSTRING3"; }
-    else if (address == 0xe686) { retval = "AS.RIGHTSTR"; }
-    else if (address == 0xe691) { retval = "AS.MIDSTR"; }
-    else if (address == 0xe6b9) { retval = "AS.SUBSTRING_SETUP"; }
-    else if (address == 0xe6d6) { retval = "AS.LEN"; }
-    else if (address == 0xe6dc) { retval = "AS.GETSTR"; }
-    else if (address == 0xe6e5) { retval = "AS.ASC"; }
-    else if (address == 0xe6f2) { retval = "AS.GOIQ"; }
-    else if (address == 0xe6f5) { retval = "AS.GTBYTC"; }
-    else if (address == 0xe6f8) { retval = "AS.GETBYT"; }
-    else if (address == 0xe6fb) { retval = "AS.CONINT"; }
-    else if (address == 0xe707) { retval = "AS.VAL"; }
-    else if (address == 0xe73d) { retval = "AS.POINT"; }
-    else if (address == 0xe746) { retval = "AS.GTNUM"; }
-    else if (address == 0xe74c) { retval = "AS.COMBYTE"; }
-    else if (address == 0xe752) { retval = "AS.GETADR"; }
-    else if (address == 0xe764) { retval = "AS.PEEK"; }
-    else if (address == 0xe77b) { retval = "AS.POKE"; }
-    else if (address == 0xe784) { retval = "AS.WAIT"; }
-    else if (address == 0xe79f) { retval = "AS.RTS10"; }
-    else if (address == 0xe7a0) { retval = "AS.FADDH"; }
-    else if (address == 0xe7a7) { retval = "AS.FSUB"; }
-    else if (address == 0xe7aa) { retval = "AS.FSUBT"; }
-    else if (address == 0xe7b9) { retval = "AS.FADD1"; }
-    else if (address == 0xe7be) { retval = "AS.FADD"; }
-    else if (address == 0xe7c1) { retval = "AS.FADDT"; }
-    else if (address == 0xe7ce) { retval = "AS.FADD2"; }
-    else if (address == 0xe7fa) { retval = "AS.FADD3"; }
-    else if (address == 0xe829) { retval = "AS.NORMALIZE_FAC1"; }
-    else if (address == 0xe82e) { retval = "AS.NORMALIZE_FAC2"; }
-    else if (address == 0xe84e) { retval = "AS.ZERO_FAC"; }
-    else if (address == 0xe850) { retval = "AS.STA_IN_FAC_SIGN_AND_EXP"; }
-    else if (address == 0xe852) { retval = "AS.STA_IN_FAC_SIGN"; }
-    else if (address == 0xe855) { retval = "AS.FADD4"; }
-    else if (address == 0xe874) { retval = "AS.NORMALIZE_FAC3"; }
-    else if (address == 0xe880) { retval = "AS.NORMALIZE_FAC4"; }
-    else if (address == 0xe88d) { retval = "AS.NORMALIZE_FAC5"; }
-    else if (address == 0xe88f) { retval = "AS.NORMALIZE_FAC6"; }
-    else if (address == 0xe89d) { retval = "AS.RTS11"; }
-    else if (address == 0xe89e) { retval = "AS.COMPLEMENT_FAC"; }
-    else if (address == 0xe8a4) { retval = "AS.COMPLEMENT_FAC_MANTISSA"; }
-    else if (address == 0xe8c6) { retval = "AS.INCREMENT_FAC_MANTISSA"; }
-    else if (address == 0xe8d4) { retval = "AS.RTS12"; }
-    else if (address == 0xe8d5) { retval = "AS.OVERFLOW"; }
-    else if (address == 0xe8da) { retval = "AS.SHIFT_RIGHT1"; }
-    else if (address == 0xe8dc) { retval = "AS.SHIFT_RIGHT2"; }
-    else if (address == 0xe8f0) { retval = "AS.SHIFT_RIGHT"; }
-    else if (address == 0xe8fd) { retval = "AS.SHIFT_RIGHT3"; }
-    else if (address == 0xe907) { retval = "AS.SHIFT_RIGHT4"; }
-    else if (address == 0xe911) { retval = "AS.SHIFT_RIGHT5"; }
-    else if (address == 0xe941) { retval = "AS.LOG"; }
-    else if (address == 0xe948) { retval = "AS.GIQ"; }
-    else if (address == 0xe94b) { retval = "AS.LOG2"; }
-    else if (address == 0xe97f) { retval = "AS.FMULT"; }
-    else if (address == 0xe982) { retval = "AS.FMULTT"; }
-    else if (address == 0xe9b0) { retval = "AS.MULTIPLY1"; }
-    else if (address == 0xe9b5) { retval = "AS.MULTIPLY2"; }
-    else if (address == 0xe9e2) { retval = "AS.RTS13"; }
-    else if (address == 0xe9e3) { retval = "AS.LOAD_ARG_FROM_YA"; }
-    else if (address == 0xea0e) { retval = "AS.ADD_EXPONENTS"; }
-    else if (address == 0xea10) { retval = "AS.ADD_EXPONENTS1"; }
-    else if (address == 0xea2b) { retval = "AS.OUTOFRNG"; }
-    else if (address == 0xea31) { retval = "AS.ZERO"; }
-    else if (address == 0xea36) { retval = "AS.JOV"; }
-    else if (address == 0xeae9) { retval = "AS.MUL10"; }
-    else if (address == 0xea55) { retval = "AS.DIV10"; }
-    else if (address == 0xea5e) { retval = "AS.DIV"; }
-    else if (address == 0xea66) { retval = "AS.FDIV"; }
-    else if (address == 0xeae6) { retval = "AS.COPY_RESULT_INTO_FAC"; }
-    else if (address == 0xeaf9) { retval = "AS.LOAD_FAC_FROM_YA"; }
-    else if (address == 0xeb1e) { retval = "AS.STORE_FAC_IN_TEMP2_ROUNDED"; }
-    else if (address == 0xeb21) { retval = "AS.STORE_FAC_IN_TEMP1_ROUNDED"; }
-    else if (address == 0xeb27) { retval = "AS.SETFOR"; }
-    else if (address == 0xeb2b) { retval = "AS.STORE_FAC_AT_YX_ROUNDED"; }
-    else if (address == 0xeb53) { retval = "AS.COPY_FAC_TO_ARG"; }
-    else if (address == 0xeb63) { retval = "AS.COPY_FAC_TO_ARG_ROUNDED"; }
-    else if (address == 0xeb71) { retval = "AS.RTS14"; }
-    else if (address == 0xeb72) { retval = "AS.ROUND_FAC"; }
-    else if (address == 0xeb7a) { retval = "AS.INCREMENT_MANTISSA"; }
-    else if (address == 0xeb82) { retval = "AS.SIGN"; }
-    else if (address == 0xeb86) { retval = "AS.SIGN1"; }
-    else if (address == 0xeb88) { retval = "AS.SIGN2"; }
-    else if (address == 0xeb8f) { retval = "AS.RTS15"; }
-    else if (address == 0xeb90) { retval = "AS.SGN"; }
-    else if (address == 0xeb9e) { retval = "AS.FLOAT"; }
-    else if (address == 0xeb9b) { retval = "AS.FLOAT1"; }
-    else if (address == 0xeba0) { retval = "AS.FLOAT2"; }
-    else if (address == 0xebaf) { retval = "AS.ABS"; }
-    else if (address == 0xebb2) { retval = "AS.FCOMP"; }
-    else if (address == 0xebb4) { retval = "AS.FCOMP2"; }
-    else if (address == 0xebf2) { retval = "AS.QINT"; }
-    else if (address == 0xec11) { retval = "AS.RTS16"; }
-    else if (address == 0xec12) { retval = "AS.QINT2"; }
-    else if (address == 0xec23) { retval = "AS.INT"; }
-    else if (address == 0xec40) { retval = "AS.QINT3"; }
-    else if (address == 0xec49) { retval = "AS.RTS17"; }
-    else if (address == 0xec4a) { retval = "AS.FIN"; }
-    else if (address == 0xec61) { retval = "AS.FIN1"; }
-    else if (address == 0xec64) { retval = "AS.FIN2"; }
-    else if (address == 0xec66) { retval = "AS.FIN3"; }
-    else if (address == 0xec87) { retval = "AS.FIN4"; }
-    else if (address == 0xec8a) { retval = "AS.FIN5"; }
-    else if (address == 0xec8c) { retval = "AS.FIN6"; }
-    else if (address == 0xec98) { retval = "AS.FIN10"; }
-    else if (address == 0xec9e) { retval = "AS.FIN7"; }
-    else if (address == 0xeca0) { retval = "AS.FIN8"; }
-    else if (address == 0xecc1) { retval = "AS.FIN9"; }
-    else if (address == 0xecd5) { retval = "AS.ADDACC"; }
-    else if (address == 0xece8) { retval = "AS.GETEXP"; }
-    else if (address == 0xed19) { retval = "AS.INPRT"; }
-    else if (address == 0xed24) { retval = "AS.LINPRT"; }
-    else if (address == 0xed2e) { retval = "AS.PRINT_FAC"; }
-    else if (address == 0xed31) { retval = "AS.GO_STROUT"; }
-    else if (address == 0xed34) { retval = "AS.FOUT"; }
-    else if (address == 0xed36) { retval = "AS.FOUT1"; }
-    else if (address == 0xed8c) { retval = "AS.FOUT2"; }
-    else if (address == 0xee17) { retval = "AS.FOUT3"; }
-    else if (address == 0xee57) { retval = "AS.FOUT4"; }
-    else if (address == 0xee5a) { retval = "AS.FOUT5"; }
-    else if (address == 0xee5f) { retval = "AS.FOUT6"; }
-    else if (address == 0xee8d) { retval = "AS.SQR"; }
-    else if (address == 0xee97) { retval = "AS.FPWRT"; }
-    else if (address == 0xeed0) { retval = "AS.NEGOP"; }
-    else if (address == 0xeeda) { retval = "AS.RTS18"; }
-    else if (address == 0xef09) { retval = "AS.EXP"; }
-    else if (address == 0xef5c) { retval = "AS.POLYNOMIAL_ODD"; }
-    else if (address == 0xef72) { retval = "AS.POLYNOMIAL"; }
-    else if (address == 0xef76) { retval = "AS.SERMAIN"; }
-    else if (address == 0xefa5) { retval = "AS.RTS19"; }
-    else if (address == 0xefae) { retval = "AS.RND"; }
-    else if (address == 0xefe7) { retval = "AS.GO_MOVMF"; }
-    else if (address == 0xefea) { retval = "AS.COS"; }
-    else if (address == 0xeff1) { retval = "AS.SIN"; }
-    else if (address == 0xf023) { retval = "AS.SIN1"; }
-    else if (address == 0xf026) { retval = "AS.SIN2"; }
-    else if (address == 0xf03a) { retval = "AS.TAN"; }
-    else if (address == 0xf062) { retval = "AS.TAN1"; }
-    else if (address == 0xf094) { retval = "AS.MS_EASTER_EGG_DATA"; }
-    else if (address == 0xf09e) { retval = "AS.ATN"; }
-    else if (address == 0xf0cd) { retval = "AS.RTS20"; }
-    else if (address == 0xf10b) { retval = "AS.GENERIC_CHRGET"; }
-    else if (address == 0xf128) { retval = "AS.COLD_START"; }
-    else if (address == 0xf1d5) { retval = "AS.CALL"; }
-    else if (address == 0xf1de) { retval = "AS.IN_NUMBER"; }
-    else if (address == 0xf1e5) { retval = "AS.PR_NUMBER"; }
-    else if (address == 0xf1ec) { retval = "AS.PLOTFNS"; }
-    else if (address == 0xf206) { retval = "AS.GOERR"; }
-    else if (address == 0xf209) { retval = "AS.LINCOOR"; }
-    else if (address == 0xf225) { retval = "AS.PLOT"; }
-    else if (address == 0xf232) { retval = "AS.HLIN"; }
-    else if (address == 0xf241) { retval = "AS.VLIN"; }
-    else if (address == 0xf24f) { retval = "AS.COLOR"; }
-    else if (address == 0xf256) { retval = "AS.VTAB"; }
-    else if (address == 0xf262) { retval = "AS.SPEED"; }
-    else if (address == 0xf26d) { retval = "AS.TRACE"; }
-    else if (address == 0xf26f) { retval = "AS.NOTRACE"; }
-    else if (address == 0xf273) { retval = "AS.NORMAL"; }
-    else if (address == 0xf277) { retval = "AS.INVERSE"; }
-    else if (address == 0xf280) { retval = "AS.FLASH"; }
-    else if (address == 0xf286) { retval = "AS.HIMEM"; }
-    else if (address == 0xf296) { retval = "AS.JMM"; }
-    else if (address == 0xf299) { retval = "AS.SETHI"; }
-    else if (address == 0xf2a6) { retval = "AS.LOMEM"; }
-    else if (address == 0xf2cb) { retval = "AS.ONERR"; }
-    else if (address == 0xf2e9) { retval = "AS.HANDLERR"; }
-    else if (address == 0xf318) { retval = "AS.RESUME"; }
-    else if (address == 0xf32e) { retval = "AS.JSYN"; }
-    else if (address == 0xf331) { retval = "AS.DEL"; }
-    else if (address == 0xf390) { retval = "AS.GR"; }
-    else if (address == 0xf399) { retval = "AS.TEXT"; }
-    else if (address == 0xf39f) { retval = "AS.STORE"; }
-    else if (address == 0xf3bc) { retval = "AS.RECALL"; }
-    else if (address == 0xf3d8) { retval = "AS.HGR2"; }
-    else if (address == 0xf3e2) { retval = "AS.HGR"; }
-    else if (address == 0xf3ea) { retval = "AS.SETHPG"; }
-    else if (address == 0xf3f2) { retval = "AS.HCLR"; }
-    else if (address == 0xf3f6) { retval = "AS.BKGND"; }
-    else if (address == 0xf411) { retval = "AS.HPOSN"; }
-    else if (address == 0xf457) { retval = "AS.HPLOT0"; }
-    else if (address == 0xf465) { retval = "AS.MOVE_LEFT_OR_RIGHT"; }
-    else if (address == 0xf47e) { retval = "AS.COLOR_SHIFT"; }
-    else if (address == 0xf48a) { retval = "AS.MOVE_RIGHT"; }
-    else if (address == 0xf49c) { retval = "AS.LRUDX1"; }
-    else if (address == 0xf49d) { retval = "AS.LRUDX2"; }
-    else if (address == 0xf4b3) { retval = "AS.LRUD1"; }
-    else if (address == 0xf4b4) { retval = "AS.LRUD2"; }
-    else if (address == 0xf4c4) { retval = "AS.LRUD3"; }
-    else if (address == 0xf4c8) { retval = "AS.LRUD4"; }
-    else if (address == 0xf4d3) { retval = "AS.MOVE_UP_OR_DOWN"; }
-    else if (address == 0xf505) { retval = "AS.MOVE_DOWN"; }
-    else if (address == 0xf530) { retval = "AS.HLINRL"; }
-    else if (address == 0xf53a) { retval = "AS.HGLN"; }
-    else if (address == 0xf57c) { retval = "AS.MOVEX"; }
-    else if (address == 0xf581) { retval = "AS.MOVEX2"; }
-    else if (address == 0xf5cb) { retval = "AS.HFIND"; }
-    else if (address == 0xf600) { retval = "AS.RTS22"; }
-    else if (address == 0xf601) { retval = "AS.DRAW0"; }
-    else if (address == 0xf605) { retval = "AS.DRAW1"; }
-    else if (address == 0xf65d) { retval = "AS.XDRAW0"; }
-    else if (address == 0xf661) { retval = "AS.XDRAW1"; }
-    else if (address == 0xf6b9) { retval = "AS.HFNS"; }
-    else if (address == 0xf6e6) { retval = "AS.GGERR"; }
-    else if (address == 0xf6e9) { retval = "AS.HCOLOR"; }
-    else if (address == 0xf6f5) { retval = "AS.RTS23"; }
-    else if (address == 0xf6fc) { retval = "AS.COLORTBL"; }
-    else if (address == 0xf6fe) { retval = "AS.HPLOT"; }
-    else if (address == 0xf721) { retval = "AS.ROT"; }
-    else if (address == 0xf727) { retval = "AS.SCALE"; }
-    else if (address == 0xf72d) { retval = "AS.DRAWPNT"; }
-    else if (address == 0xf769) { retval = "AS.DRAW"; }
-    else if (address == 0xf76f) { retval = "AS.XDRAW"; }
-    else if (address == 0xf775) { retval = "AS.SHLOAD"; }
-    else if (address == 0xf7bc) { retval = "AS.TAPEPNT"; }
-    else if (address == 0xf7d9) { retval = "AS.GETARYPT"; }
-    else if (address == 0xf7e7) { retval = "AS.HTAB"; }
+    if (address == 0xd365) { return "AS.GTFORPNT"; }
+    if (address == 0xd39e) { return "AS.BLTU"; }
+    if (address == 0xd39a) { return "AS.BLTU2"; }
+    if (address == 0xd3d6) { return "AS.CHKMEM"; }
+    if (address == 0xd3e3) { return "AS.REASON"; }
+    if (address == 0xd410) { return "AS.MEMERR"; }
+    if (address == 0xd412) { return "AS.ERROR"; }
+    if (address == 0xd431) { return "AS.PRINT_ERROR_LINNUM"; }
+    if (address == 0xd43c) { return "AS.RESTART"; }
+    if (address == 0xd45c) { return "AS.NUMBERED_LINE"; }
+    if (address == 0xd4b5) { return "AS.PUT_NEW_LINE"; }
+    if (address == 0xd4f2) { return "AS.FIX_LINKS"; }
+    if (address == 0xd52c) { return "AS.INLIN"; }
+    if (address == 0xd52e) { return "AS.INLIN2"; }
+    if (address == 0xd553) { return "AS.INCHR"; }
+    if (address == 0xd559) { return "AS.PARSE_INPUT_LINE"; }
+    if (address == 0xd56c) { return "AS.PARSE"; }
+    if (address == 0xd61a) { return "AS.FNDLIN"; }
+    if (address == 0xd61e) { return "AS.FL1"; }
+    if (address == 0xd648) { return "AS.RTS1"; }
+    if (address == 0xd649) { return "AS.NEW"; }
+    if (address == 0xd64b) { return "AS.SCRTCH"; }
+    if (address == 0xd665) { return "AS.SETPTRS"; }
+    if (address == 0xd66a) { return "AS.CLEAR"; }
+    if (address == 0xd66c) { return "AS.CLEARC"; }
+    if (address == 0xd683) { return "AS.STKINI"; }
+    if (address == 0xd696) { return "AS.RTS2"; }
+    if (address == 0xd697) { return "AS.STXTPT"; }
+    if (address == 0xd6a5) { return "AS.LIST"; }
+    if (address == 0xd6da) { return "AS.LIST0"; }
+    if (address == 0xd6fe) { return "AS.LIST1"; }
+    if (address == 0xd702) { return "AS.LIST2"; }
+    if (address == 0xd724) { return "AS.LIST3"; }
+    if (address == 0xd72c) { return "AS.GETCHR"; }
+    if (address == 0xd734) { return "AS.LIST4"; }
+    if (address == 0xd766) { return "AS.FOR"; }
+    if (address == 0xd7af) { return "AS.STEP"; }
+    if (address == 0xd7d2) { return "AS.NEWSTT"; }
+    if (address == 0xd805) { return "AS.TRACE_"; }
+    if (address == 0xd826) { return "AS.GOEND"; }
+    if (address == 0xd828) { return "AS.EXECUTE_STATEMENT"; }
+    if (address == 0xd82a) { return "AS.EXECUTE_STATEMENT1"; }
+    if (address == 0xd842) { return "AS.COLON_"; }
+    if (address == 0xd846) { return "AS.SYNERR1"; }
+    if (address == 0xd849) { return "AS.RESTORE"; }
+    if (address == 0xd853) { return "AS.SETDA"; }
+    if (address == 0xd857) { return "AS.RTS3"; }
+    if (address == 0xd858) { return "AS.ISCNTC"; }
+    if (address == 0xd863) { return "AS.CONTROL_C_TYPED"; }
+    if (address == 0xd86e) { return "AS.STOP"; }
+    if (address == 0xd870) { return "AS.END"; }
+    if (address == 0xd871) { return "AS.END2"; }
+    if (address == 0xd88a) { return "AS.END4"; }
+    if (address == 0xd896) { return "AS.CONT"; }
+    if (address == 0xd8af) { return "AS.RTS4"; }
+    if (address == 0xd8b0) { return "AS.SAVE"; }
+    if (address == 0xd8c9) { return "AS.LOAD"; }
+    if (address == 0xd8F0) { return "AS.VARTIO"; }
+    if (address == 0xd901) { return "AS.PROGIO"; }
+    if (address == 0xd912) { return "AS.RUN"; }
+    if (address == 0xd921) { return "AS.GOSUB"; }
+    if (address == 0xd935) { return "AS.GO_TO_LINE"; }
+    if (address == 0xd93e) { return "AS.GOTO"; }
+    if (address == 0xd96a) { return "AS.RTS5"; }
+    if (address == 0xd96b) { return "AS.POP"; }
+    if (address == 0xd97c) { return "AS.UNDERR"; }
+    if (address == 0xd981) { return "AS.SYNERR2"; }
+    if (address == 0xd984) { return "AS.RETURN"; }
+    if (address == 0xd995) { return "AS.DATA"; }
+    if (address == 0xd998) { return "AS.ADDON"; }
+    if (address == 0xd9a2) { return "AS.RTS6"; }
+    if (address == 0xd9a3) { return "AS.DATAN"; }
+    if (address == 0xd9a6) { return "AS.REMN"; }
+    if (address == 0xd9c5) { return "AS.PULL3"; }
+    if (address == 0xd9c9) { return "AS.IF"; }
+    if (address == 0xd9dc) { return "AS.REM"; }
+    if (address == 0xd9e1) { return "AS.IFTRUE"; }
+    if (address == 0xd9ec) { return "AS.ONGOTO"; }
+    if (address == 0xd9f4) { return "AS.ON1"; }
+    if (address == 0xd9f8) { return "AS.ON2"; }
+    if (address == 0xda0b) { return "AS.RTS7"; }
+    if (address == 0xda0c) { return "AS.LINGET"; }
+    if (address == 0xda46) { return "AS.LET"; }
+    if (address == 0xda63) { return "AS.LET2"; }
+    if (address == 0xda7a) { return "AS.LET_STRING"; }
+    if (address == 0xda7b) { return "AS.PUTSTR"; }
+    if (address == 0xdacf) { return "AS.PR_SPRING"; }
+    if (address == 0xdad5) { return "AS.PRINT"; }
+    if (address == 0xdad7) { return "AS.PRINT2"; }
+    if (address == 0xdafb) { return "AS.CRDO"; }
+    if (address == 0xdb00) { return "AS.NEGATE"; }
+    if (address == 0xdb02) { return "AS.PR_RTS8"; }
+    if (address == 0xdb03) { return "AS.PR_COMMA"; }
+    if (address == 0xdb16) { return "AS.PR_TAB_OR_SPC"; }
+    if (address == 0xdb2c) { return "AS.NXSPC"; }
+    if (address == 0xdb2f) { return "AS.PR_NEXT_CHAR"; }
+    if (address == 0xdb35) { return "AS.DOSPC"; }
+    if (address == 0xdb3a) { return "AS.STROUT"; }
+    if (address == 0xdb3d) { return "AS.STRPRT"; }
+    if (address == 0xdb57) { return "AS.OUTSP"; }
+    if (address == 0xdb5a) { return "AS.OUTQUES"; }
+    if (address == 0xdb5c) { return "AS.OUTDO"; }
+    if (address == 0xdb71) { return "AS.INPUTERR"; }
+    if (address == 0xdb7b) { return "AS.READERR"; }
+    if (address == 0xdb7f) { return "AS.ERLIN"; }
+    if (address == 0xdb86) { return "AS.INPERR"; }
+    if (address == 0xdb87) { return "AS.RESPERR"; }
+    if (address == 0xdba0) { return "AS.GET"; }
+    if (address == 0xdbb2) { return "AS.INPUT"; }
+    if (address == 0xdbdc) { return "AS.NXIN"; }
+    if (address == 0xdbe2) { return "AS.READ"; }
+    if (address == 0xdbe9) { return "AS.INPUT_FLAG_ZERO"; }
+    if (address == 0xdbeb) { return "AS.PROCESS_INPUT_LIST"; }
+    if (address == 0xdbf1) { return "AS.PROCESS_INPUT_ITEM"; }
+    if (address == 0xdC2b) { return "AS.INSTART"; }
+    if (address == 0xdC69) { return "AS.INPUT_DATA"; }
+    if (address == 0xdC72) { return "AS.INPUT_MORE"; }
+    if (address == 0xdC99) { return "AS.INPFIN"; }
+    if (address == 0xdCa0) { return "AS.FINDATA"; }
+    if (address == 0xdCC6) { return "AS.INPDONE"; }
+    if (address == 0xdcdf) { return "AS.ERR_EXTRA"; }
+    if (address == 0xdcef) { return "AS.ERR_REENTRY"; }
+    if (address == 0xdcf9) { return "AS.NEXT"; }
+    if (address == 0xdcff) { return "AS.NEXT1"; }
+    if (address == 0xdd02) { return "AS.NEXT2"; }
+    if (address == 0xdd0d) { return "AS.GERR"; }
+    if (address == 0xdd0f) { return "AS.NEXT3"; }
+    if (address == 0xdd67) { return "AS.FRMNUM"; }
+    if (address == 0xdd6a) { return "AS.CHKNUM"; }
+    if (address == 0xdd6c) { return "AS.CHKSTR"; }
+    if (address == 0xdd6d) { return "AS.CHKVAL"; }
+    if (address == 0xdd78) { return "AS.JERROR"; }
+    if (address == 0xdd7b) { return "AS.FRMEVL"; }
+    if (address == 0xdd86) { return "AS.FRMEVL1"; }
+    if (address == 0xdd95) { return "AS.FRMEVL2"; }
+    if (address == 0xddcd) { return "AS.FRM_PRECEDENCE_TEST"; }
+    if (address == 0xddd6) { return "AS.NXOP"; }
+    if (address == 0xddd7) { return "AS.SAVOP"; }
+    if (address == 0xdde4) { return "AS.FRM_RELATIONAL"; }
+    if (address == 0xddf6) { return "AS.FRM_PREFNC"; }
+    if (address == 0xddfd) { return "AS.FRM_RECURSE"; }
+    if (address == 0xde0d) { return "AS.SNTXERR"; }
+    if (address == 0xde10) { return "AS.FRM_STACK1"; }
+    if (address == 0xde15) { return "AS.FRM_STACK2"; }
+    if (address == 0xde20) { return "AS.FRM_STACK3"; }
+    if (address == 0xde35) { return "AS.NOTMATH"; }
+    if (address == 0xde38) { return "AS.GOEX"; }
+    if (address == 0xde3a) { return "AS.FRM_PERFORM1"; }
+    if (address == 0xde43) { return "AS.FRM_PERFORM2"; }
+    if (address == 0xde5d) { return "AS.EXIT"; }
+    if (address == 0xde60) { return "AS.FRM_ELEMENT"; }
+    if (address == 0xde81) { return "AS.STRTXT"; }
+    if (address == 0xde90) { return "AS.NOT_"; }
+    if (address == 0xde98) { return "AS.EQUOP"; }
+    if (address == 0xdea4) { return "AS.FN_"; }
+    if (address == 0xdeab) { return "AS.SGN_"; }
+    if (address == 0xdeb2) { return "AS.PARCHK"; }
+    if (address == 0xdeb8) { return "AS.CHKCLS"; }
+    if (address == 0xdebb) { return "AS.CHKOPN"; }
+    if (address == 0xdebe) { return "AS.CHKCOM"; }
+    if (address == 0xdec0) { return "AS.SYNCHR"; }
+    if (address == 0xdec9) { return "AS.SYNERR"; }
+    if (address == 0xdece) { return "AS.MIN"; }
+    if (address == 0xded0) { return "AS.EQUL"; }
+    if (address == 0xded5) { return "AS.FRM_VARIABLE"; }
+    if (address == 0xded7) { return "AS.FRM_VARIABLE_CALL"; }
+    if (address == 0xdef9) { return "AS.SCREEN"; }
+    if (address == 0xdf0c) { return "AS.UNARY"; }
+    if (address == 0xdf4f) { return "AS.OR"; }
+    if (address == 0xdf55) { return "AS.AND"; }
+    if (address == 0xdf5d) { return "AS.FALSE"; }
+    if (address == 0xdf60) { return "AS.TRUE"; }
+    if (address == 0xdf65) { return "AS.RELOPS"; }
+    if (address == 0xdf7d) { return "AS.STRCMP"; }
+    if (address == 0xdfaa) { return "AS.STRCMP1"; }
+    if (address == 0xdfb0) { return "AS.NUMCMP"; }
+    if (address == 0xdfb5) { return "AS.STRCMP2"; }
+    if (address == 0xdfc1) { return "AS.CMPDONE"; }
+    if (address == 0xdfcd) { return "AS.PDL"; }
+    if (address == 0xdfd6) { return "AS.NXDIM"; }
+    if (address == 0xdfd9) { return "AS.DIM"; }
+    if (address == 0xdfe3) { return "AS.PTRGET"; }
+    if (address == 0xdfe8) { return "AS.PTRGET2"; }
+    if (address == 0xdfea) { return "AS.PTRGET3"; }
+    if (address == 0xdff4) { return "AS.BADNAM"; }
+    if (address == 0xdff7) { return "AS.NAMOK"; }
+    if (address == 0xe007) { return "AS.PTRGET4"; }
+    if (address == 0xe07d) { return "AS.ISLETC"; }
+    if (address == 0xe087) { return "AS.NAME_NOT_FOUND"; }
+    if (address == 0xe09c) { return "AS.MAKE_NEW_VARIABLE"; }
+    if (address == 0xe0de) { return "AS.SET_VARPNT_AND_YA"; }
+    if (address == 0xe0ed) { return "AS.GETARY"; }
+    if (address == 0xe0ef) { return "AS.GETARY2"; }
+    if (address == 0xe102) { return "AS.MAKINT"; }
+    if (address == 0xe108) { return "AS.MKINT"; }
+    if (address == 0xe10c) { return "AS.AYINT"; }
+    if (address == 0xe119) { return "AS.MI1"; }
+    if (address == 0xe11b) { return "AS.MI2"; }
+    if (address == 0xe11e) { return "AS.ARRAY"; }
+    if (address == 0xe196) { return "AS.SUBERR"; }
+    if (address == 0xe199) { return "AS.IQERR"; }
+    if (address == 0xe19b) { return "AS.JER"; }
+    if (address == 0xe19e) { return "AS.USE_OLD_ARRAY"; }
+    if (address == 0xe1b8) { return "AS.MAKE_NEW_ARRAY"; }
+    if (address == 0xe24b) { return "AS.FIND_ARRAY_ELEMENT"; }
+    if (address == 0xe253) { return "AS.FAE1"; }
+    if (address == 0xe269) { return "AS.GSE"; }
+    if (address == 0xe26c) { return "AS.GME"; }
+    if (address == 0xe26f) { return "AS.FAE2"; }
+    if (address == 0xe270) { return "AS.FAE3"; }
+    if (address == 0xe2ac) { return "AS.RTS9"; }
+    if (address == 0xe2ad) { return "AS.MULTIPLY_SUBSCRIPT"; }
+    if (address == 0xe2b6) { return "AS.MULTIPLY_SUBS1"; }
+    if (address == 0xe2de) { return "AS.FRE"; }
+    if (address == 0xe2f2) { return "AS.GIVAYF"; }
+    if (address == 0xe2ff) { return "AS.POS"; }
+    if (address == 0xe301) { return "AS.SNGFLT"; }
+    if (address == 0xe306) { return "AS.ERRDIR"; }
+    if (address == 0xe30e) { return "AS.UNDFNC"; }
+    if (address == 0xe313) { return "AS.DEF"; }
+    if (address == 0xe341) { return "AS.FNC_"; }
+    if (address == 0xe354) { return "AS.FUNCT"; }
+    if (address == 0xe3af) { return "AS.FNCDATA"; }
+    if (address == 0xe3c5) { return "AS.STR"; }
+    if (address == 0xe3d5) { return "AS.STRINI"; }
+    if (address == 0xe3dd) { return "AS.STRSPA"; }
+    if (address == 0xe3e7) { return "AS.STRLIT"; }
+    if (address == 0xe3ed) { return "AS.STRLT2"; }
+    if (address == 0xe42a) { return "AS.PUTNEW"; }
+    if (address == 0xe432) { return "AS.JERR"; }
+    if (address == 0xe435) { return "AS.PUTEMP"; }
+    if (address == 0xe452) { return "AS.GETSPA"; }
+    if (address == 0xe484) { return "AS.GARBAG"; }
+    if (address == 0xe488) { return "AS.FIND_HIGHEST_STRING"; }
+    if (address == 0xe519) { return "AS.CHECK_SIMPLE_VARIABLE"; }
+    if (address == 0xe523) { return "AS.CHECK_VARIABLE"; }
+    if (address == 0xe552) { return "AS.CHECK_BUMP"; }
+    if (address == 0xe55d) { return "AS.CHECK_EXIT"; }
+    if (address == 0xe562) { return "AS.MOVE_HIGHEST_STRING_TO_TOP"; }
+    if (address == 0xe597) { return "AS.CAT"; }
+    if (address == 0xe5d4) { return "AS.MOVINS"; }
+    if (address == 0xe5e2) { return "AS.MOVSTR"; }
+    if (address == 0xe5e6) { return "AS.MOVSTR1"; }
+    if (address == 0xe5fd) { return "AS.FRESTR"; }
+    if (address == 0xe600) { return "AS.FREFAC"; }
+    if (address == 0xe604) { return "AS.FRETMP"; }
+    if (address == 0xe635) { return "AS.FRETMS"; }
+    if (address == 0xe646) { return "AS.CHRSTR"; }
+    if (address == 0xe65a) { return "AS.LEFTSTR"; }
+    if (address == 0xe660) { return "AS.SUBSTRING1"; }
+    if (address == 0xe667) { return "AS.SUBSTRING2"; }
+    if (address == 0xe668) { return "AS.SUBSTRING3"; }
+    if (address == 0xe686) { return "AS.RIGHTSTR"; }
+    if (address == 0xe691) { return "AS.MIDSTR"; }
+    if (address == 0xe6b9) { return "AS.SUBSTRING_SETUP"; }
+    if (address == 0xe6d6) { return "AS.LEN"; }
+    if (address == 0xe6dc) { return "AS.GETSTR"; }
+    if (address == 0xe6e5) { return "AS.ASC"; }
+    if (address == 0xe6f2) { return "AS.GOIQ"; }
+    if (address == 0xe6f5) { return "AS.GTBYTC"; }
+    if (address == 0xe6f8) { return "AS.GETBYT"; }
+    if (address == 0xe6fb) { return "AS.CONINT"; }
+    if (address == 0xe707) { return "AS.VAL"; }
+    if (address == 0xe73d) { return "AS.POINT"; }
+    if (address == 0xe746) { return "AS.GTNUM"; }
+    if (address == 0xe74c) { return "AS.COMBYTE"; }
+    if (address == 0xe752) { return "AS.GETADR"; }
+    if (address == 0xe764) { return "AS.PEEK"; }
+    if (address == 0xe77b) { return "AS.POKE"; }
+    if (address == 0xe784) { return "AS.WAIT"; }
+    if (address == 0xe79f) { return "AS.RTS10"; }
+    if (address == 0xe7a0) { return "AS.FADDH"; }
+    if (address == 0xe7a7) { return "AS.FSUB"; }
+    if (address == 0xe7aa) { return "AS.FSUBT"; }
+    if (address == 0xe7b9) { return "AS.FADD1"; }
+    if (address == 0xe7be) { return "AS.FADD"; }
+    if (address == 0xe7c1) { return "AS.FADDT"; }
+    if (address == 0xe7ce) { return "AS.FADD2"; }
+    if (address == 0xe7fa) { return "AS.FADD3"; }
+    if (address == 0xe829) { return "AS.NORMALIZE_FAC1"; }
+    if (address == 0xe82e) { return "AS.NORMALIZE_FAC2"; }
+    if (address == 0xe84e) { return "AS.ZERO_FAC"; }
+    if (address == 0xe850) { return "AS.STA_IN_FAC_SIGN_AND_EXP"; }
+    if (address == 0xe852) { return "AS.STA_IN_FAC_SIGN"; }
+    if (address == 0xe855) { return "AS.FADD4"; }
+    if (address == 0xe874) { return "AS.NORMALIZE_FAC3"; }
+    if (address == 0xe880) { return "AS.NORMALIZE_FAC4"; }
+    if (address == 0xe88d) { return "AS.NORMALIZE_FAC5"; }
+    if (address == 0xe88f) { return "AS.NORMALIZE_FAC6"; }
+    if (address == 0xe89d) { return "AS.RTS11"; }
+    if (address == 0xe89e) { return "AS.COMPLEMENT_FAC"; }
+    if (address == 0xe8a4) { return "AS.COMPLEMENT_FAC_MANTISSA"; }
+    if (address == 0xe8c6) { return "AS.INCREMENT_FAC_MANTISSA"; }
+    if (address == 0xe8d4) { return "AS.RTS12"; }
+    if (address == 0xe8d5) { return "AS.OVERFLOW"; }
+    if (address == 0xe8da) { return "AS.SHIFT_RIGHT1"; }
+    if (address == 0xe8dc) { return "AS.SHIFT_RIGHT2"; }
+    if (address == 0xe8f0) { return "AS.SHIFT_RIGHT"; }
+    if (address == 0xe8fd) { return "AS.SHIFT_RIGHT3"; }
+    if (address == 0xe907) { return "AS.SHIFT_RIGHT4"; }
+    if (address == 0xe911) { return "AS.SHIFT_RIGHT5"; }
+    if (address == 0xe941) { return "AS.LOG"; }
+    if (address == 0xe948) { return "AS.GIQ"; }
+    if (address == 0xe94b) { return "AS.LOG2"; }
+    if (address == 0xe97f) { return "AS.FMULT"; }
+    if (address == 0xe982) { return "AS.FMULTT"; }
+    if (address == 0xe9b0) { return "AS.MULTIPLY1"; }
+    if (address == 0xe9b5) { return "AS.MULTIPLY2"; }
+    if (address == 0xe9e2) { return "AS.RTS13"; }
+    if (address == 0xe9e3) { return "AS.LOAD_ARG_FROM_YA"; }
+    if (address == 0xea0e) { return "AS.ADD_EXPONENTS"; }
+    if (address == 0xea10) { return "AS.ADD_EXPONENTS1"; }
+    if (address == 0xea2b) { return "AS.OUTOFRNG"; }
+    if (address == 0xea31) { return "AS.ZERO"; }
+    if (address == 0xea36) { return "AS.JOV"; }
+    if (address == 0xeae9) { return "AS.MUL10"; }
+    if (address == 0xea55) { return "AS.DIV10"; }
+    if (address == 0xea5e) { return "AS.DIV"; }
+    if (address == 0xea66) { return "AS.FDIV"; }
+    if (address == 0xeae6) { return "AS.COPY_RESULT_INTO_FAC"; }
+    if (address == 0xeaf9) { return "AS.LOAD_FAC_FROM_YA"; }
+    if (address == 0xeb1e) { return "AS.STORE_FAC_IN_TEMP2_ROUNDED"; }
+    if (address == 0xeb21) { return "AS.STORE_FAC_IN_TEMP1_ROUNDED"; }
+    if (address == 0xeb27) { return "AS.SETFOR"; }
+    if (address == 0xeb2b) { return "AS.STORE_FAC_AT_YX_ROUNDED"; }
+    if (address == 0xeb53) { return "AS.COPY_FAC_TO_ARG"; }
+    if (address == 0xeb63) { return "AS.COPY_FAC_TO_ARG_ROUNDED"; }
+    if (address == 0xeb71) { return "AS.RTS14"; }
+    if (address == 0xeb72) { return "AS.ROUND_FAC"; }
+    if (address == 0xeb7a) { return "AS.INCREMENT_MANTISSA"; }
+    if (address == 0xeb82) { return "AS.SIGN"; }
+    if (address == 0xeb86) { return "AS.SIGN1"; }
+    if (address == 0xeb88) { return "AS.SIGN2"; }
+    if (address == 0xeb8f) { return "AS.RTS15"; }
+    if (address == 0xeb90) { return "AS.SGN"; }
+    if (address == 0xeb9e) { return "AS.FLOAT"; }
+    if (address == 0xeb9b) { return "AS.FLOAT1"; }
+    if (address == 0xeba0) { return "AS.FLOAT2"; }
+    if (address == 0xebaf) { return "AS.ABS"; }
+    if (address == 0xebb2) { return "AS.FCOMP"; }
+    if (address == 0xebb4) { return "AS.FCOMP2"; }
+    if (address == 0xebf2) { return "AS.QINT"; }
+    if (address == 0xec11) { return "AS.RTS16"; }
+    if (address == 0xec12) { return "AS.QINT2"; }
+    if (address == 0xec23) { return "AS.INT"; }
+    if (address == 0xec40) { return "AS.QINT3"; }
+    if (address == 0xec49) { return "AS.RTS17"; }
+    if (address == 0xec4a) { return "AS.FIN"; }
+    if (address == 0xec61) { return "AS.FIN1"; }
+    if (address == 0xec64) { return "AS.FIN2"; }
+    if (address == 0xec66) { return "AS.FIN3"; }
+    if (address == 0xec87) { return "AS.FIN4"; }
+    if (address == 0xec8a) { return "AS.FIN5"; }
+    if (address == 0xec8c) { return "AS.FIN6"; }
+    if (address == 0xec98) { return "AS.FIN10"; }
+    if (address == 0xec9e) { return "AS.FIN7"; }
+    if (address == 0xeca0) { return "AS.FIN8"; }
+    if (address == 0xecc1) { return "AS.FIN9"; }
+    if (address == 0xecd5) { return "AS.ADDACC"; }
+    if (address == 0xece8) { return "AS.GETEXP"; }
+    if (address == 0xed19) { return "AS.INPRT"; }
+    if (address == 0xed24) { return "AS.LINPRT"; }
+    if (address == 0xed2e) { return "AS.PRINT_FAC"; }
+    if (address == 0xed31) { return "AS.GO_STROUT"; }
+    if (address == 0xed34) { return "AS.FOUT"; }
+    if (address == 0xed36) { return "AS.FOUT1"; }
+    if (address == 0xed8c) { return "AS.FOUT2"; }
+    if (address == 0xee17) { return "AS.FOUT3"; }
+    if (address == 0xee57) { return "AS.FOUT4"; }
+    if (address == 0xee5a) { return "AS.FOUT5"; }
+    if (address == 0xee5f) { return "AS.FOUT6"; }
+    if (address == 0xee8d) { return "AS.SQR"; }
+    if (address == 0xee97) { return "AS.FPWRT"; }
+    if (address == 0xeed0) { return "AS.NEGOP"; }
+    if (address == 0xeeda) { return "AS.RTS18"; }
+    if (address == 0xef09) { return "AS.EXP"; }
+    if (address == 0xef5c) { return "AS.POLYNOMIAL_ODD"; }
+    if (address == 0xef72) { return "AS.POLYNOMIAL"; }
+    if (address == 0xef76) { return "AS.SERMAIN"; }
+    if (address == 0xefa5) { return "AS.RTS19"; }
+    if (address == 0xefae) { return "AS.RND"; }
+    if (address == 0xefe7) { return "AS.GO_MOVMF"; }
+    if (address == 0xefea) { return "AS.COS"; }
+    if (address == 0xeff1) { return "AS.SIN"; }
+    if (address == 0xf023) { return "AS.SIN1"; }
+    if (address == 0xf026) { return "AS.SIN2"; }
+    if (address == 0xf03a) { return "AS.TAN"; }
+    if (address == 0xf062) { return "AS.TAN1"; }
+    if (address == 0xf094) { return "AS.MS_EASTER_EGG_DATA"; }
+    if (address == 0xf09e) { return "AS.ATN"; }
+    if (address == 0xf0cd) { return "AS.RTS20"; }
+    if (address == 0xf10b) { return "AS.GENERIC_CHRGET"; }
+    if (address == 0xf128) { return "AS.COLD_START"; }
+    if (address == 0xf1d5) { return "AS.CALL"; }
+    if (address == 0xf1de) { return "AS.IN_NUMBER"; }
+    if (address == 0xf1e5) { return "AS.PR_NUMBER"; }
+    if (address == 0xf1ec) { return "AS.PLOTFNS"; }
+    if (address == 0xf206) { return "AS.GOERR"; }
+    if (address == 0xf209) { return "AS.LINCOOR"; }
+    if (address == 0xf225) { return "AS.PLOT"; }
+    if (address == 0xf232) { return "AS.HLIN"; }
+    if (address == 0xf241) { return "AS.VLIN"; }
+    if (address == 0xf24f) { return "AS.COLOR"; }
+    if (address == 0xf256) { return "AS.VTAB"; }
+    if (address == 0xf262) { return "AS.SPEED"; }
+    if (address == 0xf26d) { return "AS.TRACE"; }
+    if (address == 0xf26f) { return "AS.NOTRACE"; }
+    if (address == 0xf273) { return "AS.NORMAL"; }
+    if (address == 0xf277) { return "AS.INVERSE"; }
+    if (address == 0xf280) { return "AS.FLASH"; }
+    if (address == 0xf286) { return "AS.HIMEM"; }
+    if (address == 0xf296) { return "AS.JMM"; }
+    if (address == 0xf299) { return "AS.SETHI"; }
+    if (address == 0xf2a6) { return "AS.LOMEM"; }
+    if (address == 0xf2cb) { return "AS.ONERR"; }
+    if (address == 0xf2e9) { return "AS.HANDLERR"; }
+    if (address == 0xf318) { return "AS.RESUME"; }
+    if (address == 0xf32e) { return "AS.JSYN"; }
+    if (address == 0xf331) { return "AS.DEL"; }
+    if (address == 0xf390) { return "AS.GR"; }
+    if (address == 0xf399) { return "AS.TEXT"; }
+    if (address == 0xf39f) { return "AS.STORE"; }
+    if (address == 0xf3bc) { return "AS.RECALL"; }
+    if (address == 0xf3d8) { return "AS.HGR2"; }
+    if (address == 0xf3e2) { return "AS.HGR"; }
+    if (address == 0xf3ea) { return "AS.SETHPG"; }
+    if (address == 0xf3f2) { return "AS.HCLR"; }
+    if (address == 0xf3f6) { return "AS.BKGND"; }
+    if (address == 0xf411) { return "AS.HPOSN"; }
+    if (address == 0xf457) { return "AS.HPLOT0"; }
+    if (address == 0xf465) { return "AS.MOVE_LEFT_OR_RIGHT"; }
+    if (address == 0xf47e) { return "AS.COLOR_SHIFT"; }
+    if (address == 0xf48a) { return "AS.MOVE_RIGHT"; }
+    if (address == 0xf49c) { return "AS.LRUDX1"; }
+    if (address == 0xf49d) { return "AS.LRUDX2"; }
+    if (address == 0xf4b3) { return "AS.LRUD1"; }
+    if (address == 0xf4b4) { return "AS.LRUD2"; }
+    if (address == 0xf4c4) { return "AS.LRUD3"; }
+    if (address == 0xf4c8) { return "AS.LRUD4"; }
+    if (address == 0xf4d3) { return "AS.MOVE_UP_OR_DOWN"; }
+    if (address == 0xf505) { return "AS.MOVE_DOWN"; }
+    if (address == 0xf530) { return "AS.HLINRL"; }
+    if (address == 0xf53a) { return "AS.HGLN"; }
+    if (address == 0xf57c) { return "AS.MOVEX"; }
+    if (address == 0xf581) { return "AS.MOVEX2"; }
+    if (address == 0xf5cb) { return "AS.HFIND"; }
+    if (address == 0xf600) { return "AS.RTS22"; }
+    if (address == 0xf601) { return "AS.DRAW0"; }
+    if (address == 0xf605) { return "AS.DRAW1"; }
+    if (address == 0xf65d) { return "AS.XDRAW0"; }
+    if (address == 0xf661) { return "AS.XDRAW1"; }
+    if (address == 0xf6b9) { return "AS.HFNS"; }
+    if (address == 0xf6e6) { return "AS.GGERR"; }
+    if (address == 0xf6e9) { return "AS.HCOLOR"; }
+    if (address == 0xf6f5) { return "AS.RTS23"; }
+    if (address == 0xf6fc) { return "AS.COLORTBL"; }
+    if (address == 0xf6fe) { return "AS.HPLOT"; }
+    if (address == 0xf721) { return "AS.ROT"; }
+    if (address == 0xf727) { return "AS.SCALE"; }
+    if (address == 0xf72d) { return "AS.DRAWPNT"; }
+    if (address == 0xf769) { return "AS.DRAW"; }
+    if (address == 0xf76f) { return "AS.XDRAW"; }
+    if (address == 0xf775) { return "AS.SHLOAD"; }
+    if (address == 0xf7bc) { return "AS.TAPEPNT"; }
+    if (address == 0xf7d9) { return "AS.GETARYPT"; }
+    if (address == 0xf7e7) { return "AS.HTAB"; }
 
-    else if (address == 0xf800) { retval = "MON.PLOT"; }
-    else if (address == 0xf80c) { retval = "MON.RTMASK"; }
-    else if (address == 0xf80e) { retval = "MON.PLOT1"; }
-    else if (address == 0xf819) { retval = "MON.HLINE"; }
-    else if (address == 0xf828) { retval = "MON.VLINE"; }
-    else if (address == 0xf831) { retval = "MON.RTS1"; }
-    else if (address == 0xf832) { retval = "MON.CLRSCR"; }
-    else if (address == 0xf836) { retval = "MON.CLRTOP"; }
-    else if (address == 0xf838) { retval = "MON.CLRSC2"; }
-    else if (address == 0xf83c) { retval = "MON.CLRSC3"; }
-    else if (address == 0xf847) { retval = "MON.GBASCALC"; }
-    else if (address == 0xf856) { retval = "MON.GBCALC"; }
-    else if (address == 0xf85f) { retval = "MON.NXTCOL"; }
-    else if (address == 0xf864) { retval = "MON.SETCOL"; }
-    else if (address == 0xf871) { retval = "MON.SCRN"; }
-    else if (address == 0xf879) { retval = "MON.SCRN2"; }
-    else if (address == 0xf87f) { retval = "MON.RTMSKZ"; }
-    else if (address == 0xf882) { retval = "MON.INDS1"; }
-    else if (address == 0xf88c) { retval = "MON.INDS2"; }
-    else if (address == 0xf89b) { retval = "MON.IEVEN"; }
-    else if (address == 0xf8a5) { retval = "MON.ERR"; }
-    else if (address == 0xf8a9) { retval = "MON.GETFMT"; }
-    else if (address == 0xf8be) { retval = "MON.MNNDX1"; }
-    else if (address == 0xf8c2) { retval = "MON.MNNDX2"; }
-    else if (address == 0xf8c9) { retval = "MON.NBBDX3"; }
-    else if (address == 0xf8d0) { retval = "MON.UBSDSP"; }
-    else if (address == 0xf8d4) { retval = "MON.PRINTOP"; }
-    else if (address == 0xf8db) { retval = "MON.PRNTBL"; }
-    else if (address == 0xf8f5) { retval = "MON.PRMN1"; }
-    else if (address == 0xf8f9) { retval = "MON.PRMN2"; }
-    else if (address == 0xf910) { retval = "MON.PRADR1"; }
-    else if (address == 0xf914) { retval = "MON.PRADR2"; }
-    else if (address == 0xf926) { retval = "MON.PRADR3"; }
-    else if (address == 0xf92a) { retval = "MON.PRADR4"; }
-    else if (address == 0xf930) { retval = "MON.PRADR5"; }
-    else if (address == 0xf938) { retval = "MON.RELADR"; }
-    else if (address == 0xf940) { retval = "MON.PRNTYX"; }
-    else if (address == 0xf941) { retval = "MON.PRNTAX"; }
-    else if (address == 0xf944) { retval = "MON.PRNTX"; }
-    else if (address == 0xf948) { retval = "MON.PRBLNK"; }
-    else if (address == 0xf94a) { retval = "MON.PRBL2"; }
-    else if (address == 0xf94c) { retval = "MON.PRBL3"; }
-    else if (address == 0xf953) { retval = "MON.PCADJ"; }
-    else if (address == 0xf954) { retval = "MON.PCADJ2"; }
-    else if (address == 0xf956) { retval = "MON.PCADJ3"; }
-    else if (address == 0xf95c) { retval = "MON.PCADJ4"; }
-    else if (address == 0xf961) { retval = "MON.RTS2"; }
-    else if (address == 0xf962) { retval = "MON.FMT1"; }
-    else if (address == 0xf9a6) { retval = "MON.FMT2"; }
-    else if (address == 0xf9b4) { retval = "MON.CHAR1"; }
-    else if (address == 0xf9ba) { retval = "MON.CHAR2"; }
-    else if (address == 0xf9c0) { retval = "MON.MNEML"; }
-    else if (address == 0xfa00) { retval = "MON.MNEMR"; }
-    else if (address == 0xfa40) { retval = "MON.IRQ"; }
-    else if (address == 0xfa4c) { retval = "MON.BREAK"; }
-    else if (address == 0xfa59) { retval = "MON.OLDBRK"; }
-    else if (address == 0xfa62) { retval = "MON.RESET"; }
-    else if (address == 0xfa6f) { retval = "MON.INITAN"; }
-    else if (address == 0xfa81) { retval = "MON.NEWMON"; }
-    else if (address == 0xfa9b) { retval = "MON.FIXSEV"; }
-    else if (address == 0xfaa3) { retval = "MON.NOFIX"; }
-    else if (address == 0xfaa6) { retval = "MON.PWRUP"; }
-    else if (address == 0xfaa9) { retval = "MON.SETPG3"; }
-    else if (address == 0xfaab) { retval = "MON.SETPLP"; }
-    else if (address == 0xfaba) { retval = "MON.SLOOP"; }
-    else if (address == 0xfac7) { retval = "MON.NXTBYT"; }
-    else if (address == 0xfad7) { retval = "MON.REGDSP"; }
-    else if (address == 0xfada) { retval = "MON.RGDPS1"; }
-    else if (address == 0xfae4) { retval = "MON.RDSP1"; }
-    else if (address == 0xfafd) { retval = "MON.PWRCON"; }
-    else if (address == 0xfb02) { retval = "MON.DISKID"; }
-    else if (address == 0xfb09) { retval = "MON.TITLE"; }
-    else if (address == 0xfb11) { retval = "MON.XLTBL"; }
-    else if (address == 0xfb19) { retval = "MON.RTBL"; }
-    else if (address == 0xfb1e) { retval = "MON.PREAD"; }
-    else if (address == 0xfb25) { retval = "MON.PREAD2"; }
-    else if (address == 0xfb2e) { retval = "MON.RTS2D"; }
-    else if (address == 0xfb2f) { retval = "MON.INIT"; }
-    else if (address == 0xfb39) { retval = "MON.SETTXT"; }
-    else if (address == 0xfb40) { retval = "MON.SETGR"; }
-    else if (address == 0xfb4b) { retval = "MON.SETWND"; }
-    else if (address == 0xfb5b) { retval = "MON.TABV"; }
-    else if (address == 0xfb60) { retval = "MON.APPLEII"; }
-    else if (address == 0xfb65) { retval = "MON.STITLE"; }
-    else if (address == 0xfb6A) { retval = "MON.GETLN"; }
-    else if (address == 0xfb6f) { retval = "MON.SETPWRC"; }
-    else if (address == 0xfb78) { retval = "MON.VIDWAIT"; }
-    else if (address == 0xfb88) { retval = "MON.KBDWAIT"; }
+    if (address == 0xf800) { return "MON.PLOT"; }
+    if (address == 0xf80c) { return "MON.RTMASK"; }
+    if (address == 0xf80e) { return "MON.PLOT1"; }
+    if (address == 0xf819) { return "MON.HLINE"; }
+    if (address == 0xf828) { return "MON.VLINE"; }
+    if (address == 0xf831) { return "MON.RTS1"; }
+    if (address == 0xf832) { return "MON.CLRSCR"; }
+    if (address == 0xf836) { return "MON.CLRTOP"; }
+    if (address == 0xf838) { return "MON.CLRSC2"; }
+    if (address == 0xf83c) { return "MON.CLRSC3"; }
+    if (address == 0xf847) { return "MON.GBASCALC"; }
+    if (address == 0xf856) { return "MON.GBCALC"; }
+    if (address == 0xf85f) { return "MON.NXTCOL"; }
+    if (address == 0xf864) { return "MON.SETCOL"; }
+    if (address == 0xf871) { return "MON.SCRN"; }
+    if (address == 0xf879) { return "MON.SCRN2"; }
+    if (address == 0xf87f) { return "MON.RTMSKZ"; }
+    if (address == 0xf882) { return "MON.INDS1"; }
+    if (address == 0xf88c) { return "MON.INDS2"; }
+    if (address == 0xf89b) { return "MON.IEVEN"; }
+    if (address == 0xf8a5) { return "MON.ERR"; }
+    if (address == 0xf8a9) { return "MON.GETFMT"; }
+    if (address == 0xf8be) { return "MON.MNNDX1"; }
+    if (address == 0xf8c2) { return "MON.MNNDX2"; }
+    if (address == 0xf8c9) { return "MON.NBBDX3"; }
+    if (address == 0xf8d0) { return "MON.UBSDSP"; }
+    if (address == 0xf8d4) { return "MON.PRINTOP"; }
+    if (address == 0xf8db) { return "MON.PRNTBL"; }
+    if (address == 0xf8f5) { return "MON.PRMN1"; }
+    if (address == 0xf8f9) { return "MON.PRMN2"; }
+    if (address == 0xf910) { return "MON.PRADR1"; }
+    if (address == 0xf914) { return "MON.PRADR2"; }
+    if (address == 0xf926) { return "MON.PRADR3"; }
+    if (address == 0xf92a) { return "MON.PRADR4"; }
+    if (address == 0xf930) { return "MON.PRADR5"; }
+    if (address == 0xf938) { return "MON.RELADR"; }
+    if (address == 0xf940) { return "MON.PRNTYX"; }
+    if (address == 0xf941) { return "MON.PRNTAX"; }
+    if (address == 0xf944) { return "MON.PRNTX"; }
+    if (address == 0xf948) { return "MON.PRBLNK"; }
+    if (address == 0xf94a) { return "MON.PRBL2"; }
+    if (address == 0xf94c) { return "MON.PRBL3"; }
+    if (address == 0xf953) { return "MON.PCADJ"; }
+    if (address == 0xf954) { return "MON.PCADJ2"; }
+    if (address == 0xf956) { return "MON.PCADJ3"; }
+    if (address == 0xf95c) { return "MON.PCADJ4"; }
+    if (address == 0xf961) { return "MON.RTS2"; }
+    if (address == 0xf962) { return "MON.FMT1"; }
+    if (address == 0xf9a6) { return "MON.FMT2"; }
+    if (address == 0xf9b4) { return "MON.CHAR1"; }
+    if (address == 0xf9ba) { return "MON.CHAR2"; }
+    if (address == 0xf9c0) { return "MON.MNEML"; }
+    if (address == 0xfa00) { return "MON.MNEMR"; }
+    if (address == 0xfa40) { return "MON.IRQ"; }
+    if (address == 0xfa4c) { return "MON.BREAK"; }
+    if (address == 0xfa59) { return "MON.OLDBRK"; }
+    if (address == 0xfa62) { return "MON.RESET"; }
+    if (address == 0xfa6f) { return "MON.INITAN"; }
+    if (address == 0xfa81) { return "MON.NEWMON"; }
+    if (address == 0xfa9b) { return "MON.FIXSEV"; }
+    if (address == 0xfaa3) { return "MON.NOFIX"; }
+    if (address == 0xfaa6) { return "MON.PWRUP"; }
+    if (address == 0xfaa9) { return "MON.SETPG3"; }
+    if (address == 0xfaab) { return "MON.SETPLP"; }
+    if (address == 0xfaba) { return "MON.SLOOP"; }
+    if (address == 0xfac7) { return "MON.NXTBYT"; }
+    if (address == 0xfad7) { return "MON.REGDSP"; }
+    if (address == 0xfada) { return "MON.RGDPS1"; }
+    if (address == 0xfae4) { return "MON.RDSP1"; }
+    if (address == 0xfafd) { return "MON.PWRCON"; }
+    if (address == 0xfb02) { return "MON.DISKID"; }
+    if (address == 0xfb09) { return "MON.TITLE"; }
+    if (address == 0xfb11) { return "MON.XLTBL"; }
+    if (address == 0xfb19) { return "MON.RTBL"; }
+    if (address == 0xfb1e) { return "MON.PREAD"; }
+    if (address == 0xfb25) { return "MON.PREAD2"; }
+    if (address == 0xfb2e) { return "MON.RTS2D"; }
+    if (address == 0xfb2f) { return "MON.INIT"; }
+    if (address == 0xfb39) { return "MON.SETTXT"; }
+    if (address == 0xfb40) { return "MON.SETGR"; }
+    if (address == 0xfb4b) { return "MON.SETWND"; }
+    if (address == 0xfb5b) { return "MON.TABV"; }
+    if (address == 0xfb60) { return "MON.APPLEII"; }
+    if (address == 0xfb65) { return "MON.STITLE"; }
+    if (address == 0xfb6A) { return "MON.GETLN"; }
+    if (address == 0xfb6f) { return "MON.SETPWRC"; }
+    if (address == 0xfb78) { return "MON.VIDWAIT"; }
+    if (address == 0xfb88) { return "MON.KBDWAIT"; }
 
-    else if (address == 0xfbb3) { retval = "M80_F8VERSION"; }
+    if (address == 0xfbb3) { return "M80_F8VERSION"; }
 
-    else if (address == 0xfb94) { retval = "MON.NOWAIT"; }
-    else if (address == 0xfb97) { retval = "MON.ESCOLD"; }
-    else if (address == 0xfb9b) { retval = "MON.ESCNOW"; }
-    else if (address == 0xfba5) { retval = "MON.ESCNEW"; }
-    else if (address == 0xfbb3) { retval = "MON.VERSION"; }
-    else if (address == 0xfbb4) { retval = "MON.GOTOCX"; }
-    else if (address == 0xfbc1) { retval = "MON.BASCALC"; }
+    if (address == 0xfb94) { return "MON.NOWAIT"; }
+    if (address == 0xfb97) { return "MON.ESCOLD"; }
+    if (address == 0xfb9b) { return "MON.ESCNOW"; }
+    if (address == 0xfba5) { return "MON.ESCNEW"; }
+    if (address == 0xfbb3) { return "MON.VERSION"; }
+    if (address == 0xfbb4) { return "MON.GOTOCX"; }
+    if (address == 0xfbc1) { return "MON.BASCALC"; }
 
-    else if (address == 0xfbd0) { retval = "MON.BASCLC2"; }
-    else if (address == 0xfbd9) { retval = "MON.BELL1"; }
-    else if (address == 0xfbe4) { retval = "MON.BELL2"; }
-    else if (address == 0xfbef) { retval = "MON.RTS2B"; }
-    else if (address == 0xfbf0) { retval = "MON.STORADV"; }
-    else if (address == 0xfbf4) { retval = "MON.ADVANCE"; }
-    else if (address == 0xfbfc) { retval = "MON.RTS3"; }
-    else if (address == 0xfbfd) { retval = "MON.VIDOUT"; }
-    else if (address == 0xfc10) { retval = "MON.BS"; }
-    else if (address == 0xfc1a) { retval = "MON.UP"; }
-    else if (address == 0xfc22) { retval = "MON.VTAB"; }
-    else if (address == 0xfc24) { retval = "MON.VTABZ"; }
-    else if (address == 0xfc2b) { retval = "MON.RTS4"; }
-    else if (address == 0xfc2c) { retval = "MON.ESC1"; }
-    else if (address == 0xfc42) { retval = "MON.CLREOP"; }
-    else if (address == 0xfc58) { retval = "MON.HOME"; }
-    else if (address == 0xfc62) { retval = "MON.CR"; }
-    else if (address == 0xfc66) { retval = "MON.LF"; }
-    else if (address == 0xfc70) { retval = "MON.SCROLL"; }
-    else if (address == 0xfc72) { retval = "MON.XGOTOCX"; }
+    if (address == 0xfbd0) { return "MON.BASCLC2"; }
+    if (address == 0xfbd9) { return "MON.BELL1"; }
+    if (address == 0xfbe4) { return "MON.BELL2"; }
+    if (address == 0xfbef) { return "MON.RTS2B"; }
+    if (address == 0xfbf0) { return "MON.STORADV"; }
+    if (address == 0xfbf4) { return "MON.ADVANCE"; }
+    if (address == 0xfbfc) { return "MON.RTS3"; }
+    if (address == 0xfbfd) { return "MON.VIDOUT"; }
+    if (address == 0xfc10) { return "MON.BS"; }
+    if (address == 0xfc1a) { return "MON.UP"; }
+    if (address == 0xfc22) { return "MON.VTAB"; }
+    if (address == 0xfc24) { return "MON.VTABZ"; }
+    if (address == 0xfc2b) { return "MON.RTS4"; }
+    if (address == 0xfc2c) { return "MON.ESC1"; }
+    if (address == 0xfc42) { return "MON.CLREOP"; }
+    if (address == 0xfc58) { return "MON.HOME"; }
+    if (address == 0xfc62) { return "MON.CR"; }
+    if (address == 0xfc66) { return "MON.LF"; }
+    if (address == 0xfc70) { return "MON.SCROLL"; }
+    if (address == 0xfc72) { return "MON.XGOTOCX"; }
 
-    else if (address == 0xfc75) { retval = "M80_SNIFFIRQ"; }
+    if (address == 0xfc75) { return "M80_SNIFFIRQ"; }
 
-    else if (address == 0xfc84) { retval = "MON.RDCX"; }
-    else if (address == 0xfc91) { retval = "MON.ISSLOTS"; }
-    else if (address == 0xfc99) { retval = "MON.ISPAGE1"; }
-    else if (address == 0xfc9c) { retval = "MON.CLREOL"; }
-    else if (address == 0xfc9e) { retval = "MON.CLREOLZ"; }
-    else if (address == 0xfca8) { retval = "MON.WAIT"; }
-    else if (address == 0xfca9) { retval = "MON.WAIT2"; }
-    else if (address == 0xfcaa) { retval = "MON.WAIT3"; }
-    else if (address == 0xfcb4) { retval = "MON.NXTA4"; }
-    else if (address == 0xfcba) { retval = "MON.NXTA1"; }
-    else if (address == 0xfcc8) { retval = "MON.RTS4B"; }
-    else if (address == 0xfcc9) { retval = "MON.HEADR"; }
-    else if (address == 0xfcd6) { retval = "MON.WRBIT"; }
-    else if (address == 0xfcdb) { retval = "MON.ZERDLY"; }
-    else if (address == 0xfce2) { retval = "MON.ONEDLY"; }
-    else if (address == 0xfce5) { retval = "MON.WRTAPE"; }
-    else if (address == 0xfcec) { retval = "MON.RDBYTE"; }
-    else if (address == 0xfcee) { retval = "MON.RDBYT2"; }
-    else if (address == 0xfcfa) { retval = "MON.READ2BIT"; }
-    else if (address == 0xfcfd) { retval = "MON.RDBIT"; }
-    else if (address == 0xfd0c) { retval = "MON.RDKEY"; }
+    if (address == 0xfc84) { return "MON.RDCX"; }
+    if (address == 0xfc91) { return "MON.ISSLOTS"; }
+    if (address == 0xfc99) { return "MON.ISPAGE1"; }
+    if (address == 0xfc9c) { return "MON.CLREOL"; }
+    if (address == 0xfc9e) { return "MON.CLREOLZ"; }
+    if (address == 0xfca8) { return "MON.WAIT"; }
+    if (address == 0xfca9) { return "MON.WAIT2"; }
+    if (address == 0xfcaa) { return "MON.WAIT3"; }
+    if (address == 0xfcb4) { return "MON.NXTA4"; }
+    if (address == 0xfcba) { return "MON.NXTA1"; }
+    if (address == 0xfcc8) { return "MON.RTS4B"; }
+    if (address == 0xfcc9) { return "MON.HEADR"; }
+    if (address == 0xfcd6) { return "MON.WRBIT"; }
+    if (address == 0xfcdb) { return "MON.ZERDLY"; }
+    if (address == 0xfce2) { return "MON.ONEDLY"; }
+    if (address == 0xfce5) { return "MON.WRTAPE"; }
+    if (address == 0xfcec) { return "MON.RDBYTE"; }
+    if (address == 0xfcee) { return "MON.RDBYT2"; }
+    if (address == 0xfcfa) { return "MON.READ2BIT"; }
+    if (address == 0xfcfd) { return "MON.RDBIT"; }
+    if (address == 0xfd0c) { return "MON.RDKEY"; }
 
-    else if (address == 0xfd18) { retval = "MON.KEYIN"; }
-    else if (address == 0xfd21) { retval = "MON.RDESC"; }
+    if (address == 0xfd18) { return "MON.KEYIN"; }
+    if (address == 0xfd21) { return "MON.RDESC"; }
 
-    else if (address == 0xfd29) { retval = "M80_FUNCEXIT"; }
+    if (address == 0xfd29) { return "M80_FUNCEXIT"; }
 
-    else if (address == 0xfd2f) { retval = "MON.ESC"; }
-    else if (address == 0xfd35) { retval = "MON.RDCHAR"; }
-    else if (address == 0xfd3d) { retval = "MON.NOTCR"; }
-    else if (address == 0xfd5f) { retval = "MON.NOTCR1"; }
-    else if (address == 0xfd62) { retval = "MON.CANCEL"; }
-    else if (address == 0xfd67) { retval = "MON.GETLNZ"; }
-    else if (address == 0xfd6a) { retval = "MON.GETLN"; }
-    else if (address == 0xfd71) { retval = "MON.BCKSPC"; }
-    else if (address == 0xfd75) { retval = "MON.NXTCHAR"; }
-    else if (address == 0xfd7e) { retval = "MON.CAPTST"; }
-    else if (address == 0xfd84) { retval = "MON.ADDINP"; }
-    else if (address == 0xfd8e) { retval = "MON.CROUT"; }
-    else if (address == 0xfd92) { retval = "MON.PRA1"; }
-    else if (address == 0xfd96) { retval = "MON.PRYX2"; }
-    else if (address == 0xfda3) { retval = "MON.XAMB"; }
-    else if (address == 0xfdad) { retval = "MON.MOD8CHK"; }
-    else if (address == 0xfdb3) { retval = "MON.XAM"; }
-    else if (address == 0xfdb6) { retval = "MON.DATAOUT"; }
-    else if (address == 0xfdc5) { retval = "MON.RTS4C"; }
-    else if (address == 0xfdc6) { retval = "MON.XAMPM"; }
-    else if (address == 0xfdd1) { retval = "MON.ADD"; }
-    else if (address == 0xfdda) { retval = "MON.PRBYTE"; }
-    else if (address == 0xfde3) { retval = "MON.PRHEX"; }
-    else if (address == 0xfde5) { retval = "MON.PRHEXZ"; }
-    else if (address == 0xfded) { retval = "MON.COUT"; }
-    else if (address == 0xfdf0) { retval = "MON.COUT1"; }
-    else if (address == 0xfdf6) { retval = "MON.COUTZ"; }
-    else if (address == 0xfe00) { retval = "MON.BLI"; }
-    else if (address == 0xfe04) { retval = "MON.BLANK"; }
-    else if (address == 0xfe0b) { retval = "MON.STOR"; }
-    else if (address == 0xfe17) { retval = "MON.RTS5"; }
-    else if (address == 0xfe18) { retval = "MON.SETMODE"; }
-    else if (address == 0xfe1d) { retval = "MON.SETMDZ"; }
-    else if (address == 0xfe20) { retval = "MON.LT"; }
-    else if (address == 0xfe22) { retval = "MON.LT2"; }
-    else if (address == 0xfe2c) { retval = "MON.MOVE"; }
-    else if (address == 0xfe36) { retval = "MON.VFY"; }
-    else if (address == 0xfe58) { retval = "MON.VFYOK"; }
-    else if (address == 0xfe5e) { retval = "MON.LIST"; }
-    else if (address == 0xfe63) { retval = "MON.LIST2"; }
-    else if (address == 0xfe75) { retval = "MON.A1PC"; }
-    else if (address == 0xfe78) { retval = "MON.A1PCLP"; }
-    else if (address == 0xfe7f) { retval = "MON.A1PCRTS"; }
-    else if (address == 0xfe80) { retval = "MON.SETINV"; }
-    else if (address == 0xfe84) { retval = "MON.SETNORM"; }
-    else if (address == 0xfe86) { retval = "MON.SETIFLG"; }
-    else if (address == 0xfe89) { retval = "MON.SETKBD"; }
-    else if (address == 0xfe8b) { retval = "MON.INPORT"; }
-    else if (address == 0xfe8d) { retval = "MON.INPRT"; }
-    else if (address == 0xfe93) { retval = "MON.SETVID"; }
-    else if (address == 0xfe95) { retval = "MON.OUTPORT"; }
-    else if (address == 0xfe97) { retval = "MON.OUTPRT"; }
-    else if (address == 0xfe9b) { retval = "MON.IOPRT"; }
-    else if (address == 0xfea7) { retval = "MON.IOPRT1"; }
-    else if (address == 0xfea9) { retval = "MON.IOPRT2"; }
-    else if (address == 0xfeaf) { retval = "MON.CKSUMFIX"; }
-    else if (address == 0xfeb0) { retval = "MON.XBASIC"; }
-    else if (address == 0xfeb3) { retval = "MON.BASCONT"; }
-    else if (address == 0xfeb6) { retval = "MON.GO"; }
-    else if (address == 0xfebf) { retval = "MON.REGZ"; }
-    else if (address == 0xfec2) { retval = "MON.TRACE"; }
-    else if (address == 0xfec4) { retval = "MON.STEPZ"; }
-    else if (address == 0xfeca) { retval = "MON.USR"; }
-    else if (address == 0xfecd) { retval = "MON.WRITE"; }
-    else if (address == 0xfed4) { retval = "MON.WR1"; }
-    else if (address == 0xfeed) { retval = "MON.WRBYTE"; }
-    else if (address == 0xfeef) { retval = "MON.WRBYT2"; }
-    else if (address == 0xfef6) { retval = "MON.CRMON"; }
-    else if (address == 0xfefd) { retval = "MON.READ"; }
-    else if (address == 0xff02) { retval = "MON.READ2"; }
-    else if (address == 0xff0a) { retval = "MON.RD2"; }
-    else if (address == 0xff16) { retval = "MON.RD3"; }
-    else if (address == 0xff2d) { retval = "MON.PRERR"; }
-    else if (address == 0xff3a) { retval = "MON.BELL"; }
-    else if (address == 0xff3f) { retval = "MON.RESTORE"; }
-    else if (address == 0xff44) { retval = "MON.RESTR1"; }
-    else if (address == 0xff4a) { retval = "MON.SAVE"; }
-    else if (address == 0xff4c) { retval = "MON.SAV1"; }
+    if (address == 0xfd2f) { return "MON.ESC"; }
+    if (address == 0xfd35) { return "MON.RDCHAR"; }
+    if (address == 0xfd3d) { return "MON.NOTCR"; }
+    if (address == 0xfd5f) { return "MON.NOTCR1"; }
+    if (address == 0xfd62) { return "MON.CANCEL"; }
+    if (address == 0xfd67) { return "MON.GETLNZ"; }
+    if (address == 0xfd6a) { return "MON.GETLN"; }
+    if (address == 0xfd71) { return "MON.BCKSPC"; }
+    if (address == 0xfd75) { return "MON.NXTCHAR"; }
+    if (address == 0xfd7e) { return "MON.CAPTST"; }
+    if (address == 0xfd84) { return "MON.ADDINP"; }
+    if (address == 0xfd8e) { return "MON.CROUT"; }
+    if (address == 0xfd92) { return "MON.PRA1"; }
+    if (address == 0xfd96) { return "MON.PRYX2"; }
+    if (address == 0xfda3) { return "MON.XAMB"; }
+    if (address == 0xfdad) { return "MON.MOD8CHK"; }
+    if (address == 0xfdb3) { return "MON.XAM"; }
+    if (address == 0xfdb6) { return "MON.DATAOUT"; }
+    if (address == 0xfdc5) { return "MON.RTS4C"; }
+    if (address == 0xfdc6) { return "MON.XAMPM"; }
+    if (address == 0xfdd1) { return "MON.ADD"; }
+    if (address == 0xfdda) { return "MON.PRBYTE"; }
+    if (address == 0xfde3) { return "MON.PRHEX"; }
+    if (address == 0xfde5) { return "MON.PRHEXZ"; }
+    if (address == 0xfded) { return "MON.COUT"; }
+    if (address == 0xfdf0) { return "MON.COUT1"; }
+    if (address == 0xfdf6) { return "MON.COUTZ"; }
+    if (address == 0xfe00) { return "MON.BLI"; }
+    if (address == 0xfe04) { return "MON.BLANK"; }
+    if (address == 0xfe0b) { return "MON.STOR"; }
+    if (address == 0xfe17) { return "MON.RTS5"; }
+    if (address == 0xfe18) { return "MON.SETMODE"; }
+    if (address == 0xfe1d) { return "MON.SETMDZ"; }
+    if (address == 0xfe20) { return "MON.LT"; }
+    if (address == 0xfe22) { return "MON.LT2"; }
+    if (address == 0xfe2c) { return "MON.MOVE"; }
+    if (address == 0xfe36) { return "MON.VFY"; }
+    if (address == 0xfe58) { return "MON.VFYOK"; }
+    if (address == 0xfe5e) { return "MON.LIST"; }
+    if (address == 0xfe63) { return "MON.LIST2"; }
+    if (address == 0xfe75) { return "MON.A1PC"; }
+    if (address == 0xfe78) { return "MON.A1PCLP"; }
+    if (address == 0xfe7f) { return "MON.A1PCRTS"; }
+    if (address == 0xfe80) { return "MON.SETINV"; }
+    if (address == 0xfe84) { return "MON.SETNORM"; }
+    if (address == 0xfe86) { return "MON.SETIFLG"; }
+    if (address == 0xfe89) { return "MON.SETKBD"; }
+    if (address == 0xfe8b) { return "MON.INPORT"; }
+    if (address == 0xfe8d) { return "MON.INPRT"; }
+    if (address == 0xfe93) { return "MON.SETVID"; }
+    if (address == 0xfe95) { return "MON.OUTPORT"; }
+    if (address == 0xfe97) { return "MON.OUTPRT"; }
+    if (address == 0xfe9b) { return "MON.IOPRT"; }
+    if (address == 0xfea7) { return "MON.IOPRT1"; }
+    if (address == 0xfea9) { return "MON.IOPRT2"; }
+    if (address == 0xfeaf) { return "MON.CKSUMFIX"; }
+    if (address == 0xfeb0) { return "MON.XBASIC"; }
+    if (address == 0xfeb3) { return "MON.BASCONT"; }
+    if (address == 0xfeb6) { return "MON.GO"; }
+    if (address == 0xfebf) { return "MON.REGZ"; }
+    if (address == 0xfec2) { return "MON.TRACE"; }
+    if (address == 0xfec4) { return "MON.STEPZ"; }
+    if (address == 0xfeca) { return "MON.USR"; }
+    if (address == 0xfecd) { return "MON.WRITE"; }
+    if (address == 0xfed4) { return "MON.WR1"; }
+    if (address == 0xfeed) { return "MON.WRBYTE"; }
+    if (address == 0xfeef) { return "MON.WRBYT2"; }
+    if (address == 0xfef6) { return "MON.CRMON"; }
+    if (address == 0xfefd) { return "MON.READ"; }
+    if (address == 0xff02) { return "MON.READ2"; }
+    if (address == 0xff0a) { return "MON.RD2"; }
+    if (address == 0xff16) { return "MON.RD3"; }
+    if (address == 0xff2d) { return "MON.PRERR"; }
+    if (address == 0xff3a) { return "MON.BELL"; }
+    if (address == 0xff3f) { return "MON.RESTORE"; }
+    if (address == 0xff44) { return "MON.RESTR1"; }
+    if (address == 0xff4a) { return "MON.SAVE"; }
+    if (address == 0xff4c) { return "MON.SAV1"; }
 
-    else if (address == 0xff58) { retval = "M80_IORTS"; }
+    if (address == 0xff58) { return "M80_IORTS"; }
 
-    else if (address == 0xff59) { retval = "MON.OLDRST"; }
-    else if (address == 0xff65) { retval = "MON.MON"; }
-    else if (address == 0xff69) { retval = "MON.MONZ"; }
-    else if (address == 0xff73) { retval = "MON.NXTITM"; }
-    else if (address == 0xff7a) { retval = "MON.CRSRCH"; }
-    else if (address == 0xff8a) { retval = "MON.DIG"; }
-    else if (address == 0xff90) { retval = "MON.NXTBIT"; }
-    else if (address == 0xff98) { retval = "MON.NXTBAS"; }
-    else if (address == 0xffa2) { retval = "MON.NXTBS2"; }
-    else if (address == 0xffa7) { retval = "MON.GETNUM"; }
-    else if (address == 0xffad) { retval = "MON.NXTCHR"; }
-    else if (address == 0xffbe) { retval = "MON.TOSUB"; }
-    else if (address == 0xffc7) { retval = "MON.ZMODE"; }
-    else if (address == 0xffcc) { retval = "MON.CHRTBL"; }
-    else if (address == 0xffe3) { retval = "MON.SUBTBL"; }
+    if (address == 0xff59) { return "MON.OLDRST"; }
+    if (address == 0xff65) { return "MON.MON"; }
+    if (address == 0xff69) { return "MON.MONZ"; }
+    if (address == 0xff73) { return "MON.NXTITM"; }
+    if (address == 0xff7a) { return "MON.CRSRCH"; }
+    if (address == 0xff8a) { return "MON.DIG"; }
+    if (address == 0xff90) { return "MON.NXTBIT"; }
+    if (address == 0xff98) { return "MON.NXTBAS"; }
+    if (address == 0xffa2) { return "MON.NXTBS2"; }
+    if (address == 0xffa7) { return "MON.GETNUM"; }
+    if (address == 0xffad) { return "MON.NXTCHR"; }
+    if (address == 0xffbe) { return "MON.TOSUB"; }
+    if (address == 0xffc7) { return "MON.ZMODE"; }
+    if (address == 0xffcc) { return "MON.CHRTBL"; }
+    if (address == 0xffe3) { return "MON.SUBTBL"; }
 
-    return retval;
+    return QString::Null();
 }
 
 bool DisassemblerViewer::optionsMenuItems(QMenu *menu)
@@ -1523,6 +1539,27 @@ bool DisassemblerViewer::optionsMenuItems(QMenu *menu)
                 this, &DisassemblerViewer::showMetadataDialog);
     }
     menu->addAction(m_showMetadataAction);
+
+    menu->addSeparator();
+
+    if (!m_setFontAction) {
+        m_setFontAction = new QAction("Set &Font...");
+    }
+    menu->addAction(m_setFontAction);
+
+    connect(m_setFontAction, &QAction::triggered,
+            this, [this] {
+        bool ok;
+        QFont font = QFontDialog::getFont(&ok,
+                                          ui->textArea->font(),
+                                          this, "Set Font",
+                                          QFontDialog::MonospacedFonts);
+        if (ok) {
+            setTextFont(font);
+            fontToSettings("DisassemblerViewer.textFont", font);
+        }
+    });
+
 
     return true;
 }
@@ -1554,7 +1591,7 @@ void DisassemblerViewer::doPrint()
     if (ui->textArea->textCursor().hasSelection())
         dialog.addEnabledOption(QAbstractPrintDialog::PrintSelection);
     if (dialog.exec() != QDialog::Accepted) {
-  //      qDebug() << "Cancelled";
+        //      qDebug() << "Cancelled";
 
         return;
     }
@@ -1574,7 +1611,7 @@ void DisassemblerViewer::doExport()
 
     if (saveName == "") return;  // User cancelled
 
- //   qDebug() << "Set filename: " << saveName;
+    //   qDebug() << "Set filename: " << saveName;
 
     QFile saveFile(saveName);
     if (!saveFile.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -1615,7 +1652,7 @@ QString DisassemblerViewer::makeDescriptorStringForVal(quint8 val)
     //        appleAscii.append(ctrl);
     //    }
 
-    //    retval = QString("; %1 / %2").arg(val).arg(appleAscii);
-    retval = QString("; %1").arg(val);
+    //    return QString("; %1 / %2").arg(val).arg(appleAscii);
+    retval =  QString("; %1").arg(val);
     return retval;
 }

@@ -26,6 +26,10 @@ quint16 IntBasicFile::get16(quint8 v1, quint8 v2)
 
 QByteArray IntBasicFile::dumpBufferAsIntBasicFile(QByteArray origdata)
 /*
+ * THIS CODE IS MODIFIED FROM PAUL SCHYLTER'S SAMPLE CODE AVAILABLE AT:
+ * https://macgui.com/usenet/?group=1&start=14720&id=184603
+ *
+ *
  *   Integer Basic file format:
  *
  *   <Length_of_file> (16-bit little endian)

@@ -35,10 +35,14 @@ public slots:
     void doPrint();
     void doExport();
 
+protected:
+    void setTextFont(const QFont &font);
 private:
     void setText(QString text);
     void setData(QByteArray data);
     QString valToAppleAscii(quint8 val);
+
+    QAction *m_setFontAction;
 
     Ui::HexDumpViewer *ui;
 

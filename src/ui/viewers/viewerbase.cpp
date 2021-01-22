@@ -12,6 +12,8 @@
 #include "hexdumpviewer.h"
 #include "texthexdumpviewer.h"
 #include "charsetviewer.h"
+#include "IntBasicFile.h"
+#include "intbasicfileviewer.h"
 #include "hiresviewwidget.h"
 #include "disassemblerviewer.h"
 #include "textfile.h"
@@ -71,6 +73,17 @@ void ViewerBase::setFile(GenericFile *file)
         descriptor="Applesoft File Viewer";
         addViewer(descriptor,afv);
         defaultViewerDescriptor = descriptor;
+    }
+    else if (dynamic_cast<IntBasicFile*>(file))
+    {
+        IntBasicFileViewer *ibf = new IntBasicFileViewer(0);
+        ibf->setFile(file);
+        descriptor="Integer Basic File Viewer";
+        addViewer(descriptor, ibf);
+        defaultViewerDescriptor = descriptor;
+
+
+
     }
     else if (dynamic_cast<BinaryFile*>(file))
     {

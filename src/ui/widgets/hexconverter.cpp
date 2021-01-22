@@ -1,6 +1,7 @@
 #include "hexconverter.h"
 #include "ui_hexconverter.h"
 #include <QString>
+#include <QIntValidator>
 
 HexConverter::HexConverter(QWidget *parent) :
     QDialog(parent),

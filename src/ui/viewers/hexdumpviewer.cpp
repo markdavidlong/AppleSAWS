@@ -1,19 +1,30 @@
 #include "hexdumpviewer.h"
 #include "ui_hexdumpviewer.h"
-
+#include "util.h"
 #include <QDebug>
 #include <QScrollBar>
 #include <QSettings>
 #include <QAction>
 #include <QMenu>
+#include <QFontDialog>
+#include "applestring.h"
+#include <QChar>
 
 HexDumpViewer::HexDumpViewer(QWidget *parent) :
     FileViewerInterface(parent),
     ui(new Ui::HexDumpViewer)
 {
+    QFont textAreaFont;
+    textAreaFont.setStyleHint(QFont::Monospace);
+
+
     m_file = Q_NULLPTR;
     ui->setupUi(this);
+
+    setTextFont(fontFromSettings("HexDumpViewer.textFont", textAreaFont));
     m_offset = 0;
+
+
 
     QString title = QString("Hex Viewer");
     setWindowTitle(title);
@@ -86,33 +97,34 @@ void HexDumpViewer::showHexAndAsciiValues()
 QString HexDumpViewer::valToAppleAscii(quint8 val)
 {
 
-    typedef enum {
-        Inverse,
-        Flash,
-        Normal,
-        AltUC
-    } Zone;
+//    typedef enum {
+//        Inverse,
+//        Flash,
+//        Normal,
+//        AltUC
+//    } Zone;
 
-    Zone zone;
+    TextAttribute attribute = AppleChar::getAttribute(val);
+    QString charval = AppleChar::printable(val);
+    if (val == 0xff) { charval = "?"; } // QChar(0x25a0); }
 
-    QString charval;
-    if      (val <= 0x1F) { val += 0x40; charval = QString("%1").arg(QChar(val)); zone = Inverse; } //INV UC
-    else if (val <= 0x3F) { val = val;   charval = QString("%1").arg(QChar(val)); zone = Inverse; } // INV SP
-    else if (val <= 0x5F) { val = val;   charval = QString("%1").arg(QChar(val)); zone = Flash; } // FL UC
-    else if (val <= 0x7F) { val -= 0x40; charval = QString("%1").arg(QChar(val)); zone = Flash; } // FL SP
-    else if (val <= 0x9F) { val -= 0x40; charval = QString("%1").arg(QChar(val)); zone = AltUC; } // NORMx UC
-    else if (val <= 0xBF) { val -= 0x40; charval = QString("%1").arg(QChar(val)); zone = Normal; } // NORM SP
-    else if (val <= 0xDF) { val -= 0x80; charval = QString("%1").arg(QChar(val)); zone = Normal; } // NORM UC
-    else if (val <  0xFF) { val -= 0x80; charval = QString("%1").arg(QChar(val)); zone = Normal; } // NORM LC
-    else if (val == 0xFF) { val = val;   charval = QString("\u25a0"); zone = Normal; }
+//    if      (val <= 0x1F)   { val += 0x40;   charval = QString("%1").arg(QChar(val)); zone = Inverse; } //INV UC
+//    else if (val <= 0x3F)   {                charval = QString("%1").arg(QChar(val)); zone = Inverse; } // INV SP
+//    else if (val <= 0x5F)   {                charval = QString("%1").arg(QChar(val)); zone = Flash; } // FL UC
+//    else if (val <= 0x7F)   { val -= 0x40;   charval = QString("%1").arg(QChar(val)); zone = Flash; } // FL SP
+//    else if (val <= 0x9F)   { val -= 0x40;   charval = QString("%1").arg(QChar(val)); zone = AltUC; } // NORMx UC
+//    else if (val <= 0xBF)   { val -= 0x80;   charval = QString("%1").arg(QChar(val)); zone = Normal; } // NORM SP
+//    else if (val <= 0xDF)   { val -= 0x80;   charval = QString("%1").arg(QChar(val)); zone = Normal; } // NORM UC
+//    else if (val <  0xFF)   { val -= 0x80;   charval = QString("%1").arg(QChar(val)); zone = Normal; } // NORM LC
+//    else /* (val == 0xFF)*/ {                charval = QString("\u25a0"); zone = Normal; }
 
     QString htmlstr = charval.toHtmlEscaped();
 
     QString retval;
-    if (zone == Inverse) { retval = QString("<font color=\"blue\"><b>%1</b></font>").arg(htmlstr); }
-    else if (zone == Flash) { retval = QString("<font color=\"green\"><b><i>%1</i></b></font>").arg(htmlstr);}
-    else if (zone == AltUC) { retval = QString("<font color=\"red\"><i>%1</i></font>").arg(htmlstr);}
-    else /* zone == Normal */ { retval = QString("%1").arg(htmlstr);}
+    if (attribute == Inverse) { retval = QString("<font color=\"blue\"><b>%1</b></font>").arg(htmlstr); }
+    else if (attribute == Flash) { retval = QString("<font color=\"green\"><b><i>%1</i></b></font>").arg(htmlstr);}
+    else if (attribute == NormalLow) { retval = QString("<font color=\"red\"><i>%1</i></font>").arg(htmlstr);}
+    else   { retval = QString("%1").arg(htmlstr);}
 
     return retval;
 }
@@ -148,7 +160,33 @@ bool HexDumpViewer::optionsMenuItems(QMenu *menu)
             this, &HexDumpViewer::toggleWordWrap);
     menu->addAction(action);
 
+    menu->addSeparator();
+
+    if (m_setFontAction) {
+        m_setFontAction = new QAction("Set &Font...");
+    }
+    menu->addAction(m_setFontAction);
+
+    connect(m_setFontAction, &QAction::triggered,
+            this, [this] {
+        bool ok;
+        QFont font = QFontDialog::getFont(&ok,
+                                          ui->textArea->font(),
+                                          this, "Set Font",
+                                          QFontDialog::MonospacedFonts);
+        if (ok) {
+            setTextFont(font);
+            fontToSettings("HexDumpViewer.textFont", font);
+        }
+
+    });
+
     return true;
+}
+
+void HexDumpViewer::setTextFont(const QFont &font)
+{
+    ui->textArea->setFont(font);
 }
 
 void HexDumpViewer::setData(QByteArray data)

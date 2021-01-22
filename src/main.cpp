@@ -12,8 +12,8 @@
 int main(int argc, char** argv)
 {
     QApplication a(argc, argv);
-    QCoreApplication::setOrganizationName("AppleSAWS");
-    QCoreApplication::setOrganizationDomain("ml.com");
+    QCoreApplication::setOrganizationName("LydianScaleSoftware");
+    QCoreApplication::setOrganizationDomain("lydianscale.com");
     QCoreApplication::setApplicationName("AppleSAWS");
     DiskExplorer w;
     QSettings settings;

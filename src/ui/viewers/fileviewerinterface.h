@@ -17,7 +17,7 @@ class FileViewerInterface : public QWidget
     Q_OBJECT
 
 public:
-    FileViewerInterface(QWidget *parent = Q_NULLPTR) : QWidget(parent) { }
+    FileViewerInterface(QWidget *parent = Q_NULLPTR) : QWidget(parent) { setFont(QFont("courier")); }
 
     virtual bool optionsMenuItems(QMenu *) = 0;
 

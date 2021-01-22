@@ -5,13 +5,16 @@
 #include <QString>
 #include <QStringList>
 #include <QTableWidgetItem>
+#include <QFile>
 
 
 ApplesoftFileDetailViewer::ApplesoftFileDetailViewer(ApplesoftFile *file, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ApplesoftFileDetailViewer)
 {
+
     ui->setupUi(this);
+
     ui->m_varView->setSortingEnabled(true);
     m_file = file;
     load();
@@ -121,7 +124,8 @@ void ApplesoftFileDetailViewer::process()
 
     QStringList keys = vardata.keys();
     ui->m_varView->setRowCount(keys.count());
-    qSort(keys);
+   keys.sort();
+
     int idx = 0;
     foreach (QString key, keys)
     {

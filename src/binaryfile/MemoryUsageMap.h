@@ -4,6 +4,8 @@
 #include <QFlag>
 #include <QFlags>
 #include <QVector>
+#include <QList>
+
 
 enum MemoryUsage {
     Unknown            = 0x00000000,

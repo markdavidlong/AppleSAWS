@@ -16,12 +16,6 @@
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <widget class="FlowLineTextBrowser" name="textArea">
-     <property name="font">
-      <font>
-       <family>Courier</family>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
      <property name="acceptRichText">
       <bool>false</bool>
      </property>

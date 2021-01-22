@@ -2,7 +2,6 @@
 #define ASCIIINFODIALOG_H
 
 #include <QDialog>
-#include "asciiinfodialog.h"
 #include "ui_asciiinfodialog.h"
 
 namespace Ui {

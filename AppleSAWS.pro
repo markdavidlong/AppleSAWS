@@ -17,6 +17,7 @@ INCLUDEPATH += src/diskfiles
 INCLUDEPATH += src/diskfiles/dos33
 INCLUDEPATH += src/util
 INCLUDEPATH += src/applesoftfile
+INCLUDEPATH += src/intbasic
 INCLUDEPATH += src/binaryfile
 INCLUDEPATH += src/textfile
 INCLUDEPATH += src/ui/viewers
@@ -29,6 +30,7 @@ INCLUDEPATH += src/ui
 DEFINES += WS_VIDEO
 
 SOURCES += \
+    src/intbasic/IntBasicFile.cxx \
     src/main.cpp \
     src/diskfiles/dos33/diskfile.cxx \
     src/diskfiles/dos33/sector.cxx \
@@ -37,6 +39,7 @@ SOURCES += \
     src/diskfiles/dos33/tracksectorlist.cxx \
     src/diskfiles/dos33/filedescriptiveentry.cxx \
     src/diskfiles/dos33/genericfile.cxx \
+    src/ui/viewers/intbasicfileviewer.cxx \
     src/util/applestring.cxx \
     src/applesoftfile/applesoftfile.cxx \
     src/applesoftfile/applesofttoken.cxx \
@@ -83,6 +86,8 @@ HEADERS += \
     src/diskfiles/dos33/tracksectorlist.h \
     src/diskfiles/dos33/filedescriptiveentry.h \
     src/diskfiles/dos33/genericfile.h \
+    src/intbasic/IntBasicFile.h \
+    src/ui/viewers/intbasicfileviewer.h \
     src/util/util.h \
     src/util/applestring.h \
     src/applesoftfile/applesoftfile.h \
@@ -92,7 +97,7 @@ HEADERS += \
     src/textfile/textfile.h \
     src/ui/catalogwidget.h \
     src/ui/viewers/hiresviewwidget.h \
-    src/ui/viewers/applesoftfileviewer.h \ 
+    src/ui/viewers/applesoftfileviewer.h \
     src/applesoftfile/applesoftformatter.h \
     src/applesoftfile/applesoftline.h  \
     src/internals/memory.h \
@@ -132,6 +137,7 @@ FORMS += \
     src/ui/viewers/applesoftfileviewer.ui \
     src/ui/viewers/disassemblerviewer.ui \
     src/ui/viewers/hexdumpviewer.ui \
+    src/ui/viewers/intbasicfileviewer.ui \
     src/ui/viewers/texthexdumpviewer.ui \
     src/ui/viewers/applesoftfiledetailviewer.ui \
     src/ui/widgets/hexconverter.ui \

@@ -13,7 +13,10 @@ void CharSetCharacter::setData(QByteArray bytes)
     m_data = bytes;
 }
 
-void CharSetCharacter::setData(quint8 b0, quint8 b1, quint8 b2, quint8 b3, quint8 b4, quint8 b5, quint8 b6, quint8 b7)
+void CharSetCharacter::setData(quint8 b0, quint8 b1, 
+                                quint8 b2, quint8 b3, 
+                                quint8 b4, quint8 b5, 
+                                quint8 b6, quint8 b7)
 {
     QByteArray data;
     data.append(b0);

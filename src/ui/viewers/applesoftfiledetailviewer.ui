@@ -39,12 +39,12 @@
      </attribute>
      <column>
       <property name="text">
-       <string>Variable</string>
+       <string>Type</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Type</string>
+       <string>Variable</string>
       </property>
      </column>
      <column>

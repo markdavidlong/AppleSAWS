@@ -60,6 +60,8 @@ protected slots:
 
     void setShowCtrlChars(bool enabled) { setShowCtrlChars(enabled,ForceReformat); }
     void setShowCtrlChars(bool enabled, ReformatRule reformat);
+
+    void setTextFont(const QFont &font, ReformatRule reformat);
     void launchVarBrowser();
     void reformatText();
 
@@ -78,6 +80,7 @@ private:
     QAction *m_showVarExplorerAction;
     QAction *m_wordWrapAction;
     QAction *m_showCtrlCharsAction;
+    QAction *m_setFontAction;
 };
 
 #endif // APPLESOFTFILEVIEWER_H
