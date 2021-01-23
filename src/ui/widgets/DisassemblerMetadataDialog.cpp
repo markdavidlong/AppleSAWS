@@ -53,6 +53,11 @@ void DisassemblerMetadataDialog::showEvent(QShowEvent *)
     ui->symbolTable->resizeRowsToContents();
 }
 
+void DisassemblerMetadataDialog::closeEvent(QCloseEvent *)
+{
+    handleExitButton();
+}
+
 void DisassemblerMetadataDialog::handleExitButton()
 {
     m_bfm->requestDisassembly();

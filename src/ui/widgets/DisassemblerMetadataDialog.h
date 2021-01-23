@@ -26,6 +26,7 @@ public:
 protected:
     void showEvent(QShowEvent *);
 
+    void closeEvent(QCloseEvent *);
 protected slots:
     void handleExitButton();
     void handleProcessButton();
