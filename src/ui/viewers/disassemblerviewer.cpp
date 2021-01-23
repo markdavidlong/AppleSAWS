@@ -77,6 +77,7 @@ void DisassemblerViewer::setFile(BinaryFile *file) {
     m_file = file;
     m_isRelo = false;
 
+    setCursor(Qt::WaitCursor);
     m_bfm = new BinaryFileMetadata(m_file, file->address(), this);
 
     connect(m_bfm, &BinaryFileMetadata::doDisassemble,
@@ -92,11 +93,14 @@ void DisassemblerViewer::setFile(BinaryFile *file) {
     QList<quint16> addresses = m_bfm->entryPoints()->getEntryPointAddresses();
     if (!addresses.count()) { addresses.append(address); }
     handleDisassembleRequest(addresses);
+    unsetCursor();
 }
 
 void DisassemblerViewer::setFile(RelocatableFile *file) {
     m_file = file;
     m_isRelo = true;
+
+    setCursor(Qt::WaitCursor);
 
     m_bfm = new BinaryFileMetadata(m_file, file->address() + 6, this);
 
@@ -113,6 +117,7 @@ void DisassemblerViewer::setFile(RelocatableFile *file) {
     QList<quint16> addresses = m_bfm->entryPoints()->getEntryPointAddresses();
     if (!addresses.count()) { addresses.append(address); }
     handleDisassembleRequest(addresses);
+    unsetCursor();
 }
 
 void DisassemblerViewer::handleDisassembleRequest(QList<quint16> addresses)
@@ -226,6 +231,10 @@ void DisassemblerViewer::disassemble(QList<quint16> entryPoints) {
                 {
                     usedefault = true;
                 }
+            }
+            else
+            {
+                usedefault = true;
             }
 
             if (usedefault)

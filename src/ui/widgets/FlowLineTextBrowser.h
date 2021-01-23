@@ -25,6 +25,7 @@ public:
 
     void setJumpLines(JumpLines *jl);
 
+    void proxyWheelEvent(QWheelEvent *ev) { if (ev)  { wheelEvent(ev); } }
 protected:
     void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
@@ -35,6 +36,9 @@ protected:
     QRect getBlockGeometry(QTextBlock block) const;
     bool isBlockVisible(QTextBlock block) const;
     void showEvent(QShowEvent *) Q_DECL_OVERRIDE;
+
+   // void wheelEvent(QWheelEvent *ev)  Q_DECL_OVERRIDE { if (ev) { ev->ignore(); } }
+
 private slots:
     void updateLineAreaWidth();
     void updateLineArea(const QRect &, int);
@@ -67,6 +71,9 @@ protected:
     {
         m_browser->lineAreaPaintEvent(event);
     }
+
+    void wheelEvent(QWheelEvent *ev)  Q_DECL_OVERRIDE { m_browser->proxyWheelEvent(ev); }
+
 
 private:
     FlowLineTextBrowser *m_browser;
