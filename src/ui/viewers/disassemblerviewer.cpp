@@ -121,7 +121,7 @@ void DisassemblerViewer::handleDisassembleRequest(QList<quint16> addresses)
 
     disassemble(addresses);
     strings += getDisassemblyStrings();
-   // qSort(strings);
+    // qSort(strings);
     strings.sort();
     strings.removeDuplicates();
 
@@ -180,9 +180,21 @@ void DisassemblerViewer::disassemble(QList<quint16> entryPoints) {
         if (raw.contains("BRA")) { ds += "\n"; }  //TODO: Temp for spacing
         if (raw.contains("BRK")) { ds += "\n"; }  //TODO: Temp for spacing
 
+        QString newline;
 
-
-        QString newline = QString("%1:  %2 %3").arg(di.hexAddress()).arg(di.hexString()).arg(ds);
+        if (m_bfm->assemblerSymbols()->hasAssemSymbolAtAddress(di.address()))
+        {
+            int loc = m_bfm->assemblerSymbols()->locationOfSymbolAtAddress(di.address());
+            newline += (QString("%1: [%2]\n       %3 %4")
+                        .arg(di.hexAddress())
+                        .arg(m_bfm->assemblerSymbols()->at(loc).name)
+                        .arg(di.hexString()).arg(ds)
+                        );
+        }
+        else
+        {
+            newline += QString("%1:  %2 %3").arg(di.hexAddress()).arg(di.hexString()).arg(ds);
+        }
         formattedLines.append(newline);
     }
 
@@ -202,8 +214,8 @@ void DisassemblerViewer::disassemble(QList<quint16> entryPoints) {
                     newline = QString("%1: .Byte $%2                 ; %3").arg(uint16ToHex(idx))
                             .arg(uint8ToHex(m_mem.at(idx)))
                             .arg(m_bfm->assemblerSymbols()->at(loc).name);;
-                } else
-                if (m_bfm->assemblerSymbols()->at(loc).symbolsize == SizeWord)
+                }
+                else if (m_bfm->assemblerSymbols()->at(loc).symbolsize == SizeWord)
                 {
                     newline = QString("%1: .Word $%2               ; %3").arg(uint16ToHex(idx))
                             .arg(uint16ToHex(m_mem.at(idx) + (m_mem.at(idx+1)*256)))
@@ -215,14 +227,10 @@ void DisassemblerViewer::disassemble(QList<quint16> entryPoints) {
                     usedefault = true;
                 }
             }
-            else
-            {
-                usedefault = true;
-            }
 
             if (usedefault)
             {
-                newline = QString("%1:  %2                       %3\t(%4)\t'%5'").arg(uint16ToHex(idx))
+                newline += QString("%1:  %2                       %3\t(%4)\t'%5'").arg(uint16ToHex(idx))
                         .arg(uint8ToHex(m_mem.at(idx)))
                         .arg(makeDescriptorStringForVal(m_mem.at(idx)))
                         .arg(dis.getMnemonicForOp(m_mem.at(idx)))

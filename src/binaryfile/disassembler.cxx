@@ -1,6 +1,7 @@
 #include "disassembler.h"
 #include <QByteArray>
 #include <QDebug>
+#include <QList>
 #include <math.h>
 
 
@@ -134,7 +135,8 @@ QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to,
         }
 
 #endif
-    qSort(retval);
+ //   qSort(retval);
+    std::sort(retval.begin(),retval.end());
 
     //    QStringList hexdump;
     //    foreach (quint16 adr,m_memusagemap.addressesWhichContain(Operation))
