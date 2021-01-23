@@ -21,6 +21,19 @@ int AssemblerSymbols::locationOfSymbolAtAddress(quint16 address)
     return -1;
 }
 
+QString AssemblerSymbols::getSymbolAtAddress(quint16 address)
+{
+    int loc = locationOfSymbolAtAddress(address);
+    if (loc < 0)
+    {
+        return "";
+    }
+    else
+    {
+        return m_assemblerSymbols.at(loc).name;
+    }
+}
+
 bool AssemblerSymbols::hasAssemSymbolAtAddress(quint16 address)
 {
     // Assume list m_assemblerSymbols is sorted by address (it should be)

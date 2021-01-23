@@ -202,7 +202,7 @@ void DisassemblerViewer::disassemble(QList<quint16> entryPoints) {
                     newline = QString("%1: .Byte $%2                 ; %3").arg(uint16ToHex(idx))
                             .arg(uint8ToHex(m_mem.at(idx)))
                             .arg(m_bfm->assemblerSymbols()->at(loc).name);;
-                }
+                } else
                 if (m_bfm->assemblerSymbols()->at(loc).symbolsize == SizeWord)
                 {
                     newline = QString("%1: .Word $%2               ; %3").arg(uint16ToHex(idx))
@@ -231,7 +231,8 @@ void DisassemblerViewer::disassemble(QList<quint16> entryPoints) {
             formattedLines.append(newline);
         }
     }
-    qSort(formattedLines);
+    //qSort(formattedLines);
+    formattedLines.sort();
 
     m_disassemblyStrings = formattedLines;
 }
@@ -240,6 +241,14 @@ void DisassemblerViewer::disassemble(QList<quint16> entryPoints) {
 
 QString DisassemblerViewer::getPotentialLabel(quint16 address)
 {
+    if (m_bfm)
+    {
+        if (m_bfm->assemblerSymbols()->hasAssemSymbolAtAddress(address))
+        {
+            return m_bfm->assemblerSymbols()->getSymbolAtAddress(address);
+        }
+    }
+
     if (address == 0x24) { return "MON.CURSORHORIZ"; }
     if (address == 0x28) { return "MON.BASL"; }
     if (address == 0x29) { return "MON.BASH"; }

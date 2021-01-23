@@ -5,7 +5,7 @@
 #include <QDataStream>
 
 typedef enum {
-    SizeUnknown = 0,
+ //   SizeUnknown = 0,
     SizeByte = 1,
     SizeWord = 2
 } SymbolSize;
@@ -39,6 +39,7 @@ public:
     void doTestData();
 
     int locationOfSymbolAtAddress(quint16 address);
+    QString getSymbolAtAddress(quint16 address);
 signals:
     void symbolAdded(AssemblerSymbol &AssemblerSymbol, int location);
     void symbolAddedAt(int location);
