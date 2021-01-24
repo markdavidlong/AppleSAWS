@@ -7,6 +7,7 @@ NotesDialog::NotesDialog(QWidget *parent) :
     ui(new Ui::NotesDialog)
 {
     ui->setupUi(this);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     QByteArray text;
     QFile notes(":/notes/notes.txt");
     if (notes.open(QIODevice::ReadOnly | QIODevice::Text))
