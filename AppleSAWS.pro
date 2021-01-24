@@ -40,6 +40,7 @@ SOURCES += \
     src/diskfiles/dos33/filedescriptiveentry.cxx \
     src/diskfiles/dos33/genericfile.cxx \
     src/ui/viewers/intbasicfileviewer.cxx \
+    src/ui/widgets/notesdialog.cpp \
     src/util/applestring.cxx \
     src/applesoftfile/applesoftfile.cxx \
     src/applesoftfile/applesofttoken.cxx \
@@ -88,6 +89,7 @@ HEADERS += \
     src/diskfiles/dos33/genericfile.h \
     src/intbasic/IntBasicFile.h \
     src/ui/viewers/intbasicfileviewer.h \
+    src/ui/widgets/notesdialog.h \
     src/util/util.h \
     src/util/applestring.h \
     src/applesoftfile/applesoftfile.h \
@@ -146,4 +148,8 @@ FORMS += \
     src/ui/widgets/CharacterSetExplorer.ui \
     src/ui/widgets/DisassemblerMetadataDialog.ui \
     src/ui/widgets/LocationInfoDialog.ui \
-    src/ui/widgets/asciiinfodialog.ui
+    src/ui/widgets/asciiinfodialog.ui \
+    src/ui/widgets/notesdialog.ui
+
+RESOURCES += \
+    src/resource/resources.qrc

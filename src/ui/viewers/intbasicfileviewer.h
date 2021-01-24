@@ -16,7 +16,7 @@ public:
     explicit IntBasicFileViewer(QWidget *parent = nullptr);
     ~IntBasicFileViewer();
 
-    bool optionsMenuItems(QMenu *menu) { return false; }
+    bool optionsMenuItems(QMenu * /*menu*/) { return false; }
 
 public slots:
     void setFile(GenericFile *file);

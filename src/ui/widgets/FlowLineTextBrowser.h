@@ -12,11 +12,12 @@
 #include <QSize>
 #include <QWidget>
 #include <QScrollEvent>
+#include <QToolTip>
 
-class LineArea;
 
 class FlowLineTextBrowser : public QTextBrowser
 {
+    class LineArea;
 public:
     FlowLineTextBrowser(QWidget *parent = Q_NULLPTR);
 
@@ -37,8 +38,6 @@ protected:
     bool isBlockVisible(QTextBlock block) const;
     void showEvent(QShowEvent *) Q_DECL_OVERRIDE;
 
-   // void wheelEvent(QWheelEvent *ev)  Q_DECL_OVERRIDE { if (ev) { ev->ignore(); } }
-
 private slots:
     void updateLineAreaWidth();
     void updateLineArea(const QRect &, int);
@@ -47,16 +46,17 @@ public slots:
     void setLineAreaVisible(bool visible);
 
 private:
-    LineArea *m_lineArea;
+    FlowLineTextBrowser::LineArea *m_lineArea;
 
     JumpLines *m_jl;
-};
+
 
 class LineArea : public QWidget
 {
 public:
     LineArea(FlowLineTextBrowser *browser) : QWidget(browser)
     {
+        setMouseTracking(true);
         m_browser = browser;
     }
 
@@ -74,11 +74,41 @@ protected:
 
     void wheelEvent(QWheelEvent *ev)  Q_DECL_OVERRIDE { m_browser->proxyWheelEvent(ev); }
 
+    bool event(QEvent *event) Q_DECL_OVERRIDE
+    {
+        if (event->type() == QEvent::ToolTip) {
+               QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
+               int index = getChannelForXPos(helpEvent->pos().x());
+               if (index != -1) {
+                   QToolTip::showText(helpEvent->globalPos(), QString("Channel %1").arg(index));
+               } else {
+                   QToolTip::hideText();
+                   event->ignore();
+               }
+
+               return true;
+           }
+           return QWidget::event(event);
+    }
+
+    int getChannelForXPos(int xpos)
+    {
+        for (int idx = 0; idx < m_browser->m_jl->m_maxChannel; idx++)
+        {
+            int channeloffset = m_browser->getChannelOffset(idx);
+            if (abs(channeloffset - xpos) < 4)
+            {
+                return idx;
+            }
+        }
+        return -1;
+    }
+
 
 private:
     FlowLineTextBrowser *m_browser;
     JumpLines *m_jl;
 };
 
-
+};
 #endif // FLOWLINETEXTBROWSER_H

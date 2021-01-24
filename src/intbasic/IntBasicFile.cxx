@@ -148,7 +148,7 @@ QByteArray IntBasicFile::dumpBufferAsIntBasicFile(QByteArray origdata)
     }
     data.removeFirst();
 
-    int alen = get16(data[0],data[1]);
+   // int alen = get16(data[0],data[1]);
 
     int position = 2;
 

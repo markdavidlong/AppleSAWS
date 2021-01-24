@@ -11,6 +11,7 @@
 #include "hexdumpviewer.h"
 #include "viewerbase.h"
 #include "asciiinfodialog.h"
+#include "notesdialog.h"
 
 #include <QFrame>
 #include <QTimer>
@@ -68,7 +69,7 @@ private:
     HRCGControlsInfo *m_hrcgDialog;
     HexConverter *m_hexConverter;
     AsciiInfoDialog *m_AsciiInfoDialog;
-
+    NotesDialog *m_notesDialog;
 
     QAction *m_action_Unload_Disk_Image;
 

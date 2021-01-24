@@ -1,0 +1,64 @@
+# AppleSAWS
+## Apple Software Analysis WorkShop v.0.0.3pr
+
+https://github.com/markdavidlong/AppleSAWS
+
+### Welcome
+
+This is a toolkit for exploring DOS 3.3 disk contents. I started this because
+I had become interested in a game that I used to play a long time ago and I
+wanted to dig deeper into the internals of how it worked. Since it was a nice
+combination of a series of Applesoft and Binary files, I decided that a tool
+to help explore those types of things would be handy. Of course, I've ended
+up spending far more time writing the tool than I have actually exploring the
+game, but nonetheless, it's been a fun ongoing project.
+
+***
+
+### Legal Stuff:
+
+I am grateful to be able to include a couple of wonderful Apple II inspired fonts
+from KreativeKorp, **Print Char 21** and **PR Number 3** available from
+https://www.kreativekorp.com/software/fonts/apple2.shtml
+
+Accordingly, here is their license:
+
+```
+KREATIVE SOFTWARE RELAY FONTS FREE USE LICENSE
+version 1.2f
+
+Permission is hereby granted, free of charge, to any person or entity (the "User") obtaining a copy of the included font files (the "Software") produced by Kreative Software, to utilize, display, embed, or redistribute the Software, subject to the following conditions:
+
+1. The User may not sell copies of the Software for a fee.
+
+1a. The User may give away copies of the Software free of charge provided this license and any documentation is included verbatim and credit is given to Kreative Korporation or Kreative Software.
+
+2. The User may not modify, reverse-engineer, or create any derivative works of the Software.
+
+3. Any Software carrying the following font names or variations thereof is not covered by this license and may not be used under the terms of this license: Jewel Hill, Miss Diode n Friends, This is Beckie's font!
+
+3a. Any Software carrying a font name ending with the string "Pro CE" is not covered by this license and may not be used under the terms of this license.
+
+4. This license becomes null and void if any of the above conditions are not met.
+
+5. Kreative Software reserves the right to change this license at any time without notice.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF THE USE OR INABILITY TO USE THE SOFTWARE OR FROM OTHER DEALINGS IN THE SOFTWARE.
+```
+
+***
+
+And, of course, this program is released under the MIT License:
+
+
+```
+The MIT License (MIT)
+
+Copyright (c) 2015-2021 Mark D. Long
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+```

@@ -14,10 +14,13 @@
 
 DiskExplorer::DiskExplorer(QWidget *parent) : QMainWindow(parent)
 {
-    m_action_Unload_Disk_Image = 0;
-    m_disk = 0;
+    m_action_Unload_Disk_Image = nullptr;
+    m_disk = nullptr;
     m_horizSizePref = -1;
     m_toolsHidden = true;
+    m_notesDialog = nullptr;
+    m_AsciiInfoDialog = nullptr;
+    m_hrcgDialog = nullptr;
 
     resize(300,800);
     initUi();
@@ -76,10 +79,10 @@ void DiskExplorer::initUi()
 
     QAction *action_HRCG_Commands = new QAction(tr("&HRCG Commands..."),this);
     menu->addAction(action_HRCG_Commands);
-    m_hrcgDialog = new HRCGControlsInfo(this);
+    if (!m_hrcgDialog) m_hrcgDialog = new HRCGControlsInfo(this);
     connect(action_HRCG_Commands, &QAction::triggered, m_hrcgDialog, &HRCGControlsInfo::show);
 
-    m_hexConverter = new HexConverter(this);
+    if (!m_hexConverter) m_hexConverter = new HexConverter(this);
     connect(action_Hex_Converter, &QAction::triggered, m_hexConverter, &HexConverter::show);
 
     QAction *action_Ascii_Info = new QAction(tr("&ASCII Table..."),this);
@@ -87,6 +90,12 @@ void DiskExplorer::initUi()
     m_AsciiInfoDialog = new AsciiInfoDialog(this);
     connect(action_Ascii_Info, &QAction::triggered, m_AsciiInfoDialog, &AsciiInfoDialog::show);
 
+    menu->addSeparator();
+
+    QAction *action_Notes = new QAction(tr("&Notes..."), this);
+    menu->addAction(action_Notes);
+    if (!m_notesDialog) m_notesDialog = new NotesDialog(this);
+    connect(action_Notes, &QAction::triggered, m_notesDialog, &NotesDialog::show);
 
     QWidget *widget = new QWidget(0);
     m_gridLayout = new QGridLayout();

@@ -267,6 +267,7 @@ int FlowLineTextBrowser::getChannelOffset(int channel)
     return width - (channel * 9)- 10;
 }
 
+
 int FlowLineTextBrowser::lineAreaWidth()
 {
     if (!m_jl) return 10;

@@ -223,11 +223,11 @@ void MazeViewer::drawMaze()
                 quint8 roomPlayerIsIn = mem.at(0x8008 + (32*rdx));
 
                 if (roomPlayerIsIn == currentRoom) {
-                    if (rdx == 0) { pl += QString("\u2460"); }
-                    if (rdx == 1) { pl += QString("\u2461"); }
-                    if (rdx == 2) { pl += QString("\u2462"); }
-                    if (rdx == 3) { pl += QString("\u2463"); }
-                    if (rdx == 4) { pl += QString("\u2464"); }
+                    if (rdx == 0) { pl += QString(u8"\u2460"); }
+                    if (rdx == 1) { pl += QString(u8"\u2461"); }
+                    if (rdx == 2) { pl += QString(u8"\u2462"); }
+                    if (rdx == 3) { pl += QString(u8"\u2463"); }
+                    if (rdx == 4) { pl += QString(u8"\u2464"); }
                 }
             }
 

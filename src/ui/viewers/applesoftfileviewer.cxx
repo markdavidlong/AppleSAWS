@@ -18,9 +18,12 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
     m_afdv = Q_NULLPTR;
 
 
-    QFont textAreaFont;
-    textAreaFont.setStyleHint(QFont::Monospace);
+  //  QFont textAreaFont("PR Number 3");
+    QFont textAreaFont("Print Char 21");
+   // textAreaFont.setStyleHint(QFont::Monospace);
     textAreaFont.setPointSize(12);
+
+    qDebug() << "************ " << textAreaFont;
 
     QSettings settings;
     QString title = QString("Applesoft Viewer");
@@ -51,7 +54,8 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
     setSyntaxHighlighting(settings.value("ASViewer.syntaxHighlighting",true).toBool(), NoReformat);
     setShowCtrlChars(settings.value("ASViewer.showCtrlChars",true).toBool(), NoReformat);
 
-    setTextFont(fontFromSettings("ASViewer.textFont", textAreaFont), NoReformat);
+  //  setTextFont(fontFromSettings("ASViewer.textFont", textAreaFont), NoReformat);
+    setTextFont(textAreaFont, NoReformat);
 }
 
 ApplesoftFileViewer::~ApplesoftFileViewer()
@@ -168,8 +172,8 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
             bool ok;
             QFont font = QFontDialog::getFont(&ok,
                                               ui->textArea->font(),
-                                              this, "Set Font",
-                                              QFontDialog::MonospacedFonts);
+                                              this, "Set Font"
+                                              /*, QFontDialog::MonospacedFonts| QFontDialog::DontUseNativeDialog */);
             if (ok) {
                 setTextFont(font,ForceReformat);
                 fontToSettings("ASViewer.textFont",font);
