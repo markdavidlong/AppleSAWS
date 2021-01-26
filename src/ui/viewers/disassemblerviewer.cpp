@@ -265,10 +265,28 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address)
             return m_bfm->assemblerSymbols()->getSymbolAtAddress(address);
         }
     }
+    if (address == 0x20) { return "MON.WINDOW_LEFT"; }
+    if (address == 0x21) { return "MON.WINDOW_WIDTH"; }
+    if (address == 0x22) { return "MON.WINDOW_TOP"; }
+    if (address == 0x23) { return "MON.WINDOW_BOTTOM"; }
 
     if (address == 0x24) { return "MON.CURSORHORIZ"; }
+    if (address == 0x25) { return "MON.CURSORVERT"; }
+
     if (address == 0x28) { return "MON.BASL"; }
     if (address == 0x29) { return "MON.BASH"; }
+
+    if (address == 0x2A) { return "DOS.SCRATCH"; }
+    if (address == 0x2B) { return "DOS.BOOT_SLOT"; }
+
+    if (address == 0x2C) { return "DOS.RWTS_CKSUM"; }
+    if (address == 0x2D) { return "DOS.RWTS_SECTOR"; }
+    if (address == 0x2E) { return "DOS.RWTS_TRACK"; }
+    if (address == 0x2F) { return "DOS.RWTS_VOLUME"; }
+
+    if (address == 0x30) { return "MON.HIRES_TMPBM"; }
+
+    if (address == 0x32) { return "MON.VIDEO_MODE"; }
     if (address == 0x33) { return "MON.PROMPTCHAR"; }
     if (address == 0x36) { return "DOS.CSWL"; }
     if (address == 0x37) { return "DOS.CSWH"; }
@@ -280,6 +298,10 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address)
     if (address == 0x43) { return "DOS.BUFFER_ADDR_H"; }
     if (address == 0x44) { return "DOS.NUMERIC_OPERAND_L"; }
     if (address == 0x45) { return "DOS.NUMERIC_OPERAND_H"; }
+
+    if (address == 0x48) { return "DOS.RWTS_IOB_PTR_L"; }
+    if (address == 0x49) { return "DOS.RWRS_IOB_PTR_H"; }
+
 
     if (address == 0x67) { return "AS.PROG_STARTL"; }
     if (address == 0x68) { return "AS.PROG_STARTH"; }
@@ -330,17 +352,36 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address)
     if (address == 0xB0) { return "AS.PROGEND_H"; }
 
     if (address == 0xD6) { return "DOS.AS.LOCK"; }
+    if (address == 0xD8) { return "DOS.AS.ONERR"; }
+
+    if (address == 0xDA) { return "DOS.AS.ONERR_LINE_L"; }
+    if (address == 0xDB) { return "DOS.AS.ONERR_LINE_H"; }
 
     if (address == 0xE0) { return "AS.HGR_X_L"; }
     if (address == 0xE1) { return "AS.HGR_X_H"; }
     if (address == 0xE2) { return "AS.HGR_Y"; }
 
     if (address == 0xE4) { return "AS.HGR_COLOR"; }
+    if (address == 0xE5) { return "AS.HGR_MAP_BYTE"; }
+    if (address == 0xE6) { return "AS.HGR_PLOT_PAGE"; }
+    if (address == 0xE7) { return "AS.HGR_SCALE"; }
 
     if (address == 0xE8) { return "AS.SHAPETBL_L"; }
     if (address == 0xE9) { return "AS.SHAPETBL_H"; }
 
     if (address == 0xEA) { return "AS.HGR_COLLISION_CTR"; }
+
+    if (address == 0xF0) { return "AS.LORES_SCRATCH"; }
+    if (address == 0xF1) { return "AS.255_MINUS_SPEED"; }
+    if (address == 0xF2) { return "AS.TRACE_FLAG"; }
+    if (address == 0xF3) { return "MON.FLASH_MASK"; }
+    if (address == 0xF4) { return "AS.ONERR_PTR_AREA_0"; }
+    if (address == 0xF5) { return "AS.ONERR_PTR_AREA_1"; }
+    if (address == 0xF6) { return "AS.ONERR_PTR_AREA_2"; }
+    if (address == 0xF7) { return "AS.ONERR_PTR_AREA_3"; }
+    if (address == 0xF8) { return "AS.ONERR_PTR_AREA_4"; }
+
+    if (address == 0xF9) { return "AS.HGR_ROT"; }
 
     if (address == 0x03d0) { return "DOS.WARMSTART"; }
     if (address == 0x03d3) { return "DOS.COLDSTART"; }

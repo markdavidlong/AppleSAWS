@@ -20,30 +20,14 @@ QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to,
     m_to = to;
     QList<DisassembledItem> retval;
     qDebug() << "\n\n*****************\n\nDisassemble: From"<<uint16ToHex(from)<<"to"<<uint16ToHex(to);
-    //#define OLDDISSEM
 
-#ifdef OLDDISSEM
-    for (int idx = from; idx <= to; )
-    {
-
-        DisassembledItem item;
-        disassembleOp(quint16(idx),item);
-        retval.append(item);
-        idx = item.nextContiguousAddress();
-        if (idx > 0xffff || (idx < from)) {
-            qDebug() << "Breaking.";
-            break;
-        }
-    }
-#else
-    MemoryUsageMap memuse;
+    MemoryUsageMap memUse;
 
     bool stopping = false;
     quint16 next = from;
     while (entryPoints.count())
     {
         next = entryPoints.takeFirst();
-        //m_jumps.append(entryPoints);
         m_stack.push(next);
     }
 
@@ -55,7 +39,7 @@ QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to,
         bool ok = false;
 
         if (next >= from && next <= to)  //TODO: Remove this to not limit disassembly to program range
-            ok = disassembleOp(next,item,&memuse);
+            ok = disassembleOp(next,item,&memUse);
 
         if (ok)
         {
@@ -67,24 +51,15 @@ QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to,
             {
                 qDebug() << "Is Branch";
                 m_stack.push(item.targetAddress());
-                //                if (!m_jumps.contains(item.targetAddress()))
-                //                {
-                //                    m_jumps.append(item.targetAddress());
-                //                    qDebug() << "Appending branch" << uint16ToHex(item.targetAddress()) << "to jump table";
-
-                //                }
             }
 
             if (item.isJsr() && !item.canNotFollow())
             {
-                if (item.targetAddress() <= to) //TODO: Remove this to not limit disassembly to program range
+                if (item.targetAddress() <= to && item.targetAddress() >= from) //TODO: Remove this to not limit disassembly to program range
                 {
                     if (m_stack.push(item.targetAddress()))
-                        //if (!m_jumps.contains(item.targetAddress()))
                     {
                         qDebug() << "Appending" << uint16ToHex(item.targetAddress()) << "to jump table";
-
-                        //m_jumps.append(item.targetAddress());
                     }
                     else
                     {
@@ -105,23 +80,14 @@ QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to,
             stopping = true; // already processed this address
         }
 
-        //     if (found.contains(next)) stopping = true;
         if (next >= to) stopping = true;
-        //        if (stopping) {
-        //            qDebug() << "Stopping.  Stops processing: "
-        //                     << item.stopsProcessing()
-        //                     << ", next>=to: " << (next >= to)
-        //                     << ", alreadyFound: " << ((!ok)?"true":"false");
-        //        }
     }
 
-    m_memusagemap.merge(memuse);
+    m_memusagemap.merge(memUse);
 
     if (processRecursively)
-        //while (m_jumps.size())
         while (!m_stack.isEmpty())
         {
-            //    quint16 num = m_jumps.takeFirst();
             quint16 num = m_stack.pop();
             if (!m_memusagemap[num].testFlag(Operation))
             {
@@ -134,27 +100,10 @@ QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to,
             }
         }
 
-#endif
- //   qSort(retval);
     std::sort(retval.begin(),retval.end());
-
-    //    QStringList hexdump;
-    //    foreach (quint16 adr,m_memusagemap.addressesWhichContain(Operation))
-    //    {
-    //        hexdump.append(uint16ToHex(adr));
-    //    }
-    //    qDebug() << "Operations:" << hexdump;
-
-    //    hexdump.clear();
-    //    foreach (quint16 adr,m_memusagemap.addressesWhichContain(OperationArg))
-    //    {
-    //        hexdump.append(uint16ToHex(adr));
-    //    }
-    //    qDebug() << "Operations Args:" << hexdump;
 
     if (processRecursively)
     {
-      //  m_jlm.dumpJumps();
       m_jumplines = m_jlm.buildJumpLines();
       qDebug() << "Num Channels: " << m_jlm.getNumJumpLineChannels();
     }

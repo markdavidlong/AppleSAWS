@@ -54,7 +54,7 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
     setSyntaxHighlighting(settings.value("ASViewer.syntaxHighlighting",true).toBool(), NoReformat);
     setShowCtrlChars(settings.value("ASViewer.showCtrlChars",true).toBool(), NoReformat);
 
-  //  setTextFont(fontFromSettings("ASViewer.textFont", textAreaFont), NoReformat);
+    setTextFont(fontFromSettings("ASViewer.textFont", textAreaFont), NoReformat);
     setTextFont(textAreaFont, NoReformat);
 }
 
