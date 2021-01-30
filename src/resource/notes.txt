@@ -5,7 +5,7 @@ https://github.com/markdavidlong/AppleSAWS
 
 ### Welcome
 
-This is a toolkit for exploring DOS 3.3 disk contents. I started this because
+This is a toolkit for exploring DOS 3.3 disk images and their contents. I started this because
 I had become interested in a game that I used to play a long time ago and I
 wanted to dig deeper into the internals of how it worked. Since it was a nice
 combination of a series of Applesoft and Binary files, I decided that a tool

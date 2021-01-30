@@ -9,7 +9,8 @@
 #include "diskfile.h"
 #include "catalogsector.h"
 #include "applesoftfile.h"
-#include "DiskExplorer.h"
+//#include "DiskExplorer.h"
+#include "startupdialog.h"
 
 int main(int argc, char** argv)
 {
@@ -21,18 +22,12 @@ int main(int argc, char** argv)
     qDebug("Adding fonts");
     auto x = QFontDatabase::addApplicationFont(":/fonts/A2_40Col.ttf");
     auto y = QFontDatabase::addApplicationFont(":/fonts/A2_80Col.ttf");
-    qDebug("40Col: %d 80Col: %d",x,y);
 
-    qDebug() << "40: " << QFontDatabase::applicationFontFamilies(0);
-    qDebug() << "80: " << QFontDatabase::applicationFontFamilies(1);
+//    qDebug("40Col: %d 80Col: %d",x,y);
+//    qDebug() << "40: " << QFontDatabase::applicationFontFamilies(0);
+//    qDebug() << "80: " << QFontDatabase::applicationFontFamilies(1);
 
-    DiskExplorer w;
-    QSettings settings;
-    QString lastOpened = settings.value("lastOpened").toString();
-    if (!lastOpened.isEmpty())
-    {
-        w.loadDiskFile(lastOpened);
-    }
+    StartupDialog w;
     w.show();
 
     return a.exec();

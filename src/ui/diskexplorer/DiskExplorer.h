@@ -11,7 +11,7 @@
 #include "hexdumpviewer.h"
 #include "viewerbase.h"
 #include "asciiinfodialog.h"
-#include "notesdialog.h"
+//#include "notesdialog.h"
 
 #include <QFrame>
 #include <QTimer>
@@ -34,7 +34,7 @@ signals:
 public slots:
     void unloadDiskFile();
     void loadDiskFile(QString filename);
-    void showLoadDialog();
+    void showLoadDialog(bool parentToThis = true);
 
 private slots:
     void handleShowSectorData(QByteArray data, int track, int sector, QVariant metadata);
@@ -69,7 +69,7 @@ private:
     HRCGControlsInfo *m_hrcgDialog;
     HexConverter *m_hexConverter;
     AsciiInfoDialog *m_AsciiInfoDialog;
-    NotesDialog *m_notesDialog;
+//    NotesDialog *m_notesDialog;
 
     QAction *m_action_Unload_Disk_Image;
 

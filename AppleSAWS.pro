@@ -39,6 +39,7 @@ SOURCES += \
     src/diskfiles/dos33/tracksectorlist.cxx \
     src/diskfiles/dos33/filedescriptiveentry.cxx \
     src/diskfiles/dos33/genericfile.cxx \
+    src/ui/startupdialog.cpp \
     src/ui/viewers/intbasicfileviewer.cxx \
     src/ui/widgets/notesdialog.cpp \
     src/util/applestring.cxx \
@@ -88,6 +89,7 @@ HEADERS += \
     src/diskfiles/dos33/filedescriptiveentry.h \
     src/diskfiles/dos33/genericfile.h \
     src/intbasic/IntBasicFile.h \
+    src/ui/startupdialog.h \
     src/ui/viewers/intbasicfileviewer.h \
     src/ui/widgets/notesdialog.h \
     src/util/util.h \
@@ -136,6 +138,7 @@ HEADERS += \
 
 FORMS += \
     src/ui/catalogwidget.ui \
+    src/ui/startupdialog.ui \
     src/ui/viewers/applesoftfileviewer.ui \
     src/ui/viewers/disassemblerviewer.ui \
     src/ui/viewers/hexdumpviewer.ui \

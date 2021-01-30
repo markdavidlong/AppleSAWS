@@ -15,12 +15,15 @@
 DiskExplorer::DiskExplorer(QWidget *parent) : QMainWindow(parent)
 {
     m_action_Unload_Disk_Image = nullptr;
+    m_hexConverter = nullptr;
     m_disk = nullptr;
     m_horizSizePref = -1;
     m_toolsHidden = true;
-    m_notesDialog = nullptr;
+ //   m_notesDialog = nullptr;
     m_AsciiInfoDialog = nullptr;
     m_hrcgDialog = nullptr;
+
+    m_action_Unload_Disk_Image = nullptr;
 
     resize(300,800);
     initUi();
@@ -37,20 +40,20 @@ void DiskExplorer::initUi()
     QMenu *menu = new QMenu(tr("&File"),this);
     menuBar->addMenu(menu);
 
-    QAction *action_Load_Disk_Image = new QAction(tr("&Load Disk Image..."),this);
-    menu->addAction(action_Load_Disk_Image);
+//    QAction *action_Load_Disk_Image = new QAction(tr("&Load Disk Image..."),this);
+//    menu->addAction(action_Load_Disk_Image);
 
-    connect(action_Load_Disk_Image, &QAction::triggered,
-            this, &DiskExplorer::showLoadDialog);
+//    connect(action_Load_Disk_Image, &QAction::triggered,
+//            this, &DiskExplorer::showLoadDialog);
 
-    m_action_Unload_Disk_Image = new QAction(tr("&Unload Disk Image"),this);
-    m_action_Unload_Disk_Image->setEnabled(false);
-    menu->addAction(m_action_Unload_Disk_Image);
+//    m_action_Unload_Disk_Image = new QAction(tr("&Unload Disk Image"),this);
+//    m_action_Unload_Disk_Image->setEnabled(false);
+//    menu->addAction(m_action_Unload_Disk_Image);
 
-    connect(m_action_Unload_Disk_Image, &QAction::triggered,
-            this, &DiskExplorer::unloadDiskFile);
+//    connect(m_action_Unload_Disk_Image, &QAction::triggered,
+//            this, &DiskExplorer::unloadDiskFile);
 
-    menu->addSeparator();
+//    menu->addSeparator();
 
     QAction *action_Quit = new QAction(tr("&Quit"),this);
     menu->addAction(action_Quit);
@@ -90,12 +93,12 @@ void DiskExplorer::initUi()
     m_AsciiInfoDialog = new AsciiInfoDialog(this);
     connect(action_Ascii_Info, &QAction::triggered, m_AsciiInfoDialog, &AsciiInfoDialog::show);
 
-    menu->addSeparator();
+//    menu->addSeparator();
 
-    QAction *action_Notes = new QAction(tr("&Notes..."), this);
-    menu->addAction(action_Notes);
-    if (!m_notesDialog) m_notesDialog = new NotesDialog(this);
-    connect(action_Notes, &QAction::triggered, m_notesDialog, &NotesDialog::show);
+//    QAction *action_Notes = new QAction(tr("&Notes..."), this);
+//    menu->addAction(action_Notes);
+//    if (!m_notesDialog) m_notesDialog = new NotesDialog(this);
+//    connect(action_Notes, &QAction::triggered, m_notesDialog, &NotesDialog::show);
 
     QWidget *widget = new QWidget(0);
     m_gridLayout = new QGridLayout();
@@ -157,7 +160,7 @@ void DiskExplorer::loadDiskFile(QString filename)
     m_disk = new DiskFile();
     m_cw->prepForNewDisk(filename,m_disk);
     if (m_disk->read(filename)) {
-        m_action_Unload_Disk_Image->setEnabled(true);
+        if (m_action_Unload_Disk_Image) {  m_action_Unload_Disk_Image->setEnabled(true); }
         QSettings settings;
         settings.setValue("lastOpened",filename);
         m_cw->processNewlyLoadedDisk(filename,m_disk);
@@ -177,15 +180,16 @@ void DiskExplorer::handleShowSectorData(QByteArray data, int track, int sector, 
     m_hdv->setRawData(data,0);
 }
 
-void DiskExplorer::showLoadDialog()
+void DiskExplorer::showLoadDialog(bool parentToThis)
 {
     QSettings settings;
     QString last = settings.value("lastOpened",".").toString();
-    QString filename = QFileDialog::getOpenFileName(this,
+    QString filename = QFileDialog::getOpenFileName(parentToThis?this:nullptr,
                                                     tr("Open Disk Image"),
                                                     last,
                                                     "Disk Images (*.do *.dsk)");
     if (!filename.isEmpty()) {
+        if (!parentToThis) { this->show(); }
         loadDiskFile(filename);
     }
 }
