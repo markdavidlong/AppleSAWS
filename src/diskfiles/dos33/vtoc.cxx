@@ -49,8 +49,8 @@ qint16 VTOC::bytesPerSector() {
 }
 
 bool VTOC::isSectorInUse(TSPair ts) {
-    quint8 track = ts.track;
-    quint8 sec = ts.sector;
+    quint8 track = ts.track();
+    quint8 sec = ts.sector();
     quint8 baseaddr = (track * 4) + 0x38;
 
     //quint16 word = (((quint16) m_data->rawData()[baseaddr]) *256) + (quint8) m_data->rawData()[baseaddr+1];
@@ -71,8 +71,8 @@ void VTOC::dump()
     }
 */
     qDebug() << "Dumping VTOC Track " << m_data->track() << "Sector " << m_data->sector() << " ...";
-    qDebug() << "   Track number of first catalog sector: " << QString::number(firstCatalogSector().track);
-    qDebug() << "   Sector number of first catalog sector: " << QString::number(firstCatalogSector().sector);
+    qDebug() << "   Track number of first catalog sector: " << QString::number(firstCatalogSector().track());
+    qDebug() << "   Sector number of first catalog sector: " << QString::number(firstCatalogSector().sector());
     qDebug() << "   Release number of DOS used to INIT disk: " << QString::number(dosVersion());
     qDebug() << "   Disk Volume Number: " << QString::number(volumeNumber());
     qDebug() << "   Max track/sector pairs that fit in t/s list sector (122=256): " << QString::number(maxTSPairs());

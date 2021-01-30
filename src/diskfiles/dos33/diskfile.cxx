@@ -56,6 +56,7 @@ bool DiskFile::read(QString filename)
                 char buffer[256];
                 if (qds.readRawData(buffer,256) == 256)
                 {
+    qDebug() << "Track " << track << " Sector " << sector;
                     Sector sec;
                     sec.setTrackSector(track,sector);
                     sec.setData(QByteArray(buffer,256));
@@ -110,7 +111,8 @@ GenericFile *DiskFile::getFile(FileDescriptiveEntry fde)
     }
     else
     {
-        TrackSectorList tsl = getSector(fde.firstTSListSector).promoteToTrackSectorList();
+        TrackSectorList tsl = getSector(fde.firstTSListSector()).promoteToTrackSectorList();
+
         QByteArray data = getDataFromTrackSectorList(tsl);
 
         if (fde.fileType() == "A")

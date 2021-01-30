@@ -6,11 +6,11 @@ TrackSectorList::TrackSectorList(Sector *data)
 {
     m_data = data;
 
-    m_next_tslist.track = m_data->rawData()[0x01];
-    m_next_tslist.sector = m_data->rawData()[0x02];
+    m_next_tslist.setTrack(m_data->rawData()[0x01]);
+    m_next_tslist.setSector(m_data->rawData()[0x02]);
 
-    m_sector_offset.track = m_data->rawData()[0x05];
-    m_sector_offset.sector = m_data->rawData()[0x06];
+    m_sector_offset.setTrack(m_data->rawData()[0x05]);
+    m_sector_offset.setSector(m_data->rawData()[0x06]);
 
     for (int idx = 0x0C; idx < 0xff; idx+=2)
     {

@@ -21,7 +21,7 @@ public:
 
     bool read(QString filename);
 
-    Sector &getSector(TSPair ts) { return getSector(ts.track, ts.sector); }
+    Sector &getSector(TSPair ts) { return getSector(ts.track(), ts.sector()); }
 
     Sector &getSector(int track, int sector) {
         return m_contents[track][sector];

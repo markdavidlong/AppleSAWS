@@ -6,7 +6,6 @@
 #include "applestring.h"
 
 struct FileDescriptiveEntry {
-    TSPair firstTSListSector;
     int fileTypeAndFlags;
     AppleString filename;
     quint16 lengthInSectors;
@@ -36,8 +35,9 @@ struct FileDescriptiveEntry {
     bool isLocked() { return (fileTypeAndFlags & DOSIsLocked); }
 
     void dump() {
-        qDebug() << "First TS List Sector: Track: " << QString("%1").arg(firstTSListSector.track,2,16,QChar('0')).toUpper()
-                                     << " Sector: " << QString("%1").arg(firstTSListSector.sector,2,16,QChar('0')).toUpper();
+        
+	    qDebug() << "First TS List Sector: Track: " << QString("%1").arg(firstTSListSector().track(),2,16,QChar('0')).toUpper()
+                                     << " Sector: " << QString("%1").arg(firstTSListSector().sector(),2,16,QChar('0')).toUpper();
         qDebug() << "File Type and Flags: " << QString::number((quint8)fileTypeAndFlags) << "(" << fileType() << "," << (isLocked()?"Locked":"Unlocked") << ")";
         qDebug() << "Filename: " << filename.printable();
         qDebug() << "Length in Sectors: " << lengthInSectors;
@@ -50,6 +50,23 @@ struct FileDescriptiveEntry {
                                      .arg(filename.printable().trimmed());
         qDebug() << output;
     }
+
+    void setFirstTSListSector(TSPair ts) 
+    { 
+	    if (ts.isValid()) 
+	    { 
+		    m_firstTSListSector = ts; 
+	    } 
+		else 
+		{
+			m_firstTSListSector = TSPair(0,0); 
+		} 
+    }
+    TSPair &firstTSListSector()  { return m_firstTSListSector; }
+
+private:
+    TSPair m_firstTSListSector;
+
 };
 
 #endif // FILEDESCRIPTIVEENTRY_H

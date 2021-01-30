@@ -303,11 +303,11 @@ void DiskExplorerMapWidget::mapDiskToButtons()
 
         foreach(FileDescriptiveEntry fde, cs.getFDEs())
         {
-            Sector *s = &(m_disk->getSector(fde.firstTSListSector));
+            Sector *s = &(m_disk->getSector(fde.firstTSListSector()));
             TrackSectorList tsl(s);
 
-            int tsltr = fde.firstTSListSector.track;
-            int tslse = fde.firstTSListSector.sector;
+            int tsltr = fde.firstTSListSector().track();
+            int tslse = fde.firstTSListSector().sector();
 
             int tslcount = 0;
             while (tsltr != 0)
@@ -325,8 +325,8 @@ void DiskExplorerMapWidget::mapDiskToButtons()
                 int sectorcount = 0;
                 foreach(TSPair tsp, tsl.getDataTSPairs())
                 {
-                    int se = tsp.sector;
-                    int tr = tsp.track;
+                    int se = tsp.sector();
+                    int tr = tsp.track();
 
                     QString description = QString("Sector #%1.%2 of %3")
                             .arg(tslcount)
@@ -350,8 +350,8 @@ void DiskExplorerMapWidget::mapDiskToButtons()
                     //  fde.dump();
                     idx++;
                 }
-                tsltr =  tsl.getNextTSList().track;
-                tslse = tsl.getNextTSList().sector;
+                tsltr =  tsl.getNextTSList().track();
+                tslse = tsl.getNextTSList().sector();
                 tsl = m_disk->getSector(tsl.getNextTSList()).promoteToTrackSectorList();
             }
         }

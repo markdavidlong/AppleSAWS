@@ -111,7 +111,6 @@ void DisassemblerViewer::setFile(RelocatableFile *file) {
     setWindowTitle(title);
 
     quint16 address = file->address() + 6 ; // Handle offset for relocatable metadata
-
     m_mem.addFile(m_file->data(), address);
 
     QList<quint16> addresses = m_bfm->entryPoints()->getEntryPointAddresses();
@@ -154,8 +153,8 @@ QStringList DisassemblerViewer::getDisassemblyStrings() {
 void DisassemblerViewer::disassemble(QList<quint16> entryPoints) {
 
     Disassembler dis(m_mem.values());
-
     int length = m_file->length();
+    qDebug() << "DV: from: << " << m_file->address() << " to " << length;
     int end = m_file->address()+length;
     if (end > 0xffff) { end = 0xffff; }
 
