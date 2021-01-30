@@ -1,7 +1,7 @@
 # AppleSAWS
 ## Apple Software Analysis WorkShop
 
-This is a toolkit for exploring DOS 3.3 disk contents. I started this because I had become interested in a game that I used to play a long time ago and I wanted to dig deeper into the internals of how it worked. Since it was a nice combination of a series of Applesoft and Binary files, I decided that a tool to help explore those types of things would be handy. Of course, I've ended up spending far more time writing the tool than I have actually exploring the game, but nonetheless, it's been a fun ongoing project.
+This is a toolkit for exploring DOS 3.3 disk images and their contents. I started this because I had become interested in a game that I used to play a long time ago and I wanted to dig deeper into the internals of how it worked. Since it was a nice combination of a series of Applesoft and Binary files, I decided that a tool to help explore those types of things would be handy. Of course, I've ended up spending far more time writing the tool than I have actually exploring the game, but nonetheless, it's been a fun ongoing project.
 
 This code is being developed using Qt 5.15 (https://download.qt.io/official_releases/qt/5.15/), with development work being done on Windows 10, but it should compile and run without problems on Linux and Mac.
 
