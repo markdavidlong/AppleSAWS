@@ -4,6 +4,8 @@
 #include "memory.h"
 #include "util.h"
 #include "relocatablefile.h"
+#include "opcodes.h"
+
 
 #include <QSettings>
 #include <QMenu>
@@ -152,7 +154,8 @@ QStringList DisassemblerViewer::getDisassemblyStrings() {
 
 void DisassemblerViewer::disassemble(QList<quint16> entryPoints) {
 
-    Disassembler dis(m_mem.values());
+    //Disassembler dis(m_mem.values());
+    Disassembler dis(m_mem.getAllValues());
     int length = m_file->length();
     qDebug() << "DV: from: << " << m_file->address() << " to " << length;
     int end = m_file->address()+length;
@@ -241,7 +244,7 @@ void DisassemblerViewer::disassemble(QList<quint16> entryPoints) {
                 newline += QString("%1:  %2                       %3\t(%4)\t'%5'").arg(uint16ToHex(idx))
                         .arg(uint8ToHex(m_mem.at(idx)))
                         .arg(makeDescriptorStringForVal(m_mem.at(idx)))
-                        .arg(dis.getMnemonicForOp(m_mem.at(idx)))
+                        .arg(OpCodes::getMnemonic(m_mem.at(idx)))
                         .arg(AppleChar::printable(m_mem.at(idx)));
             }
             formattedLines.append(newline);

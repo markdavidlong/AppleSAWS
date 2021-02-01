@@ -4,7 +4,8 @@
 #include <QWidget>
 #include <QByteArray>
 
-#include "memory.h"
+//#include "memory.h"
+#include "attributedmemory.h"
 #include "binaryfile.h"
 #include "relocatablefile.h"
 #include "fileviewerinterface.h"
@@ -61,7 +62,8 @@ private:
 
     BinaryFileMetadata *m_bfm;
 
-    Memory m_mem;
+    //Memory m_mem;
+    AttributedMemory m_mem;
 
     bool m_isRelo;
 

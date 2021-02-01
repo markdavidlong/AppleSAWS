@@ -9,7 +9,6 @@
 #include "diskfile.h"
 #include "catalogsector.h"
 #include "applesoftfile.h"
-//#include "DiskExplorer.h"
 #include "startupdialog.h"
 
 int main(int argc, char** argv)
@@ -23,9 +22,8 @@ int main(int argc, char** argv)
     auto x = QFontDatabase::addApplicationFont(":/fonts/A2_40Col.ttf");
     auto y = QFontDatabase::addApplicationFont(":/fonts/A2_80Col.ttf");
 
-//    qDebug("40Col: %d 80Col: %d",x,y);
-//    qDebug() << "40: " << QFontDatabase::applicationFontFamilies(0);
-//    qDebug() << "80: " << QFontDatabase::applicationFontFamilies(1);
+    if (x < 0) { qWarning("Could not load A2_40Col.ttf font."); }
+    if (y < 0) { qWarning("Could not load A2_80Col.ttf font."); }
 
     StartupDialog w;
     w.show();

@@ -26,6 +26,9 @@ INCLUDEPATH += src/internals
 INCLUDEPATH += src/ui/diskexplorer/
 INCLUDEPATH += src/ui/widgets/
 INCLUDEPATH += src/ui
+INCLUDEPATH += src/memory
+INCLUDEPATH += src/memory/roles
+
 
 DEFINES += WS_VIDEO
 
@@ -39,6 +42,10 @@ SOURCES += \
     src/diskfiles/dos33/tracksectorlist.cxx \
     src/diskfiles/dos33/filedescriptiveentry.cxx \
     src/diskfiles/dos33/genericfile.cxx \
+    src/memory/attributedmemory.cpp \
+    src/memory/memorycell.cpp \
+    src/memory/memrole.cpp \
+    src/memory/roles/role_asm_opcode.cpp \
     src/ui/startupdialog.cpp \
     src/ui/viewers/intbasicfileviewer.cxx \
     src/ui/widgets/notesdialog.cpp \
@@ -77,7 +84,8 @@ SOURCES += \
     src/ui/diskexplorer/DiskExplorerMapWidget.cpp \
     src/applesoftfile/ApplesoftRetokenizer.cpp \
     src/internals/JumpLineManager.cpp \
-    src/ui/widgets/FlowLineTextBrowser.cpp
+    src/ui/widgets/FlowLineTextBrowser.cpp \
+    src/util/opcodes.cpp
 
 
 HEADERS += \
@@ -89,9 +97,14 @@ HEADERS += \
     src/diskfiles/dos33/filedescriptiveentry.h \
     src/diskfiles/dos33/genericfile.h \
     src/intbasic/IntBasicFile.h \
+    src/memory/attributedmemory.h \
+    src/memory/memorycell.h \
+    src/memory/memrole.h \
+    src/memory/roles/role_asm_opcode.h \
     src/ui/startupdialog.h \
     src/ui/viewers/intbasicfileviewer.h \
     src/ui/widgets/notesdialog.h \
+    src/util/opcodes.h \
     src/util/util.h \
     src/util/applestring.h \
     src/applesoftfile/applesoftfile.h \

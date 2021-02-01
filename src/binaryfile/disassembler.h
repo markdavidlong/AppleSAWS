@@ -4,6 +4,7 @@
 #include "MemoryUsageMap.h"
 #include "util.h"
 #include "JumpLineManager.h"
+#include "opcodes.h"
 
 #include <QByteArray>
 #include <QStringList>
@@ -12,24 +13,24 @@
 #include <QStack>
 
 
-enum AddressMode {
-    AM_InvalidOp,
-    AM_Absolute,                    // a
-    AM_AbsoluteIndexedIndirect,     // (a,x)
-    AM_AbsoluteIndexedWithX,        // a,x
-    AM_AbsoluteIndexedWithY,        // a,y
-    AM_AbsoluteIndirect,            // (a)
-    AM_Immediate,                   // #
-    AM_Implied,                     // i
-    AM_Accumulator,                 // A
-    AM_ProgramCounterRelative,      // r
-    AM_ZeroPage,                    // zp
-    AM_ZeroPageIndexedIndirect,     // (zp,x)
-    AM_ZeroPageIndexedWithX,        // zp,x
-    AM_ZeroPageIndexedWithY,        // zp,y
-    AM_ZeroPageIndirect,            // (zp)
-    AM_ZeroPageIndirectIndexedWithY // (zp),y
-};
+//enum AddressMode {
+//    AM_InvalidOp,
+//    AM_Absolute,                    // a
+//    AM_AbsoluteIndexedIndirect,     // (a,x)
+//    AM_AbsoluteIndexedWithX,        // a,x
+//    AM_AbsoluteIndexedWithY,        // a,y
+//    AM_AbsoluteIndirect,            // (a)
+//    AM_Immediate,                   // #
+//    AM_Implied,                     // i
+//    AM_Accumulator,                 // A
+//    AM_ProgramCounterRelative,      // r
+//    AM_ZeroPage,                    // zp
+//    AM_ZeroPageIndexedIndirect,     // (zp,x)
+//    AM_ZeroPageIndexedWithX,        // zp,x
+//    AM_ZeroPageIndexedWithY,        // zp,y
+//    AM_ZeroPageIndirect,            // (zp)
+//    AM_ZeroPageIndirectIndexedWithY // (zp),y
+//};
 //////////////////////////////////////////////////////////////////////////////
 
 class AddressStack
@@ -56,27 +57,27 @@ class AddressStack
 
 //////////////////////////////////////////////////////////////////////////////
 
-struct AssyInstruction {
+//struct AssyInstruction {
 
-public:
+//public:
 
-    AssyInstruction(quint8 opcode = 0x00, QString mnemonic = "???", AddressMode am = AM_InvalidOp);
+//    AssyInstruction(quint8 opcode = 0x00, QString mnemonic = "???", AddressMode am = AM_InvalidOp);
 
-    AddressMode addressMode() { return m_addressMode; }
+//    AddressMode addressMode() { return m_addressMode; }
 
-    QString mnemonic() { return m_mnemonic; }
+//    QString mnemonic() { return m_mnemonic; }
 
-    quint8 opcode() { return m_opcode; }
+//    quint8 opcode() { return m_opcode; }
 
-    quint8 numArgs();
+//    quint8 numArgs();
 
-    QString debugStr() { return QString("%1 %2 %3").arg(uint8ToHex(m_opcode)).arg(m_mnemonic).arg(m_addressMode); }
+//    QString debugStr() { return QString("%1 %2 %3").arg(uint8ToHex(m_opcode)).arg(m_mnemonic).arg(m_addressMode); }
 
-private:
-    QString m_mnemonic;
-    quint8 m_opcode;
-    AddressMode m_addressMode;
-};
+//private:
+//    QString m_mnemonic;
+//    quint8 m_opcode;
+//    AddressMode m_addressMode;
+//};
 //////////////////////////////////////////////////////////////////////////////
 
 class DisassembledItem {
@@ -184,22 +185,16 @@ public:
 
     void setUnknownToData(quint16 from, quint16 to);
 
-    QString getMnemonicForOp(quint8 opcode)
-    {
-        return m_opcodeinfo[opcode].mnemonic();
-    }
 
     JumpLines getJumpLines() const { return m_jumplines; }
 
 private:
     bool disassembleOp(quint16 address, DisassembledItem &retval, MemoryUsageMap *memuse = Q_NULLPTR);
-    void makeOpcodeTable();
 
 
     quint16 m_from;
     quint16 m_to;
 
-    QHash<quint8,AssyInstruction> m_opcodeinfo;
     QByteArray m_memimage;
 
     AddressStack m_stack;
