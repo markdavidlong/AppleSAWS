@@ -4,7 +4,6 @@
 #include <QWidget>
 #include <QByteArray>
 
-//#include "memory.h"
 #include "attributedmemory.h"
 #include "binaryfile.h"
 #include "relocatablefile.h"

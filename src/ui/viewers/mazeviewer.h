@@ -6,7 +6,7 @@
 #include <QImage>
 
 #include "binaryfile.h"
-#include "memory.h"
+#include "attributedmemory.h"
 #include "fileviewerinterface.h"
 
 
@@ -31,7 +31,7 @@ public:
 private:
     QPixmap m_maze;
     BinaryFile *m_file;
-    Memory mem;
+    AttributedMemory mem;
 
     bool cellHasWalls(int x, int y);
     bool cellHasNorthDoor(int x, int y);

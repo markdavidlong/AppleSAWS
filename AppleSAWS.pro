@@ -64,7 +64,6 @@ SOURCES += \
     src/ui/viewers/texthexdumpviewer.cpp \
     src/ui/viewers/mazeviewer.cpp \
     src/ui/viewers/charsetviewer.cpp \
-    src/internals/memory.cxx \
     src/relocatablefile/relocatablefile.cxx \
     src/binaryfile/binaryfilemetadata.cpp \
     src/util/charset.cpp \
@@ -117,7 +116,6 @@ HEADERS += \
     src/ui/viewers/applesoftfileviewer.h \
     src/applesoftfile/applesoftformatter.h \
     src/applesoftfile/applesoftline.h  \
-    src/internals/memory.h \
     src/ui/viewers/disassemblerviewer.h \
     src/ui/viewers/hexdumpviewer.h \
     src/ui/viewers/texthexdumpviewer.h \
