@@ -46,6 +46,10 @@ private:
     CharacterSet m_charset;
 
     CharacterSetExplorer *m_cse;
+
+    QAction *m_showGridAction;
+    QAction *m_enableBitShiftAction;
+    QAction *m_charSetEncoderAction;
 };
 
 #endif // CHARSETVIEWER_H

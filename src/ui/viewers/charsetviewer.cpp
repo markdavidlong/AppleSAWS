@@ -6,8 +6,11 @@
 
 CharSetViewer::CharSetViewer(QWidget *parent) : FileViewerInterface(parent)
 {
-    m_file = Q_NULLPTR;
-    m_cse = Q_NULLPTR;
+    m_file = nullptr;
+    m_cse = nullptr;
+    m_showGridAction = nullptr;
+    m_enableBitShiftAction = nullptr;
+    m_charSetEncoderAction = nullptr;
 
     QGridLayout *qgl = new QGridLayout(this);
     setLayout(qgl);
@@ -64,26 +67,34 @@ bool CharSetViewer::optionsMenuItems(QMenu *menu)
 {
     QSettings settings;
 
-    QAction *action = new QAction("Show &Grid",menu);
-    action->setCheckable(true);
-    action->setChecked(settings.value("CharSetViewer.ShowGrid",true).toBool());
-    showGrid(settings.value("CharSetViewer.ShowGrid",true).toBool());
-    connect(action, &QAction::toggled, this, &CharSetViewer::showGrid);
-    menu->addAction(action);
+    if (!m_showGridAction)
+    {
+        m_showGridAction = new QAction("Show &Grid",menu);
+        m_showGridAction->setCheckable(true);
+        m_showGridAction->setChecked(settings.value("CharSetViewer.ShowGrid",true).toBool());
+        showGrid(settings.value("CharSetViewer.ShowGrid",true).toBool());
+        connect(m_showGridAction, &QAction::toggled, this, &CharSetViewer::showGrid);
+        menu->addAction(m_showGridAction);
+    }
 
-    action = new QAction("&Enable Bit Shift",menu);
-    action->setCheckable(true);
-    action->setChecked(settings.value("CharSetViewer.EnableBitShift",true).toBool());
-    enableBitShift(settings.value("CharSetViewer.EnableBitShift",true).toBool());
-    connect(action, &QAction::toggled, this, &CharSetViewer::enableBitShift);
-    menu->addAction(action);
+    if (!m_enableBitShiftAction)
+    {
+        m_enableBitShiftAction = new QAction("&Enable Bit Shift",menu);
+        m_enableBitShiftAction->setCheckable(true);
+        m_enableBitShiftAction->setChecked(settings.value("CharSetViewer.EnableBitShift",true).toBool());
+        enableBitShift(settings.value("CharSetViewer.EnableBitShift",true).toBool());
+        connect(m_enableBitShiftAction, &QAction::toggled, this, &CharSetViewer::enableBitShift);
+        menu->addAction(m_enableBitShiftAction);
+    }
 
-    menu->addSeparator();
+    if (!m_charSetEncoderAction)
+    {
+        menu->addSeparator();
 
-    action = new QAction("&Character Set Explorer...");
-    connect(action, &QAction::triggered, this, &CharSetViewer::showExplorer);
-    menu->addAction(action);
-
+        m_charSetEncoderAction = new QAction("&Character Set Explorer...");
+        connect(m_charSetEncoderAction, &QAction::triggered, this, &CharSetViewer::showExplorer);
+        menu->addAction(m_charSetEncoderAction);
+    }
     return true;
 }
 

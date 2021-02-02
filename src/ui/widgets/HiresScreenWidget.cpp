@@ -234,8 +234,8 @@ void HiresScreenWidget::drawPixmap()
                 doubleScan = 1;
             }
 
-            qDebug() << (byte & 0x01) << (byte & 0x02) << (byte & 0x04) << (byte & 0x08)
-                     << (byte & 0x10) << (byte & 0x20) << (byte & 0x40) << "HI: " << (byte & 0x80);
+//            qDebug() << (byte & 0x01) << (byte & 0x02) << (byte & 0x04) << (byte & 0x08)
+//                     << (byte & 0x10) << (byte & 0x20) << (byte & 0x40) << "HI: " << (byte & 0x80);
 
             pmpainter.setPen(xoff & 0x01?oddColor:evenColor);
             pmpainter.setBrush(xoff & 0x01?oddColor:evenColor);
