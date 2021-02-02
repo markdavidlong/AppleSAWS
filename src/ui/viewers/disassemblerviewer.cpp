@@ -154,8 +154,7 @@ QStringList DisassemblerViewer::getDisassemblyStrings() {
 
 void DisassemblerViewer::disassemble(QList<quint16> entryPoints) {
 
-    //Disassembler dis(m_mem.values());
-    Disassembler dis(m_mem.getAllValues());
+    Disassembler dis(m_mem);
     int length = m_file->length();
     qDebug() << "DV: from: << " << m_file->address() << " to " << length;
     int end = m_file->address()+length;

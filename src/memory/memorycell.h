@@ -18,6 +18,7 @@ public:
     bool setRole(MemRole *role);
     MemRole *getRole(int id);
     bool hasRole(int id) const;
+    bool removeRole(int id);
 
     void setValue(quint8 val) { m_value = val; }
     quint8 value() const { return m_value; }

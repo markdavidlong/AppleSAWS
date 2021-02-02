@@ -43,6 +43,15 @@ bool AttributedMemory::setRoleAt(quint16 address,
     return false;
 }
 
+bool AttributedMemory::replaceRoleAt(quint16 address,
+                                     MemRole *withRole)
+{
+    if (!withRole) return false;
+
+    removeRoleAt(address,withRole->id());
+    return setRoleAt(address,withRole);
+}
+
 bool AttributedMemory::hasRoleAt(quint16 address, int withId)
 {
     return m_cells[address].hasRole(withId);
@@ -56,6 +65,11 @@ MemRole *AttributedMemory::getRoleAt(quint16 address, int withId)
 QList<MemRole *> AttributedMemory::getAllRolesAt(quint16 address)
 {
     return m_cells[address].getAllRoles();
+}
+
+bool AttributedMemory::removeRoleAt(quint16 address, int withId)
+{
+    return m_cells[address].removeRole(withId);
 }
 
 QByteArray AttributedMemory::getAllValues() const

@@ -1,20 +1,20 @@
 
 #include "opcodes.h"
 #include "disassembler.h"
-
-
+#include "role_asm_opcode.h"
+#include "role_asm_operand.h"
+#include "util.h"
 #include <QByteArray>
 #include <QDebug>
 #include <QList>
 #include <math.h>
 
 
-Disassembler::Disassembler(QByteArray memimage)
+Disassembler::Disassembler(AttributedMemory &mem)
 {
-    m_memimage = memimage;
+    m_mem = &mem;
     m_memusagemap.clearData();
 }
-
 
 QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to,
                                                   QList<quint16> entryPoints,
@@ -22,7 +22,6 @@ QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to,
     m_from = from;
     m_to = to;
     QList<DisassembledItem> retval;
-    qDebug() << "\n\n*****************\n\nDisassemble: From"<<uint16ToHex(from)<<"to"<<uint16ToHex(to);
 
     MemoryUsageMap memUse;
 
@@ -36,8 +35,6 @@ QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to,
 
     while (!stopping)
     {
-        //   quint8 opcode = m_memimage[next];
-        //   qDebug() << "Opcode: " << uint8ToHex(opcode);
         DisassembledItem item;
         bool ok = false;
 
@@ -107,12 +104,13 @@ QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to,
 
     if (processRecursively)
     {
-      m_jumplines = m_jlm.buildJumpLines();
-      qDebug() << "Num Channels: " << m_jlm.getNumJumpLineChannels();
+        m_jumplines = m_jlm.buildJumpLines();
+        qDebug() << "Num Channels: " << m_jlm.getNumJumpLineChannels();
     }
 
     return retval;
 }
+
 
 bool Disassembler::disassembleOp(quint16 address, DisassembledItem &retval, MemoryUsageMap *memuse)
 {
@@ -122,11 +120,25 @@ bool Disassembler::disassembleOp(quint16 address, DisassembledItem &retval, Memo
         if ((*memuse)[address].testFlag(Operation)) return false;
     }
 
-    quint8 opcode = m_memimage[address];
-    AssyInstruction op = OpCodes::getAssyInstruction(opcode);
-    retval.setInstruction(op);
+    quint8 opcode = m_mem->at(address);
 
-    if (opcode == 0x6C || opcode == 0x7c) // Indirect jumps
+    retval.setOpcode(opcode);
+
+
+    if (!m_mem->hasRoleAt(address,RoleAsmOpcode::RoleID))
+    {
+        auto opRole = new RoleAsmOpcode();
+        if (!m_mem->setRoleAt(address,opRole))
+        {
+            qWarning("Cannot set role %s at address %s for opcode %s",
+                     qPrintable(opRole->name()),
+                     qPrintable(uint16ToHex(address)),
+                     qPrintable(uint8ToHex(opcode)));
+            delete opRole;
+        }
+    }
+
+    if (OpCodes::isIndirectJump(opcode)) // Indirect jumps
     {
         m_jlm.addJump(address,address,IsUnknownJump,m_from,m_to);
         retval.setCanNotFollow(true);
@@ -139,136 +151,164 @@ bool Disassembler::disassembleOp(quint16 address, DisassembledItem &retval, Memo
 
     // Prepare Op Code arguments
 
-    for (int idx = 1; idx < op.numArgs()+1; idx++) {
-        quint8 val = m_memimage[address+idx];
+    auto numArgs =  OpCodes::numArgs(opcode);
+    for (int idx = 1; idx < numArgs+1; idx++) {
+        qDebug() << "Opcode at " << uint16ToHex(idx + address);
+        auto oprndRole = new RoleAsmOperand();
+        if (numArgs == 1)
+        {
+            oprndRole->setOperandType(RoleAsmOperand::Type::Byte);
+        }
+        else {
+            if (idx == 1)
+            {
+                oprndRole->setOperandType(RoleAsmOperand::Type::WordLo);
+            }
+            else // idx == 2
+            {
+                oprndRole->setOperandType(RoleAsmOperand::Type::WordHi);
+            }
+        }
+        if (!m_mem->setRoleAt(address+idx,oprndRole))
+        {
+            qWarning(">> Cannot set role %s at address %s",
+                     qPrintable(oprndRole->name()),
+                     qPrintable(uint16ToHex(address)));
+            delete oprndRole;
+        }
+
+        quint8 val = m_mem->at(address+idx);
         hexValues.append(val);
     }
+
     if (memuse)
     {
         (*memuse)[address].setFlag(Operation);
-        for (int idx = 1; idx < op.numArgs()+1; idx++)
+        for (int idx = 1; idx < OpCodes::numArgs(opcode)+1; idx++)
         {
             (*memuse)[address+idx].setFlag(OperationArg);
         }
     }
 
     quint16 argval = 0;
-    if (op.numArgs() == 1)
+    if (numArgs == 1)
+    {
         argval = (quint8) hexValues[1];
-    else if (op.numArgs() == 2)
+    }
+    else if (numArgs == 2)
     {
         argval = makeWord(hexValues[1],hexValues[2]);
     }
 
-
-
     for (int idx = 0; idx < hexValues.length(); idx++) {
-        hexValueString.append(QString("%1 ").arg((quint8) hexValues[idx],2,16,QChar('0')));
+        hexValueString.append(QString("%1 ").arg(uint8ToHex(hexValues[idx])));
     }
-    
-    retval.setNextContiguousAddress(address+1+op.numArgs());
-    retval.setNextFlowAddress(address+1+op.numArgs());
 
+    retval.setNextContiguousAddress(address+1+numArgs);
+    retval.setNextFlowAddress(address+1+numArgs);
+
+    QString mnemonic = OpCodes::mnemonic(opcode);
     // Disassemble instruction
-    switch (op.addressMode()) {
-        case AM_InvalidOp: {
-            disassemblyLine = op.mnemonic();
-            retval.setIsInvalidOp(true);
-            break;
-        }
-        case AM_Absolute:{
-            disassemblyLine = QString("%1 _ARG16_").arg(op.mnemonic());
-            retval.setRawArgument(argval);
-            break;
-        }
-        case AM_AbsoluteIndexedIndirect:{
-            disassemblyLine = QString("%1 (_ARG16_,x)").arg(op.mnemonic());
-            retval.setRawArgument(argval);
-            break;
-        }
-        case AM_AbsoluteIndexedWithX:{
-            disassemblyLine = QString("%1 _ARG16_,x").arg(op.mnemonic());
-            retval.setRawArgument(argval);
-            break;
-        }
-        case AM_AbsoluteIndexedWithY:{
-            disassemblyLine = QString("%1 _ARG16_,y").arg(op.mnemonic());
-            retval.setRawArgument(argval);
-            break;
-        }
-        case AM_AbsoluteIndirect:{
-            disassemblyLine = QString("%1 (_ARG16_)").arg(op.mnemonic());
-            retval.setRawArgument(argval);
-            break;
-        }
-        case AM_Immediate:{
-            disassemblyLine = QString("%1 #%2").arg(op.mnemonic()).arg((quint8) hexValues[1],2,16,QChar('0')).toUpper();
-            retval.setRawArgument(argval);
-            break;
-        }
-        case AM_Implied:{
-            disassemblyLine = op.mnemonic();
-            break;
-        }
-        case AM_Accumulator:{
-            disassemblyLine = op.mnemonic();
-            break;
-        }
-        case AM_ProgramCounterRelative:{
-            qint8 offset = (qint8) hexValues[1];
-            quint16 offsetAddress = address+2+offset;
+    switch (OpCodes::addressMode(opcode)) {
+    case AM_InvalidOp: {
+        disassemblyLine = OpCodes::mnemonic(opcode);
+        retval.setIsInvalidOp(true);
+        break;
+    }
+    case AM_Absolute:{
+        disassemblyLine = QString("%1 _ARG16_").arg(mnemonic);
+        retval.setRawArgument(argval);
+        break;
+    }
+    case AM_AbsoluteIndexedIndirect:{
+        disassemblyLine = QString("%1 (_ARG16_,x)").arg(mnemonic);
+        retval.setRawArgument(argval);
+        break;
+    }
+    case AM_AbsoluteIndexedWithX:{
+        disassemblyLine = QString("%1 _ARG16_,x").arg(mnemonic);
+        retval.setRawArgument(argval);
+        break;
+    }
+    case AM_AbsoluteIndexedWithY:{
+        disassemblyLine = QString("%1 _ARG16_,y").arg(mnemonic);
+        retval.setRawArgument(argval);
+        break;
+    }
+    case AM_AbsoluteIndirect:{
+        disassemblyLine = QString("%1 (_ARG16_)").arg(mnemonic);
+        retval.setRawArgument(argval);
+        break;
+    }
+    case AM_Immediate:{
+        disassemblyLine = QString("%1 #%2").arg(mnemonic).arg((quint8) hexValues[1],2,16,QChar('0')).toUpper();
+        retval.setRawArgument(argval);
+        break;
+    }
+    case AM_Implied:{
+        disassemblyLine = mnemonic;
+        break;
+    }
+    case AM_Accumulator:{
+        disassemblyLine = mnemonic;
+        break;
+    }
+    case AM_ProgramCounterRelative:{
+        qint8 offset = (qint8) hexValues[1];
+        quint16 offsetAddress = address+2+offset;
 
-            retval.setTargetAddress(offsetAddress);
-            if (opcode == 0x80) // BRA
-                m_jlm.addJump(address,offsetAddress,IsBRA,m_from,m_to);
-            else
-                m_jlm.addJump(address,offsetAddress,IsBranch,m_from,m_to);
+        retval.setTargetAddress(offsetAddress);
+        if (opcode == 0x80) // BRA
+            m_jlm.addJump(address,offsetAddress,IsBRA,m_from,m_to);
+        else
+            m_jlm.addJump(address,offsetAddress,IsBranch,m_from,m_to);
 
-            disassemblyLine = QString("%1 _ARG16_ {%2%3}").arg(op.mnemonic())
-                              .arg((offset<0)?"-":"+")
-                              .arg(abs(offset));
-            retval.setRawArgument(offsetAddress);
-            break;
-        }
-        case AM_ZeroPage:{
-            disassemblyLine = QString("%1 _ARG8_").arg(op.mnemonic());
-            retval.setRawArgument(argval);
-            break;
-        }
-        case AM_ZeroPageIndirectIndexedWithY:{
-            disassemblyLine = QString("%1 (_ARG8_),Y").arg(op.mnemonic());
-            retval.setRawArgument(argval);
-            break;
-        }
-        case AM_ZeroPageIndexedIndirect:{
-            disassemblyLine = QString("%1 (_ARG8_,x)").arg(op.mnemonic());
-            retval.setRawArgument(argval);
-            break;
-        }
-        case AM_ZeroPageIndexedWithX:{
-            disassemblyLine = QString("%1 _ARG8_,x").arg(op.mnemonic());
-            retval.setRawArgument(argval);
-            break;
-        }
-        case AM_ZeroPageIndexedWithY:{
-            disassemblyLine = QString("%1 _ARG8_,y").arg(op.mnemonic());
-            retval.setRawArgument(argval);
-            break;
-        }
-        case AM_ZeroPageIndirect:{
-            disassemblyLine = QString("%1 (_ARG8_)").arg(op.mnemonic());
-            retval.setRawArgument(argval);
-            break;
-        }
-        default:{
-            disassemblyLine = op.mnemonic();
-            retval.setIsInvalidOp(true);
-            qDebug() << "Unhandled Address Mode: " << op.addressMode();
-            break;
-        }
+        disassemblyLine = QString("%1 _ARG16_ {%2%3}").arg(mnemonic)
+                .arg((offset<0)?"-":"+")
+                .arg(abs(offset));
+        retval.setRawArgument(offsetAddress);
+        break;
+    }
+    case AM_ZeroPage:{
+        disassemblyLine = QString("%1 _ARG8_").arg(mnemonic);
+        retval.setRawArgument(argval);
+        break;
+    }
+    case AM_ZeroPageIndirectIndexedWithY:{
+        disassemblyLine = QString("%1 (_ARG8_),Y").arg(mnemonic);
+        retval.setRawArgument(argval);
+        break;
+    }
+    case AM_ZeroPageIndexedIndirect:{
+        disassemblyLine = QString("%1 (_ARG8_,x)").arg(mnemonic);
+        retval.setRawArgument(argval);
+        break;
+    }
+    case AM_ZeroPageIndexedWithX:{
+        disassemblyLine = QString("%1 _ARG8_,x").arg(mnemonic);
+        retval.setRawArgument(argval);
+        break;
+    }
+    case AM_ZeroPageIndexedWithY:{
+        disassemblyLine = QString("%1 _ARG8_,y").arg(mnemonic);
+        retval.setRawArgument(argval);
+        break;
+    }
+    case AM_ZeroPageIndirect:{
+        disassemblyLine = QString("%1 (_ARG8_)").arg(mnemonic);
+        retval.setRawArgument(argval);
+        break;
+    }
+    default:{
+        disassemblyLine = mnemonic;
+        retval.setIsInvalidOp(true);
+        qDebug() << "Unhandled Address Mode: " << mnemonic;
+        break;
+    }
     }
 
-    if (opcode == 0x20 || opcode == 0x4c) {
+    if (opcode == 0x20 || opcode == 0x4c) // JSR / JMP
+    {
         retval.setTargetAddress(makeWord(hexValues[1],hexValues[2]));
 
         if (opcode == 0x4c) // JMP
@@ -294,6 +334,7 @@ bool Disassembler::disassembleOp(quint16 address, DisassembledItem &retval, Memo
 }
 
 
+
 void Disassembler::setUnknownToData(quint16 from, quint16 to)
 {
     for (int idx = from; idx <= to; idx++)
@@ -305,28 +346,14 @@ void Disassembler::setUnknownToData(quint16 from, quint16 to)
     }
 }
 
-DisassembledItem::DisassembledItem(AssyInstruction instr) {
-    m_canNotFollow = false;
-    setInstruction(instr);
-}
+//DisassembledItem::DisassembledItem(AssyInstruction instr) {
+//    m_canNotFollow = false;
+//    setInstruction(instr);
+//}
 
-void DisassembledItem::setInstruction(AssyInstruction instr) {
-    m_instruction = instr;
-    //    qDebug() << "Set instruction: " << uint8ToHex(instr.opcode());
-    //    qDebug() << " Copied instr:" << m_instruction.debugStr();
-    if (instr.opcode() == 0x20) { m_is_jsr = true; }
-    if (instr.opcode() == 0x10) { m_is_branch = true; } // BPL
-    if (instr.opcode() == 0x30) { m_is_branch = true; } // BMI
-    if (instr.opcode() == 0x50) { m_is_branch = true; } // BVC
-    if (instr.opcode() == 0x70) { m_is_branch = true; } // BVS
-    if (instr.opcode() == 0x90) { m_is_branch = true; } // BCC
-    if (instr.opcode() == 0xB0) { m_is_branch = true; } // BCS
-    if (instr.opcode() == 0xD0) { m_is_branch = true; } // BNE
-    if (instr.opcode() == 0xF0) { m_is_branch = true; } // BEQ
-    if (instr.opcode() == 0x80) { m_is_jump = true; }   // BRA
-    if (instr.opcode() == 0x4C) { m_is_jump = true; }   // JMP a
-    if (instr.opcode() == 0x6C) { m_is_jump = true; }   // JMP (a)
-    if (instr.opcode() == 0x7C) { m_is_jump = true; }   // JMP (a,x)
+DisassembledItem::DisassembledItem(quint8 opcode) {
+    m_canNotFollow = false;
+    m_opcode = opcode;
 }
 
 QString DisassembledItem::disassembledString() {
@@ -345,11 +372,9 @@ void DisassembledItem::init() {
     m_address = m_target_address = 0;
     m_nextContiguousAddress = 0;
     m_nextFlowAddress = 0;
-    m_is_jump = m_is_branch = m_is_jsr = false;
     m_unknown_ta = true;
     m_raw_arg = 0;
     m_has_arg = false;
     m_canNotFollow = false;
     m_isInvalidOp = false;
-
 }

@@ -61,7 +61,6 @@ private:
 
     BinaryFileMetadata *m_bfm;
 
-    //Memory m_mem;
     AttributedMemory m_mem;
 
     bool m_isRelo;

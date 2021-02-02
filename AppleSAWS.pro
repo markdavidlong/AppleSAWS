@@ -46,6 +46,7 @@ SOURCES += \
     src/memory/memorycell.cpp \
     src/memory/memrole.cpp \
     src/memory/roles/role_asm_opcode.cpp \
+    src/memory/roles/role_asm_operand.cpp \
     src/ui/startupdialog.cpp \
     src/ui/viewers/intbasicfileviewer.cxx \
     src/ui/widgets/notesdialog.cpp \
@@ -100,6 +101,7 @@ HEADERS += \
     src/memory/memorycell.h \
     src/memory/memrole.h \
     src/memory/roles/role_asm_opcode.h \
+    src/memory/roles/role_asm_operand.h \
     src/ui/startupdialog.h \
     src/ui/viewers/intbasicfileviewer.h \
     src/ui/widgets/notesdialog.h \

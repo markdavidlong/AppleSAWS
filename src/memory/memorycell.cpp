@@ -17,10 +17,14 @@ MemoryCell::~MemoryCell()
 
 bool MemoryCell::setRole(MemRole *role)
 {
-    if (!role) return false;
+    if (!role) {
+        qWarning("No role given!");
+        return false;
+    }
 
     if (hasRole(role->id()))
     {
+        qWarning("Address already has this role.");
         return false;
     }
 
@@ -41,6 +45,16 @@ MemRole *MemoryCell::getRole(int id)
 bool MemoryCell::hasRole(int id) const
 {
     return m_roles.contains(id);
+}
+
+bool MemoryCell::removeRole(int id)
+{
+    if (hasRole(id))
+    {
+        m_roles.remove(id);
+        return true;
+    }
+    return false;
 }
 
 QList<MemRole *> MemoryCell::getAllRoles()

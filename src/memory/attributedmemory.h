@@ -22,6 +22,8 @@ public:
     bool hasRoleAt(quint16 address, int withId);
     MemRole *getRoleAt(quint16 address, int withId);
     QList<MemRole *> getAllRolesAt(quint16 address);
+    bool removeRoleAt(quint16 address, int withId);
+    bool replaceRoleAt(quint16 address, MemRole *withRole);
 
     QByteArray getAllValues() const;
     QByteArray getAllValuesInExpectedRange() const;
@@ -30,7 +32,6 @@ public:
     quint8 at(quint16 address) const { return m_cells[address].value(); }
 
     bool addFile(QByteArray data, quint16 start);  // From Memory.h.  Should be replaced?
-
 
 protected:
 
