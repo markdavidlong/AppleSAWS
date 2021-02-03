@@ -16,8 +16,9 @@ CatalogWidget::CatalogWidget(QWidget *parent) :
     ui(new Ui::CatalogWidget)
 {
     ui->setupUi(this);
-    QFont catalogFont;
-    catalogFont.setStyleHint(QFont::Monospace);
+    QFont catalogFont("PR Number 3",12);
+    //catalogFont.setStyleHint(QFont::Monospace);
+
     ui->catalog_list->setFont(catalogFont);
     ui->noteButton->setText(QChar(0x270d));
     ui->noteButton->setFont(QFont("sans",16,QFont::Bold));

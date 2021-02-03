@@ -15,38 +15,37 @@ DiskExplorerMapWidget::DiskExplorerMapWidget(int numtracks, int numsectors, QWid
 {
     m_numtracks = numtracks;
     m_numsectors = numsectors;
-    m_diskLabel = Q_NULLPTR;
-    m_statusWidget = Q_NULLPTR;
+
+    m_diskLabel = nullptr;
+    m_statusWidget = nullptr;
+    m_currentChecked = nullptr;
 
     m_deferredSetup = false;
 
     setWindowTitle("Disk Explorer");
 
-    m_currentChecked = Q_NULLPTR;
+    QGridLayout *gridlayout = new QGridLayout(this);
+    gridlayout->setSizeConstraint(QLayout::SetFixedSize);
+    gridlayout->setHorizontalSpacing(2);
+    gridlayout->setVerticalSpacing(1);
 
     initColors();
 
-    QGridLayout *layout = new QGridLayout();
-    layout->setSizeConstraint(QLayout::SetFixedSize);
-    layout->setHorizontalSpacing(2);
-    layout->setVerticalSpacing(1);
-
     m_bgroup = new QButtonGroup(this);
 
-    setLayout(layout);
     QLabel *tracklabel = new QLabel("Track",this);
-    layout->addWidget(tracklabel,0,0,1,m_numtracks+1,Qt::AlignHCenter);
+    gridlayout->addWidget(tracklabel,0,0,1,m_numtracks+1,Qt::AlignHCenter);
     for (int track= 0; track < numtracks; track++)
     {
         QLabel *label = new QLabel(QString("%1").arg(track));
         label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-        layout->addWidget(label,1,track+1);
+        gridlayout->addWidget(label,1,track+1);
     }
     for (int sec = 0; sec < numsectors; sec++)
     {
         QLabel *label = new QLabel(QString("Sec %1").arg(sec));
         label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-        layout->addWidget(label,sec+2,0);
+        gridlayout->addWidget(label,sec+2,0);
     }
     for (int track = 0; track < 35; track++)
     {
@@ -62,7 +61,7 @@ DiskExplorerMapWidget::DiskExplorerMapWidget(int numtracks, int numsectors, QWid
 
             tb->setAutoFillBackground(true);
 
-            layout->addWidget(tb,sec+2,track+1);
+            gridlayout->addWidget(tb,sec+2,track+1);
         }
     }
 
@@ -72,7 +71,7 @@ DiskExplorerMapWidget::DiskExplorerMapWidget(int numtracks, int numsectors, QWid
 void DiskExplorerMapWidget::makeStatusWidget()
 {
     QWidget *statusWidget = new QWidget(this);
-    QHBoxLayout *hbl = new QHBoxLayout(this);
+    QHBoxLayout *hbl = new QHBoxLayout();
     statusWidget->setLayout(hbl);
 
     m_trackSectorLabel = new QLabel(this);

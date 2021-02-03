@@ -1,8 +1,8 @@
 <RCC>
     <qresource prefix="/fonts">
         <file>FreeLicense.txt</file>
-        <file alias="A2_40Col.ttf">PrintChar21.ttf</file>
-        <file alias="A2_80Col.ttf">PRNumber3.ttf</file>
+        <file alias="Print_Char_21.ttf">PrintChar21.ttf</file>
+        <file alias="PR_Number_3.ttf">PRNumber3.ttf</file>
     </qresource>
     <qresource prefix="/notes">
         <file>notes.txt</file>

@@ -18,12 +18,11 @@ int main(int argc, char** argv)
     QCoreApplication::setOrganizationDomain("lydianscale.com");
     QCoreApplication::setApplicationName("AppleSAWS");
 
-    qDebug("Adding fonts");
-    auto x = QFontDatabase::addApplicationFont(":/fonts/A2_40Col.ttf");
-    auto y = QFontDatabase::addApplicationFont(":/fonts/A2_80Col.ttf");
+    auto x = QFontDatabase::addApplicationFont(":/fonts/Print_Char_21.ttf");
+    auto y = QFontDatabase::addApplicationFont(":/fonts/PR_Number_3.ttf");
 
-    if (x < 0) { qWarning("Could not load A2_40Col.ttf font."); }
-    if (y < 0) { qWarning("Could not load A2_80Col.ttf font."); }
+    if (x < 0) { qWarning("Could not load Print_Char_21.ttf font."); }
+    if (y < 0) { qWarning("Could not load PR_Number_3.ttf font."); }
 
     StartupDialog w;
     w.show();
