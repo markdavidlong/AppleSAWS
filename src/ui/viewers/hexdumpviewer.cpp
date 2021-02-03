@@ -10,18 +10,21 @@
 #include "applestring.h"
 #include <QChar>
 
-HexDumpViewer::HexDumpViewer(QWidget *parent) :
+HexDumpViewer::HexDumpViewer(QWidget *parent, int defaultFontSize) :
     FileViewerInterface(parent),
     ui(new Ui::HexDumpViewer)
 {
+    m_defaultFontSize = defaultFontSize;
     QFont textAreaFont;
     textAreaFont.setStyleHint(QFont::Monospace);
 
+    if (defaultFontSize > 0) { textAreaFont.setPointSize(10); }
 
     m_file = Q_NULLPTR;
     ui->setupUi(this);
 
-    setTextFont(fontFromSettings("HexDumpViewer.textFont", textAreaFont));
+    setTextFont(fontFromSettings("HexDumpViewer.textFont", textAreaFont),
+                defaultFontSize);
     m_offset = 0;
 
 
@@ -184,9 +187,13 @@ bool HexDumpViewer::optionsMenuItems(QMenu *menu)
     return true;
 }
 
-void HexDumpViewer::setTextFont(const QFont &font)
+void HexDumpViewer::setTextFont(const QFont &font, int forcedFontSize)
 {
-    ui->textArea->setFont(font);
+    QFont myfont = font;
+    if (forcedFontSize > 0) { myfont.setPointSize(forcedFontSize); }
+    qDebug() << "######################### Setting text font size " << myfont.pointSize();
+    ui->textArea->setFont(myfont);
+
 }
 
 void HexDumpViewer::setData(QByteArray data)

@@ -18,8 +18,8 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
     m_afdv = Q_NULLPTR;
 
 
-  //  QFont textAreaFont("PR Number 3");
-    QFont textAreaFont("Print Char 21");
+    QFont textAreaFont("PR Number 3");
+  //  QFont textAreaFont("Print Char 21");
    // textAreaFont.setStyleHint(QFont::Monospace);
     textAreaFont.setPointSize(12);
 

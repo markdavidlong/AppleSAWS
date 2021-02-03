@@ -15,7 +15,7 @@ TrackSectorList::TrackSectorList(Sector *data)
     for (int idx = 0x0C; idx < 0xff; idx+=2)
     {
         TSPair ts(m_data->rawData()[idx],m_data->rawData()[idx+1]);
-        if (ts == TSPair(0,0)) {
+        if (ts == TSPair(0,0) && ts.isValid()) {
             break;
         } else {
             m_ts_pairs_for_data.append(ts);

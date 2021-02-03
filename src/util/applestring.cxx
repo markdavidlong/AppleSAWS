@@ -6,10 +6,11 @@ QString AppleString::printable() const
 {
     QString retval;
     foreach (quint8 ch, *this) {
-        if (ch > 0x80)
-            retval.append(QChar(ch-0x80));
-        else
-            retval.append(QChar(ch));
+        retval.append(AppleChar::printable(ch));
+//        if (ch > 0x80)
+//            retval.append(QChar(ch-0x80));
+//        else
+//            retval.append(QChar(ch));
     }
     return retval;
 }

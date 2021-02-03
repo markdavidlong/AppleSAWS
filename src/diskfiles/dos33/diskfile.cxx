@@ -56,7 +56,7 @@ bool DiskFile::read(QString filename)
                 char buffer[256];
                 if (qds.readRawData(buffer,256) == 256)
                 {
-    qDebug() << "Track " << track << " Sector " << sector;
+                    qDebug() << "Track " << track << " Sector " << sector;
                     Sector sec;
                     sec.setTrackSector(track,sector);
                     sec.setData(QByteArray(buffer,256));
@@ -88,6 +88,8 @@ VTOC DiskFile::getVTOC()
 
 QList<CatalogSector> DiskFile::getCatalogSectors()
 {
+    qDebug() << "### Start getCatalogSector";
+
     QList<CatalogSector> retval;
     VTOC vtoc = getVTOC();
     TSPair ts = vtoc.firstCatalogSector();
@@ -99,6 +101,8 @@ QList<CatalogSector> DiskFile::getCatalogSectors()
         cs = getSector(ts).promoteToCatalogSector();
         retval.append(cs);
     }
+    qDebug() << "### End getCatalogSector";
+
     return retval;
 }
 
@@ -111,8 +115,19 @@ GenericFile *DiskFile::getFile(FileDescriptiveEntry fde)
     }
     else
     {
-        TrackSectorList tsl = getSector(fde.firstTSListSector()).promoteToTrackSectorList();
 
+        if (!fde.firstTSListSector().isValid())
+        {
+            qWarning("  Not returning a file from invalid TSList!");
+            return nullptr;
+        }
+
+        TrackSectorList tsl = getSector(fde.firstTSListSector()).promoteToTrackSectorList();
+        if (!fde.firstTSListSector().isValid())
+        {
+            qWarning("  Not returning a file from invalid TSList!");
+            return nullptr;
+        }
         QByteArray data = getDataFromTrackSectorList(tsl);
 
         if (fde.fileType() == "A")
@@ -152,11 +167,19 @@ QByteArray DiskFile::getDataFromTrackSectorList(TrackSectorList tsl)
 
     foreach(TSPair pair, tsl.getDataTSPairs())
     {
+        if (pair.isValid())
+        {
         Sector sec = getSector(pair);
         retval.append(sec.rawData());
+        }
+        else
+        {
+            qWarning("Not adding data from invalid TSList");
+        }
     }
 
-    if (tsl.getNextTSList() != TSPair(0,0)) {
+    auto next = tsl.getNextTSList();
+    if (next.isValid() && next != TSPair(0,0)) {
         TrackSectorList nextTsl = getSector(tsl.getNextTSList()).promoteToTrackSectorList();
         retval.append(getDataFromTrackSectorList(nextTsl));
     }
@@ -164,7 +187,9 @@ QByteArray DiskFile::getDataFromTrackSectorList(TrackSectorList tsl)
     return retval;
 }
 
-QList<FileDescriptiveEntry> DiskFile::getAllFDEs() {
+QList<FileDescriptiveEntry> DiskFile::getAllFDEs()
+{
+    qDebug() << "### Start getAllFDEs";
     QList<FileDescriptiveEntry> retval;
 
     QList<CatalogSector>  sectors = getCatalogSectors();
@@ -174,6 +199,7 @@ QList<FileDescriptiveEntry> DiskFile::getAllFDEs() {
         QList<FileDescriptiveEntry> fdes = cs.getFDEs();
         retval.append(fdes);
     }
+    qDebug() << "### End getAllFDEs";
     return retval;
 }
 

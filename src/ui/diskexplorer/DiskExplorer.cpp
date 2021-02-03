@@ -112,7 +112,8 @@ void DiskExplorer::initUi()
     m_frame->setMinimumSize(200,200);
     QGridLayout *frameLayout = new QGridLayout(0);
     m_frame->setLayout(frameLayout);
-    m_hdv = new HexDumpViewer(this);
+    m_hdv = new HexDumpViewer(this, 10);
+
     frameLayout->addWidget(m_hdv);
 
     m_gridLayout->setColumnStretch(0,4);
@@ -196,7 +197,10 @@ void DiskExplorer::showLoadDialog(bool parentToThis)
 
 void DiskExplorer::handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescriptiveEntry fde)
 {
+    if (fde.deleted) { return; }
+
     GenericFile *file = disk->getFile(fde);
+
     file->setFilename(AppleString(fde.filename).printable().trimmed());
 
     ViewerBase *vb = new ViewerBase();

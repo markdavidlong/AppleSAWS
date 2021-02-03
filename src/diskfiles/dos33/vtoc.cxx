@@ -12,6 +12,7 @@ VTOC::VTOC(Sector *data)
 }
 
 TSPair VTOC::firstCatalogSector() {
+  //  return TSPair(0x11,0x0f); // Force to look at the normal location
     return TSPair(m_data->rawData()[0x01], m_data->rawData()[0x02]);
 }
 

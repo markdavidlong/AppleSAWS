@@ -59,7 +59,7 @@ struct TSPair {
     bool isValid()
     {
         auto retval= (m_track != 0xff && m_track < 35) && m_sector < 16;
-       // qDebug() << "TSPair " << track() << "," << sector() << " is " << (retval?"":"not ") << "valid";
+  //      qDebug() << "TSPair " << track() << "," << sector() << " is " << (retval?"":"not ") << "valid";
         return retval; }
 
     quint8 track() const { return m_track; }

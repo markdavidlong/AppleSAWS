@@ -39,44 +39,44 @@ void CatalogWidget::prepForNewDisk(QString filename, DiskFile *disk)
 
 QString CatalogWidget::createToolTip(FileDescriptiveEntry &fde) {
     QString retval;
-    retval += AppleString(fde.filename).printable().trimmed() + "\n";
+    retval += AppleString(fde.filename).printable().trimmed() +
+            (fde.deleted?"(Deleted)":"") + "\n";
     retval += QString("Type: %1\n").arg(fde.fileType());
     retval += QString("Sectors: %1 (%2 bytes)\n")
-              .arg(fde.lengthInSectors)
-              .arg(fde.lengthInSectors*256);
+            .arg(fde.lengthInSectors)
+            .arg(fde.lengthInSectors*256);
     retval += QString("%1\n").arg(fde.isLocked()?"Locked":"Unlocked");
-
     GenericFile *file = m_disk->getFile(fde);
+    if (!file) { return ""; }
     quint16 address = file->address();
     retval += QString("Address: $%1 (%2)\n").arg((quint16) (address),4,16,QChar('0'))
-                                            .arg(address);
-
+            .arg(address);
     if (dynamic_cast<BinaryFile*>(file)) {
         BinaryFile *binfile = dynamic_cast<BinaryFile*>(file);
         quint16 length = binfile->length();
-
         retval += QString("Length: $%1 (%2)\n").arg((quint16) (length),4,16,QChar('0'))
-                                               .arg(length);
+                .arg(length);
     } else if (dynamic_cast<ApplesoftFile*>(file)) {
         ApplesoftFile *asfile = dynamic_cast<ApplesoftFile*>(file);
         quint16 length = asfile->length();
         retval += QString("Length: $%1 (%2)\n").arg((quint16) (length),4,16,QChar('0'))
-                                               .arg(length);
+                .arg(length);
         quint16 uabytes = asfile->extraData().length();
         if (uabytes) {
-         retval += QString("Unaccounted Bytes: $%1 (%2)\n").arg((quint16) (uabytes),4,16,QChar('0'))
-                                                   .arg(uabytes);
+            retval += QString("Unaccounted Bytes: $%1 (%2)\n").arg((quint16) (uabytes),4,16,QChar('0'))
+                    .arg(uabytes);
         }
     } else {
         retval += QString("Data Length: $%1 (%2)\n").arg((quint16) (file->data().length()),4,16,QChar('0'))
                 .arg(file->data().length());
     }
-
+//    delete file;
     return retval;
 }
 
 void CatalogWidget::processNewlyLoadedDisk(QString diskfilename, DiskFile *disk)
 {
+    qDebug() << "### Start processNewlyLoadedDisk";
     if (m_disk == disk) {
         QUrl url = QUrl::fromLocalFile(diskfilename);
         QString shortfilename = url.fileName();
@@ -85,6 +85,7 @@ void CatalogWidget::processNewlyLoadedDisk(QString diskfilename, DiskFile *disk)
         ui->volume_label->setText(shortfilename);
         int idx = 0;
         foreach(FileDescriptiveEntry fde, m_disk->getAllFDEs()) {
+            qDebug() << "    Processing FDE# " << idx;
             QString filetype = fde.fileType();
             QString filename = AppleString(fde.filename).printable().trimmed();
             quint16 size = fde.lengthInSectors;
@@ -92,7 +93,6 @@ void CatalogWidget::processNewlyLoadedDisk(QString diskfilename, DiskFile *disk)
             QString sizeStr = QString("%1").arg(size,5,10,QChar(' ')).toUpper();
             QString text = QString("%1 %2 %3 %4").arg(locked?"*":" ").arg(sizeStr).arg(filetype).arg(filename);
             QListWidgetItem *item = new QListWidgetItem(text);
-
             if (filetype == "A")      { item->setForeground(Qt::blue); }
             else if (filetype == "I") { item->setForeground(Qt::darkYellow); }
             else if (filetype == "B") { item->setForeground(Qt::darkGreen); }
@@ -102,32 +102,35 @@ void CatalogWidget::processNewlyLoadedDisk(QString diskfilename, DiskFile *disk)
             else if (filetype == "a") { item->setForeground(Qt::darkBlue); }
             else if (filetype == "b") { item->setForeground(Qt::darkMagenta); }
             else { item->setForeground(Qt::black); }
-
             item->setToolTip(createToolTip(fde));
             item->setData(0x0100,idx);
-            ui->catalog_list->addItem(item);
+
+            if (!fde.deleted) ui->catalog_list->addItem(item);
+
             QRect rect = fm.boundingRect(text);
             if (rect.width() > maxrect.width()) {
                 maxrect = rect;
             }
             idx++;
+            qDebug() << "    Done Processing FDE# " << idx-1;
         }
-//        QFont italfont = ui->catalog_list->font();
-//        italfont.setItalic(true);
-//        QListWidgetItem *item = new QListWidgetItem("Boot Sector");
-//        item->setForeground(Qt::black);
-//        item->setFont(italfont);
-//        item->setData(0x0100,-1);
-//        ui->catalog_list->addItem(item);
+        //        QFont italfont = ui->catalog_list->font();
+        //        italfont.setItalic(true);
+        //        QListWidgetItem *item = new QListWidgetItem("Boot Sector");
+        //        item->setForeground(Qt::black);
+        //        item->setFont(italfont);
+        //        item->setData(0x0100,-1);
+        //        ui->catalog_list->addItem(item);
 
-//        item = new QListWidgetItem("DOS Image");
-//        item->setForeground(Qt::black);
-//        item->setFont(italfont);
-//        item->setData(0x0100,-2);
-//        ui->catalog_list->addItem(item);
+        //        item = new QListWidgetItem("DOS Image");
+        //        item->setForeground(Qt::black);
+        //        item->setFont(italfont);
+        //        item->setData(0x0100,-2);
+        //        ui->catalog_list->addItem(item);
 
         ui->catalog_list->resize(maxrect.width(),ui->catalog_list->size().height());
     }
+    qDebug() << "### End processNewlyLoadedDisk";
 }
 
 void CatalogWidget::unloadDisk(DiskFile *disk)
@@ -145,7 +148,7 @@ void CatalogWidget::itemDoubleClicked(QListWidgetItem *item)
     if (idx >= 0)
     {
         FileDescriptiveEntry fde = m_disk->getAllFDEs()[idx];
- //   qDebug() << "Default File " << AppleString(fde.filename).printable().trimmed();
+        //   qDebug() << "Default File " << AppleString(fde.filename).printable().trimmed();
         emit openWithDefaultViewer(m_disk,fde);
     }
     else
@@ -165,6 +168,6 @@ void CatalogWidget::itemClicked(QListWidgetItem *item)
 {
     int idx = item->data(0x0100).toInt();
     FileDescriptiveEntry fde = m_disk->getAllFDEs()[idx];
- //   qDebug() << "Default File " << AppleString(fde.filename).printable().trimmed();
+    //   qDebug() << "Default File " << AppleString(fde.filename).printable().trimmed();
     emit newFileSelected(m_disk,fde);
 }

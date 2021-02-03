@@ -18,7 +18,7 @@ class HexDumpViewer : public FileViewerInterface
     Q_OBJECT
 
 public:
-    explicit HexDumpViewer(QWidget *parent = 0);
+    explicit HexDumpViewer(QWidget *parent = 0, int defaultFontSize = -1);
     ~HexDumpViewer();
 
     void setFile(GenericFile *file) { setFile(file,0); }
@@ -36,14 +36,14 @@ public slots:
     void doExport();
 
 protected:
-    void setTextFont(const QFont &font);
+    void setTextFont(const QFont &font, int forcedFontSize = -1);
 private:
     void setText(QString text);
     void setData(QByteArray data);
     QString valToAppleAscii(quint8 val);
 
     QAction *m_setFontAction;
-
+    int m_defaultFontSize;
     Ui::HexDumpViewer *ui;
 
     quint16 m_offset;

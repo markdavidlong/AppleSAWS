@@ -24,7 +24,13 @@
     <number>1</number>
    </property>
    <item row="0" column="0" colspan="2">
-    <widget class="QTextBrowser" name="textArea"/>
+    <widget class="QTextBrowser" name="textArea">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

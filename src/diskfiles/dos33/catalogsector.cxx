@@ -3,13 +3,14 @@
 
 CatalogSector::CatalogSector(Sector *data)
 {
+    qDebug() << "### Start CatalogSector ctor";
     m_data = data;
 
     m_next = TSPair(0,0);
 
     TSPair next(m_data->rawData()[0x01],m_data->rawData()[0x02]);
 
-    if (next.isValid())
+    if (next.isValid() && next.track() == 17)
     {
         next.dump();
         qDebug("Next track sector is valid.");
@@ -27,10 +28,15 @@ CatalogSector::CatalogSector(Sector *data)
     {
         FileDescriptiveEntry fde = makeFDE(idx*0x23+0x0B);
         if (fde.firstTSListSector() != TSPair(0,0)) {
-            m_fdes.append(fde);
+            if (fde.firstTSListSector().isValid())
+            {
+                m_fdes.append(fde);
+            }
+            else qDebug() << "Not appending invalid TSPair.";
         }
         else { qWarning("fde.firstTSListSector() is 0,0"); }
     }
+    qDebug() << "### End CatalogSector ctor";
 }
 
 void CatalogSector::dumpFDEs() {
@@ -53,6 +59,11 @@ FileDescriptiveEntry CatalogSector::makeFDE(int offset)
     fde.lengthInSectors = makeWord( m_data->rawData()[offset + 0x21],
                                      m_data->rawData()[offset + 0x22]);
     
+    if (fde.lengthInSectors > 16*35)
+    {
+        fde.lengthInSectors = -1;
+    }
+
     for (int idx = 0x03; idx <= 0x20; idx++) {
         fde.filename.append(m_data->rawData()[idx+offset]);
     }

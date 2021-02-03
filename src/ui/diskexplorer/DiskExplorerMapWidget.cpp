@@ -9,6 +9,7 @@
 #include <QButtonGroup>
 #include <QDebug>
 #include <QHBoxLayout>
+#include <QGuiApplication>
 
 DiskExplorerMapWidget::DiskExplorerMapWidget(int numtracks, int numsectors, QWidget *parent) : QWidget(parent)
 {
@@ -129,9 +130,9 @@ void DiskExplorerMapWidget::handleButtonCheck(int track, int sector, bool checke
         emit showSectorData(data,track,sector,QVariant());
         m_trackSectorLabel->setText(
                     QString("Track: %1 Sector: %2 (%3)")
-                            .arg(track)
-                            .arg(sector)
-                            .arg(getSectorDescription(track,sector)));
+                    .arg(track)
+                    .arg(sector)
+                    .arg(getSectorDescription(track,sector)));
     }
     else{
         emit showSectorData(QByteArray(),-1,-1,QVariant());
@@ -242,6 +243,7 @@ QGroupBox *DiskExplorerMapWidget::makeKeyWidget()
 
 DEButton *DiskExplorerMapWidget::buttonAt(int track, int sector)
 {
+    qDebug() << "Button At:" << track << "," << sector;
     if (track >= m_numtracks || sector >= m_numsectors)
     {
         if (track >= m_numtracks) { track = 0; }
@@ -293,6 +295,7 @@ void DiskExplorerMapWidget::mapDiskToButtons()
     int catseccount = 0;
     foreach (CatalogSector cs, m_disk->getCatalogSectors())
     {
+   //     qDebug() << "LOOP 1";
         Sector *sec = cs.getSector();
 
         QString desc = QString("Catalog Sector #%1").arg(++catseccount);
@@ -303,55 +306,76 @@ void DiskExplorerMapWidget::mapDiskToButtons()
 
         foreach(FileDescriptiveEntry fde, cs.getFDEs())
         {
+   //         qDebug() << "LOOP 2";
             Sector *s = &(m_disk->getSector(fde.firstTSListSector()));
             TrackSectorList tsl(s);
 
             int tsltr = fde.firstTSListSector().track();
             int tslse = fde.firstTSListSector().sector();
 
-            int tslcount = 0;
-            while (tsltr != 0)
+            if (!fde.firstTSListSector().isValid())
             {
+                qDebug() << "Invalid first tse entry.  Skipping TSList.";
+                break;
+            }
+
+            int tslcount = 0;
+            while (tsltr != 0 /*&& tslcount < 1*/)
+            {
+                qDebug() << "LOOP 3";
                 tslcount++;
+
                 buttonAt(tsltr,tslse)->setBgColor(m_tsListColor);
                 buttonAt(tsltr,tslse)->setText(QString("%1").arg(idx));
-                //qDebug() << "Button" << idx << "=" << tsltr << "," << tslse << "   " << fde.filename.printable() << "TSL";
+    //            qDebug() << "Button" << idx << "=" << tsltr << "," << tslse << "   " << fde.filename.printable() << "TSL";
 
                 QString description = QString("T/S List #%1 for %2").arg(tslcount).arg(fde.filename.printable());
                 m_sectorDescriptions.insert(DETSPair(tsltr,tslse),description);
 
                 idx++;
 
+                bool valid = true;
+
                 int sectorcount = 0;
-                foreach(TSPair tsp, tsl.getDataTSPairs())
+                auto pairs = tsl.getDataTSPairs();
+              //  int jdx = 0;
+/*if (false) */               foreach(TSPair tsp, pairs)
                 {
+
+           //         qDebug() << "LOOP 4" << jdx++ << "of" << pairs.count() << "pairs";
+//QCoreApplication::processEvents(QEventLoop::AllEvents);
                     int se = tsp.sector();
                     int tr = tsp.track();
 
-                    QString description = QString("Sector #%1.%2 of %3")
-                            .arg(tslcount)
-                            .arg(++sectorcount)
-                            .arg(fde.filename.printable());
-                    m_sectorDescriptions.insert(DETSPair(tr,se),description);
+                    if (valid && tsp.isValid() && (se != 0 && tr != 0)) {
+                        QString description = QString("Sector #%1.%2 of %3")
+                                .arg(tslcount)
+                                .arg(++sectorcount)
+                                .arg(fde.filename.printable());
+                        m_sectorDescriptions.insert(DETSPair(tr,se),description);
 
-                    QColor color;
-                    if (fde.fileType() == "I") color = m_intBasicFileColor;
-                    else if (fde.fileType() == "A") color = m_applesoftFileColor;
-                    else if (fde.fileType() == "R") color = m_reloFileColor;
-                    else if (fde.fileType() == "B") color = m_binaryFileColor;
-                    else if (fde.fileType() == "S") color = m_typeSFileColor;
-                    else if (fde.fileType() == "T") color = m_textFileColor;
-                    else if (fde.fileType() == "a") color = m_typeAFileColor;
-                    else if (fde.fileType() == "b") color = m_typeBFileColor;
-                    else qDebug() << "Unknown file type: " << fde.fileType();
-                    buttonAt(tr,se)->setBgColor(color);
-                    setButtonText(tr,se,QString("%1").arg(idx));
-                    //qDebug() << "Button" << idx << "=" << tr << "," << se << "   " << fde.filename.printable();
-                    //  fde.dump();
+                        QColor color;
+                        if (fde.fileType() == "I") color = m_intBasicFileColor;
+                        else if (fde.fileType() == "A") color = m_applesoftFileColor;
+                        else if (fde.fileType() == "R") color = m_reloFileColor;
+                        else if (fde.fileType() == "B") color = m_binaryFileColor;
+                        else if (fde.fileType() == "S") color = m_typeSFileColor;
+                        else if (fde.fileType() == "T") color = m_textFileColor;
+                        else if (fde.fileType() == "a") color = m_typeAFileColor;
+                        else if (fde.fileType() == "b") color = m_typeBFileColor;
+                        else qDebug() << "Unknown file type: " << fde.fileType();
+                        buttonAt(tr,se)->setBgColor(color);
+                        setButtonText(tr,se,QString("%1").arg(idx));
+                        qDebug() << "Button" << idx << "=" << tr << "," << se << "   " << fde.filename.printable();
+                          fde.dump();
+                    }
                     idx++;
                 }
                 tsltr =  tsl.getNextTSList().track();
                 tslse = tsl.getNextTSList().sector();
+
+                valid = tsl.getNextTSList().isValid();
+
                 tsl = m_disk->getSector(tsl.getNextTSList()).promoteToTrackSectorList();
             }
         }
