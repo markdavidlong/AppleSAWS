@@ -27,7 +27,7 @@ signals:
     void viewerClosing(ViewerBase *me);
 
 public slots:
-    void showViewer(const QString &descriptor);
+    void showViewer(int index);
 
 protected:
     void closeEvent(QCloseEvent *event);

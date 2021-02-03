@@ -55,35 +55,43 @@ void ViewerBase::setFile(GenericFile *file)
     m_file = file;
 
     QString descriptor;
-    QString defaultViewerDescriptor;
+    int  defaultViewerDescriptor;
+
+    QString hexdumpviewerstring = "Hex Dump Viewer";
+    QString applesoftviewerstring = "Applesoft File Viewer";
+    QString intbasicfileviewerstring = "Integer Basic File Viewer";
+    QString hrcgcharsetviewerstring = "HRCG Character Set Viewer";
+    QString hiresviewerstring = "HiRes Image Viewer";
+    QString mrmazeviewerstring = "MissingRing Maze Viewer";
+    QString disassemblerviewerstring = "Diassembler Viewer";
+    QString texthexviewstring = "Text/Hex Dump Viewer";
+    QString relocatableviewerstring = "Relocatable Disassembler Viewer";
 
     HexDumpViewer *hdv = new HexDumpViewer(0);
     if (dynamic_cast<ApplesoftFile*>(file))
         hdv->setFile(file,0x801);  //TODO: Double check this offset.
     else
         hdv->setFile(file,m_file->address());
-    descriptor = ("Hex Dump Viewer");
+    descriptor = (hexdumpviewerstring);
     addViewer(descriptor,hdv);
-    defaultViewerDescriptor = descriptor;
+    defaultViewerDescriptor = m_viewercombo->findText(descriptor);
 
     if (dynamic_cast<ApplesoftFile*>(file))
     {
         ApplesoftFileViewer *afv = new ApplesoftFileViewer(0);
         afv->setFile(file);
-        descriptor="Applesoft File Viewer";
+        descriptor=applesoftviewerstring;
         addViewer(descriptor,afv);
-        defaultViewerDescriptor = descriptor;
+        defaultViewerDescriptor = m_viewercombo->findText(descriptor);
+
     }
     else if (dynamic_cast<IntBasicFile*>(file))
     {
         IntBasicFileViewer *ibf = new IntBasicFileViewer(0);
         ibf->setFile(file);
-        descriptor="Integer Basic File Viewer";
+        descriptor=intbasicfileviewerstring;
         addViewer(descriptor, ibf);
-        defaultViewerDescriptor = descriptor;
-
-
-
+        defaultViewerDescriptor = m_viewercombo->findText(descriptor);
     }
     else if (dynamic_cast<BinaryFile*>(file))
     {
@@ -91,37 +99,39 @@ void ViewerBase::setFile(GenericFile *file)
 
         CharSetViewer *csv = new CharSetViewer();
         csv->setFile(bf);
-        descriptor ="HRCG Character Set Viewer";
+        descriptor = hrcgcharsetviewerstring;
         addViewer(descriptor,csv);
 
         HiresViewWidget *hrvw = new HiresViewWidget();
         hrvw->setFile(bf);
-        descriptor = "HiRes Image Viewer";
+        descriptor = hiresviewerstring;
         addViewer(descriptor,hrvw);
 
         MazeViewer *mv = new MazeViewer();
         mv->setFile(file);
-        descriptor = "MissingRing Maze Viewer";
+        descriptor = mrmazeviewerstring;
         addViewer(descriptor,mv);
 
         DisassemblerViewer *dv = new DisassemblerViewer();
         dv->setFile(bf);
-        descriptor = "Disassembler Viewer";
+        descriptor = disassemblerviewerstring;
         addViewer(descriptor,dv);
-        defaultViewerDescriptor = descriptor;
+        defaultViewerDescriptor = m_viewercombo->findText(descriptor);
 
         if (bf->filename().toUpper().endsWith(".SET"))
         {
-            defaultViewerDescriptor ="HRCG Character Set Viewer";
+            defaultViewerDescriptor = m_viewercombo->findText(hrcgcharsetviewerstring);
         }
         if (bf->filename().toUpper().startsWith("MAZE"))
         {
-            defaultViewerDescriptor = "MissingRing Maze Viewer";
+            defaultViewerDescriptor = m_viewercombo->findText(mrmazeviewerstring);
+
         }
         if ((bf->address() == 0x2000 || bf->address() == 0x4000)
             && bf->length() == 0x2000)
         {
-            defaultViewerDescriptor = "HiRes Image Viewer";
+            defaultViewerDescriptor = m_viewercombo->findText(hiresviewerstring);
+
         }
 
     }
@@ -131,21 +141,22 @@ void ViewerBase::setFile(GenericFile *file)
 
         TextHexDumpViewer *thdv = new TextHexDumpViewer();
         thdv->setFile(bf);
-        descriptor = QString("Text/Hex Dump Viewer");
+        descriptor = QString(texthexviewstring);
         addViewer(descriptor,thdv);
 
-        defaultViewerDescriptor = descriptor;
+        defaultViewerDescriptor = m_viewercombo->findText(descriptor);
+
     }
     else if (dynamic_cast<RelocatableFile*>(file))
     {
         DisassemblerViewer *dv = new DisassemblerViewer();
         dv->setFile(file);
-        descriptor = "Relocatable Disassembler Viewer";
+        descriptor = relocatableviewerstring;
         addViewer(descriptor,dv);
-        defaultViewerDescriptor = descriptor;
-
+        defaultViewerDescriptor = m_viewercombo->findText(descriptor);
     }
-    connect(m_viewercombo, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
+    connect(m_viewercombo,
+            static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
             this, &ViewerBase::showViewer);
     showViewer(defaultViewerDescriptor);
 }
@@ -165,8 +176,9 @@ void ViewerBase::addViewer(QString descriptor, FileViewerInterface *viewer)
     }
 }
 
-void ViewerBase::showViewer(const QString& descriptor)
+void ViewerBase::showViewer(int index)
 {
+    QString descriptor = m_viewercombo->itemText(index);
     FileViewerInterface *fvi = m_viewers[descriptor];
     if (fvi)
     {
