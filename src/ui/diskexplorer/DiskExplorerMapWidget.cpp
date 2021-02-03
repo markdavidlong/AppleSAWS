@@ -242,7 +242,7 @@ QGroupBox *DiskExplorerMapWidget::makeKeyWidget()
 
 DEButton *DiskExplorerMapWidget::buttonAt(int track, int sector)
 {
-    qDebug() << "Button At:" << track << "," << sector;
+    //qDebug() << "Button At:" << track << "," << sector;
     if (track >= m_numtracks || sector >= m_numsectors)
     {
         if (track >= m_numtracks) { track = 0; }

@@ -74,7 +74,9 @@ struct TSPair {
         return !(operator==(other));
     }
 
-    void dump() const { qDebug() << "TSPair: track: " << track() << " sector: " << sector(); }
+    void dump() const {
+        //qDebug() << "TSPair: track: " << track() << " sector: " << sector();
+    }
 private:
     quint8 m_track;
     quint8 m_sector;

@@ -77,7 +77,7 @@ QString CatalogWidget::createToolTip(FileDescriptiveEntry &fde) {
 
 void CatalogWidget::processNewlyLoadedDisk(QString diskfilename, DiskFile *disk)
 {
-    qDebug() << "### Start processNewlyLoadedDisk";
+   // qDebug() << "### Start processNewlyLoadedDisk";
     if (m_disk == disk) {
         QUrl url = QUrl::fromLocalFile(diskfilename);
         QString shortfilename = url.fileName();
@@ -86,7 +86,7 @@ void CatalogWidget::processNewlyLoadedDisk(QString diskfilename, DiskFile *disk)
         ui->volume_label->setText(shortfilename);
         int idx = 0;
         foreach(FileDescriptiveEntry fde, m_disk->getAllFDEs()) {
-            qDebug() << "    Processing FDE# " << idx;
+    //        qDebug() << "    Processing FDE# " << idx;
             QString filetype = fde.fileType();
             QString filename = AppleString(fde.filename).printable().trimmed();
             quint16 size = fde.lengthInSectors;
@@ -113,7 +113,7 @@ void CatalogWidget::processNewlyLoadedDisk(QString diskfilename, DiskFile *disk)
                 maxrect = rect;
             }
             idx++;
-            qDebug() << "    Done Processing FDE# " << idx-1;
+      //      qDebug() << "    Done Processing FDE# " << idx-1;
         }
         //        QFont italfont = ui->catalog_list->font();
         //        italfont.setItalic(true);
@@ -131,7 +131,7 @@ void CatalogWidget::processNewlyLoadedDisk(QString diskfilename, DiskFile *disk)
 
         ui->catalog_list->resize(maxrect.width(),ui->catalog_list->size().height());
     }
-    qDebug() << "### End processNewlyLoadedDisk";
+  //  qDebug() << "### End processNewlyLoadedDisk";
 }
 
 void CatalogWidget::unloadDisk(DiskFile *disk)

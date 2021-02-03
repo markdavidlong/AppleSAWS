@@ -59,7 +59,7 @@ void ApplesoftRetokenizer::parse(quint16 start_address)
     m_data_end = idx;
 
     if (idx < m_data.length()) {
-        qDebug() << QString("%1 byte(s) unaccounted for.").arg(m_data.length() - idx);
+  //      qDebug() << QString("%1 byte(s) unaccounted for.").arg(m_data.length() - idx);
     }
 
     retokenizeLinesForFormatting();

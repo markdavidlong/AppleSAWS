@@ -3,7 +3,7 @@
 
 CatalogSector::CatalogSector(Sector *data)
 {
-    qDebug() << "### Start CatalogSector ctor";
+ //   qDebug() << "### Start CatalogSector ctor";
     m_data = data;
 
     m_next = TSPair(0,0);
@@ -13,12 +13,12 @@ CatalogSector::CatalogSector(Sector *data)
     if (next.isValid() && next.track() == 17)
     {
         next.dump();
-        qDebug("Next track sector is valid.");
+    //    qDebug("Next track sector is valid.");
         m_next = next;
     }
     else
     {
-        qWarning() << "Track sector is invalid! Not adding to catalog.";
+        qWarning() << "Track sector " << next.track() << "," << next.sector() << "is invalid! Not adding to catalog.";
         m_next.dump();
     }
     //m_next.setTrack(m_data->rawData()[0x01]);
@@ -34,9 +34,9 @@ CatalogSector::CatalogSector(Sector *data)
             }
             else qDebug() << "Not appending invalid TSPair.";
         }
-        else { qWarning("fde.firstTSListSector() is 0,0"); }
+    //    else { qWarning("fde.firstTSListSector() is 0,0"); }
     }
-    qDebug() << "### End CatalogSector ctor";
+  //  qDebug() << "### End CatalogSector ctor";
 }
 
 void CatalogSector::dumpFDEs() {

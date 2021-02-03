@@ -56,7 +56,7 @@ bool DiskFile::read(QString filename)
                 char buffer[256];
                 if (qds.readRawData(buffer,256) == 256)
                 {
-                    qDebug() << "Track " << track << " Sector " << sector;
+       //             qDebug() << "Track " << track << " Sector " << sector;
                     Sector sec;
                     sec.setTrackSector(track,sector);
                     sec.setData(QByteArray(buffer,256));
@@ -72,7 +72,7 @@ bool DiskFile::read(QString filename)
         hash.addData(contents);
 
         m_hash = hash.result();
-        qDebug() << "Hash: " << m_hash;
+   //     qDebug() << "Hash: " << m_hash;
 
         return true;
     }
@@ -88,7 +88,7 @@ VTOC DiskFile::getVTOC()
 
 QList<CatalogSector> DiskFile::getCatalogSectors()
 {
-    qDebug() << "### Start getCatalogSector";
+  //  qDebug() << "### Start getCatalogSector";
 
     QList<CatalogSector> retval;
     VTOC vtoc = getVTOC();
@@ -101,7 +101,7 @@ QList<CatalogSector> DiskFile::getCatalogSectors()
         cs = getSector(ts).promoteToCatalogSector();
         retval.append(cs);
     }
-    qDebug() << "### End getCatalogSector";
+  //  qDebug() << "### End getCatalogSector";
 
     return retval;
 }
@@ -189,7 +189,7 @@ QByteArray DiskFile::getDataFromTrackSectorList(TrackSectorList tsl)
 
 QList<FileDescriptiveEntry> DiskFile::getAllFDEs()
 {
-    qDebug() << "### Start getAllFDEs";
+ //   qDebug() << "### Start getAllFDEs";
     QList<FileDescriptiveEntry> retval;
 
     QList<CatalogSector>  sectors = getCatalogSectors();
@@ -199,7 +199,7 @@ QList<FileDescriptiveEntry> DiskFile::getAllFDEs()
         QList<FileDescriptiveEntry> fdes = cs.getFDEs();
         retval.append(fdes);
     }
-    qDebug() << "### End getAllFDEs";
+ //   qDebug() << "### End getAllFDEs";
     return retval;
 }
 

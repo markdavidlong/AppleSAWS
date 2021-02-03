@@ -191,7 +191,7 @@ void HexDumpViewer::setTextFont(const QFont &font, int forcedFontSize)
 {
     QFont myfont = font;
     if (forcedFontSize > 0) { myfont.setPointSize(forcedFontSize); }
-    qDebug() << "######################### Setting text font size " << myfont.pointSize();
+ //   qDebug() << "######################### Setting text font size " << myfont.pointSize();
     ui->textArea->setFont(myfont);
 
 }
