@@ -7,9 +7,9 @@ class BinaryFile : public GenericFile
 {
 public:
     BinaryFile(QByteArray data = QByteArray());
-    void setData(QByteArray data);
+    void setData(QByteArray data) override;
 
-    virtual quint16 length() { return m_length; }
+    virtual quint16 length() const override { return m_length; }
 
     void dump();
 
