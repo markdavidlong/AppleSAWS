@@ -28,6 +28,8 @@ INCLUDEPATH += src/ui/widgets/
 INCLUDEPATH += src/ui
 INCLUDEPATH += src/memory
 INCLUDEPATH += src/memory/roles
+INCLUDEPATH += src/sequence
+
 
 
 DEFINES += WS_VIDEO
@@ -47,6 +49,11 @@ SOURCES += \
     src/memory/memrole.cpp \
     src/memory/roles/role_asm_opcode.cpp \
     src/memory/roles/role_asm_operand.cpp \
+    src/sequence/sequenceevent.cpp \
+    src/sequence/sequenceeventlist.cpp \
+    src/sequence/sequenceeventlistwidget.cpp \
+    src/sequence/sequencetool.cpp \
+    src/sequence/sequencetoolbox.cpp \
     src/ui/startupdialog.cpp \
     src/ui/viewers/intbasicfileviewer.cxx \
     src/ui/widgets/notesdialog.cpp \
@@ -102,6 +109,11 @@ HEADERS += \
     src/memory/memrole.h \
     src/memory/roles/role_asm_opcode.h \
     src/memory/roles/role_asm_operand.h \
+    src/sequence/sequenceevent.h \
+    src/sequence/sequenceeventlist.h \
+    src/sequence/sequenceeventlistwidget.h \
+    src/sequence/sequencetool.h \
+    src/sequence/sequencetoolbox.h \
     src/ui/startupdialog.h \
     src/ui/viewers/intbasicfileviewer.h \
     src/ui/widgets/notesdialog.h \
