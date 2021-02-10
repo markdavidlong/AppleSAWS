@@ -29,6 +29,8 @@ private slots:
 
     void on_infoBtn_clicked();
 
+    void on_newStuffButton_clicked();
+
 private:
     Ui::StartupDialog *ui;
 

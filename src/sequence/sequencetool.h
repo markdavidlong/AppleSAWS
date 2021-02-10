@@ -18,9 +18,6 @@ public:
     virtual QString category() const { return m_category; }
 
 
-signals:
-
-
 protected:
     void mousePressEvent(QMouseEvent *event);
 

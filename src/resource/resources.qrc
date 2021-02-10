@@ -7,4 +7,7 @@
     <qresource prefix="/notes">
         <file>notes.txt</file>
     </qresource>
+    <qresource prefix="/images">
+        <file>redblob.png</file>
+    </qresource>
 </RCC>

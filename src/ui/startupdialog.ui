@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>312</width>
-    <height>197</height>
+    <height>231</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,6 +29,13 @@
    </item>
    <item row="3" column="0">
     <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QPushButton" name="newStuffButton">
+       <property name="text">
+        <string>New Display Stuff</string>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="QPushButton" name="exploreContentsBtn">
        <property name="text">
@@ -100,7 +107,7 @@
         </font>
        </property>
        <property name="text">
-        <string>V. 0.0.3pr</string>
+        <string>V. 0.2.0pr</string>
        </property>
       </widget>
      </item>

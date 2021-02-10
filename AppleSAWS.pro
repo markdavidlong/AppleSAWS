@@ -29,6 +29,7 @@ INCLUDEPATH += src/ui
 INCLUDEPATH += src/memory
 INCLUDEPATH += src/memory/roles
 INCLUDEPATH += src/sequence
+INCLUDEPATH += src/ui/central
 
 
 
@@ -52,8 +53,13 @@ SOURCES += \
     src/sequence/sequenceevent.cpp \
     src/sequence/sequenceeventlist.cpp \
     src/sequence/sequenceeventlistwidget.cpp \
+    src/sequence/sequenceoutputview.cpp \
     src/sequence/sequencetool.cpp \
     src/sequence/sequencetoolbox.cpp \
+    src/sequence/sequenceviewer.cpp \
+    src/sequence/textblockuserdata.cpp \
+    src/ui/central/centralappwindow.cpp \
+    src/ui/central/mainapptoolbar.cpp \
     src/ui/startupdialog.cpp \
     src/ui/viewers/intbasicfileviewer.cxx \
     src/ui/widgets/notesdialog.cpp \
@@ -112,8 +118,13 @@ HEADERS += \
     src/sequence/sequenceevent.h \
     src/sequence/sequenceeventlist.h \
     src/sequence/sequenceeventlistwidget.h \
+    src/sequence/sequenceoutputview.h \
     src/sequence/sequencetool.h \
     src/sequence/sequencetoolbox.h \
+    src/sequence/sequenceviewer.h \
+    src/sequence/textblockuserdata.h \
+    src/ui/central/centralappwindow.h \
+    src/ui/central/mainapptoolbar.h \
     src/ui/startupdialog.h \
     src/ui/viewers/intbasicfileviewer.h \
     src/ui/widgets/notesdialog.h \
@@ -162,6 +173,7 @@ HEADERS += \
     src/ui/widgets/asciiinfodialog.h
 
 FORMS += \
+    src/sequence/sequenceviewer.ui \
     src/ui/catalogwidget.ui \
     src/ui/startupdialog.ui \
     src/ui/viewers/applesoftfileviewer.ui \

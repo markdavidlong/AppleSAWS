@@ -13,6 +13,7 @@
 class SequenceToolBoxHeader : public QCheckBox
 {
     Q_OBJECT
+
 public:
     SequenceToolBoxHeader(const QString &text,
                           QWidget *parent = 0) : QCheckBox(text,parent)
