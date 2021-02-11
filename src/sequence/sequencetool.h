@@ -21,6 +21,7 @@ public:
 protected:
     void mousePressEvent(QMouseEvent *event);
 
+
 protected:
     SequenceEvent *m_seqevent;
     QString m_category;

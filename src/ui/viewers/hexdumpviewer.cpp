@@ -124,9 +124,9 @@ QString HexDumpViewer::valToAppleAscii(quint8 val)
     QString htmlstr = charval.toHtmlEscaped();
 
     QString retval;
-    if (attribute == Inverse) { retval = QString("<font color=\"blue\"><b>%1</b></font>").arg(htmlstr); }
-    else if (attribute == Flash) { retval = QString("<font color=\"green\"><b><i>%1</i></b></font>").arg(htmlstr);}
-    else if (attribute == NormalLow) { retval = QString("<font color=\"red\"><i>%1</i></font>").arg(htmlstr);}
+    if (attribute == TextAttribute::Inverse) { retval = QString("<font color=\"blue\"><b>%1</b></font>").arg(htmlstr); }
+    else if (attribute == TextAttribute::Flash) { retval = QString("<font color=\"green\"><b><i>%1</i></b></font>").arg(htmlstr);}
+    else if (attribute == TextAttribute::NormalLow) { retval = QString("<font color=\"red\"><i>%1</i></font>").arg(htmlstr);}
     else   { retval = QString("%1").arg(htmlstr);}
 
     return retval;

@@ -5,7 +5,7 @@
 
 #include "catalogwidget.h"
 #include "DiskExplorerMapWidget.h"
-#include "diskfile.h"
+#include "dos33diskimage.h"
 #include "hrcgcontrolsinfo.h"
 #include "hexconverter.h"
 #include "hexdumpviewer.h"
@@ -25,10 +25,10 @@ public:
     virtual ~DiskExplorer();
 
 signals:
-    void diskFileLoading(QString filename, DiskFile *file);
-    void diskFileLoaded(QString filename, DiskFile *file);
-    void diskFileLoadFailed(QString filename, DiskFile *file);
-    void diskFileUnloading(DiskFile *file);
+    void diskFileLoading(QString filename, Dos33DiskImage *file);
+    void diskFileLoaded(QString filename, Dos33DiskImage *file);
+    void diskFileLoadFailed(QString filename, Dos33DiskImage *file);
+    void diskFileUnloading(Dos33DiskImage *file);
     void diskFileUnloaded();
 
 public slots:
@@ -38,7 +38,7 @@ public slots:
 
 private slots:
     void handleShowSectorData(QByteArray data, int track, int sector, QVariant metadata);
-    void handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescriptiveEntry fde);
+    void handleDiskItemSelectedDefaultOpen(Dos33DiskImage *disk, FileDescriptiveEntry fde);
 
     void setDiskToolsVisible(bool visible);
 
@@ -64,7 +64,7 @@ private:
 
     QWidget *m_demwStatusWidget;
 
-    DiskFile *m_disk;
+    Dos33DiskImage *m_disk;
 
     HRCGControlsInfo *m_hrcgDialog;
     HexConverter *m_hexConverter;

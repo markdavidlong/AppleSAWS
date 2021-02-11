@@ -48,6 +48,13 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ***
 
+I have included a nice dark stylesheet based off of Colin Duquesnoy's QDarkStyleSheet
+from https://github.com/ColinDuquesnoy/QDarkStyleSheet
+
+Its licensing information can be found at https://github.com/ColinDuquesnoy/QDarkStyleSheet/blob/master/LICENSE.rst
+
+***
+
 And, of course, this program is released under the MIT License:
 
 

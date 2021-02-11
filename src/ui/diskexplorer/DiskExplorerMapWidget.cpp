@@ -146,7 +146,7 @@ void DiskExplorerMapWidget::setButtonBgColor(int track, int sector, QColor color
     buttonAt(track,sector)->setBgColor(color);
 }
 
-void DiskExplorerMapWidget::setDisk(DiskFile *disk)
+void DiskExplorerMapWidget::setDisk(Dos33DiskImage *disk)
 {
     if (disk)
     {
@@ -375,7 +375,7 @@ void DiskExplorerMapWidget::mapDiskToButtons()
 
                 valid = tsl.getNextTSList().isValid();
 
-                tsl = m_disk->getSector(tsl.getNextTSList()).promoteToTrackSectorList();
+                tsl = m_disk->getSector(tsl.getNextTSList()).asTrackSectorList();
             }
         }
     }

@@ -32,7 +32,7 @@ CatalogWidget::~CatalogWidget()
     delete ui;
 }
 
-void CatalogWidget::prepForNewDisk(QString filename, DiskFile *disk)
+void CatalogWidget::prepForNewDisk(QString filename, Dos33DiskImage *disk)
 {
     m_disk = disk;
     m_diskname = filename;
@@ -75,7 +75,7 @@ QString CatalogWidget::createToolTip(FileDescriptiveEntry &fde) {
     return retval;
 }
 
-void CatalogWidget::processNewlyLoadedDisk(QString diskfilename, DiskFile *disk)
+void CatalogWidget::processNewlyLoadedDisk(QString diskfilename, Dos33DiskImage *disk)
 {
    // qDebug() << "### Start processNewlyLoadedDisk";
     if (m_disk == disk) {
@@ -134,7 +134,7 @@ void CatalogWidget::processNewlyLoadedDisk(QString diskfilename, DiskFile *disk)
   //  qDebug() << "### End processNewlyLoadedDisk";
 }
 
-void CatalogWidget::unloadDisk(DiskFile *disk)
+void CatalogWidget::unloadDisk(Dos33DiskImage *disk)
 {
     if (m_disk == disk) {
         m_disk = 0;

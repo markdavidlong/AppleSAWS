@@ -1,6 +1,12 @@
 #include "centralappwindow.h"
 #include "sequenceviewer.h"
 
+#include "dos33diskimage.h"
+#include "dos33imagemodel.h"
+
+#include "sequencetoolbox.h"
+
+#include <QTreeView>
 #include <QAction>
 #include <QMenuBar>
 #include <QMenu>
@@ -8,9 +14,23 @@
 #include <QSplitter>
 #include <QDockWidget>
 #include <QGridLayout>
+#include <QStatusBar>
+
+#include <QFile>
 
 CentralAppWindow::CentralAppWindow(QWidget *parent) : QMainWindow(parent)
 {
+    QFile f(":qdarkstyle/style.qss");
+
+    if (!f.exists())   {
+        printf("Unable to set stylesheet, file not found\n");
+    }
+    else   {
+        f.open(QFile::ReadOnly | QFile::Text);
+        QTextStream ts(&f);
+        this->setStyleSheet(ts.readAll());
+    }
+
     createActions();
     initMenuBar();
     initToolBars();
@@ -36,7 +56,8 @@ void CentralAppWindow::initMenuBar()
 
 void CentralAppWindow::initStatusBar()
 {
-
+    m_status_bar = new QStatusBar(this);
+    setStatusBar(m_status_bar);
 }
 
 void CentralAppWindow::initToolBars()
@@ -53,22 +74,53 @@ void CentralAppWindow::initToolBars()
 void CentralAppWindow::initDockWidgets()
 {
     QDockWidget *container = new QDockWidget(this);
-    container->setLayout(new QGridLayout());
+    //   container->setLayout(new QGridLayout());
     container->setMinimumWidth(200);
     container->setFeatures(QDockWidget::DockWidgetMovable);
+
     m_project_area = new QWidget(container);
-    m_project_area->setMinimumSize(200,200);
-    m_project_area->setStyleSheet("background:black");
-    m_directory_area = new QWidget(container);
-    m_directory_area->setMinimumSize(200,200);
-    m_directory_area->setStyleSheet("background:black");
+    m_project_area->setMinimumSize(300,200);
+
+    m_directory_area = new QTreeView(container);
+    m_directory_area->setFont(QFont("Pr Number 3", 12));
+    m_directory_area->setMinimumSize(300,200);
+
     QSplitter *split = new QSplitter(container);
+    container->setWidget(split);
     split->setOrientation(Qt::Vertical);
     split->addWidget(m_directory_area);
     split->addWidget(m_project_area);
-    container->setWidget(split);
+    split->setStretchFactor(0,1);
+    split->setStretchFactor(1,1);
+    split->setSizes(QList<int>({4000, 4000}));
+
+
+    Dos33DiskImage *img = new Dos33DiskImage("c:/develop/git/AppleSAWS/disk-images/ApplesoftToolkit.dsk");
+
+    auto model = new Dos33ImageModel();
+    model->addDiskImage(img,"ApplesoftToolkit.dsk");
+
+    img = new Dos33DiskImage("c:/develop/git/AppleSAWS/disk-images/dos.3.3.system.master.dsk");
+    model->addDiskImage(img);
+
+    img = new Dos33DiskImage("c:/develop/git/AppleSAWS/disk-images/Print Shop Companion - Side 1.dsk");
+    model->addDiskImage(img);
+    m_directory_area->setModel(model);
 
     addDockWidget(Qt::LeftDockWidgetArea,container);
+
+
+
+    QDockWidget *stb = new QDockWidget(this);
+    stb->setMinimumWidth(200);
+    stb->setFeatures(QDockWidget::DockWidgetMovable);
+    stb->setLayout(new QGridLayout());
+
+    m_toolbox = new SequenceToolBox(this);
+
+
+
+    addDockWidget(Qt::RightDockWidgetArea,stb);
 
 
 }

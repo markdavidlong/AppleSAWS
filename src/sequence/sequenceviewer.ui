@@ -27,16 +27,12 @@
     <number>0</number>
    </property>
    <item row="0" column="0">
-    <widget class="QSplitter" name="splitter_2">
+    <widget class="QSplitter" name="hsplitter">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="SequenceOutputView" name="viewer" native="true">
-      <property name="styleSheet">
-       <string notr="true">background:black</string>
-      </property>
-     </widget>
-     <widget class="QSplitter" name="splitter">
+     <widget class="SequenceOutputView" name="viewer" native="true"/>
+     <widget class="QSplitter" name="vsplitter">
       <property name="minimumSize">
        <size>
         <width>50</width>
@@ -53,9 +49,6 @@
          <height>50</height>
         </size>
        </property>
-       <property name="styleSheet">
-        <string notr="true">background:lightgrey </string>
-       </property>
       </widget>
       <widget class="QWidget" name="properties" native="true">
        <property name="minimumSize">
@@ -63,9 +56,6 @@
          <width>50</width>
          <height>50</height>
         </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background:lightgray</string>
        </property>
       </widget>
      </widget>

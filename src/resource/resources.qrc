@@ -10,4 +10,15 @@
     <qresource prefix="/images">
         <file>redblob.png</file>
     </qresource>
+    <qresource prefix="/">
+        <file>I_RED.png</file>
+        <file>A_GREY.png</file>
+        <file>A_YELLOW.png</file>
+        <file>B_GREEN.png</file>
+        <file>B_GREY.png</file>
+        <file>R_MAGENTA.png</file>
+        <file>S_ORANGE.png</file>
+        <file>T_CYAN.png</file>
+        <file>disk.png</file>
+    </qresource>
 </RCC>

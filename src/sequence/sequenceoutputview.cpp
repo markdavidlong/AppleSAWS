@@ -22,7 +22,7 @@ SequenceOutputView::SequenceOutputView(QWidget *parent) : QPlainTextEdit(parent)
 void SequenceOutputView::lineNumberAreaPaintEvent(QPaintEvent *event)
 {
     QPainter painter(lineNumberArea);
-     painter.fillRect(event->rect(), Qt::lightGray);
+
      QTextBlock block = firstVisibleBlock();
      int blockNumber = block.blockNumber();
      int top = qRound(blockBoundingGeometry(block).translated(contentOffset()).top());
@@ -30,9 +30,9 @@ void SequenceOutputView::lineNumberAreaPaintEvent(QPaintEvent *event)
      while (block.isValid() && top <= event->rect().bottom()) {
          if (block.isVisible() && bottom >= event->rect().top()) {
              QString number = QString::number(blockNumber + 1);
-             painter.setPen(Qt::black);
-             painter.drawText(0, top, lineNumberArea->width()-10, fontMetrics().height(),
-                              Qt::AlignRight, number);
+             painter.drawText(0, top, lineNumberArea->width()-10,
+                              fontMetrics().height(),
+                              Qt::AlignRight | Qt::AlignHCenter, number);
          }
 
          block = block.next();

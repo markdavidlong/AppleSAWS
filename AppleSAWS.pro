@@ -38,13 +38,16 @@ DEFINES += WS_VIDEO
 SOURCES += \
     src/intbasic/IntBasicFile.cxx \
     src/main.cpp \
-    src/diskfiles/dos33/diskfile.cxx \
+    src/diskfiles/dos33/dos33diskimage.cxx \
     src/diskfiles/dos33/sector.cxx \
     src/diskfiles/dos33/vtoc.cxx \
     src/diskfiles/dos33/catalogsector.cxx \
     src/diskfiles/dos33/tracksectorlist.cxx \
     src/diskfiles/dos33/filedescriptiveentry.cxx \
     src/diskfiles/dos33/genericfile.cxx \
+    src/diskfiles/dos33/tspair.cpp \
+    src/diskfiles/dos33/dos33imagemodel.cpp \
+    src/diskfiles/dos33/dos33treeitem.cpp \
     src/memory/attributedmemory.cpp \
     src/memory/memorycell.cpp \
     src/memory/memrole.cpp \
@@ -102,13 +105,16 @@ SOURCES += \
 
 
 HEADERS += \
-    src/diskfiles/dos33/diskfile.h \
+    src/diskfiles/dos33/dos33diskimage.h \
     src/diskfiles/dos33/sector.h \
     src/diskfiles/dos33/vtoc.h \
     src/diskfiles/dos33/catalogsector.h \
     src/diskfiles/dos33/tracksectorlist.h \
     src/diskfiles/dos33/filedescriptiveentry.h \
     src/diskfiles/dos33/genericfile.h \
+    src/diskfiles/dos33/tspair.h \
+    src/diskfiles/dos33/dos33imagemodel.h\
+    src/diskfiles/dos33/dos33treeitem.h\
     src/intbasic/IntBasicFile.h \
     src/memory/attributedmemory.h \
     src/memory/memorycell.h \
@@ -192,4 +198,5 @@ FORMS += \
     src/ui/widgets/notesdialog.ui
 
 RESOURCES += \
-    src/resource/resources.qrc
+    src/resource/resources.qrc \
+    src/qdarkstyle/style.qrc

@@ -158,7 +158,7 @@ void DiskExplorer::loadDiskFile(QString filename)
         unloadDiskFile();
     }
 
-    m_disk = new DiskFile();
+    m_disk = new Dos33DiskImage();
     m_cw->prepForNewDisk(filename,m_disk);
     if (m_disk->read(filename)) {
         if (m_action_Unload_Disk_Image) {  m_action_Unload_Disk_Image->setEnabled(true); }
@@ -195,7 +195,7 @@ void DiskExplorer::showLoadDialog(bool parentToThis)
     }
 }
 
-void DiskExplorer::handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescriptiveEntry fde)
+void DiskExplorer::handleDiskItemSelectedDefaultOpen(Dos33DiskImage *disk, FileDescriptiveEntry fde)
 {
     if (fde.deleted) { return; }
 

@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QListWidgetItem>
 
-#include "diskfile.h"
+#include "dos33diskimage.h"
 
 namespace Ui {
 class  CatalogWidget;
@@ -20,13 +20,13 @@ public:
     ~CatalogWidget();
 
 public slots:
-    void prepForNewDisk(QString filename, DiskFile *disk);
-    void processNewlyLoadedDisk(QString filename, DiskFile *disk);
-    void unloadDisk(DiskFile *disk);
+    void prepForNewDisk(QString filename, Dos33DiskImage *disk);
+    void processNewlyLoadedDisk(QString filename, Dos33DiskImage *disk);
+    void unloadDisk(Dos33DiskImage *disk);
 
 signals:
-    void newFileSelected(DiskFile *disk, FileDescriptiveEntry entry);
-    void openWithDefaultViewer(DiskFile *disk, FileDescriptiveEntry fde);
+    void newFileSelected(Dos33DiskImage *disk, FileDescriptiveEntry entry);
+    void openWithDefaultViewer(Dos33DiskImage *disk, FileDescriptiveEntry fde);
 
 protected:
     QString createToolTip(FileDescriptiveEntry &fde);
@@ -39,7 +39,7 @@ private:
 
     Ui::CatalogWidget *ui;
 
-    DiskFile *m_disk;
+    Dos33DiskImage *m_disk;
     QString m_diskname;
 };
 

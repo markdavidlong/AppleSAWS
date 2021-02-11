@@ -6,6 +6,7 @@
 #include <QSyntaxHighlighter>
 #include <QTextBlock>
 #include <QRegularExpression>
+#include <QStyle>
 
 class SOVNumberPanel;
 
@@ -38,12 +39,16 @@ class SOVNumberPanel : public QWidget
 {
     Q_OBJECT
 public:
-    explicit SOVNumberPanel(SequenceOutputView *sov) : QWidget(sov), m_sov(sov) { }
+    explicit SOVNumberPanel(SequenceOutputView *sov) : QWidget(sov), m_sov(sov) {
+        setAttribute(Qt::WA_StyledBackground, true);
+
+    }
     QSize sizeHint() const override { return QSize(m_sov->lineNumberAreaWidth(), 0); }
 
 protected:
     void paintEvent(QPaintEvent *event) override {
-        m_sov->lineNumberAreaPaintEvent(event);}
+        m_sov->lineNumberAreaPaintEvent(event);
+    }
     SequenceOutputView *m_sov;
 };
 

@@ -10,7 +10,7 @@
 #include <QLabel>
 
 
-#include "diskfile.h"
+#include "dos33diskimage.h"
 
 
 class DEButton : public QPushButton
@@ -99,7 +99,7 @@ public:
         buttonAt(track,sector)->setText(text);
     }
 
-    void setDisk(DiskFile *disk);
+    void setDisk(Dos33DiskImage *disk);
     void unloadDisk();
 
     void setAllButtonsEnabled(bool enabled);
@@ -157,7 +157,7 @@ private:
     QColor m_typeSFileColor;
 
     QButtonGroup *m_bgroup;
-    DiskFile *m_disk;
+    Dos33DiskImage *m_disk;
 
     bool m_deferredSetup;
 

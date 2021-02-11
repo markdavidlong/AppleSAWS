@@ -6,7 +6,7 @@
 
 #include "binaryfile.h"
 #include "genericfile.h"
-#include "diskfile.h"
+#include "dos33diskimage.h"
 #include "catalogsector.h"
 #include "applesoftfile.h"
 #include "startupdialog.h"
