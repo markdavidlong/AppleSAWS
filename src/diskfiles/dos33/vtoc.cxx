@@ -49,7 +49,7 @@ qint16 VTOC::bytesPerSector() {
                     m_data->rawData()[0x37]);
 }
 
-bool VTOC::isSectorInUse(TSPair ts) {
+bool VTOC::isSectorInUse(TSPair ts) const {
     quint8 track = ts.track();
     quint8 sec = ts.sector();
     quint8 baseaddr = (track * 4) + 0x38;
@@ -60,6 +60,42 @@ bool VTOC::isSectorInUse(TSPair ts) {
     quint16 bitpos = (quint16) 0x01 << (quint16) sec;
 
     return !(word & bitpos);
+}
+
+QList<TSPair> VTOC::sectorsInUse() const
+{
+    QList<TSPair> retval;
+
+    for (int track = 0; track < 35; track++)
+    {
+        for (int sector = 0; sector < 16; sector++)
+        {
+            TSPair ts(track,sector);
+            if (isSectorInUse(ts))
+            {
+                retval.append(ts);
+            }
+        }
+    }
+    return retval;
+}
+
+QList<TSPair> VTOC::sectorsNotInUse() const
+{
+    QList<TSPair> retval;
+
+    for (int track = 0; track < 35; track++)
+    {
+        for (int sector = 0; sector < 16; sector++)
+        {
+            TSPair ts(track,sector);
+            if (!isSectorInUse(ts))
+            {
+                retval.append(ts);
+            }
+        }
+    }
+    return retval;
 }
 
 void VTOC::dump()

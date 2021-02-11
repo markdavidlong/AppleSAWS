@@ -21,11 +21,11 @@ public:
         return VTOC(this);
     }
 
-    CatalogSector promoteToCatalogSector() {
+    CatalogSector asCatalogSector() {
         return CatalogSector(this);
     }
 
-    TrackSectorList promoteToTrackSectorList()  {
+    TrackSectorList asTrackSectorList()  {
         return TrackSectorList(this);
     }
 
@@ -35,6 +35,11 @@ public:
     void setTrackSector(int track, int sector) {
         setTrack(track);
         setSector(sector);
+    }
+
+    void setTrackSector(TSPair ts)
+    {
+        setTrackSector(ts.track(),ts.sector());
     }
 
     void setTrack(int track) { m_track = track; }

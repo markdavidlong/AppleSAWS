@@ -1,7 +1,7 @@
 #ifndef GENERICFILE_H
 #define GENERICFILE_H
 
-#include "diskfile.h"
+#include "dos33diskimage.h"
 
 #include <QByteArray>
 #include <QString>
@@ -27,15 +27,21 @@ public:
     virtual void setLength(quint16 length) { m_length = length; }
     virtual quint16 length() const { return m_length; }
 
-    DiskFile *diskFile() const { return m_diskfile; }
-    void setDiskFile(DiskFile *diskfile) { m_diskfile = diskfile; }
+    Dos33DiskImage *diskFile() const { return m_diskfile; }
+    void setDiskFile(Dos33DiskImage *diskfile) { m_diskfile = diskfile; }
+
+    void setFileType(QString type) { m_file_type = type; }
+    QString getFileType() const;
 
 protected:
+
     QByteArray m_data;
     QString m_filename;
     quint16 m_address;
     qint16 m_length;
-    DiskFile * m_diskfile;
+    Dos33DiskImage * m_diskfile;
+
+    QString m_file_type;
 
 };
 

@@ -1,0 +1,95 @@
+#include "dos33imagemodel.h"
+
+#include <QIcon>
+
+#include "tspair.h"
+
+Dos33ImageModel::Dos33ImageModel(QObject *parent) : QStandardItemModel(parent)
+{
+    setHorizontalHeaderLabels({"Disk Images"});
+
+    m_icon_A = QIcon(":/A_YELLOW.png");
+    m_icon_a = QIcon(":/A_GREY.png");
+    m_icon_B = QIcon(":/B_GREEN.png");
+    m_icon_b = QIcon(":/B_GREY.png");
+    m_icon_R = QIcon(":/R_MAGENTA.png");
+    m_icon_S = QIcon(":/S_ORANGE.png");
+    m_icon_T = QIcon(":/T_CYAN.png");
+    m_icon_I = QIcon(":/I_RED.png");
+    m_icon_disk = QIcon(":/disk.png");
+}
+
+Dos33ImageModel::~Dos33ImageModel()
+{
+
+}
+
+bool Dos33ImageModel::addDiskImage(Dos33DiskImage *image, QString name)
+{
+    if (!image) { return false; }
+
+    if (name.isEmpty()) { name = image->getDiskImageName(); }
+
+    if (m_images.contains(name)) { return false; }
+
+    auto diskImageItem = new Dos33TreeItem(name);
+    invisibleRootItem()->appendRow(diskImageItem);
+
+
+    foreach (auto sector, image->getCatalogSectors())
+    {
+        foreach (auto fde, sector.getFDEs())
+        {
+            if (!fde.deleted)
+            {
+                QString fn = AppleString(fde.filename).appleFontPrintable();
+                QString type = fde.fileType();
+
+                QIcon icon;
+                if (type == "A") { icon = m_icon_A; }
+                else if (type == "B") { icon = m_icon_B; }
+                else if (type == "T") { icon = m_icon_T; }
+                else if (type == "R") { icon = m_icon_R; }
+                else if (type == "I") { icon = m_icon_I; }
+                else if (type == "a") { icon = m_icon_a; }
+                else if (type == "b") { icon = m_icon_b; }
+                else { icon = m_icon_S; }
+
+                auto item = new Dos33TreeItem(icon,fn);
+
+
+                QVariant data;
+                data.setValue(fde.firstTSListSector());
+                item->setData(data);
+                item->setToolTip(QString("%1 Block(s)").arg(fde.lengthInSectors));
+                diskImageItem->appendRow(item);
+            }
+        }
+    }
+
+    auto sectors = new Dos33TreeItem("Track/Sector");
+    diskImageItem->appendRow(sectors);
+
+    for (int track = 0; track < image->tracks(); track++)
+    {
+        auto trk = new Dos33TreeItem(m_icon_disk, QString("Track %1").arg(track));
+        sectors->appendRow(trk);
+        for (int sector = 0; sector < image->sectorsPerTrack(); sector++)
+        {
+            auto sec = new Dos33TreeItem(m_icon_disk, QString("Sector %1").arg(sector));
+            trk->appendRow(sec);
+        }
+    }
+
+    return true;
+}
+
+Dos33DiskImage *Dos33ImageModel::getDiskImage(QString name)
+{
+    return nullptr;
+}
+
+Dos33DiskImage *Dos33ImageModel::removeDiskImage(QString name)
+{
+    return nullptr;
+}

@@ -3,7 +3,6 @@
 
 CatalogSector::CatalogSector(Sector *data)
 {
- //   qDebug() << "### Start CatalogSector ctor";
     m_data = data;
 
     m_next = TSPair(0,0);
@@ -12,22 +11,19 @@ CatalogSector::CatalogSector(Sector *data)
 
     if (next.isValid() && next.track() == 17)
     {
-        next.dump();
-    //    qDebug("Next track sector is valid.");
+ //       next.dump();
         m_next = next;
     }
     else
     {
-        qWarning() << "Track sector " << next.track() << "," << next.sector() << "is invalid! Not adding to catalog.";
-        m_next.dump();
+     //   qWarning() << "Track sector " << next.track() << "," << next.sector() << "is invalid! Not adding to catalog.";
+   //     m_next.dump();
     }
-    //m_next.setTrack(m_data->rawData()[0x01]);
-    //m_next.setSector(m_data->rawData()[0x02]);
 
     for (int idx = 0; idx<7; idx++)
     {
         FileDescriptiveEntry fde = makeFDE(idx*0x23+0x0B);
-        if (fde.firstTSListSector() != TSPair(0,0)) {
+        if (fde.firstTSListSector() !=  TSPair(0,0)) {
             if (fde.firstTSListSector().isValid())
             {
                 m_fdes.append(fde);
@@ -36,7 +32,6 @@ CatalogSector::CatalogSector(Sector *data)
         }
     //    else { qWarning("fde.firstTSListSector() is 0,0"); }
     }
-  //  qDebug() << "### End CatalogSector ctor";
 }
 
 void CatalogSector::dumpFDEs() {
@@ -53,12 +48,14 @@ void CatalogSector::dumpFDEs() {
 FileDescriptiveEntry CatalogSector::makeFDE(int offset)
 {
     FileDescriptiveEntry fde;
-    fde.firstTSListSector().setTrack(m_data->rawData()[offset + 0x00]);
-    fde.firstTSListSector().setSector(m_data->rawData()[offset + 0x01]);
-    fde.fileTypeAndFlags = m_data->rawData()[offset + 0x02];
+    TSPair first(m_data->rawData()[offset + 0x00],m_data->rawData()[offset + 0x01]);
+    fde.setFirstTSListSector(first);
+
     fde.lengthInSectors = makeWord( m_data->rawData()[offset + 0x21],
                                      m_data->rawData()[offset + 0x22]);
     
+    fde.fileTypeFlags = m_data->rawData()[offset + 0x02];
+
     if (fde.lengthInSectors > 16*35)
     {
         fde.lengthInSectors = -1;
@@ -70,11 +67,12 @@ FileDescriptiveEntry CatalogSector::makeFDE(int offset)
 
     if (fde.firstTSListSector().track() == 0xFF)
     {
-        //TODO: Double check this stuff. applevision.dsk is a good example.
         qDebug() << "File" << fde.filename.printable() << "is deleted";
         fde.deleted = true;
         qDebug() << fde.filename;
-        fde.firstTSListSector().setTrack(m_data->rawData()[offset + 0x20]);
+        TSPair first = fde.firstTSListSector();
+        first.setTrack(m_data->rawData()[offset + 0x20]);
+        fde.setFirstTSListSector(first);
         qDebug() << "   New track: " <<  (quint8) fde.firstTSListSector().track();
         qDebug() << "   Sector: " << fde.firstTSListSector().sector();
     }

@@ -22,12 +22,13 @@ void Sector::dump() {
     for (int jdx = 0; jdx < 16; jdx++)
     {
         QString line;
-        line += QString("%1 (%2): ").arg(jdx*16,2,16,QChar('0')).arg(jdx*16,3,10,QChar(' '));
+        line += QString("%1 (%2): ")
+                .arg(uint16ToHex(jdx*16)).arg(jdx*16,3,10,QChar(' '));
         for (int idx = 0; idx < 16; idx++)
         {
             int offset = (jdx*16) + idx;
             quint8 val = m_data[offset];
-            line +=  QString("%1 ").arg(val,2,16,QChar('0'));
+            line +=  QString("%1 ").arg(uint16ToHex(val));
             if (idx == 7) line += " ";
         }
         line = line.toUpper();

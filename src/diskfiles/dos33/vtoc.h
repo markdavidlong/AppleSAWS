@@ -3,6 +3,8 @@
 
 #include <Qt>
 #include "util.h"
+#include "tspair.h"
+
 class Sector;
 class QString;
 
@@ -22,7 +24,10 @@ public:
     quint8 tracksPerDisk();
     quint8 sectorsPerDisk();
     qint16 bytesPerSector();
-    bool isSectorInUse(TSPair ts);
+    bool isSectorInUse(TSPair ts) const;
+
+    QList<TSPair> sectorsInUse() const;
+    QList<TSPair> sectorsNotInUse() const;
 
 private:
     QString buildUseString(quint8 track);

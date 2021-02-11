@@ -5,6 +5,7 @@
 #include <QByteArray>
 #include <QDebug>
 
+#include "tspair.h"
 #include "util.h"
 #include "applestring.h"
 #include "filedescriptiveentry.h"

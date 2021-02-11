@@ -1,18 +1,18 @@
 #ifndef FILEDESCRIPTIVEENTRY_H
 #define FILEDESCRIPTIVEENTRY_H
 
-#include "util.h"
+#include "tspair.h"
 #include <QDebug>
 #include "applestring.h"
 
 struct FileDescriptiveEntry {
-    int fileTypeAndFlags;
+    quint8  fileTypeFlags;
     AppleString filename;
     quint16 lengthInSectors;
     bool deleted;
 
     FileDescriptiveEntry() {
-        fileTypeAndFlags = 0;
+        fileTypeFlags = 0;
         lengthInSectors = 0;
         deleted = false;
     }
@@ -22,23 +22,23 @@ struct FileDescriptiveEntry {
     }
 
     QString fileType() {
-        if (fileTypeAndFlags & DOSIntegerBasicFile) { return "I"; }
-        if (fileTypeAndFlags & DOSApplesoftBasicFile) { return "A"; }
-        if (fileTypeAndFlags & DOSRelocatableFile) { return "R"; }
-        if (fileTypeAndFlags & DOSRawBinaryFile) { return "B"; }
-        if (fileTypeAndFlags & DOSTypeSFile) { return "S"; }
-        if (fileTypeAndFlags & DOSTypeAFile) { return "a"; }
-        if (fileTypeAndFlags & DOSTypeBFile) { return "b"; }
+        if (fileTypeFlags & (quint8) FileTypeFlag::Integer) { return "I"; }
+        if (fileTypeFlags & (quint8) FileTypeFlag::Applesoft) { return "A"; }
+        if (fileTypeFlags & (quint8) FileTypeFlag::Relocatable) { return "R"; }
+        if (fileTypeFlags & (quint8) FileTypeFlag::Binary) { return "B"; }
+        if (fileTypeFlags & (quint8) FileTypeFlag::TypeS) { return "S"; }
+        if (fileTypeFlags & (quint8) FileTypeFlag::TypeA) { return "a"; }
+        if (fileTypeFlags & (quint8) FileTypeFlag::TypeB) { return "b"; }
         return "T";
     }
 
-    bool isLocked() { return (fileTypeAndFlags & DOSIsLocked); }
+    bool isLocked() { return (fileTypeFlags & (quint8) FileTypeFlag::IsLockedFlag); }
 
     void dump() {
         
 	    qDebug() << "First TS List Sector: Track: " << QString("%1").arg(firstTSListSector().track(),2,16,QChar('0')).toUpper()
                                      << " Sector: " << QString("%1").arg(firstTSListSector().sector(),2,16,QChar('0')).toUpper();
-        qDebug() << "File Type and Flags: " << QString::number((quint8)fileTypeAndFlags) << "(" << fileType() << "," << (isLocked()?"Locked":"Unlocked") << ")";
+        qDebug() << "File Type and Flags: " << QString::number((quint8) fileTypeFlags) << "(" << fileType() << "," << (isLocked()?"Locked":"Unlocked") << ")";
         qDebug() << "Filename: " << filename.printable();
         qDebug() << "Length in Sectors: " << lengthInSectors;
     }
@@ -62,7 +62,7 @@ struct FileDescriptiveEntry {
 			m_firstTSListSector = TSPair(0,0); 
 		} 
     }
-    TSPair &firstTSListSector()  { return m_firstTSListSector; }
+    TSPair firstTSListSector() const { return m_firstTSListSector; }
 
 private:
     TSPair m_firstTSListSector;

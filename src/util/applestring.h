@@ -22,7 +22,7 @@ public:
     static TextSet getTextSet(quint8 val) ;
     static QChar printable(quint8 val) ;
     static QString getHtmlString(quint8 val);
-
+    static QChar getAppleFontChar(quint8 val);
 
 private:
     quint8 m_val;
@@ -32,6 +32,7 @@ class AppleString : public QByteArray {
 public:
     void setData(const QByteArray &data) { insert(0,data); }
     QString printable() const;
+    QString appleFontPrintable() const;
     QVector<TextAttribute> attributes() const;
 
 };

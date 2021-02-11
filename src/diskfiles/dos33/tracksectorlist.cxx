@@ -22,3 +22,25 @@ TrackSectorList::TrackSectorList(Sector *data)
         }
     }
 }
+
+bool TrackSectorList::isNextTSListValid() const
+{
+    return getNextTSList().isValid();
+}
+
+bool TrackSectorList::isSectorOffsetValid() const
+{
+    return getSectorOffset().isValid();
+}
+
+QList<TSPair> TrackSectorList::getValidTSPairs() const
+{
+    QList<TSPair> retval;
+
+    foreach (auto item, m_ts_pairs_for_data)
+    {
+        if (item.isValid()) { retval.append(item); }
+    }
+
+    return retval;
+}

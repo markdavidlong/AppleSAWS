@@ -15,3 +15,17 @@ void GenericFile::setData(QByteArray data)
     m_data = data;
     m_length = data.size();
 }
+
+QString GenericFile::getFileType() const
+{
+    if (m_file_type == "A" || m_file_type == "B" || m_file_type == "T" ||
+        m_file_type == "I" || m_file_type == "R" || m_file_type == "S" ||
+        m_file_type == "a" || m_file_type == "b")
+    {
+        return m_file_type;
+    }
+    else
+    {
+        return "?";
+    }
+}
