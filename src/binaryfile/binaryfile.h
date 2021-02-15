@@ -5,15 +5,15 @@
 
 class BinaryFile : public GenericFile
 {
-public:
-    BinaryFile(QByteArray data = QByteArray());
-    void setData(QByteArray data) override;
+    friend class Dos33DiskImage;
 
-    virtual quint16 length() const override { return m_length; }
+public:
 
     void dump();
 
 protected:
+    BinaryFile(QByteArray data = QByteArray());
+    void setData(QByteArray data) override;
 };
 
 #endif // BINARYFILE_H

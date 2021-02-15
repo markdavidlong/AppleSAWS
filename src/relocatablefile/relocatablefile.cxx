@@ -10,18 +10,18 @@ RelocatableFile::RelocatableFile(QByteArray data) : GenericFile(data)
     }
 }
 
-void RelocatableFile::setData(QByteArray data)
+void RelocatableFile::setData(QByteArray /*data*/)
 {
  //   qDebug() << "setData()";
-    if (data.length() >= 6) {
-        m_starting_ram_address = makeWord(m_data[0],m_data[1]);
-        m_ram_image_length = makeWord(m_data[2],m_data[3]);
-        m_code_image_length = makeWord(m_data[4],m_data[5]);
+    if (length() >= 6) {
+        m_starting_ram_address = dataWordAt(0);
+        m_ram_image_length = dataWordAt(2);
+        m_code_image_length = dataWordAt(4);
 
         int offset = 0;
 
         for (int idx = 6; idx < m_code_image_length+6; idx++) {
-            quint8 val = m_data[idx];
+            quint8 val = dataAt(idx);
             m_binary_code_image.append(val);
         }
 
@@ -33,14 +33,12 @@ void RelocatableFile::setData(QByteArray data)
 //                    << uint8ToHex(m_data[offset+2])
 //                    << uint8ToHex(m_data[offset+3]);
 
-            RelocatableDictItem rdi = RelocatableDictItem(m_data[offset],m_data[offset+1],
-                    m_data[offset+2],m_data[offset+3]);
+            RelocatableDictItem rdi = RelocatableDictItem(
+                        dataAt(offset),dataAt(offset+1),
+                        dataAt(offset+2),dataAt(offset+3));
             m_relocatable_dict.append(rdi);
             if (rdi.isEndOfRLD()) { break; }
         }
-
-
-
     }
 }
 

@@ -8,10 +8,6 @@ TextFile::TextFile(QByteArray data) : GenericFile(data)
     }
 }
 
-void TextFile::setData(QByteArray data)
-{
-    m_data = data;
-}
 
 void TextFile::dump()
 {

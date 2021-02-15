@@ -8,29 +8,37 @@
 #include <QColor>
 #include <QGroupBox>
 #include <QLabel>
+#include <QToolButton>
 
 
 #include "dos33diskimage.h"
 
 
-class DEButton : public QPushButton
+class DEButton : public QToolButton
 {
     Q_OBJECT
+
 public:
-    DEButton(QWidget *parent,int track = -1, int sec = -1) : QPushButton(parent)
+
+    DEButton(QWidget *parent,int track = -1, int sec = -1) : QToolButton(parent)
     {
         setTrack(track);
         setSector(sec);
         connect(this, &DEButton::clicked, this, &DEButton::handleClick);
         m_isHighlighted = false;
     }
+
     void setTrack(int track) { m_track = track; }
     void setSector(int sector) { m_sector = sector; }
 
     int track() const { return m_track; }
     int sector() const { return m_sector; }
 
-    void clearBgColor() { m_backgroundColor = ""; setText(""); setStyleSheet(makeStyleSheet());}
+    void clearBgColor() {
+        m_backgroundColor = "";
+        setText("");
+        setStyleSheet(makeStyleSheet());
+    }
 
     void setBgColor(QColor color) {
         m_fgColor = determineFgColor(color).name();
@@ -40,9 +48,18 @@ public:
     }
 
     bool highlighted() const { return m_isHighlighted; }
-    void setHighlighted(bool highlighted) { m_isHighlighted = highlighted;setStyleSheet(makeStyleSheet()); }
 
-    void reset() { setHighlighted(false); setChecked(false); makeStyleSheet(); qDebug() << "Reset";}
+    void setHighlighted(bool highlighted) {
+        m_isHighlighted = highlighted;
+        setStyleSheet(makeStyleSheet());
+    }
+
+    void reset() {
+        setHighlighted(false);
+        setChecked(false);
+        makeStyleSheet();
+        qDebug() << "Reset";
+    }
 
     void resetToDefault() { clearBgColor(); reset(); }
 
@@ -59,28 +76,41 @@ signals:
     void checked(int track, int sec,bool );
 
 private slots:
-    void handleClick(bool isChecked) { emit checked(m_track,m_sector,isChecked); }
+    void handleClick(bool isChecked) {
+        emit checked(m_track,m_sector,isChecked);
+    }
 
-    QSize minimumSizeHint() const Q_DECL_OVERRIDE { return QSize(24,24); }
+    QSize minimumSizeHint() const Q_DECL_OVERRIDE { return QSize(12,12); }
     QSize sizeHint() const Q_DECL_OVERRIDE { return QSize(24,24); }
     bool hasHeightForWidth() const Q_DECL_OVERRIDE { return true; }
     int heightForWidth(int width) const Q_DECL_OVERRIDE { return width; }
 
 private:
+
     QString makeStyleSheet() const {
-        return QString(" QPushButton {  font: 10px; border-width: 1px; color: %1; background-color: %2} "
-                       " QPushButton:checked { font: bold italic 11px; } "
-               ) .arg(m_fgColor)
+        return QString("DEButton {                  "
+                       "    font: 10px;             "
+                       "    border-width: 1px;      "
+                       "    color: %1;              "
+                       "    background-color: %2    "
+                       "}                           "
+                       "                            "
+                       "DEButton:checked {          "
+                       "    font: bold italic 11px; "
+                       "}"
+               ).arg(m_fgColor)
                 .arg(m_backgroundColor);
     }
 
     int m_track;
     int m_sector;
+
     bool m_isHighlighted;
 
     QString m_fgColor;
     QString m_backgroundColor;
     QString m_hlColor;
+
 };
 
 

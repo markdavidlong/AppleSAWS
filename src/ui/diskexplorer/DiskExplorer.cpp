@@ -36,7 +36,7 @@ DiskExplorer::~DiskExplorer()
 void DiskExplorer::initUi()
 {
     QMenuBar *menuBar = new QMenuBar(this);
-    setMenuBar(menuBar);
+   setMenuBar(menuBar);
     QMenu *menu = new QMenu(tr("&File"),this);
     menuBar->addMenu(menu);
 
@@ -100,7 +100,7 @@ void DiskExplorer::initUi()
 //    if (!m_notesDialog) m_notesDialog = new NotesDialog(this);
 //    connect(action_Notes, &QAction::triggered, m_notesDialog, &NotesDialog::show);
 
-    QWidget *widget = new QWidget(0);
+    QWidget *widget = new QWidget(nullptr);
     m_gridLayout = new QGridLayout();
     m_gridLayout->setVerticalSpacing(4);
     m_gridLayout->setHorizontalSpacing(4);
@@ -125,7 +125,12 @@ void DiskExplorer::initUi()
     m_key = m_demw->makeKeyWidget();
     m_gridLayout->addWidget(m_key,1,1);
     m_gridLayout->addWidget(m_frame,1,2);
+
     this->setCentralWidget(widget);
+//    auto lo = new QGridLayout();
+//    this->setLayout(lo);
+//    lo->addWidget(widget);
+
 
     connect(m_cw, &CatalogWidget::openWithDefaultViewer,
             this, &DiskExplorer::handleDiskItemSelectedDefaultOpen);

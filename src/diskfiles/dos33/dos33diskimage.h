@@ -11,22 +11,25 @@
 #include "sector.h"
 #include "vtoc.h"
 
+#include "rawdiskimage.h"
+#include "chunkbytelist.h"
+
+
 class GenericFile;
+
+using FileList = QList<GenericFile *>;
 
 class Dos33DiskImage
 {
 public:
     Dos33DiskImage(QString filename = "");
+    Dos33DiskImage(RawDiskImage *rawImage);
     ~Dos33DiskImage();
 
     bool read(QString filename);
 
-    Sector &getSector(TSPair ts) { return m_contents[ts]; }
-
-    Sector &getSector(int track, int sector) {
-        TSPair ts(track,sector);
-        return getSector(ts);
-    }
+    Sector &getSector(TSPair ts);
+    Sector &getSector(int track, int sector);
 
     VTOC getVTOC();
 
@@ -34,34 +37,36 @@ public:
 
     GenericFile *getFile(FileDescriptiveEntry fde);
 
-    QByteArray getDataFromTrackSectorList(TrackSectorList tsl);
+    ChunkByteList getDataFromTrackSectorList(TrackSectorList tsl);
 
     QList<FileDescriptiveEntry> getAllFDEs();
 
     QByteArray fileHash() const { return m_hash; }
 
-    QString getDiskImageName() const { return m_imageName; }
-    QString getFullDiskImageName() const { return m_fullImageName; }
+    QString getDiskImageName() const { return m_disk_image->diskImageName(); }
+    QString getFullDiskImageName() const { return m_disk_image->fullDiskImageName(); }
     QString getMetaDataPath() const;
 
     QString fileType() const { return m_fileType; }
     void setFileType(QString type) { m_fileType = type; }
 
-    quint8 sectorsPerTrack() const { return m_sectors_per_track; }
-    quint8 tracks() const { return 35; }
+    int sectorsPerTrack() const { return m_disk_image->sectorsPerTrack(); }
+    int tracks() const { return m_disk_image->numTracks(); }
+
+    QList<GenericFile *> fileList();
+
+
 
 private:
+
+    RawDiskImage *m_disk_image;
 
     QMap<TSPair, Sector> m_contents;
     QMap<FileDescriptiveEntry, GenericFile *> m_files;
     QByteArray m_hash;
 
-    QString m_imageName;
-    QString m_fullImageName;
-
     QString m_fileType;
 
-    quint8 m_sectors_per_track;
 
 };
 

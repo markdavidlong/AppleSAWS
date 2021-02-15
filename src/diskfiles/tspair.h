@@ -8,10 +8,10 @@ class TSPair
 {
 public:
     TSPair() { m_track = m_sector = 0; }
-    TSPair(quint8 trackval, quint8 secval) { m_track=trackval; m_sector = secval; }
-    TSPair(QPair<quint8,quint8> pair) { m_track = pair.first; m_sector = pair.second;}
+    TSPair(int trackval, int secval) { m_track=trackval; m_sector = secval; }
+    TSPair(QPair<int,int> pair) { m_track = pair.first; m_sector = pair.second;}
 
-    void setTrack(quint8 tracknum)
+    void setTrack(int tracknum)
     {
         if (tracknum > 34 && tracknum != 0xff) {
             qWarning("Setting a track with value %d (> 34 and not 256).",tracknum);
@@ -34,8 +34,8 @@ public:
 
         return retval; }
 
-    quint8 track() const { return m_track; }
-    quint8 sector() const { return m_sector; }
+    int  track() const { return m_track; }
+    int sector() const { return m_sector; }
 
     bool operator==(const TSPair &other) const {
         if (other.track() == track() && other.sector() == sector()) return true;
@@ -57,14 +57,14 @@ public:
         }
     }
 
-    QPair<quint8,quint8> toQPair() { return QPair<quint8,quint8>(track(),sector()); }
+    QPair<int,int> toQPair() { return QPair<quint8,quint8>(track(),sector()); }
 
     void dump() const {
         qDebug() << "TSPair: track: " << track() << " sector: " << sector();
     }
 private:
-    quint8 m_track;
-    quint8 m_sector;
+    int m_track;
+    int m_sector;
 };
 Q_DECLARE_METATYPE(TSPair);
 

@@ -3,8 +3,9 @@
 
 #include "dos33diskimage.h"
 #include "dos33imagemodel.h"
-
+#include "dos33disktreeview.h"
 #include "sequencetoolbox.h"
+#include "DiskExplorerMapWidget.h"
 
 #include <QTreeView>
 #include <QAction>
@@ -15,6 +16,9 @@
 #include <QDockWidget>
 #include <QGridLayout>
 #include <QStatusBar>
+#include <QStackedWidget>
+#include <QScrollArea>
+
 
 #include <QFile>
 
@@ -36,8 +40,8 @@ CentralAppWindow::CentralAppWindow(QWidget *parent) : QMainWindow(parent)
     initToolBars();
     initDockWidgets();
     initStatusBar();
+    initCentralWidget();
 
-    setCentralWidget(new SequenceViewer());
 }
 
 void CentralAppWindow::createActions()
@@ -74,14 +78,13 @@ void CentralAppWindow::initToolBars()
 void CentralAppWindow::initDockWidgets()
 {
     QDockWidget *container = new QDockWidget(this);
-    //   container->setLayout(new QGridLayout());
     container->setMinimumWidth(200);
     container->setFeatures(QDockWidget::DockWidgetMovable);
 
     m_project_area = new QWidget(container);
     m_project_area->setMinimumSize(300,200);
 
-    m_directory_area = new QTreeView(container);
+    m_directory_area = new Dos33DiskTreeView(container);
     m_directory_area->setFont(QFont("Pr Number 3", 12));
     m_directory_area->setMinimumSize(300,200);
 
@@ -114,7 +117,7 @@ void CentralAppWindow::initDockWidgets()
     QDockWidget *stb = new QDockWidget(this);
     stb->setMinimumWidth(200);
     stb->setFeatures(QDockWidget::DockWidgetMovable);
-    stb->setLayout(new QGridLayout());
+ //   stb->setLayout(new QGridLayout());
 
     m_toolbox = new SequenceToolBox(this);
 
@@ -123,4 +126,21 @@ void CentralAppWindow::initDockWidgets()
     addDockWidget(Qt::RightDockWidgetArea,stb);
 
 
+}
+
+void CentralAppWindow::initCentralWidget()
+{
+    m_central_stack = new QStackedWidget(this);
+    QScrollArea *sa = new QScrollArea(m_central_stack);
+    sa->setWidgetResizable(true);
+    m_central_stack->addWidget(sa);
+
+    setCentralWidget(m_central_stack);
+
+    Dos33DiskImage *img =  new Dos33DiskImage("c:/develop/git/AppleSAWS/disk-images/ApplesoftToolkit.dsk");
+    auto dew =  new DiskExplorerMapWidget(img->tracks(),img->sectorsPerTrack());
+    dew->setDisk(img);
+    sa->setWidget(dew);
+ //   m_central_stack->addWidget(dew);
+//new SequenceViewer()
 }

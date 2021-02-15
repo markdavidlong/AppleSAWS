@@ -36,6 +36,8 @@ INCLUDEPATH += src/ui/central
 DEFINES += WS_VIDEO
 
 SOURCES += \
+    src/diskfiles/dos33/dos33disktreeview.cpp \
+    src/diskfiles/rawdiskimage.cpp \
     src/intbasic/IntBasicFile.cxx \
     src/main.cpp \
     src/diskfiles/dos33/dos33diskimage.cxx \
@@ -45,7 +47,7 @@ SOURCES += \
     src/diskfiles/dos33/tracksectorlist.cxx \
     src/diskfiles/dos33/filedescriptiveentry.cxx \
     src/diskfiles/dos33/genericfile.cxx \
-    src/diskfiles/dos33/tspair.cpp \
+    src/diskfiles/tspair.cpp \
     src/diskfiles/dos33/dos33imagemodel.cpp \
     src/diskfiles/dos33/dos33treeitem.cpp \
     src/memory/attributedmemory.cpp \
@@ -101,20 +103,23 @@ SOURCES += \
     src/applesoftfile/ApplesoftRetokenizer.cpp \
     src/internals/JumpLineManager.cpp \
     src/ui/widgets/FlowLineTextBrowser.cpp \
+    src/util/chunkbytelist.cpp \
     src/util/opcodes.cpp
 
 
 HEADERS += \
     src/diskfiles/dos33/dos33diskimage.h \
+    src/diskfiles/dos33/dos33disktreeview.h \
     src/diskfiles/dos33/sector.h \
     src/diskfiles/dos33/vtoc.h \
     src/diskfiles/dos33/catalogsector.h \
     src/diskfiles/dos33/tracksectorlist.h \
     src/diskfiles/dos33/filedescriptiveentry.h \
     src/diskfiles/dos33/genericfile.h \
-    src/diskfiles/dos33/tspair.h \
+    src/diskfiles/tspair.h \
     src/diskfiles/dos33/dos33imagemodel.h\
     src/diskfiles/dos33/dos33treeitem.h\
+    src/diskfiles/rawdiskimage.h \
     src/intbasic/IntBasicFile.h \
     src/memory/attributedmemory.h \
     src/memory/memorycell.h \
@@ -134,6 +139,7 @@ HEADERS += \
     src/ui/startupdialog.h \
     src/ui/viewers/intbasicfileviewer.h \
     src/ui/widgets/notesdialog.h \
+    src/util/chunkbytelist.h \
     src/util/opcodes.h \
     src/util/util.h \
     src/util/applestring.h \

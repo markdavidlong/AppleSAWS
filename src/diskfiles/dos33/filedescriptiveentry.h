@@ -21,15 +21,15 @@ struct FileDescriptiveEntry {
         return f1.filename < filename;
     }
 
-    QString fileType() {
-        if (fileTypeFlags & (quint8) FileTypeFlag::Integer) { return "I"; }
-        if (fileTypeFlags & (quint8) FileTypeFlag::Applesoft) { return "A"; }
-        if (fileTypeFlags & (quint8) FileTypeFlag::Relocatable) { return "R"; }
-        if (fileTypeFlags & (quint8) FileTypeFlag::Binary) { return "B"; }
-        if (fileTypeFlags & (quint8) FileTypeFlag::TypeS) { return "S"; }
-        if (fileTypeFlags & (quint8) FileTypeFlag::TypeA) { return "a"; }
-        if (fileTypeFlags & (quint8) FileTypeFlag::TypeB) { return "b"; }
-        return "T";
+    QString fileTypeIdentifier() {
+        if      (fileTypeFlags & (quint8) FileTypeFlag::Integer)     { return "I"; }
+        else if (fileTypeFlags & (quint8) FileTypeFlag::Applesoft)   { return "A"; }
+        else if (fileTypeFlags & (quint8) FileTypeFlag::Relocatable) { return "R"; }
+        else if (fileTypeFlags & (quint8) FileTypeFlag::Binary)      { return "B"; }
+        else if (fileTypeFlags & (quint8) FileTypeFlag::TypeS)       { return "S"; }
+        else if (fileTypeFlags & (quint8) FileTypeFlag::TypeA)       { return "a"; }
+        else if (fileTypeFlags & (quint8) FileTypeFlag::TypeB)       { return "b"; }
+        else return "T";
     }
 
     bool isLocked() { return (fileTypeFlags & (quint8) FileTypeFlag::IsLockedFlag); }
@@ -38,7 +38,7 @@ struct FileDescriptiveEntry {
         
 	    qDebug() << "First TS List Sector: Track: " << QString("%1").arg(firstTSListSector().track(),2,16,QChar('0')).toUpper()
                                      << " Sector: " << QString("%1").arg(firstTSListSector().sector(),2,16,QChar('0')).toUpper();
-        qDebug() << "File Type and Flags: " << QString::number((quint8) fileTypeFlags) << "(" << fileType() << "," << (isLocked()?"Locked":"Unlocked") << ")";
+        qDebug() << "File Type and Flags: " << QString::number((quint8) fileTypeFlags) << "(" << fileTypeIdentifier() << "," << (isLocked()?"Locked":"Unlocked") << ")";
         qDebug() << "Filename: " << filename.printable();
         qDebug() << "Length in Sectors: " << lengthInSectors;
     }
@@ -46,7 +46,7 @@ struct FileDescriptiveEntry {
     void catalog() {
         QString output = QString("%1 %2 %3 %4").arg(QString(isLocked()?"*":" "))
                                      .arg(lengthInSectors,3,10,QChar('0'))
-                                     .arg(fileType())
+                                     .arg(fileTypeIdentifier())
                                      .arg(filename.printable().trimmed());
         qDebug() << output;
     }
@@ -68,5 +68,5 @@ private:
     TSPair m_firstTSListSector;
 
 };
-
+Q_DECLARE_METATYPE(FileDescriptiveEntry);
 #endif // FILEDESCRIPTIVEENTRY_H

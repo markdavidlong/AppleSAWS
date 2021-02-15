@@ -3,19 +3,13 @@
 #include <QString>
 #include <QDebug>
 
-QByteRef Sector::operator[](uint offset) {
+quint8 Sector::operator[](uint offset) const {
     if (offset > 255) {
         offset = 255;
     }
-    return m_data[offset];
+    return m_raw_data->at(offset);
 }
 
-bool Sector::setData(QByteArray data) {
-    if (data.length() != 256) return false;
-
-    m_data = data;
-    return true;
-}
 
 void Sector::dump() {
     qDebug() << "Dumping Track " << track() << "Sector " << sector() << " ...";
@@ -27,7 +21,7 @@ void Sector::dump() {
         for (int idx = 0; idx < 16; idx++)
         {
             int offset = (jdx*16) + idx;
-            quint8 val = m_data[offset];
+            quint8 val = m_raw_data->at(offset);
             line +=  QString("%1 ").arg(uint16ToHex(val));
             if (idx == 7) line += " ";
         }
@@ -36,7 +30,7 @@ void Sector::dump() {
         for (int idx = 0; idx < 16; idx++)
         {
             int offset = (jdx*16) + idx;
-            quint8 val = m_data[offset];
+            quint8 val = m_raw_data->at(offset);
             if (val > 127) { val -= 128; }
             QChar ch(val);
             line +=  QString("%1").arg(ch.isPrint()?ch:'.');

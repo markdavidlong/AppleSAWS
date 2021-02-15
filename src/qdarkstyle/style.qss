@@ -1,12 +1,4 @@
-/* ---------------------------------------------------------------------------
 
-    Created by the qtsass compiler v0.1.1
-
-    The definitions are in the "qdarkstyle.qss._styles.scss" module
-
-    WARNING! All changes made in this file will be lost!
-
---------------------------------------------------------------------------- */
 /* QDarkStyleSheet -----------------------------------------------------------
 
 This is the main style sheet, the palette has nine colors.
@@ -1010,7 +1002,7 @@ QPushButton {
   padding: 3px;
   outline: none;
   /* Issue #194 - Special case of QPushButton inside dialogs, for better UI */
-  min-width: 80px;
+   min-width: 80px;
 }
 
 QPushButton:disabled {
@@ -2187,3 +2179,13 @@ background-color: #32414B;
 color: #aaa;
 }
 
+
+DEButton {
+  background-color: #505F69;
+  border: 1px solid #32414B;
+  color: #F0F0F0;
+  border-radius: 4px;
+  padding: 2px;
+  outline: none;
+   min-width: 10px;
+}

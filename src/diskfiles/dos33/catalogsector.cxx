@@ -7,7 +7,7 @@ CatalogSector::CatalogSector(Sector *data)
 
     m_next = TSPair(0,0);
 
-    TSPair next(m_data->rawData()[0x01],m_data->rawData()[0x02]);
+    TSPair next(m_data->at(0x01),m_data->at(0x02));
 
     if (next.isValid() && next.track() == 17)
     {
@@ -48,13 +48,13 @@ void CatalogSector::dumpFDEs() {
 FileDescriptiveEntry CatalogSector::makeFDE(int offset)
 {
     FileDescriptiveEntry fde;
-    TSPair first(m_data->rawData()[offset + 0x00],m_data->rawData()[offset + 0x01]);
+    TSPair first(m_data->at(offset + 0x00),m_data->at(offset + 0x01));
     fde.setFirstTSListSector(first);
 
-    fde.lengthInSectors = makeWord( m_data->rawData()[offset + 0x21],
-                                     m_data->rawData()[offset + 0x22]);
+    fde.lengthInSectors = makeWord(m_data->at(offset + 0x21),
+                                   m_data->at(offset + 0x22));
     
-    fde.fileTypeFlags = m_data->rawData()[offset + 0x02];
+    fde.fileTypeFlags = m_data->at(offset + 0x02);
 
     if (fde.lengthInSectors > 16*35)
     {
@@ -62,7 +62,7 @@ FileDescriptiveEntry CatalogSector::makeFDE(int offset)
     }
 
     for (int idx = 0x03; idx <= 0x20; idx++) {
-        fde.filename.append(m_data->rawData()[idx+offset]);
+        fde.filename.append(m_data->at(idx+offset));
     }
 
     if (fde.firstTSListSector().track() == 0xFF)
@@ -71,7 +71,7 @@ FileDescriptiveEntry CatalogSector::makeFDE(int offset)
         fde.deleted = true;
         qDebug() << fde.filename;
         TSPair first = fde.firstTSListSector();
-        first.setTrack(m_data->rawData()[offset + 0x20]);
+        first.setTrack(m_data->at(offset + 0x20));
         fde.setFirstTSListSector(first);
         qDebug() << "   New track: " <<  (quint8) fde.firstTSListSector().track();
         qDebug() << "   Sector: " << fde.firstTSListSector().sector();

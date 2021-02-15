@@ -16,80 +16,104 @@
 
 Dos33DiskImage::Dos33DiskImage(QString filename)
 {
+    m_disk_image = new RawDiskImage(filename);
+
     if (!filename.isEmpty())
     {
         read(filename);
     }
 }
 
+Dos33DiskImage::Dos33DiskImage(RawDiskImage *rawImage)
+{
+    m_disk_image = rawImage;
+}
+
 Dos33DiskImage::~Dos33DiskImage()
 {
-    foreach (GenericFile *file, m_files)
-    {
-        delete file;
-    }
+//    foreach (GenericFile *file, m_files)
+//    {
+//        delete file;
+//    }
 }
 
 bool Dos33DiskImage::read(QString filename)
 {
-    m_fullImageName = filename;
-    m_imageName = QFileInfo(filename).fileName();
-    if (m_imageName.toUpper().contains(".D13"))
-    {
-        m_sectors_per_track = 13;
-    }
-    else
-    {
-        m_sectors_per_track = 16;
-    }
+    bool retval = m_disk_image->read(filename);
 
-    QFile infile(filename);
-    QCryptographicHash hash(QCryptographicHash::Md5);
-
-    if (infile.open(QIODevice::ReadOnly))
+    if (retval)
     {
-        QByteArray contents = infile.readAll();
-        int expectedsize = sectorsPerTrack() * tracks() * 256;
-        if (contents.size() != expectedsize)
+        for (auto tracknum = 0; tracknum < m_disk_image->numTracks(); tracknum++)
         {
-            if (contents.size() == 35*16*256) { m_sectors_per_track = 16; }
-            else if (contents.size() == 35*13*256) { m_sectors_per_track = 13; }
-            else qWarning() << QString("Size mismatch in file!  Expected %1, got %2")
-                               .arg(expectedsize)
-                               .arg(contents.size());
-        }
-
-        QDataStream qds(contents);
-        for (int track = 0; track < 35; track++)
-        {
-            for (int sector = 0; sector < m_sectors_per_track; sector++)
+            for (auto secnum = 0; secnum < m_disk_image->sectorsPerTrack(); secnum++)
             {
-                char buffer[256];
-                if (qds.readRawData(buffer,256) == 256)
-                {
-                    TSPair tmpts(track,sector);
-                    Sector newSec;
-                    newSec.setTrackSector(tmpts);
-                    newSec.setData(QByteArray(buffer,256));
-                    m_contents[tmpts] = newSec;
-                }
-                else
-                {
-                    qDebug() << "Invalid sector read!";
-                    return false;
-                }
+                TSPair tmpts(tracknum,secnum);
+                Sector newSec;
+                SectorData * data = m_disk_image->sectorAt(tmpts);
+                newSec.setData(data);
+                newSec.setTrackSector(tmpts);
+                m_contents[tmpts] = newSec;
             }
         }
-        hash.addData(contents);
-
-        m_hash = hash.result();
-        //     qDebug() << "Hash: " << m_hash;
-
-        return true;
     }
-    else
-        qDebug() << "Could not open file " << filename;
-    return false;
+
+    return retval;
+
+//    m_fullImageName = filename;
+//    m_imageName = QFileInfo(filename).fileName();
+//    QFile infile(filename);
+//    QCryptographicHash hash(QCryptographicHash::Md5);
+
+//    if (infile.open(QIODevice::ReadOnly))
+//    {
+//        QByteArray contents = infile.readAll();
+//        int expectedsize = sectorsPerTrack() * tracks() * 256;
+//        if (contents.size() != expectedsize)
+//        {
+//            if (contents.size() == 35*16*256) { m_sectors_per_track = 16; }
+//            else if (contents.size() == 35*13*256) { m_sectors_per_track = 13; }
+//            else qWarning() << QString("Size mismatch in file!  Expected %1, got %2")
+//                               .arg(expectedsize)
+//                               .arg(contents.size());
+//        }
+
+//        QDataStream qds(contents);
+//        for (int track = 0; track < 35; track++)
+//        {
+//            for (int sector = 0; sector < m_sectors_per_track; sector++)
+//            {
+//                char buffer[256];
+//                if (qds.readRawData(buffer,256) == 256)
+//                {
+//                    TSPair tmpts(track,sector);
+//                    Sector newSec;
+//                    newSec.setTrackSector(tmpts);
+//                    newSec.setData(QByteArray(buffer,256));
+//                    m_contents[tmpts] = newSec;
+//                }
+//                else
+//                {
+//                    qDebug() << "Invalid sector read!";
+//                    return false;
+//                }
+//            }
+//        }
+//        hash.addData(contents);
+
+//        m_hash = hash.result();
+//        //     qDebug() << "Hash: " << m_hash;
+
+//        return true;
+//    }
+//    else
+//        qDebug() << "Could not open file " << filename;
+//    return false;
+}
+
+Sector &Dos33DiskImage::getSector(TSPair ts) { return m_contents[ts]; }
+
+Sector &Dos33DiskImage::getSector(int track, int sector)  {
+    return getSector(TSPair(track,sector));
 }
 
 VTOC Dos33DiskImage::getVTOC()
@@ -99,8 +123,6 @@ VTOC Dos33DiskImage::getVTOC()
 
 QList<CatalogSector> Dos33DiskImage::getCatalogSectors()
 {
-    //  qDebug() << "### Start getCatalogSector";
-
     QList<CatalogSector> retval;
     VTOC vtoc = getVTOC();
     TSPair ts = vtoc.firstCatalogSector();
@@ -112,7 +134,6 @@ QList<CatalogSector> Dos33DiskImage::getCatalogSectors()
         cs = getSector(ts).asCatalogSector();
         retval.append(cs);
     }
-    //  qDebug() << "### End getCatalogSector";
 
     return retval;
 }
@@ -138,30 +159,31 @@ GenericFile *Dos33DiskImage::getFile(FileDescriptiveEntry fde)
             qWarning("  Not returning a file from invalid TSList!");
             return nullptr;
         }
-        QByteArray data = getDataFromTrackSectorList(tsl);
-        setFileType(fde.fileType());
 
-        if (fileType() == "A")
-        {
-            retval = new ApplesoftFile(data);
-        }
-        else if (fileType() == "B")
-        {
-            retval = new BinaryFile(data);
-        }
-        else if (fileType() == "R")
-        {
-            retval = new RelocatableFile(data);
-        }
-        else if ((fileType() == "T"))
-        {
-            retval = new TextFile(data);
-        }
-        else if ((fileType() == "I"))
-        {
-            retval = new IntBasicFile(data);
-        }
-        else
+        ChunkByteList data = getDataFromTrackSectorList(tsl);
+        setFileType(fde.fileTypeIdentifier());
+
+//        if (fileType() == "A")
+//        {
+//            retval = new ApplesoftFile(data);
+//        }
+//        else if (fileType() == "B")
+//        {
+//            retval = new BinaryFile(data);
+//        }
+//        else if (fileType() == "R")
+//        {
+//            retval = new RelocatableFile(data);
+//        }
+//        else if ((fileType() == "T"))
+//        {
+//            retval = new TextFile(data);
+//        }
+//        else if ((fileType() == "I"))
+//        {
+//            retval = new IntBasicFile(data);
+//        }
+//        else
         {
             retval = new GenericFile(data);
         }
@@ -173,16 +195,16 @@ GenericFile *Dos33DiskImage::getFile(FileDescriptiveEntry fde)
 }
 
 
-QByteArray Dos33DiskImage::getDataFromTrackSectorList(TrackSectorList tsl)
+ChunkByteList Dos33DiskImage::getDataFromTrackSectorList(TrackSectorList tsl)
 {
-    QByteArray retval;
+    ChunkByteList retval;
 
     foreach(TSPair pair, tsl.getDataTSPairs())
     {
         if (pair.isValid())
         {
             Sector sec = getSector(pair);
-            retval.append(sec.rawData());
+            retval.appendChunk(sec.rawData());
         }
         else
         {
@@ -193,7 +215,7 @@ QByteArray Dos33DiskImage::getDataFromTrackSectorList(TrackSectorList tsl)
     auto next = tsl.getNextTSList();
     if (next.isValid() && next != TSPair(0,0)) {
         TrackSectorList nextTsl = getSector(tsl.getNextTSList()).asTrackSectorList();
-        retval.append(getDataFromTrackSectorList(nextTsl));
+        retval.appendChunkList(getDataFromTrackSectorList(nextTsl));
     }
 
     return retval;
@@ -201,7 +223,6 @@ QByteArray Dos33DiskImage::getDataFromTrackSectorList(TrackSectorList tsl)
 
 QList<FileDescriptiveEntry> Dos33DiskImage::getAllFDEs()
 {
-    //   qDebug() << "### Start getAllFDEs";
     QList<FileDescriptiveEntry> retval;
 
     QList<CatalogSector>  sectors = getCatalogSectors();
@@ -211,7 +232,6 @@ QList<FileDescriptiveEntry> Dos33DiskImage::getAllFDEs()
         QList<FileDescriptiveEntry> fdes = cs.getFDEs();
         retval.append(fdes);
     }
-    //   qDebug() << "### End getAllFDEs";
     return retval;
 }
 
@@ -222,5 +242,10 @@ QString Dos33DiskImage::getMetaDataPath() const {
     dir.mkpath(".");
 
     return path;
+}
+
+FileList Dos33DiskImage::fileList()
+{
+    return { };
 }
 

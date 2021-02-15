@@ -5,6 +5,8 @@
 
 class Sector;
 
+using TSPairList = QList<TSPair>;
+
 class TrackSectorList
 {
 public:
@@ -16,14 +18,14 @@ public:
     TSPair getSectorOffset() const { return m_sector_offset; }
     bool isSectorOffsetValid() const;
 
-    QList<TSPair> getDataTSPairs() const { return m_ts_pairs_for_data; }
-    QList<TSPair> getValidTSPairs() const;
+    TSPairList getDataTSPairs() const { return m_ts_pairs_for_data; }
+    TSPairList getValidTSPairs() const;
 
 
 private:
     TSPair m_next_tslist;
     TSPair m_sector_offset;
-    QList<TSPair> m_ts_pairs_for_data;
+    TSPairList m_ts_pairs_for_data;
 
     Sector *m_data;
 };

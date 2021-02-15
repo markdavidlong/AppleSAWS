@@ -13,40 +13,40 @@ VTOC::VTOC(Sector *data)
 
 TSPair VTOC::firstCatalogSector() {
   //  return TSPair(0x11,0x0f); // Force to look at the normal location
-    return TSPair(m_data->rawData()[0x01], m_data->rawData()[0x02]);
+    return TSPair(m_data->at(0x01), m_data->at(0x02));
 }
 
 quint8 VTOC::dosVersion() {
-    return m_data->rawData()[0x03];
+    return m_data->at(0x03);
 }
 
 quint8 VTOC::volumeNumber() {
-    return m_data->rawData()[0x06];
+    return m_data->at(0x06);
 }
 
 quint8 VTOC::maxTSPairs() {
-    return m_data->rawData()[0x27];
+    return m_data->at(0x27);
 }
 
 quint8 VTOC::lastTrackAllocated() {
-    return m_data->rawData()[0x30];
+    return m_data->at(0x30);
 }
 
 qint8 VTOC::directionOfAllocation() {
-    return m_data->rawData()[0x31];
+    return m_data->at(0x31);
 }
 
 quint8 VTOC::tracksPerDisk() {
-    return m_data->rawData()[0x34];
+    return m_data->at(0x34);
 }
 
 quint8 VTOC::sectorsPerDisk() {
-    return m_data->rawData()[0x35];
+    return m_data->at(0x35);
 }
 
 qint16 VTOC::bytesPerSector() {
-    return makeWord(m_data->rawData()[0x36],
-                    m_data->rawData()[0x37]);
+    return makeWord(m_data->at(0x36),
+                    m_data->at(0x37));
 }
 
 bool VTOC::isSectorInUse(TSPair ts) const {
@@ -55,8 +55,8 @@ bool VTOC::isSectorInUse(TSPair ts) const {
     quint8 baseaddr = (track * 4) + 0x38;
 
     //quint16 word = (((quint16) m_data->rawData()[baseaddr]) *256) + (quint8) m_data->rawData()[baseaddr+1];
-    quint16 word = makeWord(m_data->rawData()[baseaddr+1],
-                            m_data->rawData()[baseaddr]);
+    quint16 word = makeWord(m_data->at(baseaddr+1),
+                            m_data->at(baseaddr));
     quint16 bitpos = (quint16) 0x01 << (quint16) sec;
 
     return !(word & bitpos);
@@ -119,7 +119,7 @@ void VTOC::dump()
     qDebug() << "   Number sectors per disk: " << QString::number(sectorsPerDisk());
     qDebug() << "   Number bytes/sector: " << QString::number(bytesPerSector());
     qDebug() << "   Track Usage (.=free, 0-F=used):";
-    for (quint8 track = 0; track < m_data->rawData()[0x34];track++)
+    for (quint8 track = 0; track < m_data->at(0x34);track++)
     {
         qDebug() << "      " << QString("Track %1:").arg((int) track,2,10,QChar('0')) << buildUseString(track);
     }

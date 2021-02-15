@@ -8,6 +8,7 @@ class QTreeView;
 class QAction;
 class QStatusBar;
 class SequenceToolBox;
+class QStackedWidget;
 
 class CentralAppWindow : public QMainWindow
 {
@@ -22,6 +23,7 @@ private:
     void initStatusBar();
     void initToolBars();
     void initDockWidgets();
+    void initCentralWidget();
 
 private:
     QAction *m_quitAction;
@@ -32,6 +34,8 @@ private:
     QStatusBar *m_status_bar;
 
     SequenceToolBox *m_toolbox;
+
+    QStackedWidget *m_central_stack;
 };
 
 #endif // CENTRALAPPWINDOW_H

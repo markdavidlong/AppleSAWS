@@ -43,7 +43,7 @@ bool Dos33ImageModel::addDiskImage(Dos33DiskImage *image, QString name)
             if (!fde.deleted)
             {
                 QString fn = AppleString(fde.filename).appleFontPrintable();
-                QString type = fde.fileType();
+                QString type = fde.fileTypeIdentifier();
 
                 QIcon icon;
                 if (type == "A") { icon = m_icon_A; }
@@ -53,14 +53,23 @@ bool Dos33ImageModel::addDiskImage(Dos33DiskImage *image, QString name)
                 else if (type == "I") { icon = m_icon_I; }
                 else if (type == "a") { icon = m_icon_a; }
                 else if (type == "b") { icon = m_icon_b; }
-                else { icon = m_icon_S; }
+                else if (type == "S") { icon = m_icon_S; }
 
                 auto item = new Dos33TreeItem(icon,fn);
 
 
-                QVariant data;
-                data.setValue(fde.firstTSListSector());
-                item->setData(data);
+                QVariant typevar = (int) Dos33ItemType::File;
+                item->setData(typevar, (int) Dos33TreeRole::ItemType);
+
+                QVariant datavar;
+                datavar.setValue(fde.firstTSListSector());
+                item->setData(datavar, (int) Dos33TreeRole::GetTSPair);
+
+                QVariant fdevar;
+                fdevar.setValue(fde);
+                item->setData(fdevar, (int) Dos33TreeRole::GetFDE);
+
+
                 item->setToolTip(QString("%1 Block(s)").arg(fde.lengthInSectors));
                 diskImageItem->appendRow(item);
             }

@@ -9,6 +9,20 @@
 
 #include <QIcon>
 
+enum class Dos33TreeRole {
+    ItemType = Qt::UserRole,
+    GetTSPair,
+    GetFDE,
+};
+
+enum class Dos33ItemType {
+    Unknown,
+    Sector,
+    File,
+    DiskImage
+};
+
+
 class Dos33ImageModel : public QStandardItemModel
 {
     Q_OBJECT

@@ -77,12 +77,10 @@ private:
 
 class RelocatableFile : public GenericFile
 {
+    friend class Dos33DiskImage;
+
 public:
 
-    RelocatableFile(QByteArray data = QByteArray());
-    void setData(QByteArray data);
-
-    virtual quint16 length() { return m_data.length(); }
 
     void dump();
 
@@ -95,6 +93,9 @@ public:
     QStringList decodeRelocatableDict();
 
 protected:
+    RelocatableFile(QByteArray data = QByteArray());
+    void setData(QByteArray data);
+
     quint16 m_starting_ram_address;
     quint16 m_ram_image_length;
     quint16 m_code_image_length;

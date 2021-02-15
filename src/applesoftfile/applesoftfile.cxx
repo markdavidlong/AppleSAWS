@@ -11,42 +11,29 @@ ApplesoftFile::ApplesoftFile(QByteArray data) : GenericFile(data)
     m_retokenizer = Q_NULLPTR;
     m_data_end = data.length();
 
-    if (!data.isEmpty())
-    {
-        setData(data);
-    }
     setAddress(0x801);
 }
 
-void ApplesoftFile::setData(QByteArray data)
+void ApplesoftFile::processData()
 {
     if (!m_retokenizer)
     {
         m_retokenizer = new ApplesoftRetokenizer();
     }
 
-    GenericFile::setData(data);
+    m_length = dataWordAt(0);
+    setIgnoreOffset(2);
 
-    quint8 addlo = m_data.at(0);
-    quint8 addhi = m_data.at(1);
-    m_length = makeWord(addlo,addhi);
-    m_data.remove(0,2);
-
-    m_retokenizer->setData(m_data);
+    m_retokenizer->setData(data());
     m_retokenizer->parse();
     m_data_end = m_retokenizer->getEndOfDataOffset();
     m_lines = m_retokenizer->getRetokenizedLines();
 
     m_flowTargets = m_retokenizer->getFlowTargets();
+
 }
 
-QByteArray ApplesoftFile::rawData() {
-    QByteArray retval;
-    retval.append(m_length % 255);
-    retval.append(m_length / 255);
-    retval.append(m_data);
-    return retval;
-}
+
 
 QStringList ApplesoftFile::extraDataHexValues() {
     QStringList retval;
@@ -72,7 +59,7 @@ QStringList ApplesoftFile::extraDataHexValues() {
 
 QByteArray ApplesoftFile::extraData()
 {
-    return m_data.mid(m_data_end);
+    return data().mid(m_data_end);
 }
 
 

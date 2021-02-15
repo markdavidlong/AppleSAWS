@@ -6,11 +6,13 @@
 
 class IntBasicFile : public GenericFile
 {
-public:
-    IntBasicFile(QByteArray data = QByteArray());
+    friend class Dos33DiskImage;
 
+public:
     QByteArray detokenize();
+
 private:
+    IntBasicFile(QByteArray data = QByteArray());
     quint16 get16(quint8 v1, quint8 v2);
     QByteArray dumpBufferAsIntBasicFile(QByteArray origdata);
 };

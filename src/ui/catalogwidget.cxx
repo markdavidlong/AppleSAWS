@@ -42,7 +42,7 @@ QString CatalogWidget::createToolTip(FileDescriptiveEntry &fde) {
     QString retval;
     retval += AppleString(fde.filename).printable().trimmed() +
             (fde.deleted?"(Deleted)":"") + "\n";
-    retval += QString("Type: %1\n").arg(fde.fileType());
+    retval += QString("Type: %1\n").arg(fde.fileTypeIdentifier());
     retval += QString("Sectors: %1 (%2 bytes)\n")
             .arg(fde.lengthInSectors)
             .arg(fde.lengthInSectors*256);
@@ -54,12 +54,12 @@ QString CatalogWidget::createToolTip(FileDescriptiveEntry &fde) {
             .arg(address);
     if (dynamic_cast<BinaryFile*>(file)) {
         BinaryFile *binfile = dynamic_cast<BinaryFile*>(file);
-        quint16 length = binfile->length();
+        auto length = binfile->length();
         retval += QString("Length: $%1 (%2)\n").arg((quint16) (length),4,16,QChar('0'))
                 .arg(length);
     } else if (dynamic_cast<ApplesoftFile*>(file)) {
         ApplesoftFile *asfile = dynamic_cast<ApplesoftFile*>(file);
-        quint16 length = asfile->length();
+        auto length = asfile->length();
         retval += QString("Length: $%1 (%2)\n").arg((quint16) (length),4,16,QChar('0'))
                 .arg(length);
         quint16 uabytes = asfile->extraData().length();
@@ -87,7 +87,7 @@ void CatalogWidget::processNewlyLoadedDisk(QString diskfilename, Dos33DiskImage 
         int idx = 0;
         foreach(FileDescriptiveEntry fde, m_disk->getAllFDEs()) {
     //        qDebug() << "    Processing FDE# " << idx;
-            QString filetype = fde.fileType();
+            QString filetype = fde.fileTypeIdentifier();
             QString filename = AppleString(fde.filename).printable().trimmed();
             quint16 size = fde.lengthInSectors;
             bool locked = fde.isLocked();

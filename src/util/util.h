@@ -39,6 +39,8 @@ enum class TextSet {
 };
 
 
+
+
 inline QString uint8ToHex(quint8 val) {
     QString retval = QString("%1").arg(val,2,16,QChar('0')).toUpper();
     return retval;

@@ -5,13 +5,14 @@
 
 class TextFile : public GenericFile
 {
+    friend class Dos33DiskImage;
+
 public:
-    TextFile(QByteArray data = QByteArray());
-    void setData(QByteArray data);
 
     void dump();
 
 protected:
+    TextFile(QByteArray data = QByteArray());
 };
 
 #endif // TEXTFILE_H

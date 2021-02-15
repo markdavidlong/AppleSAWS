@@ -25,8 +25,9 @@ DiskExplorerMapWidget::DiskExplorerMapWidget(int numtracks, int numsectors, QWid
     setWindowTitle("Disk Explorer");
 
     QGridLayout *gridlayout = new QGridLayout(this);
-    gridlayout->setSizeConstraint(QLayout::SetFixedSize);
-    gridlayout->setHorizontalSpacing(2);
+    //  gridlayout->setSizeConstraint(QLayout::SetFixedSize);
+    gridlayout->setSizeConstraint(QLayout::SetMinimumSize);
+    gridlayout->setHorizontalSpacing(1);
     gridlayout->setVerticalSpacing(1);
 
     initColors();
@@ -37,7 +38,7 @@ DiskExplorerMapWidget::DiskExplorerMapWidget(int numtracks, int numsectors, QWid
     gridlayout->addWidget(tracklabel,0,0,1,m_numtracks+1,Qt::AlignHCenter);
     for (int track= 0; track < numtracks; track++)
     {
-        QLabel *label = new QLabel(QString("%1").arg(track));
+        QLabel *label = new QLabel(QString("%1").arg(track,2,10,QChar('0')));
         label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         gridlayout->addWidget(label,1,track+1);
     }
@@ -64,13 +65,16 @@ DiskExplorerMapWidget::DiskExplorerMapWidget(int numtracks, int numsectors, QWid
             gridlayout->addWidget(tb,sec+2,track+1);
         }
     }
+    gridlayout->addWidget(new QLabel("Stretchy Row"),18,0,1,5);
+    gridlayout->setRowStretch(18,900);
+
 
     makeStatusWidget();
 }
 
 void DiskExplorerMapWidget::makeStatusWidget()
 {
-    QWidget *statusWidget = new QWidget(this);
+    QWidget *statusWidget = new QWidget;
     QHBoxLayout *hbl = new QHBoxLayout();
     statusWidget->setLayout(hbl);
 
@@ -125,8 +129,8 @@ void DiskExplorerMapWidget::handleButtonCheck(int track, int sector, bool checke
     if (checked)
     {
         Sector sec = m_disk->getSector(track,sector);
-        QByteArray data = sec.rawData();
-        emit showSectorData(data,track,sector,QVariant());
+        QByteArray *data = sec.rawData();
+        emit showSectorData(*data,track,sector,QVariant());
         m_trackSectorLabel->setText(
                     QString("Track: %1 Sector: %2 (%3)")
                     .arg(track)
@@ -215,7 +219,7 @@ QLabel *DiskExplorerMapWidget::makeKeyLabel(QWidget *parent, QString name, QColo
 QGroupBox *DiskExplorerMapWidget::makeKeyWidget()
 {
     int idx = 0;
-    QGroupBox *groupbox= new QGroupBox(this);
+    QGroupBox *groupbox= new QGroupBox();
     groupbox->setTitle("Key");
     QGridLayout *layout = new QGridLayout();
     layout->setVerticalSpacing(0);
@@ -354,15 +358,15 @@ void DiskExplorerMapWidget::mapDiskToButtons()
                         m_sectorDescriptions.insert(DETSPair(tr,se),description);
 
                         QColor color;
-                        if (fde.fileType() == "I") color = m_intBasicFileColor;
-                        else if (fde.fileType() == "A") color = m_applesoftFileColor;
-                        else if (fde.fileType() == "R") color = m_reloFileColor;
-                        else if (fde.fileType() == "B") color = m_binaryFileColor;
-                        else if (fde.fileType() == "S") color = m_typeSFileColor;
-                        else if (fde.fileType() == "T") color = m_textFileColor;
-                        else if (fde.fileType() == "a") color = m_typeAFileColor;
-                        else if (fde.fileType() == "b") color = m_typeBFileColor;
-                        else qDebug() << "Unknown file type: " << fde.fileType();
+                        if (fde.fileTypeIdentifier() == "I") color = m_intBasicFileColor;
+                        else if (fde.fileTypeIdentifier() == "A") color = m_applesoftFileColor;
+                        else if (fde.fileTypeIdentifier() == "R") color = m_reloFileColor;
+                        else if (fde.fileTypeIdentifier() == "B") color = m_binaryFileColor;
+                        else if (fde.fileTypeIdentifier() == "S") color = m_typeSFileColor;
+                        else if (fde.fileTypeIdentifier() == "T") color = m_textFileColor;
+                        else if (fde.fileTypeIdentifier() == "a") color = m_typeAFileColor;
+                        else if (fde.fileTypeIdentifier() == "b") color = m_typeBFileColor;
+                        else qDebug() << "Unknown file type: " << fde.fileTypeIdentifier();
                         buttonAt(tr,se)->setBgColor(color);
                         setButtonText(tr,se,QString("%1").arg(idx));
                         qDebug() << "Button" << idx << "=" << tr << "," << se << "   " << fde.filename.printable();
