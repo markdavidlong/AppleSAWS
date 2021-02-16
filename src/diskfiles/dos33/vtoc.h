@@ -8,7 +8,6 @@
 class Sector;
 class QString;
 
-
 class VTOC
 {
 public:
@@ -29,6 +28,7 @@ public:
 
     QList<TSPair> sectorsInUse() const;
     QList<TSPair> sectorsNotInUse() const;
+
 
 private:
     QString buildUseString(quint8 track);

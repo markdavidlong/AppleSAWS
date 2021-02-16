@@ -2,15 +2,16 @@
 #include "binaryfile.h"
 #include "util.h"
 
-BinaryFile::BinaryFile(QByteArray data) : GenericFile(data)
+BinaryFile::BinaryFile(Dos33DiskImage *image, FileDescriptiveEntry &fde)
+    : GenericFile(image,fde)
 {
-    if (!data.isEmpty()) {
-        setData(data);
-    }
+    setupData();
 }
 
-void BinaryFile::setData(QByteArray data)
+void BinaryFile::setupData()
 {
+    QByteArray data = rawData().asQByteArray();
+
     if (data.length() >= 4) {
         QByteArray metadata = data.left(4);
         GenericFile::setData(data.mid(4));

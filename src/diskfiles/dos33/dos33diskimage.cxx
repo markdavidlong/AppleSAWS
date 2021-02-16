@@ -160,34 +160,33 @@ GenericFile *Dos33DiskImage::getFile(FileDescriptiveEntry fde)
             return nullptr;
         }
 
-        ChunkByteList data = getDataFromTrackSectorList(tsl);
-        setFileType(fde.fileTypeIdentifier());
+        auto type = fde.fileTypeIdentifier();
 
-//        if (fileType() == "A")
-//        {
-//            retval = new ApplesoftFile(data);
-//        }
-//        else if (fileType() == "B")
-//        {
-//            retval = new BinaryFile(data);
-//        }
-//        else if (fileType() == "R")
-//        {
-//            retval = new RelocatableFile(data);
-//        }
-//        else if ((fileType() == "T"))
-//        {
-//            retval = new TextFile(data);
-//        }
-//        else if ((fileType() == "I"))
-//        {
-//            retval = new IntBasicFile(data);
-//        }
-//        else
+        if (type == "A")
         {
-            retval = new GenericFile(data);
+            retval = new ApplesoftFile(this,fde);
         }
-
+        else if (type == "B")
+        {
+            retval = new BinaryFile(this,fde);
+        }
+        else if (type == "R")
+        {
+            retval = new RelocatableFile(this,fde);
+        }
+        else if ((type == "T"))
+        {
+            retval = new TextFile(this,fde);
+        }
+        else if ((type == "I"))
+        {
+            retval = new IntBasicFile(this,fde);
+        }
+        else
+        {
+              retval = new GenericFile(this,fde);
+        }
+        retval->updateFromFDE(fde);
         m_files[fde] = retval;
     }
     if (retval) { retval->setDiskFile(this); }
@@ -198,6 +197,7 @@ GenericFile *Dos33DiskImage::getFile(FileDescriptiveEntry fde)
 ChunkByteList Dos33DiskImage::getDataFromTrackSectorList(TrackSectorList tsl)
 {
     ChunkByteList retval;
+
 
     foreach(TSPair pair, tsl.getDataTSPairs())
     {
@@ -218,6 +218,24 @@ ChunkByteList Dos33DiskImage::getDataFromTrackSectorList(TrackSectorList tsl)
         retval.appendChunkList(getDataFromTrackSectorList(nextTsl));
     }
 
+    return retval;
+}
+
+ChunkByteList Dos33DiskImage::getDataFromTSPairList(TSPairList list)
+{
+    ChunkByteList retval;
+    foreach(TSPair pair, list)
+    {
+        if (pair.isValid())
+        {
+            Sector sec = getSector(pair);
+            retval.appendChunk(sec.rawData());
+        }
+        else
+        {
+            qWarning("Not adding data from invalid TSPairList");
+        }
+    }
     return retval;
 }
 

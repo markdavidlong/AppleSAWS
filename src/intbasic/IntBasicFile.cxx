@@ -1,13 +1,13 @@
 #include "IntBasicFile.h"
 #include <QDebug>
 
-IntBasicFile::IntBasicFile(QByteArray data)
+#include "util.h"
+
+IntBasicFile::IntBasicFile(Dos33DiskImage *image, FileDescriptiveEntry &fde)
+    : GenericFile(image,fde)
 {
-    setData(data);
-
-    qDebug()<<detokenize();
-
-    setData(detokenize());
+    /// Detokenize rawData() to Integer Basic
+    this->setData(detokenize());
 }
 
 QByteArray IntBasicFile::detokenize()
@@ -16,13 +16,9 @@ QByteArray IntBasicFile::detokenize()
 //    uint  =  unsigned int
 //    quint8    =  unsigned char
 //    ==========================================================================
-    return dumpBufferAsIntBasicFile(data());
+    return dumpBufferAsIntBasicFile(rawData().asQByteArray());
 }
 
-quint16 IntBasicFile::get16(quint8 v1, quint8 v2)
-{
-    return (quint16) v1 + ((quint16) v2 * 256);
-}
 
 QByteArray IntBasicFile::dumpBufferAsIntBasicFile(QByteArray origdata)
 /*
@@ -161,7 +157,7 @@ QByteArray IntBasicFile::dumpBufferAsIntBasicFile(QByteArray origdata)
         int lastTOK = 0;
 
         unsigned int lineno;
-        lineno = get16(data[position],data[position+1]);
+        lineno = makeWord(data[position],data[position+1]);
         position += 2;
         //fprintf( fptr, "%u ", lineno );
         retval.append(QString::asprintf("%u ", lineno ).toLocal8Bit());
@@ -174,7 +170,7 @@ QByteArray IntBasicFile::dumpBufferAsIntBasicFile(QByteArray origdata)
                 if ( !inREM && !inQUOTE && !lastAN &&
                      (data[position]>=0xb0 && data[position]<=0xb9) )
                 {
-                    qint16 integerval = get16(data[position+1],data[position+2]);
+                    qint16 integerval = makeWord(data[position+1],data[position+2]);
                     int leadspace = lastTOK && leadSP;
                     retval.append(QString::asprintf(leadspace ? " %d" : "%d", (int) integerval ));
                     position += 2;
@@ -212,7 +208,8 @@ QByteArray IntBasicFile::dumpBufferAsIntBasicFile(QByteArray origdata)
                     case QUOTE_END:   inQUOTE = false;  break;
                     default:  break;
                 }
-                retval.append(QString::asprintf(leadspace ? " %s" : "%s", tok ));
+
+                retval += QString::asprintf(leadspace ? " %s" : "%s", tok ).toUtf8();
                 lastAN  = 0;
                 leadSP = isalnum(lastchar) || lastchar == ')' || lastchar == '\"';
                 lastTOK = 1;

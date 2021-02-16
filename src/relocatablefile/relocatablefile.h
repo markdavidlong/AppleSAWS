@@ -87,16 +87,14 @@ public:
     QByteArray getBinaryCodeImage() { return m_binary_code_image; }
     QList<RelocatableDictItem> getRelocatableDict() { return m_relocatable_dict; }
 
-    quint16 address() { return m_starting_ram_address; }
     quint16 codeImageLength() { return m_code_image_length; }
 
     QStringList decodeRelocatableDict();
 
 protected:
-    RelocatableFile(QByteArray data = QByteArray());
-    void setData(QByteArray data);
+    RelocatableFile(Dos33DiskImage *image, FileDescriptiveEntry &fde);
+    void setupData();
 
-    quint16 m_starting_ram_address;
     quint16 m_ram_image_length;
     quint16 m_code_image_length;
 

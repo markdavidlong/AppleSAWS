@@ -12,8 +12,8 @@ public:
     void dump();
 
 protected:
-    BinaryFile(QByteArray data = QByteArray());
-    void setData(QByteArray data) override;
+    BinaryFile(Dos33DiskImage *image, FileDescriptiveEntry &fde);
+    void setupData();
 };
 
 #endif // BINARYFILE_H

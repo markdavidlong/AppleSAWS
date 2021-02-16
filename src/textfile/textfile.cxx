@@ -1,11 +1,10 @@
 #include <QDebug>
 #include "textfile.h"
 
-TextFile::TextFile(QByteArray data) : GenericFile(data)
+TextFile::TextFile(Dos33DiskImage *image, FileDescriptiveEntry &fde)
+    : GenericFile(image,fde)
 {
-    if (!data.isEmpty()) {
-        setData(data);
-    }
+
 }
 
 

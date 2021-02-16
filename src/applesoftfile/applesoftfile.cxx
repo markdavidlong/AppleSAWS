@@ -6,12 +6,15 @@
 #include <QRegularExpressionMatchIterator>
 #include <QList>
 
-ApplesoftFile::ApplesoftFile(QByteArray data) : GenericFile(data)
+ApplesoftFile::ApplesoftFile(Dos33DiskImage *image, FileDescriptiveEntry &fde)
+    : GenericFile(image,fde)
 {
     m_retokenizer = Q_NULLPTR;
-    m_data_end = data.length();
+    m_data_end = data().length();
 
     setAddress(0x801);
+
+    processData();
 }
 
 void ApplesoftFile::processData()
@@ -22,9 +25,9 @@ void ApplesoftFile::processData()
     }
 
     m_length = dataWordAt(0);
-    setIgnoreOffset(2);
+    QByteArray tmp = rawData().asQByteArray().mid(2);
 
-    m_retokenizer->setData(data());
+    m_retokenizer->setData(tmp);
     m_retokenizer->parse();
     m_data_end = m_retokenizer->getEndOfDataOffset();
     m_lines = m_retokenizer->getRetokenizedLines();

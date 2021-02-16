@@ -12,7 +12,7 @@ public:
     void dump();
 
 protected:
-    TextFile(QByteArray data = QByteArray());
+    TextFile(Dos33DiskImage *image, FileDescriptiveEntry &fde);
 };
 
 #endif // TEXTFILE_H

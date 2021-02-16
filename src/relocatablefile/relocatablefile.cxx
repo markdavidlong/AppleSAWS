@@ -2,26 +2,27 @@
 #include "relocatablefile.h"
 #include "util.h"
 
-RelocatableFile::RelocatableFile(QByteArray data) : GenericFile(data)
+RelocatableFile::RelocatableFile(Dos33DiskImage *image, FileDescriptiveEntry &fde)
+                                 : GenericFile(image,fde)
 {
- //   qDebug() << "Relocatable file ctor";
-    if (!data.isEmpty()) {
-        setData(data);
-    }
+    setupData();
 }
 
-void RelocatableFile::setData(QByteArray /*data*/)
+void RelocatableFile::setupData()
 {
+
  //   qDebug() << "setData()";
     if (length() >= 6) {
-        m_starting_ram_address = dataWordAt(0);
-        m_ram_image_length = dataWordAt(2);
-        m_code_image_length = dataWordAt(4);
+        quint16 starting_ram_address = rawDataWordAt(0);
+        setAddress(starting_ram_address);
+        m_ram_image_length = rawDataWordAt(2);
+        setLength(m_ram_image_length);
+        m_code_image_length = rawDataWordAt(4);
 
         int offset = 0;
 
         for (int idx = 6; idx < m_code_image_length+6; idx++) {
-            quint8 val = dataAt(idx);
+            quint8 val = rawDataAt(idx);
             m_binary_code_image.append(val);
         }
 
@@ -34,8 +35,8 @@ void RelocatableFile::setData(QByteArray /*data*/)
 //                    << uint8ToHex(m_data[offset+3]);
 
             RelocatableDictItem rdi = RelocatableDictItem(
-                        dataAt(offset),dataAt(offset+1),
-                        dataAt(offset+2),dataAt(offset+3));
+                        rawDataAt(offset),rawDataAt(offset+1),
+                        rawDataAt(offset+2),rawDataAt(offset+3));
             m_relocatable_dict.append(rdi);
             if (rdi.isEndOfRLD()) { break; }
         }
@@ -45,7 +46,7 @@ void RelocatableFile::setData(QByteArray /*data*/)
 void RelocatableFile::dump()
 {
     qDebug() << "\nTotalLength: " << length();
-    qDebug() << "Starting Ram Address: " << (quint16) m_starting_ram_address << uint16ToHex(m_starting_ram_address);
+    qDebug() << "Starting Ram Address: " << (quint16) address() << uint16ToHex(address());
     qDebug() << "Length of Ram Image: " << (quint16) m_ram_image_length << uint16ToHex(m_ram_image_length);
     qDebug() << "Length of Code Image: " << (quint16) m_code_image_length << uint16ToHex(m_code_image_length);
 

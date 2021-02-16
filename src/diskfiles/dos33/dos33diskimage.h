@@ -10,6 +10,7 @@
 #include "util.h"
 #include "sector.h"
 #include "vtoc.h"
+#include "tracksectorlist.h"
 
 #include "rawdiskimage.h"
 #include "chunkbytelist.h"
@@ -38,6 +39,7 @@ public:
     GenericFile *getFile(FileDescriptiveEntry fde);
 
     ChunkByteList getDataFromTrackSectorList(TrackSectorList tsl);
+    ChunkByteList getDataFromTSPairList(TSPairList list);
 
     QList<FileDescriptiveEntry> getAllFDEs();
 
@@ -46,16 +48,12 @@ public:
     QString getDiskImageName() const { return m_disk_image->diskImageName(); }
     QString getFullDiskImageName() const { return m_disk_image->fullDiskImageName(); }
     QString getMetaDataPath() const;
-
-    QString fileType() const { return m_fileType; }
-    void setFileType(QString type) { m_fileType = type; }
+    RawDiskImage *rawImage() const { return m_disk_image; }
 
     int sectorsPerTrack() const { return m_disk_image->sectorsPerTrack(); }
     int tracks() const { return m_disk_image->numTracks(); }
 
     QList<GenericFile *> fileList();
-
-
 
 private:
 
@@ -65,7 +63,6 @@ private:
     QMap<FileDescriptiveEntry, GenericFile *> m_files;
     QByteArray m_hash;
 
-    QString m_fileType;
 
 
 };

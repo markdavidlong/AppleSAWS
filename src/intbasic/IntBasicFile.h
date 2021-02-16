@@ -12,8 +12,7 @@ public:
     QByteArray detokenize();
 
 private:
-    IntBasicFile(QByteArray data = QByteArray());
-    quint16 get16(quint8 v1, quint8 v2);
+    IntBasicFile(Dos33DiskImage *image, FileDescriptiveEntry &fde);
     QByteArray dumpBufferAsIntBasicFile(QByteArray origdata);
 };
 

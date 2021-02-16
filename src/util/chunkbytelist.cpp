@@ -1,6 +1,9 @@
 #include "chunkbytelist.h"
 
-ChunkByteList::ChunkByteList() { }
+ChunkByteList::ChunkByteList()
+{
+    m_preamble_size = 0;
+}
 
 ChunkByteList &ChunkByteList::appendChunk(QByteArray *chunk)
 {
@@ -30,7 +33,7 @@ int ChunkByteList::count() const
     {
         size += chunk->size();
     }
-    return size;
+    return size - preambleLength();
 }
 
 int ChunkByteList::size() const
@@ -56,20 +59,7 @@ bool ChunkByteList::isEmpty() const
 
 char ChunkByteList::at(int i) const
 {
-    int offset = 0;
-    foreach (auto chunk, m_chunk_list)
-    {
-        int upperbound = offset + chunk->size();
-        if (i < upperbound)
-        {
-            return chunk->at(i-offset);
-        }
-        else
-        {
-            offset += chunk->size();
-        }
-    }
-    return 0;
+    return preambleData(i + preambleLength());
 }
 
 char ChunkByteList::operator[](int i) const

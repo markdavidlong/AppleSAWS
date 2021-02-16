@@ -29,7 +29,8 @@ protected:
     void processData();
 
 private:
-    ApplesoftFile(QByteArray data = QByteArray());
+    ApplesoftFile(Dos33DiskImage *image, FileDescriptiveEntry &fde);
+
     QVector<ApplesoftLine> m_lines;
     int m_data_end;
     quint16 m_length;

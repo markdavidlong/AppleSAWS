@@ -1,58 +1,95 @@
 #include "genericfile.h"
 
-GenericFile::GenericFile(QByteArray data)
+
+quint8 GenericFile::rawDataAt(int offset)
 {
-    m_data_loaded = false;
-    m_diskfile = 0;
-    if (!data.isEmpty()) {
-        setData(data);
-        m_data_loaded = true;
+    return rawData().at(offset);
+}
+
+quint16 GenericFile::rawDataWordAt(int offset)
+{
+    return makeWord(dataAt(offset),dataAt(offset+1));
+}
+
+quint8 GenericFile::dataAt(int offset)
+{
+    return data().at(offset);
+}
+
+
+quint16 GenericFile::dataWordAt(int offset)
+{
+    return makeWord(dataAt(offset),dataAt(offset+1));
+}
+
+QByteArray GenericFile::data()
+{
+    if (m_local_data.size() == 0)
+    {
+    if (m_data_cache.size() == 0)
+    {
+        m_data_cache = rawData().asQByteArray();
     }
-    m_address = 0x00;
-    m_length = 0x00;
-    m_ignore_offset = 0;
-}
-
-GenericFile::GenericFile(Dos33DiskImage *image, TSPairList pairs)
-{
-    m_diskfile = image;
-    m_ts_pairs = pairs;
-    m_length = 0x00;
-    m_address = 0x00;
-    m_ignore_offset = 0;
-    m_data_loaded = false;
-}
-
-quint8 GenericFile::dataAt(int offset) const
-{
-    return m_data[offset ];
+    }
+    else
+    {
+        return m_local_data;
+    }
+    return m_data_cache;
 }
 
 void GenericFile::setData(QByteArray data)
 {
-    m_data_loaded = true;
-    m_data = data;
-    m_length = data.size();
+    m_local_data = data;
+}
+
+void GenericFile::resetToDefaultData()
+{
+    m_local_data.clear();
 }
 
 
-QString GenericFile::getFileType() const
+ChunkByteList &GenericFile::rawData()
 {
-    if (m_file_type == "A" || m_file_type == "B" || m_file_type == "T" ||
-        m_file_type == "I" || m_file_type == "R" || m_file_type == "S" ||
-        m_file_type == "a" || m_file_type == "b")
+    if (!m_data_loaded)
     {
-        return m_file_type;
+        initDataFromImage();
     }
-    else
-    {
-        return "?";
-    }
+    return m_data;
 }
 
-
-
-quint16 GenericFile::dataWordAt(int offset) const
+void GenericFile::updateFromFDE(FileDescriptiveEntry &fde)
 {
-    return makeWord(dataAt(offset),dataAt(offset+1));
+    fde.updateGenericFile(this);
+    setLength(fde.lengthInSectors * m_diskfile->rawImage()->sectorSize());
+}
+
+SectorData *GenericFile::peekFirstSector() const
+{
+    SectorData *retval = nullptr;
+
+    if (m_diskfile)
+    {
+        auto tsl = m_diskfile->getSector(m_fde.firstTSListSector()).asTrackSectorList();
+        TSPairList pairs = tsl.getValidTSPairs();
+        if (pairs.size())
+        {
+            retval = m_diskfile->getSector(pairs.first()).rawData();
+        }
+    }
+    return retval;
+}
+
+void GenericFile::initDataFromImage()
+{
+    if (!m_data_loaded)
+    {
+        if (m_diskfile)
+        {
+            auto tsl = m_diskfile->getSector(m_fde.firstTSListSector()).asTrackSectorList();
+            TSPairList pairs = tsl.getValidTSPairs();
+            m_data_loaded = true;
+            m_data = m_diskfile->getDataFromTSPairList(pairs);
+        }
+    }
 }

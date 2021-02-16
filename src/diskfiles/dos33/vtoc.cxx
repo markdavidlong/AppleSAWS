@@ -98,6 +98,8 @@ QList<TSPair> VTOC::sectorsNotInUse() const
     return retval;
 }
 
+
+
 void VTOC::dump()
 {
     /*
