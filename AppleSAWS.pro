@@ -65,6 +65,10 @@ SOURCES += \
     src/sequence/textblockuserdata.cpp \
     src/ui/central/centralappwindow.cpp \
     src/ui/central/mainapptoolbar.cpp \
+    src/ui/diskexplorer/catalogsectorview.cpp \
+    src/ui/diskexplorer/tslistview.cpp \
+    src/ui/diskexplorer/viewwidgetstack.cpp \
+    src/ui/diskexplorer/vtocview.cpp \
     src/ui/startupdialog.cpp \
     src/ui/viewers/intbasicfileviewer.cxx \
     src/ui/widgets/notesdialog.cpp \
@@ -136,6 +140,10 @@ HEADERS += \
     src/sequence/textblockuserdata.h \
     src/ui/central/centralappwindow.h \
     src/ui/central/mainapptoolbar.h \
+    src/ui/diskexplorer/catalogsectorview.h \
+    src/ui/diskexplorer/tslistview.h \
+    src/ui/diskexplorer/viewwidgetstack.h \
+    src/ui/diskexplorer/vtocview.h \
     src/ui/startupdialog.h \
     src/ui/viewers/intbasicfileviewer.h \
     src/ui/widgets/notesdialog.h \
@@ -187,6 +195,8 @@ HEADERS += \
 FORMS += \
     src/sequence/sequenceviewer.ui \
     src/ui/catalogwidget.ui \
+    src/ui/diskexplorer/catalogsectorview.ui \
+    src/ui/diskexplorer/vtocview.ui \
     src/ui/startupdialog.ui \
     src/ui/viewers/applesoftfileviewer.ui \
     src/ui/viewers/disassemblerviewer.ui \

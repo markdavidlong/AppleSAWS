@@ -14,7 +14,6 @@ class Sector
 public:
 
     Sector(SectorData *data = nullptr) {
-    //    m_data.resize(256);
         setData(data);
         m_track = 255;
         m_sector = 255;
@@ -54,7 +53,11 @@ public:
     void setSector(int sector) { m_sector = sector; }
 
     quint8 operator[](uint offset) const;
-    quint8 at(int offset) { return m_raw_data->at(offset); }
+    quint8 at(int offset) {
+        if (offset >= m_raw_data->size()) return 0;
+
+        return m_raw_data->at(offset);
+    }
 
     void dump();
 

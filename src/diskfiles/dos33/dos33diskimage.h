@@ -63,6 +63,7 @@ private:
     QMap<FileDescriptiveEntry, GenericFile *> m_files;
     QByteArray m_hash;
 
+    Sector m_dummy_sector; // Returned for non-existant sectors on disk
 
 
 };

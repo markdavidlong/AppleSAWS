@@ -25,7 +25,6 @@ DiskExplorerMapWidget::DiskExplorerMapWidget(int numtracks, int numsectors, QWid
     setWindowTitle("Disk Explorer");
 
     QGridLayout *gridlayout = new QGridLayout(this);
-    //  gridlayout->setSizeConstraint(QLayout::SetFixedSize);
     gridlayout->setSizeConstraint(QLayout::SetMinimumSize);
     gridlayout->setHorizontalSpacing(1);
     gridlayout->setVerticalSpacing(1);
@@ -65,7 +64,7 @@ DiskExplorerMapWidget::DiskExplorerMapWidget(int numtracks, int numsectors, QWid
             gridlayout->addWidget(tb,sec+2,track+1);
         }
     }
-    gridlayout->addWidget(new QLabel("Stretchy Row"),18,0,1,5);
+    gridlayout->addWidget(new QLabel(""),18,0,1,5); // Stretchy Row
     gridlayout->setRowStretch(18,900);
 
 
@@ -107,13 +106,23 @@ QString DiskExplorerMapWidget::getSectorDescription(int track, int sector)
     else
     {
         QString desc = "xxx";
-        if (m_sectorDescriptions.contains(DETSPair(track,sector)))
+        if (m_descriptions.contains(TSPair(track,sector)))
         {
-            desc = m_sectorDescriptions[DETSPair(track,sector)];
+            desc = m_descriptions[TSPair(track,sector)];
+        }
+        else
+        {
+            if (m_roles[TSPair(track,sector)] == DiskSectorRole::Unknown)
+            {
+                desc = "Unused";
+            }
+            else
+            {
+                desc = "Marked as used, but use unknown";
+            }
         }
         return desc.simplified();
     }
-
 }
 
 void DiskExplorerMapWidget::handleButtonCheck(int track, int sector, bool checked)
@@ -123,14 +132,13 @@ void DiskExplorerMapWidget::handleButtonCheck(int track, int sector, bool checke
     if (m_currentChecked)
     {
         // Do anything needed to clean up after previous button click
-        //    m_currentClicked->setHighlighted(false);
     }
 
     if (checked)
     {
         Sector sec = m_disk->getSector(track,sector);
         QByteArray *data = sec.rawData();
-        emit showSectorData(*data,track,sector,QVariant());
+        emit showSectorData(*data,track,sector,QVariant((int) m_roles[TSPair(track,sector)]));
         m_trackSectorLabel->setText(
                     QString("Track: %1 Sector: %2 (%3)")
                     .arg(track)
@@ -138,7 +146,7 @@ void DiskExplorerMapWidget::handleButtonCheck(int track, int sector, bool checke
                     .arg(getSectorDescription(track,sector)));
     }
     else{
-        emit showSectorData(QByteArray(),-1,-1,QVariant());
+        emit showSectorData(QByteArray(),-1,-1,QVariant(-1));
         m_trackSectorLabel->setText("No Track/Sector selected");
     }
 
@@ -154,7 +162,7 @@ void DiskExplorerMapWidget::setDisk(Dos33DiskImage *disk)
 {
     if (disk)
     {
-        m_sectorDescriptions.clear();
+        m_descriptions.clear();
 
         m_disk = disk;
         setWindowTitle(QString("Disk Explorer - %1").arg(m_disk->getDiskImageName()));
@@ -164,7 +172,10 @@ void DiskExplorerMapWidget::setDisk(Dos33DiskImage *disk)
         {
             if (m_disk)
             {
-                mapDiskToButtons();
+                defineRoles();
+                checkForUsedButUnknown();
+                mapButtonsFromRoles();
+                //mapDiskToButtons();
             }
         }
         else
@@ -178,7 +189,7 @@ void DiskExplorerMapWidget::unloadDisk()
 {
     if (m_disk)
     {
-        m_sectorDescriptions.clear();
+        m_descriptions.clear();
         m_bgroup->setExclusive(false);
         for (int track = 0; track < m_numtracks; track++)
         {
@@ -268,123 +279,305 @@ void DiskExplorerMapWidget::initColors()
     m_intBasicFileColor  = QColor("#00d0d0");
     m_binaryFileColor    = QColor("#d060d0");
     m_textFileColor      = QColor("#F05060");
-    m_reloFileColor     = QColor("#d00000");
-    m_typeAFileColor      = QColor("#c040a0");
+    m_reloFileColor      = QColor("#d00000");
+    m_typeAFileColor     = QColor("#c040a0");
     m_typeBFileColor     = QColor("#c03030");
     m_typeSFileColor     = QColor("#20a0a0");
 }
 
-void DiskExplorerMapWidget::mapDiskToButtons()
+void DiskExplorerMapWidget::defineRoles(TSPair vtoc)
 {
-    setAllButtonsEnabled(true);
-    m_bgroup->setExclusive(false);
+    m_descriptions.clear();
+    m_numbers.clear();
+    m_roles.clear();
 
-    int idx = 0;
-    for (int track = 0; track < 3; track++)
+    int buttonNumber = 0;
+
+    for (auto track = 0; track < m_numtracks; track++)
     {
-        for (int sec = 0; sec < m_numsectors; sec++)
+        for (auto sec = 0; sec < m_numsectors; sec++)
         {
+            TSPair ts(track,sec);
             if (track == 0)
-                buttonAt(track,sec)->setBgColor(m_bootSectorColor);
+            {
+                if (setButtonRole(ts,DiskSectorRole::BootSector))
+                {
+                    setButtonNumber(ts,buttonNumber++);
+                    setDescription(ts,"Boot Sector");
+                }
+            }
+            else if (track <= 2)
+            {
+                if (setButtonRole(ts,DiskSectorRole::DosImage))
+                {
+                    setButtonNumber(ts,buttonNumber++);
+                    setDescription(ts,"DOS Image");
+                }
+            }
             else
-                buttonAt(track,sec)->setBgColor(m_dosImageColor);
-            buttonAt(track,sec)->setText(QString("%1").arg(idx++));
+            {
+                setButtonRole(ts,DiskSectorRole::Unknown);
+            }
         }
     }
 
-    buttonAt(17,0)->setBgColor(m_vtocColor);
-    buttonAt(17,0)->setText(QString("%1").arg(idx++));
+    if (setButtonRole(vtoc, DiskSectorRole::VTOC))
+    {
+        setButtonNumber(vtoc,buttonNumber++);
+        setDescription(vtoc,"VTOC");
+    }
 
-    int catseccount = 0;
+    mapCatalogSectors(buttonNumber);
+}
+
+void DiskExplorerMapWidget::mapCatalogSectors(int &buttonNumber)
+{
+    int catSectorCount = 0;
     foreach (CatalogSector cs, m_disk->getCatalogSectors())
     {
-   //     qDebug() << "LOOP 1";
-        Sector *sec = cs.getSector();
-
-        QString desc = QString("Catalog Sector #%1").arg(++catseccount);
-        m_sectorDescriptions.insert(DETSPair(sec->track(),sec->sector()),desc);
-
-        buttonAt(sec->track(),sec->sector())->setBgColor(m_dirEntryColor);
-        buttonAt(sec->track(),sec->sector())->setText(QString("%1").arg(idx++));
-
-        foreach(FileDescriptiveEntry fde, cs.getFDEs())
+        TSPair ts(cs.sectorLocation());
+        if (setButtonRole(ts,DiskSectorRole::CatalogSector))
         {
-   //         qDebug() << "LOOP 2";
-            Sector *s = &(m_disk->getSector(fde.firstTSListSector()));
-            TrackSectorList tsl(s);
+            QString desc = QString("Catalog Sector #%1").arg(++catSectorCount);
+            setDescription(ts,desc);
+            setButtonNumber(ts,buttonNumber++);
 
-            int tsltr = fde.firstTSListSector().track();
-            int tslse = fde.firstTSListSector().sector();
-
-            if (!fde.firstTSListSector().isValid())
+            int fdeNum = 0;
+            foreach (FileDescriptiveEntry fde, cs.getFDEs())
             {
-                qDebug() << "Invalid first tse entry.  Skipping TSList.";
+                mapFDE(fde, fdeNum++,  buttonNumber);
+            }
+        }
+        else
+        {
+            qDebug("Not processing remap-attempted Catalog Sector");
+        }
+
+    }
+}
+
+void DiskExplorerMapWidget::mapFDE(FileDescriptiveEntry &fde, int /*fdeNum*/, int &buttonNumber)
+{
+    TSPair ts_list = fde.firstTSListSector();
+
+    int tslCount = 0;
+
+    if (fde.lengthInSectors == 0)
+    {
+        qDebug("FDE Reports 0 sectors used, not looking at T/S List");
+        return;
+    }
+    mapTSListSector(ts_list,fde,buttonNumber, tslCount);
+}
+
+void DiskExplorerMapWidget::mapTSListSector(TSPair location,
+                                            FileDescriptiveEntry &fde,
+                                            int &buttonNumber, int &tslCount)
+{
+    // Don't follow deleted links.
+    if (location.track() == 0xff) return;
+
+
+    if (location == TSPair(0,0))
+    {
+        return;
+    }
+
+    if (!location.isValid())
+    {
+        qDebug("Invalid mapTSListSector location: %d/%d.  Not parsing.",
+               location.track(),location.sector());
+        return;
+    }
+
+    if (m_roles[location] != DiskSectorRole::Unknown)
+    {
+        qDebug("Not processing FDE for previously processed sector at %d/%d",
+               location.track(), location.sector());
+        return;
+    }
+
+    Sector *s = &(m_disk->getSector(location));
+    TrackSectorList tsl(s);
+
+    if (setButtonRole(location,DiskSectorRole::TSList))
+    {
+        tslCount++;
+        QString desc = QString("T/S List #%1 for %2").arg(tslCount)
+                .arg(fde.filename.printable());
+        setDescription(location, desc);
+        setButtonNumber(location,buttonNumber++);
+
+        int sectorcount = 0;
+        auto pairs = tsl.getValidTSPairs();
+
+        foreach(TSPair tsp, pairs)
+        {
+            if (tsp.isValid())
+            {
+                auto filetype = getFileTypeFromID(fde.fileTypeIdentifier());
+                if (setButtonRole(tsp,filetype))
+                {
+                    setButtonNumber(tsp,buttonNumber++);
+                    QString description = QString("Sector #%1.%2 of %3")
+                            .arg(tslCount)
+                            .arg(++sectorcount)
+                            .arg(fde.filename.printable());
+                    setDescription(tsp,description);
+                }
+            }
+            else
+            {
+                qDebug("Invalid value in T/S List");
+            }
+        }
+
+        TSPair next = tsl.getNextTSList();
+        mapTSListSector(next, fde, buttonNumber, tslCount);
+    }
+
+
+}
+
+DiskSectorRole DiskExplorerMapWidget::getFileTypeFromID(QString id)
+{
+    DiskSectorRole role = DiskSectorRole::Used;
+
+    if (id == "I") role = DiskSectorRole::IntBasicFile;
+    else if (id == "A") role = DiskSectorRole::ApplesoftFile;
+    else if (id== "R") role = DiskSectorRole::RelocatableFile;
+    else if (id == "B") role = DiskSectorRole::BinaryFile;
+    else if (id== "S") role = DiskSectorRole::TypeSFile;
+    else if (id == "T") role = DiskSectorRole::TextFile;
+    else if (id == "a") role = DiskSectorRole::TypeAFile;
+    else if (id == "b") role = DiskSectorRole::TypeBFile;
+
+    return role;
+}
+
+
+bool DiskExplorerMapWidget::setButtonRole(TSPair ts, DiskSectorRole role)
+{
+    if (m_roles.contains(ts) && m_roles[ts] != DiskSectorRole::Unknown)
+    {
+        qDebug("Trying to remap button %d (Role: %d) with new role %d.",
+               m_numbers[ts], (int) m_roles[ts], (int) role);
+        return false;
+    }
+
+    m_roles[ts] = role;
+    return true;
+
+}
+
+void DiskExplorerMapWidget::setButtonNumber(TSPair ts, int number)
+{
+    m_numbers[ts] = number;
+}
+
+void DiskExplorerMapWidget::setDescription(TSPair ts, QString description)
+{
+    m_descriptions[ts] = description;
+}
+
+void DiskExplorerMapWidget::mapButtonsFromRoles()
+{
+    for (auto track = 0; track < m_numtracks; track++)
+    {
+        for (auto sec = 0; sec < m_numsectors; sec++)
+        {
+            auto button = buttonAt(track,sec);
+            TSPair ts(track,sec);
+
+            QColor buttonColor;
+
+            switch (m_roles[ts])
+            {
+            case DiskSectorRole::BootSector:
+                buttonColor = m_bootSectorColor;
                 break;
+            case DiskSectorRole::DosImage:
+                buttonColor = m_dosImageColor;
+                break;
+            case DiskSectorRole::VTOC:
+                buttonColor = m_vtocColor;
+                break;
+            case DiskSectorRole::CatalogSector:
+                buttonColor = m_dirEntryColor;
+                break;
+            case DiskSectorRole::TSList:
+                buttonColor = m_tsListColor;
+                break;
+            case DiskSectorRole::ApplesoftFile:
+                buttonColor = m_applesoftFileColor;
+                break;
+            case DiskSectorRole::IntBasicFile:
+                buttonColor = m_intBasicFileColor;
+                break;
+            case DiskSectorRole::TextFile:
+                buttonColor = m_textFileColor;
+                break;
+            case DiskSectorRole::RelocatableFile:
+                buttonColor = m_reloFileColor;
+                break;
+            case DiskSectorRole::BinaryFile:
+                buttonColor = m_binaryFileColor;
+                break;
+            case DiskSectorRole::TypeAFile:
+                buttonColor = m_typeAFileColor;
+                break;
+            case DiskSectorRole::TypeBFile:
+                buttonColor = m_typeBFileColor;
+                break;
+            case DiskSectorRole::TypeSFile:
+                buttonColor = m_typeSFileColor;
+                break;
+            case DiskSectorRole::Used:
+                buttonColor = m_defaultColor.lighter(120);
+                break;
+            case DiskSectorRole::Unknown:
+            default:
+                buttonColor = m_defaultColor;
             }
 
-            int tslcount = 0;
-            while (tsltr != 0 /*&& tslcount < 1*/)
+            button->setBgColor(buttonColor);
+            if (m_roles.contains(ts))
             {
-                qDebug() << "LOOP 3";
-                tslcount++;
-
-                buttonAt(tsltr,tslse)->setBgColor(m_tsListColor);
-                buttonAt(tsltr,tslse)->setText(QString("%1").arg(idx));
-    //            qDebug() << "Button" << idx << "=" << tsltr << "," << tslse << "   " << fde.filename.printable() << "TSL";
-
-                QString description = QString("T/S List #%1 for %2").arg(tslcount).arg(fde.filename.printable());
-                m_sectorDescriptions.insert(DETSPair(tsltr,tslse),description);
-
-                idx++;
-
-                bool valid = true;
-
-                int sectorcount = 0;
-                auto pairs = tsl.getDataTSPairs();
-              //  int jdx = 0;
-/*if (false) */               foreach(TSPair tsp, pairs)
+                if (m_roles[ts] != DiskSectorRole::Used && m_roles[ts] != DiskSectorRole::Unknown)
                 {
-
-           //         qDebug() << "LOOP 4" << jdx++ << "of" << pairs.count() << "pairs";
-//QCoreApplication::processEvents(QEventLoop::AllEvents);
-                    int se = tsp.sector();
-                    int tr = tsp.track();
-
-                    if (valid && tsp.isValid() && (se != 0 && tr != 0)) {
-                        QString description = QString("Sector #%1.%2 of %3")
-                                .arg(tslcount)
-                                .arg(++sectorcount)
-                                .arg(fde.filename.printable());
-                        m_sectorDescriptions.insert(DETSPair(tr,se),description);
-
-                        QColor color;
-                        if (fde.fileTypeIdentifier() == "I") color = m_intBasicFileColor;
-                        else if (fde.fileTypeIdentifier() == "A") color = m_applesoftFileColor;
-                        else if (fde.fileTypeIdentifier() == "R") color = m_reloFileColor;
-                        else if (fde.fileTypeIdentifier() == "B") color = m_binaryFileColor;
-                        else if (fde.fileTypeIdentifier() == "S") color = m_typeSFileColor;
-                        else if (fde.fileTypeIdentifier() == "T") color = m_textFileColor;
-                        else if (fde.fileTypeIdentifier() == "a") color = m_typeAFileColor;
-                        else if (fde.fileTypeIdentifier() == "b") color = m_typeBFileColor;
-                        else qDebug() << "Unknown file type: " << fde.fileTypeIdentifier();
-                        buttonAt(tr,se)->setBgColor(color);
-                        setButtonText(tr,se,QString("%1").arg(idx));
-                        qDebug() << "Button" << idx << "=" << tr << "," << se << "   " << fde.filename.printable();
-                          fde.dump();
-                    }
-                    idx++;
+                    setButtonText(track,sec,QString("%1").arg(m_numbers[ts]));
                 }
-                tsltr =  tsl.getNextTSList().track();
-                tslse = tsl.getNextTSList().sector();
-
-                valid = tsl.getNextTSList().isValid();
-
-                tsl = m_disk->getSector(tsl.getNextTSList()).asTrackSectorList();
+                else
+                {
+                    if (m_roles[ts] == DiskSectorRole::Used)
+                    {
+                        setButtonText(track,sec,"?");
+                    }
+                }
             }
         }
     }
-    m_bgroup->setExclusive(true);
+}
 
+void DiskExplorerMapWidget::checkForUsedButUnknown(TSPair vtoc)
+{
+    auto vtocsector = m_disk->getSector(vtoc).promoteToVTOC();
+
+    for (auto track = 0; track < m_numtracks; track++)
+    {
+        for (auto sec = 0; sec < m_numsectors; sec++)
+        {
+            TSPair ts(track,sec);
+
+            if (m_roles[ts] == DiskSectorRole::Unknown)
+            {
+                if (vtocsector.isSectorInUse(ts))
+                {
+                    m_roles[ts] = DiskSectorRole::Used;
+                }
+            }
+        }
+    }
 }
 
 void DiskExplorerMapWidget::showEvent(QShowEvent *)
@@ -393,7 +586,10 @@ void DiskExplorerMapWidget::showEvent(QShowEvent *)
     {
         if (m_disk)
         {
-            mapDiskToButtons();
+            defineRoles();
+            checkForUsedButUnknown();
+            mapButtonsFromRoles();
+            //mapDiskToButtons();
         }
         m_deferredSetup = false;
     }

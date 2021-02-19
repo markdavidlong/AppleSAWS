@@ -8,10 +8,12 @@
 #include "dos33diskimage.h"
 #include "hrcgcontrolsinfo.h"
 #include "hexconverter.h"
-#include "hexdumpviewer.h"
+//#include "hexdumpviewer.h"
 #include "viewerbase.h"
 #include "asciiinfodialog.h"
 //#include "notesdialog.h"
+
+#include "viewwidgetstack.h"
 
 #include <QFrame>
 #include <QTimer>
@@ -58,7 +60,8 @@ private:
     CatalogWidget *m_cw;
     DiskExplorerMapWidget *m_demw;
     QFrame *m_frame;
-    HexDumpViewer *m_hdv;
+ //   HexDumpViewer *m_hdv;
+    ViewWidgetStack *m_vws;
     QWidget *m_key;
     QGridLayout *m_gridLayout;
 

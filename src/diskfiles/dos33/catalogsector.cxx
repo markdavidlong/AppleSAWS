@@ -24,11 +24,11 @@ CatalogSector::CatalogSector(Sector *data)
     {
         FileDescriptiveEntry fde = makeFDE(idx*0x23+0x0B);
         if (fde.firstTSListSector() !=  TSPair(0,0)) {
-            if (fde.firstTSListSector().isValid())
+       //     if (fde.firstTSListSector().isValid())
             {
                 m_fdes.append(fde);
             }
-            else qDebug() << "Not appending invalid TSPair.";
+       //     else qDebug() << "Not appending invalid TSPair.";
         }
     //    else { qWarning("fde.firstTSListSector() is 0,0"); }
     }
@@ -70,12 +70,16 @@ FileDescriptiveEntry CatalogSector::makeFDE(int offset)
         qDebug() << "File" << fde.filename.printable() << "is deleted";
         fde.deleted = true;
         qDebug() << fde.filename;
-        TSPair first = fde.firstTSListSector();
-        first.setTrack(m_data->at(offset + 0x20));
-        fde.setFirstTSListSector(first);
-        qDebug() << "   New track: " <<  (quint8) fde.firstTSListSector().track();
-        qDebug() << "   Sector: " << fde.firstTSListSector().sector();
+//        TSPair first = fde.firstTSListSector();
+//        first.setTrack(m_data->at(offset + 0x20));
+//        fde.setFirstTSListSector(first);
+//        qDebug() << "   New track: " <<  (quint8) fde.firstTSListSector().track();
+//        qDebug() << "   Sector: " << fde.firstTSListSector().sector();
     }
 
     return fde;
+}
+
+TSPair CatalogSector::sectorLocation() const {
+    return TSPair(m_data->track(),m_data->sector());
 }

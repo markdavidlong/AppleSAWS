@@ -40,6 +40,8 @@ void CatalogWidget::prepForNewDisk(QString filename, Dos33DiskImage *disk)
 
 QString CatalogWidget::createToolTip(FileDescriptiveEntry &fde) {
     QString retval;
+
+return retval;
     retval += AppleString(fde.filename).printable().trimmed() +
             (fde.deleted?"(Deleted)":"") + "\n";
     retval += QString("Type: %1\n").arg(fde.fileTypeIdentifier());
@@ -68,8 +70,8 @@ QString CatalogWidget::createToolTip(FileDescriptiveEntry &fde) {
                     .arg(uabytes);
         }
     } else {
-        retval += QString("Data Length: $%1 (%2)\n").arg((quint16) (file->data().length()),4,16,QChar('0'))
-                .arg(file->data().length());
+        retval += QString("Data Length: $%1 (%2)\n").arg((quint16) (file->rawData().length()),4,16,QChar('0'))
+                .arg(file->rawData().length());
     }
 //    delete file;
     return retval;

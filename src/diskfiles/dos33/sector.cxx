@@ -7,6 +7,8 @@ quint8 Sector::operator[](uint offset) const {
     if (offset > 255) {
         offset = 255;
     }
+    if ((int) offset >= m_raw_data->size()) return 0;
+
     return m_raw_data->at(offset);
 }
 

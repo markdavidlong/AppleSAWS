@@ -13,6 +13,11 @@ quint16 GenericFile::rawDataWordAt(int offset)
 
 quint8 GenericFile::dataAt(int offset)
 {
+    if (offset >= data().size())
+    {
+        qWarning("Data offset (%d) > size (%d)",offset,data().size());
+        return 0;
+    }
     return data().at(offset);
 }
 
@@ -26,10 +31,10 @@ QByteArray GenericFile::data()
 {
     if (m_local_data.size() == 0)
     {
-    if (m_data_cache.size() == 0)
-    {
-        m_data_cache = rawData().asQByteArray();
-    }
+        if (m_data_cache.size() == 0)
+        {
+            m_data_cache = rawData().asQByteArray();
+        }
     }
     else
     {

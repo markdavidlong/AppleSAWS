@@ -19,7 +19,8 @@ class CatalogSector
 public:
     CatalogSector(Sector *sector);
 
-    FileDescriptiveEntry &getFDE(quint8 number) {
+    FileDescriptiveEntry getFDE(quint8 number) {
+        if (m_fdes.length() == 0) { return FileDescriptiveEntry(); }
         if (number >= m_fdes.length()) {
             number = m_fdes.length() - 1;
         }
@@ -34,8 +35,10 @@ public:
 
     Sector *getSector() const { return m_data; }
 
-private:
     FileDescriptiveEntry makeFDE(int offset);
+
+    TSPair sectorLocation() const;
+private:
 
 private:
     Sector *m_data;

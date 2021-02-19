@@ -19,7 +19,7 @@ DiskExplorer::DiskExplorer(QWidget *parent) : QMainWindow(parent)
     m_disk = nullptr;
     m_horizSizePref = -1;
     m_toolsHidden = true;
- //   m_notesDialog = nullptr;
+    //   m_notesDialog = nullptr;
     m_AsciiInfoDialog = nullptr;
     m_hrcgDialog = nullptr;
 
@@ -36,24 +36,24 @@ DiskExplorer::~DiskExplorer()
 void DiskExplorer::initUi()
 {
     QMenuBar *menuBar = new QMenuBar(this);
-   setMenuBar(menuBar);
+    setMenuBar(menuBar);
     QMenu *menu = new QMenu(tr("&File"),this);
     menuBar->addMenu(menu);
 
-//    QAction *action_Load_Disk_Image = new QAction(tr("&Load Disk Image..."),this);
-//    menu->addAction(action_Load_Disk_Image);
+    //    QAction *action_Load_Disk_Image = new QAction(tr("&Load Disk Image..."),this);
+    //    menu->addAction(action_Load_Disk_Image);
 
-//    connect(action_Load_Disk_Image, &QAction::triggered,
-//            this, &DiskExplorer::showLoadDialog);
+    //    connect(action_Load_Disk_Image, &QAction::triggered,
+    //            this, &DiskExplorer::showLoadDialog);
 
-//    m_action_Unload_Disk_Image = new QAction(tr("&Unload Disk Image"),this);
-//    m_action_Unload_Disk_Image->setEnabled(false);
-//    menu->addAction(m_action_Unload_Disk_Image);
+    //    m_action_Unload_Disk_Image = new QAction(tr("&Unload Disk Image"),this);
+    //    m_action_Unload_Disk_Image->setEnabled(false);
+    //    menu->addAction(m_action_Unload_Disk_Image);
 
-//    connect(m_action_Unload_Disk_Image, &QAction::triggered,
-//            this, &DiskExplorer::unloadDiskFile);
+    //    connect(m_action_Unload_Disk_Image, &QAction::triggered,
+    //            this, &DiskExplorer::unloadDiskFile);
 
-//    menu->addSeparator();
+    //    menu->addSeparator();
 
     QAction *action_Quit = new QAction(tr("&Quit"),this);
     menu->addAction(action_Quit);
@@ -93,12 +93,12 @@ void DiskExplorer::initUi()
     m_AsciiInfoDialog = new AsciiInfoDialog(this);
     connect(action_Ascii_Info, &QAction::triggered, m_AsciiInfoDialog, &AsciiInfoDialog::show);
 
-//    menu->addSeparator();
+    //    menu->addSeparator();
 
-//    QAction *action_Notes = new QAction(tr("&Notes..."), this);
-//    menu->addAction(action_Notes);
-//    if (!m_notesDialog) m_notesDialog = new NotesDialog(this);
-//    connect(action_Notes, &QAction::triggered, m_notesDialog, &NotesDialog::show);
+    //    QAction *action_Notes = new QAction(tr("&Notes..."), this);
+    //    menu->addAction(action_Notes);
+    //    if (!m_notesDialog) m_notesDialog = new NotesDialog(this);
+    //    connect(action_Notes, &QAction::triggered, m_notesDialog, &NotesDialog::show);
 
     QWidget *widget = new QWidget(nullptr);
     m_gridLayout = new QGridLayout();
@@ -112,9 +112,12 @@ void DiskExplorer::initUi()
     m_frame->setMinimumSize(200,200);
     QGridLayout *frameLayout = new QGridLayout(0);
     m_frame->setLayout(frameLayout);
-    m_hdv = new HexDumpViewer(this, 10);
 
-    frameLayout->addWidget(m_hdv);
+    //    m_hdv = new HexDumpViewer(this, 10);
+    //    frameLayout->addWidget(m_hdv);
+
+    m_vws = new ViewWidgetStack(this);
+    frameLayout->addWidget(m_vws);
 
     m_gridLayout->setColumnStretch(0,4);
     m_gridLayout->setColumnStretch(1,1);
@@ -127,9 +130,9 @@ void DiskExplorer::initUi()
     m_gridLayout->addWidget(m_frame,1,2);
 
     this->setCentralWidget(widget);
-//    auto lo = new QGridLayout();
-//    this->setLayout(lo);
-//    lo->addWidget(widget);
+    //    auto lo = new QGridLayout();
+    //    this->setLayout(lo);
+    //    lo->addWidget(widget);
 
 
     connect(m_cw, &CatalogWidget::openWithDefaultViewer,
@@ -153,7 +156,8 @@ void DiskExplorer::unloadDiskFile()
     {
         m_cw->unloadDisk(m_disk);
         m_demw->unloadDisk();
-        m_hdv->setRawData(QByteArray(),0);
+        //m_hdv->setRawData(QByteArray(),0);
+        m_vws->setSector(nullptr);
     }
 }
 
@@ -178,12 +182,34 @@ void DiskExplorer::loadDiskFile(QString filename)
     }
 }
 
-void DiskExplorer::handleShowSectorData(QByteArray data, int track, int sector, QVariant metadata)
+void DiskExplorer::handleShowSectorData(QByteArray /*data*/, int track, int sector, QVariant metadata)
 {
-    Q_UNUSED(track)
-    Q_UNUSED(sector)
-    Q_UNUSED(metadata)
-    m_hdv->setRawData(data,0);
+
+    ViewWidgetStack::PreferredViewer viewer =
+            ViewWidgetStack::PreferredViewer::DontCare;
+
+    bool USE_SPECIFIC_VIEWER = true;  // Hook for later allowing the disuse of
+    if (USE_SPECIFIC_VIEWER)          //   default viewer switching
+    {
+        if (metadata == (int) DiskSectorRole::VTOC)
+        {
+            viewer = ViewWidgetStack::PreferredViewer::VTOC;
+        }
+        else if (metadata == (int) DiskSectorRole::CatalogSector)
+        {
+            viewer = ViewWidgetStack::PreferredViewer::CatalogSector;
+        }
+        else if (metadata == (int) DiskSectorRole::TSList)
+        {
+            viewer = ViewWidgetStack::PreferredViewer::TSList;
+        }
+        else
+        {
+            viewer = ViewWidgetStack::PreferredViewer::HexDump;
+        }
+    }
+    auto sec = m_disk->getSector(track,sector);
+    m_vws->setSector(&sec, viewer);
 }
 
 void DiskExplorer::showLoadDialog(bool parentToThis)
@@ -238,7 +264,8 @@ void DiskExplorer::setDiskToolsVisible(bool visible)
 
     m_demw->setVisible(visible);
     m_frame->setVisible(visible);
-    m_hdv->setVisible(visible);
+    //m_hdv->setVisible(visible);
+    m_vws->setVisible(visible);
     m_key->setVisible(visible);
 
     if (!visible)

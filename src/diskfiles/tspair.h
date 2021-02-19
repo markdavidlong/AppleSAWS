@@ -30,9 +30,10 @@ public:
 
     bool isValid() const
     {
-        auto retval= (m_track != 0xff && m_track < 35) && m_sector < 16;
+        auto retval = (m_track == 0xff || m_track < 35) && m_sector < 16;
 
-        return retval; }
+        return retval;
+    }
 
     int  track() const { return m_track; }
     int sector() const { return m_sector; }

@@ -13,6 +13,7 @@ VTOC::VTOC(Sector *data)
 
 TSPair VTOC::firstCatalogSector() {
   //  return TSPair(0x11,0x0f); // Force to look at the normal location
+
     return TSPair(m_data->at(0x01), m_data->at(0x02));
 }
 
@@ -40,7 +41,7 @@ quint8 VTOC::tracksPerDisk() {
     return m_data->at(0x34);
 }
 
-quint8 VTOC::sectorsPerDisk() {
+quint8 VTOC::sectorsPerTrack() {
     return m_data->at(0x35);
 }
 
@@ -118,7 +119,7 @@ void VTOC::dump()
     qDebug() << "   Last track where sectors were allocated: " << QString::number(lastTrackAllocated());
     qDebug() << "   Direction of track allocations (+/- 1): " << QString::number(directionOfAllocation());
     qDebug() << "   Number tracks per disk: " << QString::number(tracksPerDisk());
-    qDebug() << "   Number sectors per disk: " << QString::number(sectorsPerDisk());
+    qDebug() << "   Number sectors per disk: " << QString::number(sectorsPerTrack());
     qDebug() << "   Number bytes/sector: " << QString::number(bytesPerSector());
     qDebug() << "   Track Usage (.=free, 0-F=used):";
     for (quint8 track = 0; track < m_data->at(0x34);track++)

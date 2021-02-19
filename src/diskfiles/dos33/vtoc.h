@@ -21,7 +21,7 @@ public:
     quint8 lastTrackAllocated();
     qint8  directionOfAllocation();
     quint8 tracksPerDisk();
-    quint8 sectorsPerDisk();
+    quint8 sectorsPerTrack();
     qint16 bytesPerSector();
 
     bool   isSectorInUse(TSPair ts) const;

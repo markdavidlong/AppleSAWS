@@ -1,6 +1,8 @@
 #ifndef DISKEXPLORERMAPWIDGET_H
 #define DISKEXPLORERMAPWIDGET_H
 
+#include "dos33diskimage.h"
+
 #include <QWidget>
 #include <QPair>
 #include <QMap>
@@ -10,8 +12,6 @@
 #include <QLabel>
 #include <QToolButton>
 
-
-#include "dos33diskimage.h"
 
 
 class DEButton : public QToolButton
@@ -113,9 +113,25 @@ private:
 
 };
 
+enum class DiskSectorRole {
+    Unknown,
+    Used,
 
+    BootSector,
+    DosImage,
+    VTOC,
+    CatalogSector,
+    TSList,
 
-typedef QPair<int,int> DETSPair;
+    ApplesoftFile,
+    IntBasicFile,
+    BinaryFile,
+    TextFile,
+    RelocatableFile,
+    TypeAFile,
+    TypeBFile,
+    TypeSFile
+};
 
 class DiskExplorerMapWidget : public QWidget
 {
@@ -144,7 +160,11 @@ public slots:
     void handleButtonCheck(int track, int sector, bool checked);
 
 protected:
-    void mapDiskToButtons();
+    void mapButtonsFromRoles();
+    void defineRoles(TSPair vtoc = TSPair(17,0));
+    bool setButtonRole(TSPair ts, DiskSectorRole role);
+    void setButtonNumber(TSPair ts, int number);
+
     DEButton *buttonAt(int track, int sector);
 
     void initColors();
@@ -163,6 +183,13 @@ protected:
     void makeStatusWidget();
     QString getSectorDescription(int track, int sector);
 
+    void mapCatalogSectors(int &buttonNumber);
+    void setDescription(TSPair ts, QString description);
+    void mapFDE(FileDescriptiveEntry &fde, int fdeNum, int &buttonNumber);
+    void mapTSListSector(TSPair location, FileDescriptiveEntry &fde,
+                         int &buttonNumber, int &tslCount);
+    DiskSectorRole getFileTypeFromID(QString id);
+    void checkForUsedButUnknown(TSPair vtoc = TSPair(17,0));
 private:
 
     QMap<int, QMap<int,DEButton*> > m_buttons;
@@ -195,7 +222,10 @@ private:
     QLabel *m_trackSectorLabel;
     QWidget *m_statusWidget;
 
-    QMap< DETSPair, QString> m_sectorDescriptions;
+    QMap<TSPair, QString> m_descriptions;
+    QMap<TSPair, DiskSectorRole> m_roles;
+    QMap<TSPair, int> m_numbers;
 };
+
 
 #endif // DISKEXPLORERMAPWIDGET_H

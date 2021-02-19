@@ -40,6 +40,10 @@ QList<TSPair> TrackSectorList::getValidTSPairs() const
     foreach (auto item, m_ts_pairs_for_data)
     {
         if (item.isValid()) { retval.append(item); }
+        else
+        {
+            break;
+        }
     }
 
     return retval;

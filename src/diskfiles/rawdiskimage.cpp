@@ -59,6 +59,8 @@ bool RawDiskImage::read(QString filename)
     if (infile.open(QIODevice::ReadOnly))
     {
         QByteArray contents = infile.readAll();
+
+
         int expectedsize = sectorsPerTrack() * numTracks() * 256;
         if (contents.size() != expectedsize)
         {

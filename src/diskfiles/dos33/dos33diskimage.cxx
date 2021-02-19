@@ -13,6 +13,7 @@
 #include "IntBasicFile.h"
 #include "relocatablefile.h"
 #include "textfile.h"
+#include "sector.h"
 
 Dos33DiskImage::Dos33DiskImage(QString filename)
 {
@@ -21,20 +22,26 @@ Dos33DiskImage::Dos33DiskImage(QString filename)
     if (!filename.isEmpty())
     {
         read(filename);
+        //TODO: Cross reference & dbl. check sec/track with VTOC
     }
+    auto dummy_data = new SectorData;
+    dummy_data->resize(256);
+    m_dummy_sector.setData(dummy_data);
 }
 
 Dos33DiskImage::Dos33DiskImage(RawDiskImage *rawImage)
 {
     m_disk_image = rawImage;
+    //TODO: Cross reference & dbl. check sec/track with VTOC
+
 }
 
 Dos33DiskImage::~Dos33DiskImage()
 {
-//    foreach (GenericFile *file, m_files)
-//    {
-//        delete file;
-//    }
+    //    foreach (GenericFile *file, m_files)
+    //    {
+    //        delete file;
+    //    }
 }
 
 bool Dos33DiskImage::read(QString filename)
@@ -59,58 +66,63 @@ bool Dos33DiskImage::read(QString filename)
 
     return retval;
 
-//    m_fullImageName = filename;
-//    m_imageName = QFileInfo(filename).fileName();
-//    QFile infile(filename);
-//    QCryptographicHash hash(QCryptographicHash::Md5);
+    //    m_fullImageName = filename;
+    //    m_imageName = QFileInfo(filename).fileName();
+    //    QFile infile(filename);
+    //    QCryptographicHash hash(QCryptographicHash::Md5);
 
-//    if (infile.open(QIODevice::ReadOnly))
-//    {
-//        QByteArray contents = infile.readAll();
-//        int expectedsize = sectorsPerTrack() * tracks() * 256;
-//        if (contents.size() != expectedsize)
-//        {
-//            if (contents.size() == 35*16*256) { m_sectors_per_track = 16; }
-//            else if (contents.size() == 35*13*256) { m_sectors_per_track = 13; }
-//            else qWarning() << QString("Size mismatch in file!  Expected %1, got %2")
-//                               .arg(expectedsize)
-//                               .arg(contents.size());
-//        }
+    //    if (infile.open(QIODevice::ReadOnly))
+    //    {
+    //        QByteArray contents = infile.readAll();
+    //        int expectedsize = sectorsPerTrack() * tracks() * 256;
+    //        if (contents.size() != expectedsize)
+    //        {
+    //            if (contents.size() == 35*16*256) { m_sectors_per_track = 16; }
+    //            else if (contents.size() == 35*13*256) { m_sectors_per_track = 13; }
+    //            else qWarning() << QString("Size mismatch in file!  Expected %1, got %2")
+    //                               .arg(expectedsize)
+    //                               .arg(contents.size());
+    //        }
 
-//        QDataStream qds(contents);
-//        for (int track = 0; track < 35; track++)
-//        {
-//            for (int sector = 0; sector < m_sectors_per_track; sector++)
-//            {
-//                char buffer[256];
-//                if (qds.readRawData(buffer,256) == 256)
-//                {
-//                    TSPair tmpts(track,sector);
-//                    Sector newSec;
-//                    newSec.setTrackSector(tmpts);
-//                    newSec.setData(QByteArray(buffer,256));
-//                    m_contents[tmpts] = newSec;
-//                }
-//                else
-//                {
-//                    qDebug() << "Invalid sector read!";
-//                    return false;
-//                }
-//            }
-//        }
-//        hash.addData(contents);
+    //        QDataStream qds(contents);
+    //        for (int track = 0; track < 35; track++)
+    //        {
+    //            for (int sector = 0; sector < m_sectors_per_track; sector++)
+    //            {
+    //                char buffer[256];
+    //                if (qds.readRawData(buffer,256) == 256)
+    //                {
+    //                    TSPair tmpts(track,sector);
+    //                    Sector newSec;
+    //                    newSec.setTrackSector(tmpts);
+    //                    newSec.setData(QByteArray(buffer,256));
+    //                    m_contents[tmpts] = newSec;
+    //                }
+    //                else
+    //                {
+    //                    qDebug() << "Invalid sector read!";
+    //                    return false;
+    //                }
+    //            }
+    //        }
+    //        hash.addData(contents);
 
-//        m_hash = hash.result();
-//        //     qDebug() << "Hash: " << m_hash;
+    //        m_hash = hash.result();
+    //        //     qDebug() << "Hash: " << m_hash;
 
-//        return true;
-//    }
-//    else
-//        qDebug() << "Could not open file " << filename;
-//    return false;
+    //        return true;
+    //    }
+    //    else
+    //        qDebug() << "Could not open file " << filename;
+    //    return false;
 }
 
-Sector &Dos33DiskImage::getSector(TSPair ts) { return m_contents[ts]; }
+Sector &Dos33DiskImage::getSector(TSPair ts) {
+    if (m_contents.contains(ts))
+        return m_contents[ts];
+    else
+        return m_dummy_sector;
+}
 
 Sector &Dos33DiskImage::getSector(int track, int sector)  {
     return getSector(TSPair(track,sector));
@@ -184,7 +196,7 @@ GenericFile *Dos33DiskImage::getFile(FileDescriptiveEntry fde)
         }
         else
         {
-              retval = new GenericFile(this,fde);
+            retval = new GenericFile(this,fde);
         }
         retval->updateFromFDE(fde);
         m_files[fde] = retval;
