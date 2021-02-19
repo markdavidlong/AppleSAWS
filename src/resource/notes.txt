@@ -48,7 +48,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ***
 
-And, of course, this program is released under the MIT License:
+And, of course, this program is released under the LGPL 3.0:
 
 
 ```
