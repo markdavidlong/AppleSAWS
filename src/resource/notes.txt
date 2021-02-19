@@ -57,7 +57,6 @@ Its licensing information can be found at https://github.com/ColinDuquesnoy/QDar
 
 And, of course, this program is released under the GPL 3.0:
 
-
 ```
 AppleSAWS - The Apple Software Analysis WorkShop
 Copyright (C) 2015-2021 Mark D. Long
