@@ -1560,7 +1560,6 @@ QTabBar::tab:top {
   padding-right: 4px;
   padding-top: 2px;
   padding-bottom: 2px;
-  min-width: 5px;
   border-bottom: 3px solid #32414B;
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
@@ -2188,4 +2187,8 @@ DEButton {
   padding: 2px;
   outline: none;
    min-width: 10px;
+}
+
+ads--CElidingLabel {
+min-width: 80px;
 }

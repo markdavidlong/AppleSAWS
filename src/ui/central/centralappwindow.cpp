@@ -36,9 +36,9 @@
 #include <QStatusBar>
 #include <QStackedWidget>
 #include <QScrollArea>
-
-
 #include <QFile>
+
+using namespace ads;
 
 CentralAppWindow::CentralAppWindow(QWidget *parent) : QMainWindow(parent)
 {
@@ -50,24 +50,62 @@ CentralAppWindow::CentralAppWindow(QWidget *parent) : QMainWindow(parent)
     else   {
         f.open(QFile::ReadOnly | QFile::Text);
         QTextStream ts(&f);
-        this->setStyleSheet(ts.readAll());
+    //    this->setStyleSheet(ts.readAll());
+        this->setStyleSheet("font-family: \"Pr Number 3\"; font-size: 16px");
     }
 
+    initCentralWidget();
     createActions();
     initMenuBar();
     initToolBars();
     initDockWidgets();
     initStatusBar();
-    initCentralWidget();
 
 }
 
 void CentralAppWindow::createActions()
 {
-    m_quitAction = new QAction(QIcon(":/images/redblob.png"),tr("E&xit"));
+    m_quitAction = new QAction(QIcon(":/images/redblob.png"),tr("&Quit"));
     connect(m_quitAction, &QAction::triggered,
             qApp, &QApplication::quit);
+
+    m_reference_action = new QAction(QIcon(":/images/redblob.png"),tr("&References"));
+    m_reference_action->setCheckable(true);
+//    connect(m_reference_action, &QAction::triggered,
+//            qApp, &QApplication::xxxxxx);
+
+    m_utils_action = new QAction(QIcon(":/images/redblob.png"),tr("&Utils"));
+    m_utils_action->setCheckable(true);
+//    connect(m_reference_action, &QAction::triggered,
+//            qApp, &QApplication::xxxxxx);
+
+    m_image_lib_action = new QAction(QIcon(":/images/redblob.png"),tr("&Disk Image\nLibrary"));
+    m_image_lib_action->setCheckable(true);
+//    connect(m_reference_action, &QAction::triggered,
+//            qApp, &QApplication::xxxxxx);
+
+    m_disk_explorer_action= new QAction(QIcon(":/images/redblob.png"),tr("Disk Image\n&Explorer"));
+    m_disk_explorer_action->setCheckable(true);
+//    connect(m_reference_action, &QAction::triggered,
+//            qApp, &QApplication::xxxxxx);
+
+    m_projects_action = new QAction(QIcon(":/images/redblob.png"),tr("&Projects"));
+    m_projects_action->setCheckable(true);
+//    connect(m_reference_action, &QAction::triggered,
+//            qApp, &QApplication::xxxxxx);
+
+    m_tool_action_group = new QActionGroup(this);
+    m_tool_action_group->addAction(m_reference_action);
+    m_tool_action_group->addAction(m_utils_action);
+    m_tool_action_group->addAction(m_image_lib_action);
+    m_tool_action_group->addAction(m_disk_explorer_action);
+    m_tool_action_group->addAction(m_projects_action);
+    m_tool_action_group->setExclusive(true);
+    m_disk_explorer_action->toggle();
+
+
 }
+
 
 void CentralAppWindow::initMenuBar()
 {
@@ -87,33 +125,26 @@ void CentralAppWindow::initToolBars()
     m_mainToolBar = new MainAppToolbar(this);
     m_mainToolBar->setIconSize(QSize(64,64));
     m_mainToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    m_mainToolBar->addAction(m_quitAction);
     m_mainToolBar->setFont(QFont("Ariel",14));
+//    m_mainToolBar->addAction(m_quitAction);
+
+    m_mainToolBar->addAction(m_reference_action);
+    m_mainToolBar->addAction(m_utils_action);
+    m_mainToolBar->addAction(m_image_lib_action);
+    m_mainToolBar->addAction(m_disk_explorer_action);
+    m_mainToolBar->addAction(m_projects_action);
+
     addToolBar(Qt::LeftToolBarArea, m_mainToolBar);
 
 }
 
 void CentralAppWindow::initDockWidgets()
 {
-    QDockWidget *container = new QDockWidget(this);
-    container->setMinimumWidth(200);
-    container->setFeatures(QDockWidget::DockWidgetMovable);
 
-    m_project_area = new QWidget(container);
-    m_project_area->setMinimumSize(300,200);
 
-    m_directory_area = new Dos33DiskTreeView(container);
+    m_directory_area = new Dos33DiskTreeView();
     m_directory_area->setFont(QFont("Pr Number 3", 12));
     m_directory_area->setMinimumSize(300,200);
-
-    QSplitter *split = new QSplitter(container);
-    container->setWidget(split);
-    split->setOrientation(Qt::Vertical);
-    split->addWidget(m_directory_area);
-    split->addWidget(m_project_area);
-    split->setStretchFactor(0,1);
-    split->setStretchFactor(1,1);
-    split->setSizes(QList<int>({4000, 4000}));
 
 
     Dos33DiskImage *img = new Dos33DiskImage("c:/develop/git/AppleSAWS/disk-images/ApplesoftToolkit.dsk");
@@ -128,37 +159,73 @@ void CentralAppWindow::initDockWidgets()
     model->addDiskImage(img);
     m_directory_area->setModel(model);
 
-    addDockWidget(Qt::LeftDockWidgetArea,container);
+
+    auto DiskImageDockWidget = new CDockWidget("Disk Images");
+    DiskImageDockWidget->setWidget(m_directory_area);
+    DiskImageDockWidget->setMinimumSizeHintMode(CDockWidget::MinimumSizeHintFromDockWidget);
+    DiskImageDockWidget->resize(250, 150);
+    DiskImageDockWidget->setMinimumSize(200,150);
+    auto DiskImageWidgetArea = DockManager->addDockWidget(DockWidgetArea::LeftDockWidgetArea, DiskImageDockWidget);
+    //DockManager->addDockWidget(DockWidgetArea::BottomDockWidgetArea, TableDockWidget, TableArea);
+//     ui->menuView->addAction(TableDockWidget->toggleViewAction());
 
 
 
-    QDockWidget *stb = new QDockWidget(this);
-    stb->setMinimumWidth(200);
-    stb->setFeatures(QDockWidget::DockWidgetMovable);
- //   stb->setLayout(new QGridLayout());
+
+
 
     m_toolbox = new SequenceToolBox(this);
 
+    auto SequenceDockWidget = new CDockWidget("Sequences");
+    SequenceDockWidget->setWidget(m_toolbox);
+    SequenceDockWidget->setMinimumSizeHintMode(CDockWidget::MinimumSizeHintFromDockWidget);
+    SequenceDockWidget->resize(250, 150);
+    SequenceDockWidget->setMinimumSize(200,150);
+    auto SequenceWidgetArea = DockManager->addDockWidget(DockWidgetArea::RightDockWidgetArea, SequenceDockWidget);
 
 
-    addDockWidget(Qt::RightDockWidgetArea,stb);
 
 
 }
 
 void CentralAppWindow::initCentralWidget()
 {
+     CDockManager::setConfigFlag(CDockManager::OpaqueSplitterResize, true);
+     CDockManager::setConfigFlag(CDockManager::XmlCompressionEnabled, false);
+     CDockManager::setConfigFlag(CDockManager::FocusHighlighting, true);
+     CDockManager::setConfigFlag(CDockManager::TabCloseButtonIsToolButton, true);
+
+     DockManager = new CDockManager(this);
+     DockManager->setStyleSheet("");
+
     m_central_stack = new QStackedWidget(this);
     QScrollArea *sa = new QScrollArea(m_central_stack);
     sa->setWidgetResizable(true);
     m_central_stack->addWidget(sa);
 
-    setCentralWidget(m_central_stack);
+    CentralDockWidget = new CDockWidget("CentralWidget");
+    CentralDockWidget->setWidget(m_central_stack);
+   // CentralDockWidget->setFeature(CDockWidget::NoTab,true);
+    m_central_dock_area = DockManager->setCentralWidget(CentralDockWidget);
 
-    Dos33DiskImage *img =  new Dos33DiskImage("c:/develop/git/AppleSAWS/disk-images/ApplesoftToolkit.dsk");
+    Dos33DiskImage *img = new Dos33DiskImage("c:/develop/git/AppleSAWS/disk-images/ApplesoftToolkit.dsk");
     auto dew =  new DiskExplorerMapWidget(img->tracks(),img->sectorsPerTrack());
     dew->setDisk(img);
     sa->setWidget(dew);
- //   m_central_stack->addWidget(dew);
-//new SequenceViewer()
+
+    auto VWSDockWidget = new CDockWidget("Sector Contents");
+    VWSDockWidget->setWidget(dew->generateViewWidgetStack());
+    auto VWSWidgetArea = DockManager->addDockWidget(DockWidgetArea::BottomDockWidgetArea, VWSDockWidget);
+
+    auto KeyDockWidget = new CDockWidget("Key");
+    auto keywidget = dew->makeKeyWidget();
+    keywidget->setMaximumWidth(240);
+    KeyDockWidget->setWidget(keywidget);
+    KeyDockWidget->setMinimumSizeHintMode(CDockWidget::MinimumSizeHintFromDockWidget);
+ //   KeyDockWidget->resize(250, 150);
+ //   KeyDockWidget->setMinimumSize(200,150);
+    auto DiskImageWidgetArea =
+            DockManager->addDockWidget(DockWidgetArea::LeftDockWidgetArea, KeyDockWidget, m_central_dock_area);
+
+
 }

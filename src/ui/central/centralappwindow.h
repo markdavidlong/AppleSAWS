@@ -30,6 +30,12 @@ class QStatusBar;
 class SequenceToolBox;
 class QStackedWidget;
 
+#include "DockAreaWidget.h"
+#include "DockWidget.h"
+#include "DockManager.h"
+#include <QActionGroup>
+
+
 class CentralAppWindow : public QMainWindow
 {
     Q_OBJECT
@@ -47,6 +53,12 @@ private:
 
 private:
     QAction *m_quitAction;
+    QAction *m_reference_action;
+    QAction *m_utils_action;
+    QAction *m_image_lib_action;
+    QAction *m_disk_explorer_action;
+    QAction *m_projects_action;
+    QActionGroup *m_tool_action_group;
 
     MainAppToolbar *m_mainToolBar;
     QTreeView *m_directory_area;
@@ -54,6 +66,10 @@ private:
     QStatusBar *m_status_bar;
 
     SequenceToolBox *m_toolbox;
+
+    ads::CDockManager *DockManager;
+    ads::CDockWidget *CentralDockWidget;
+    ads::CDockAreaWidget *m_central_dock_area;
 
     QStackedWidget *m_central_stack;
 };

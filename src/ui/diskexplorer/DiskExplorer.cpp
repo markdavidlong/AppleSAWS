@@ -134,7 +134,7 @@ void DiskExplorer::initUi()
     //    m_hdv = new HexDumpViewer(this, 10);
     //    frameLayout->addWidget(m_hdv);
 
-    m_vws = new ViewWidgetStack(this);
+    m_vws = m_demw->generateViewWidgetStack(); // new ViewWidgetStack(this);
     frameLayout->addWidget(m_vws);
 
     m_gridLayout->setColumnStretch(0,4);
@@ -155,8 +155,8 @@ void DiskExplorer::initUi()
 
     connect(m_cw, &CatalogWidget::openWithDefaultViewer,
             this, &DiskExplorer::handleDiskItemSelectedDefaultOpen);
-    connect(m_demw, &DiskExplorerMapWidget::showSectorData,
-            this, &DiskExplorer::handleShowSectorData);
+//    connect(m_demw, &DiskExplorerMapWidget::showSectorData,
+//            this, &DiskExplorer::handleShowSectorData);
 
     QStatusBar *statusBar = new QStatusBar(this);
     setStatusBar(statusBar);
@@ -178,6 +178,8 @@ void DiskExplorer::unloadDiskFile()
         m_vws->setSector(nullptr);
     }
 }
+
+
 
 void DiskExplorer::loadDiskFile(QString filename)
 {
@@ -202,6 +204,7 @@ void DiskExplorer::loadDiskFile(QString filename)
 
 void DiskExplorer::handleShowSectorData(QByteArray /*data*/, int track, int sector, QVariant metadata)
 {
+    return;
 
     ViewWidgetStack::PreferredViewer viewer =
             ViewWidgetStack::PreferredViewer::DontCare;

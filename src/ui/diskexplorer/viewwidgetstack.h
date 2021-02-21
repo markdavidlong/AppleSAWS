@@ -28,6 +28,7 @@ class HexDumpViewer;
 class VTOCView;
 class CatalogSectorView;
 class TSListView;
+enum class DiskSectorRole;
 
 class ViewWidgetStack : public QTabWidget
 {
@@ -47,6 +48,10 @@ public:
 
 public slots:
     void setSector(Sector *sec, PreferredViewer viewer = PreferredViewer::DontCare);
+
+    void handleShowSectorData(Sector *data, int track, int sector, DiskSectorRole role);
+
+
 
 private:
     void makeWidgets();

@@ -52,7 +52,8 @@ void VTOCView::setSector(Sector *sec)
 
         ui->m_lastAllocTrackLabel->setText(QString("%1").arg(v.lastTrackAllocated()));
 
-        ui->m_allocDirLabel->setText(QString("%1").arg(v.directionOfAllocation()));
+        ui->m_allocDirLabel->setText(QString("%1   %2").arg(v.directionOfAllocation())
+                                     .arg((v.directionOfAllocation()>0)?"==>":"<=="));
 
         ui->m_tracksPerDiskLabel->setText(QString("%1").arg(v.tracksPerDisk()));
 
@@ -90,7 +91,7 @@ void VTOCView::setSector(Sector *sec)
         ui->m_usageTextBrowser->setText("");
         ui->m_usageTextBrowser->setWordWrapMode(QTextOption::NoWrap);
         auto format = ui->m_usageTextBrowser->currentCharFormat();
-        format.setFont(QFont("courier new",6));
+      //  format.setFont(QFont("courier new"/*,6*/));
         ui->m_usageTextBrowser->setCurrentCharFormat(format);
         ui->m_usageTextBrowser->insertPlainText(usage);
 
@@ -114,9 +115,4 @@ void VTOCView::setSector(Sector *sec)
 
 
 
-}
-
-QString VTOCView::makeUsage()
-{
-return QString();
 }

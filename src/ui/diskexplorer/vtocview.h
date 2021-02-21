@@ -39,8 +39,6 @@ public:
 
     void setSector(Sector *sec);
 
-protected:
-    QString makeUsage();
 
 private:
     Ui::VTOCView *ui;

@@ -20,6 +20,7 @@
 *****************************************************************************/
 
 #include "dos33diskimage.h"
+#include "viewwidgetstack.h"
 
 #include <QWidget>
 #include <QPair>
@@ -29,6 +30,7 @@
 #include <QGroupBox>
 #include <QLabel>
 #include <QToolButton>
+
 
 class DEButton : public QToolButton
 {
@@ -112,7 +114,8 @@ private:
                        "}                           "
                        "                            "
                        "DEButton:checked {          "
-                       "    font: bold italic 11px; "
+                   //    "    font: bold italic 11px; "
+                       "    font: bold 11px; "
                        "}"
                ).arg(m_fgColor)
                 .arg(m_backgroundColor);
@@ -168,9 +171,12 @@ public:
 
     QGroupBox *makeKeyWidget();
     QWidget *getStatusWidget() const { return m_statusWidget; }
+    ViewWidgetStack *generateViewWidgetStack();
+
 
 signals:
     void showSectorData(QByteArray data, int track, int sector, QVariant metadata);
+    void showSector(Sector *sec, int track, int sector, DiskSectorRole role);
 
 public slots:
     void handleButtonCheck(int track, int sector, bool checked);
@@ -206,6 +212,8 @@ protected:
                          int &buttonNumber, int &tslCount);
     DiskSectorRole getFileTypeFromID(QString id);
     void checkForUsedButUnknown(TSPair vtoc = TSPair(17,0));
+
+
 private:
 
     QMap<int, QMap<int,DEButton*> > m_buttons;

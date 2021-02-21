@@ -65,6 +65,7 @@ private slots:
     void setDiskToolsVisible(bool visible);
 
     void handleViewerClosing(ViewerBase *viewer);
+
 protected:
     void initUi();
 

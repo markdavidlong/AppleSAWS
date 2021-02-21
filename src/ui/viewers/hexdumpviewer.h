@@ -19,8 +19,6 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-
-
 #include "genericfile.h"
 #include "fileviewerinterface.h"
 
@@ -57,6 +55,7 @@ public slots:
 
 protected:
     void setTextFont(const QFont &font, int forcedFontSize = -1);
+
 private:
     void setText(QString text);
     void setData(QByteArray data);

@@ -6,6 +6,7 @@ MOC_DIR = ./.build
 UI_DIR = ./.build
 OBJECTS_DIR = ./.build
 
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = AppleSAWS
@@ -32,6 +33,7 @@ INCLUDEPATH += src/sequence
 INCLUDEPATH += src/ui/central
 
 
+include(./ads.pri)
 
 DEFINES += WS_VIDEO
 

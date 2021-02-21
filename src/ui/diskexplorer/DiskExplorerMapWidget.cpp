@@ -157,6 +157,8 @@ void DiskExplorerMapWidget::handleButtonCheck(int track, int sector, bool checke
         Sector sec = m_disk->getSector(track,sector);
         QByteArray *data = sec.rawData();
         emit showSectorData(*data,track,sector,QVariant((int) m_roles[TSPair(track,sector)]));
+        emit showSector(&sec,track,sector,m_roles[TSPair(track,sector)]);
+
         m_trackSectorLabel->setText(
                     QString("Track: %1 Sector: %2 (%3)")
                     .arg(track)
@@ -165,6 +167,8 @@ void DiskExplorerMapWidget::handleButtonCheck(int track, int sector, bool checke
     }
     else{
         emit showSectorData(QByteArray(),-1,-1,QVariant(-1));
+        emit showSector(nullptr, -1, -1, DiskSectorRole::Unknown);
+
         m_trackSectorLabel->setText("No Track/Sector selected");
     }
 
@@ -249,7 +253,7 @@ QGroupBox *DiskExplorerMapWidget::makeKeyWidget()
 {
     int idx = 0;
     QGroupBox *groupbox= new QGroupBox();
-    groupbox->setTitle("Key");
+    //groupbox->setTitle("Key");
     QGridLayout *layout = new QGridLayout();
     layout->setVerticalSpacing(0);
     layout->setHorizontalSpacing(0);
@@ -271,6 +275,15 @@ QGroupBox *DiskExplorerMapWidget::makeKeyWidget()
     layout->addWidget(makeKeyLabel(groupbox,"Type-S File",m_typeSFileColor),idx++,0);
 
     return groupbox;
+}
+
+ViewWidgetStack *DiskExplorerMapWidget::generateViewWidgetStack()
+{
+    ViewWidgetStack *vws = new ViewWidgetStack();
+    vws->setSector(nullptr);
+    connect(this, &DiskExplorerMapWidget::showSector,
+            vws, &ViewWidgetStack::handleShowSectorData);
+    return vws;
 }
 
 DEButton *DiskExplorerMapWidget::buttonAt(int track, int sector)
