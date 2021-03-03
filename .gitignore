@@ -1,3 +1,7 @@
 AppleSAWS.pro.user*
 disk-images/*
-
+.qmake.stash
+Makefile
+src/Makefile*
+src/debug/
+src/release

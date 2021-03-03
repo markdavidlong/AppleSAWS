@@ -79,10 +79,9 @@ void ViewWidgetStack::makeWidgets()
     setCurrentWidget(m_hdv);
 }
 
-void ViewWidgetStack::handleShowSectorData(Sector *data, int track,
-                                           int sector, DiskSectorRole role)
+void ViewWidgetStack::handleShowSectorData(Sector *data, int /*track*/,
+                                           int /*sector*/, DiskSectorRole role)
 {
-
     ViewWidgetStack::PreferredViewer viewer =
             ViewWidgetStack::PreferredViewer::DontCare;
 

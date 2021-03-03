@@ -74,10 +74,6 @@ void CentralAppWindow::createActions()
 //    connect(m_reference_action, &QAction::triggered,
 //            qApp, &QApplication::xxxxxx);
 
-    m_utils_action = new QAction(QIcon(":/images/redblob.png"),tr("&Utils"));
-    m_utils_action->setCheckable(true);
-//    connect(m_reference_action, &QAction::triggered,
-//            qApp, &QApplication::xxxxxx);
 
     m_image_lib_action = new QAction(QIcon(":/images/redblob.png"),tr("&Disk Image\nLibrary"));
     m_image_lib_action->setCheckable(true);
@@ -96,7 +92,6 @@ void CentralAppWindow::createActions()
 
     m_tool_action_group = new QActionGroup(this);
     m_tool_action_group->addAction(m_reference_action);
-    m_tool_action_group->addAction(m_utils_action);
     m_tool_action_group->addAction(m_image_lib_action);
     m_tool_action_group->addAction(m_disk_explorer_action);
     m_tool_action_group->addAction(m_projects_action);
@@ -112,6 +107,8 @@ void CentralAppWindow::initMenuBar()
     auto filemenu = menuBar()->addMenu(tr("&File"));
     filemenu->addAction(m_quitAction);
 
+
+    auto toolsmenu = menuBar()->addMenu(tr("&Tools"));
 }
 
 void CentralAppWindow::initStatusBar()
@@ -126,26 +123,21 @@ void CentralAppWindow::initToolBars()
     m_mainToolBar->setIconSize(QSize(64,64));
     m_mainToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     m_mainToolBar->setFont(QFont("Ariel",14));
-//    m_mainToolBar->addAction(m_quitAction);
 
     m_mainToolBar->addAction(m_reference_action);
-    m_mainToolBar->addAction(m_utils_action);
+    m_mainToolBar->addSeparator();
     m_mainToolBar->addAction(m_image_lib_action);
     m_mainToolBar->addAction(m_disk_explorer_action);
     m_mainToolBar->addAction(m_projects_action);
 
     addToolBar(Qt::LeftToolBarArea, m_mainToolBar);
-
 }
 
 void CentralAppWindow::initDockWidgets()
 {
-
-
     m_directory_area = new Dos33DiskTreeView();
     m_directory_area->setFont(QFont("Pr Number 3", 12));
     m_directory_area->setMinimumSize(300,200);
-
 
     Dos33DiskImage *img = new Dos33DiskImage("c:/develop/git/AppleSAWS/disk-images/ApplesoftToolkit.dsk");
 
@@ -155,19 +147,14 @@ void CentralAppWindow::initDockWidgets()
     img = new Dos33DiskImage("c:/develop/git/AppleSAWS/disk-images/dos.3.3.system.master.dsk");
     model->addDiskImage(img);
 
-    img = new Dos33DiskImage("c:/develop/git/AppleSAWS/disk-images/Print Shop Companion - Side 1.dsk");
-    model->addDiskImage(img);
     m_directory_area->setModel(model);
-
 
     auto DiskImageDockWidget = new CDockWidget("Disk Images");
     DiskImageDockWidget->setWidget(m_directory_area);
     DiskImageDockWidget->setMinimumSizeHintMode(CDockWidget::MinimumSizeHintFromDockWidget);
     DiskImageDockWidget->resize(250, 150);
     DiskImageDockWidget->setMinimumSize(200,150);
-    auto DiskImageWidgetArea = DockManager->addDockWidget(DockWidgetArea::LeftDockWidgetArea, DiskImageDockWidget);
-    //DockManager->addDockWidget(DockWidgetArea::BottomDockWidgetArea, TableDockWidget, TableArea);
-//     ui->menuView->addAction(TableDockWidget->toggleViewAction());
+    DockManager->addDockWidget(DockWidgetArea::LeftDockWidgetArea, DiskImageDockWidget);
 
 
 
@@ -181,10 +168,7 @@ void CentralAppWindow::initDockWidgets()
     SequenceDockWidget->setMinimumSizeHintMode(CDockWidget::MinimumSizeHintFromDockWidget);
     SequenceDockWidget->resize(250, 150);
     SequenceDockWidget->setMinimumSize(200,150);
-    auto SequenceWidgetArea = DockManager->addDockWidget(DockWidgetArea::RightDockWidgetArea, SequenceDockWidget);
-
-
-
+    DockManager->addDockWidget(DockWidgetArea::RightDockWidgetArea, SequenceDockWidget);
 
 }
 
@@ -205,8 +189,7 @@ void CentralAppWindow::initCentralWidget()
 
     CentralDockWidget = new CDockWidget("CentralWidget");
     CentralDockWidget->setWidget(m_central_stack);
-   // CentralDockWidget->setFeature(CDockWidget::NoTab,true);
-    m_central_dock_area = DockManager->setCentralWidget(CentralDockWidget);
+    DockManager->setCentralWidget(CentralDockWidget);
 
     Dos33DiskImage *img = new Dos33DiskImage("c:/develop/git/AppleSAWS/disk-images/ApplesoftToolkit.dsk");
     auto dew =  new DiskExplorerMapWidget(img->tracks(),img->sectorsPerTrack());
@@ -215,17 +198,16 @@ void CentralAppWindow::initCentralWidget()
 
     auto VWSDockWidget = new CDockWidget("Sector Contents");
     VWSDockWidget->setWidget(dew->generateViewWidgetStack());
-    auto VWSWidgetArea = DockManager->addDockWidget(DockWidgetArea::BottomDockWidgetArea, VWSDockWidget);
+    DockManager->addDockWidget(DockWidgetArea::BottomDockWidgetArea, VWSDockWidget);
 
     auto KeyDockWidget = new CDockWidget("Key");
     auto keywidget = dew->makeKeyWidget();
     keywidget->setMaximumWidth(240);
     KeyDockWidget->setWidget(keywidget);
     KeyDockWidget->setMinimumSizeHintMode(CDockWidget::MinimumSizeHintFromDockWidget);
- //   KeyDockWidget->resize(250, 150);
- //   KeyDockWidget->setMinimumSize(200,150);
-    auto DiskImageWidgetArea =
-            DockManager->addDockWidget(DockWidgetArea::LeftDockWidgetArea, KeyDockWidget, m_central_dock_area);
 
+    DockManager->addDockWidget(DockWidgetArea::LeftDockWidgetArea,
+                               KeyDockWidget,
+                               DockManager->centralWidget()->dockAreaWidget());
 
 }

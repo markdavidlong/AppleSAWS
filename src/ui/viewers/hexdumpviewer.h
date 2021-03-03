@@ -45,23 +45,17 @@ public:
     virtual bool optionsMenuItems(QMenu *menu);
 
     bool canPrint() const;
-    bool canExport() const;
+    bool canExport() const { return false; }
 
 public slots:
     void showHexAndAsciiValues();
     void toggleWordWrap(bool enabled);
     void doPrint();
-    void doExport();
-
-protected:
-    void setTextFont(const QFont &font, int forcedFontSize = -1);
 
 private:
     void setText(QString text);
     void setData(QByteArray data);
-    QString valToAppleAscii(quint8 val);
 
-    QAction *m_setFontAction;
     int m_defaultFontSize;
     Ui::HexDumpViewer *ui;
 

@@ -186,7 +186,6 @@ void ApplesoftFormatter::formatDocument(QTextDocument *doc)
 
         } // while tokenIt.hasNext()
 
-        //formattedText.append("\n");
         cursor.insertBlock();
 
     } // foreach line

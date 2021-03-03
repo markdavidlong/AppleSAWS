@@ -43,7 +43,7 @@ DiskExplorerMapWidget::DiskExplorerMapWidget(int numtracks, int numsectors, QWid
     setWindowTitle("Disk Explorer");
 
     QGridLayout *gridlayout = new QGridLayout(this);
-    gridlayout->setSizeConstraint(QLayout::SetMinimumSize);
+   // gridlayout->setSizeConstraint(QLayout::SetMinimumSize);
     gridlayout->setHorizontalSpacing(1);
     gridlayout->setVerticalSpacing(1);
 
@@ -52,16 +52,20 @@ DiskExplorerMapWidget::DiskExplorerMapWidget(int numtracks, int numsectors, QWid
     m_bgroup = new QButtonGroup(this);
 
     QLabel *tracklabel = new QLabel("Track",this);
+    tracklabel->setSizePolicy(QSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed));
+
     gridlayout->addWidget(tracklabel,0,0,1,m_numtracks+1,Qt::AlignHCenter);
     for (int track= 0; track < numtracks; track++)
     {
         QLabel *label = new QLabel(QString("%1").arg(track,2,10,QChar('0')));
+        label->setSizePolicy(QSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed));
         label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         gridlayout->addWidget(label,1,track+1);
     }
     for (int sec = 0; sec < numsectors; sec++)
     {
         QLabel *label = new QLabel(QString("Sec %1").arg(sec));
+        label->setSizePolicy(QSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed));
         label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         gridlayout->addWidget(label,sec+2,0);
     }
@@ -70,6 +74,7 @@ DiskExplorerMapWidget::DiskExplorerMapWidget(int numtracks, int numsectors, QWid
         for (int sec = 0; sec < 16; sec++)
         {
             DEButton *tb = new DEButton(this,track,sec);
+
             tb->setObjectName(QString("BtnT%1S%2").arg(track).arg(sec));
             tb->setBgColor(m_defaultColor);
             tb->setCheckable(true);
@@ -82,9 +87,20 @@ DiskExplorerMapWidget::DiskExplorerMapWidget(int numtracks, int numsectors, QWid
             gridlayout->addWidget(tb,sec+2,track+1);
         }
     }
-    gridlayout->addWidget(new QLabel(""),18,0,1,5); // Stretchy Row
-    gridlayout->setRowStretch(18,900);
 
+    gridlayout->addWidget(new QLabel(""),18,0,1,5); // Stretchy Row
+   // gridlayout->setRowStretch(18,900);
+
+    for (auto rownum = 0; rownum < gridlayout->rowCount(); rownum++)
+    {
+        gridlayout->setRowStretch(rownum,1);
+    }
+    gridlayout->setRowStretch(gridlayout->rowCount()-1, 5000);
+
+    for (auto colnum= 0; colnum < gridlayout->columnCount(); colnum++)
+    {
+        gridlayout->setColumnStretch(colnum,1);
+    }
 
     makeStatusWidget();
 }

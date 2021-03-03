@@ -116,7 +116,7 @@ QString AppleChar::getHtmlString(quint8 val)
     return retval;
 }
 
-QChar AppleChar::getAppleFontChar(quint8 val)
+QChar AppleChar::getAppleFontChar(quint8 val, bool showCtrlChars)
 {
     if (getAttribute(val) == TextAttribute::Inverse)
     {
@@ -128,7 +128,21 @@ QChar AppleChar::getAppleFontChar(quint8 val)
     }
     else if (val >= 0x80 && val < 0xA0)
     {
-        return QChar(val - 0x80 + 0xe800);
+        if (showCtrlChars)
+        {
+            return QChar(val - 0x80 + 0xe800);
+        }
+        else
+        {
+            if (val > 0x80+0x20)
+            {
+                return QChar(val - 0x80 + 0xe800);
+            }
+            else
+            {
+                return QChar(val - 0x80 + 0x40);
+            }
+        }
     }
     else
     {

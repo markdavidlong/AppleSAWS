@@ -40,7 +40,7 @@ public:
     static TextSet getTextSet(quint8 val) ;
     static QChar printable(quint8 val) ;
     static QString getHtmlString(quint8 val);
-    static QChar getAppleFontChar(quint8 val);
+    static QChar getAppleFontChar(quint8 val, bool showCtrlChars = false);
 
 private:
     quint8 m_val;

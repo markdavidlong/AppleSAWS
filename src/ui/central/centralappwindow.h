@@ -54,7 +54,6 @@ private:
 private:
     QAction *m_quitAction;
     QAction *m_reference_action;
-    QAction *m_utils_action;
     QAction *m_image_lib_action;
     QAction *m_disk_explorer_action;
     QAction *m_projects_action;
@@ -69,9 +68,10 @@ private:
 
     ads::CDockManager *DockManager;
     ads::CDockWidget *CentralDockWidget;
-    ads::CDockAreaWidget *m_central_dock_area;
 
     QStackedWidget *m_central_stack;
+
+
 };
 
 #endif // CENTRALAPPWINDOW_H

@@ -44,6 +44,9 @@ public:
         setSector(sec);
         connect(this, &DEButton::clicked, this, &DEButton::handleClick);
         m_isHighlighted = false;
+        setSizePolicy(
+                    QSizePolicy(QSizePolicy::MinimumExpanding,
+                                QSizePolicy::Minimum));
     }
 
     void setTrack(int track) { m_track = track; }
@@ -98,8 +101,9 @@ private slots:
         emit checked(m_track,m_sector,isChecked);
     }
 
-    QSize minimumSizeHint() const Q_DECL_OVERRIDE { return QSize(12,12); }
-    QSize sizeHint() const Q_DECL_OVERRIDE { return QSize(24,24); }
+public:
+    QSize minimumSizeHint() const Q_DECL_OVERRIDE { return QSize(14,14); }
+    QSize sizeHint() const Q_DECL_OVERRIDE { return QSize(14,14); }
     bool hasHeightForWidth() const Q_DECL_OVERRIDE { return true; }
     int heightForWidth(int width) const Q_DECL_OVERRIDE { return width; }
 

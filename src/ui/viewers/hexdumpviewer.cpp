@@ -18,15 +18,17 @@
 
 #include "hexdumpviewer.h"
 #include "ui_hexdumpviewer.h"
+#include "applestring.h"
 #include "util.h"
+
 #include <QDebug>
 #include <QScrollBar>
 #include <QSettings>
 #include <QAction>
 #include <QMenu>
 #include <QFontDialog>
-#include "applestring.h"
 #include <QChar>
+#include <QTextCursor>
 
 HexDumpViewer::HexDumpViewer(QWidget *parent, int defaultFontSize) :
     FileViewerInterface(parent),
@@ -34,15 +36,15 @@ HexDumpViewer::HexDumpViewer(QWidget *parent, int defaultFontSize) :
 {
     m_defaultFontSize = defaultFontSize;
     QFont textAreaFont;
-    textAreaFont.setStyleHint(QFont::Monospace);
+ //   textAreaFont.setStyleHint(QFont::Monospace);
 
-    if (defaultFontSize > 0) { textAreaFont.setPointSize(10); }
+  //  if (defaultFontSize > 0) { textAreaFont.setPointSize(10); }
 
     m_file = Q_NULLPTR;
     ui->setupUi(this);
 
-    setTextFont(fontFromSettings("HexDumpViewer.textFont", textAreaFont),
-                defaultFontSize);
+//    setTextFont(fontFromSettings("HexDumpViewer.textFont", textAreaFont),
+//                defaultFontSize);
     m_offset = 0;
 
 
@@ -51,7 +53,7 @@ HexDumpViewer::HexDumpViewer(QWidget *parent, int defaultFontSize) :
     setWindowTitle(title);
 
     QSettings settings;
-    toggleWordWrap(settings.value("HexViewer.WordWrap",true).toBool());
+//    toggleWordWrap(settings.value("HexViewer.WordWrap",true).toBool());
 }
 
 HexDumpViewer::~HexDumpViewer()
@@ -79,76 +81,84 @@ void HexDumpViewer::showHexAndAsciiValues()
 {
     int offset = ui->textArea->verticalScrollBar()->value();
 
-    QStringList lines;
+    ui->textArea->clear();
+
+    auto doc = ui->textArea->document();
+    auto cursor = new QTextCursor(doc);
+
+    QTextCharFormat text40;
+    text40.setFontFamily("Print Char 21");
+    QTextCharFormat text80;
+    text80.setFontFamily("Pr Number 3");
+
 
     //TODO: Align text from x00 to xFF.  Currently it will start with whatever the offset is.
 
-    quint16 addr = m_offset;
     for (int idx = 0; idx <= m_data.count()/16; idx++) {
+        if ((idx*16) >= m_data.count()) { break; }
+
+        cursor->setCharFormat(text80);
         QString line = QString("(%1) %2: ")
                 .arg(m_offset+(idx*16),4,10,QChar('0'))
                 .arg(m_offset+(idx*16),4,16,QChar('0'));
-        QString asciiline;
+        cursor->insertText(line);
 
+        int posHandled = 0;
         for (int jdx = (idx*16); jdx < (idx*16)+16; jdx++) {
-            addr++;
             if (jdx < m_data.count()) {
-                asciiline += valToAppleAscii(m_data[jdx]);
+                posHandled++;
+                cursor->setCharFormat(text80);
+                cursor->insertText(" ");
 
-                line += QString(" %1").arg((quint8) m_data[jdx],2,16,QChar('0'));
-            }
-        }
-
-        if (line.length() > 14) {
-            int diff = (62 - line.length());
-            if (diff < 0) { diff = 0; }
-            if (diff>0) {
-                for (int pdx = 0; pdx < diff; pdx++)
+                cursor->insertText(
+                            QString("%1")
+                            .arg((quint8) m_data[jdx],2,16,QChar('0')).toUpper());
+                if (posHandled == 8)
                 {
-                    line.append("&#160;");
+                    cursor->setCharFormat(text80);
+                    cursor->insertText(" ");
                 }
             }
-            lines.append(line + "&#160;&#160;" + asciiline);
         }
+
+        for (int pos = posHandled; pos < 16; pos++)
+            cursor->insertText("   ");
+
+        cursor->setCharFormat(text40);
+        cursor->insertText("   ");
+
+        posHandled = 0;
+        for (int jdx = (idx*16); jdx < (idx*16)+16; jdx++) {
+            if (jdx < m_data.count()) {
+                posHandled++;
+                auto colorformat = text40;
+                if (AppleChar::getAttribute(m_data[jdx]) == TextAttribute::Flash)
+                {
+                    colorformat.setBackground(QColor(Qt::lightGray));
+                    colorformat.setForeground(QColor(Qt::darkBlue));
+                }
+                else if ((unsigned char) m_data[jdx] >= 0x80 &&
+                         (unsigned char) m_data[jdx] < 0x80+0x20)
+                {
+                    colorformat.setForeground(QColor(Qt::black));
+                    colorformat.setBackground(QColor(Qt::green).lighter());
+                }
+                cursor->setCharFormat(colorformat);
+                cursor->insertText(AppleChar::getAppleFontChar(m_data[jdx]));
+//                if (posHandled == 8) {
+//                    cursor->setCharFormat(text80);
+//                    cursor->insertText(" ");
+//                    cursor->setCharFormat(text40);
+//                }
+            }
+        }
+        cursor->insertText("\n");
     }
-    setText(qPrintable(lines.join("<br>").toUpper()));
     ui->textArea->verticalScrollBar()->setValue(offset);
 }
 
-QString HexDumpViewer::valToAppleAscii(quint8 val)
-{
 
-//    typedef enum {
-//        Inverse,
-//        Flash,
-//        Normal,
-//        AltUC
-//    } Zone;
 
-    TextAttribute attribute = AppleChar::getAttribute(val);
-    QString charval = AppleChar::printable(val);
-    if (val == 0xff) { charval = "?"; } // QChar(0x25a0); }
-
-//    if      (val <= 0x1F)   { val += 0x40;   charval = QString("%1").arg(QChar(val)); zone = Inverse; } //INV UC
-//    else if (val <= 0x3F)   {                charval = QString("%1").arg(QChar(val)); zone = Inverse; } // INV SP
-//    else if (val <= 0x5F)   {                charval = QString("%1").arg(QChar(val)); zone = Flash; } // FL UC
-//    else if (val <= 0x7F)   { val -= 0x40;   charval = QString("%1").arg(QChar(val)); zone = Flash; } // FL SP
-//    else if (val <= 0x9F)   { val -= 0x40;   charval = QString("%1").arg(QChar(val)); zone = AltUC; } // NORMx UC
-//    else if (val <= 0xBF)   { val -= 0x80;   charval = QString("%1").arg(QChar(val)); zone = Normal; } // NORM SP
-//    else if (val <= 0xDF)   { val -= 0x80;   charval = QString("%1").arg(QChar(val)); zone = Normal; } // NORM UC
-//    else if (val <  0xFF)   { val -= 0x80;   charval = QString("%1").arg(QChar(val)); zone = Normal; } // NORM LC
-//    else /* (val == 0xFF)*/ {                charval = QString("\u25a0"); zone = Normal; }
-
-    QString htmlstr = charval.toHtmlEscaped();
-
-    QString retval;
-    if (attribute == TextAttribute::Inverse) { retval = QString("<font color=\"blue\"><b>%1</b></font>").arg(htmlstr); }
-    else if (attribute == TextAttribute::Flash) { retval = QString("<font color=\"green\"><b><i>%1</i></b></font>").arg(htmlstr);}
-    else if (attribute == TextAttribute::NormalLow) { retval = QString("<font color=\"red\"><i>%1</i></font>").arg(htmlstr);}
-    else   { retval = QString("%1").arg(htmlstr);}
-
-    return retval;
-}
 
 void HexDumpViewer::setFile(GenericFile *file, quint16 offset)
 {
@@ -170,49 +180,11 @@ void HexDumpViewer::setRawData(QByteArray data, quint16 offset)
     showHexAndAsciiValues();
 }
 
-bool HexDumpViewer::optionsMenuItems(QMenu *menu)
+bool HexDumpViewer::optionsMenuItems(QMenu * /*menu*/)
 {
-    QSettings settings;
-
-    QAction *action = new QAction("&Word Wrap");
-    action->setCheckable(true);
-    action->setChecked(settings.value("HexViewer.WordWrap",true).toBool());
-    connect(action, &QAction::toggled,
-            this, &HexDumpViewer::toggleWordWrap);
-    menu->addAction(action);
-
-    menu->addSeparator();
-
-    if (m_setFontAction) {
-        m_setFontAction = new QAction("Set &Font...");
-    }
-    menu->addAction(m_setFontAction);
-
-    connect(m_setFontAction, &QAction::triggered,
-            this, [this] {
-        bool ok;
-        QFont font = QFontDialog::getFont(&ok,
-                                          ui->textArea->font(),
-                                          this, "Set Font",
-                                          QFontDialog::MonospacedFonts);
-        if (ok) {
-            setTextFont(font);
-            fontToSettings("HexDumpViewer.textFont", font);
-        }
-
-    });
-
-    return true;
+    return false;
 }
 
-void HexDumpViewer::setTextFont(const QFont &font, int forcedFontSize)
-{
-    QFont myfont = font;
-    if (forcedFontSize > 0) { myfont.setPointSize(forcedFontSize); }
- //   qDebug() << "######################### Setting text font size " << myfont.pointSize();
-    ui->textArea->setFont(myfont);
-
-}
 
 void HexDumpViewer::setData(QByteArray data)
 {
@@ -242,28 +214,4 @@ void HexDumpViewer::doPrint()
 }
 
 
-bool HexDumpViewer::canExport() const { return true; }
 
-void HexDumpViewer::doExport()
-{
-    QString defaultPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-    QDir savename = QDir(defaultPath).filePath(m_file->filename()+".txt");
-
-    QString saveName = QFileDialog::getSaveFileName(this,
-       tr("Export Hex Dump"), savename.path(), tr("Text Files (*.txt)"));
-
-    if (saveName == "") return;  // User cancelled
-
-    qDebug() << "Set filename: " << saveName;
-
-    QFile saveFile(saveName);
-    if (!saveFile.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-        QMessageBox::warning(this,"Save Error","Could not save "+saveName);
-        return;
-    }
-
-    QTextStream out(&saveFile);
-    out << ui->textArea->document()->toPlainText();
-    saveFile.close();
-}
