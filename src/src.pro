@@ -226,3 +226,24 @@ else:unix: LIBS += -L$$OUT_PWD/../ads/src/ -lqtadvanceddockingd
 
 INCLUDEPATH += $$PWD/../ads/src
 DEPENDPATH += $$PWD/../ads/src
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../cpress/zlib/release/ -lzlib
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../cpress/zlib/debug/ -lzlib
+else:unix: LIBS += -L$$OUT_PWD/../cpress/zlib/ -lzlib
+
+INCLUDEPATH += $$PWD/../cpress/zlib
+DEPENDPATH += $$PWD/../cpress/zlib
+
+#win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../cpress/nufxlib/release/ -lnufxlib
+#else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../cpress/nufxlib/debug/ -lnufxlib
+#else:unix: LIBS += -L$$OUT_PWD/../cpress/nufxlib/ -lnufxlib
+
+#INCLUDEPATH += $$PWD/../cpress/nufxlib
+#DEPENDPATH += $$PWD/../cpress/nufxlib
+
+#win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../cpress/diskimg/release/ -ldiskimg
+#else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../cpress/diskimg/debug/ -ldiskimg
+#else:unix: LIBS += -L$$OUT_PWD/../cpress/diskimg/ -ldiskimg
+
+#INCLUDEPATH += $$PWD/../cpress/diskimg
+#DEPENDPATH += $$PWD/../cpress/diskimg

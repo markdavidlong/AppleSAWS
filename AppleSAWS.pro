@@ -3,9 +3,10 @@ TEMPLATE = subdirs
 DEFINES -= ADS_BUILD_STATIC
 
 SUBDIRS = \
-	src \
-	ads
+	cpress \
+    src \
+    ads
 
 
-src.depends = ads
+src.depends = ads cpress
 

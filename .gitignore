@@ -5,3 +5,13 @@ Makefile
 src/Makefile*
 src/debug/
 src/release
+cpress/nufxlib/debug/*
+cpress/nufxlib/release/*
+cpress/zlib/debug/*
+cpress/zlib/release/*
+cpress/diskimg/debug/*
+cpress/diskimg/release/*
+cpress/libhfs/debug/*
+cpress/libhfs/release/*
+cpress/*/Makefile*
+src/.build
