@@ -1,6 +1,6 @@
 [submodule "ads"]
 	path = ads
-	url = https://github.com/githubuser0xFFFF/Qt-Advanced-Docking-System.git
+	url = https://github.com/markdavidlong/Qt-Advanced-Docking-System.git
 [submodule "cpress/ciderpress"]
 	path = cpress/ciderpress
 	url = https://github.com/markdavidlong/ciderpress.git
