@@ -34,7 +34,7 @@ INCLUDEPATH += ./ui/central
 
 INCLUDEPATH += ../ads/src/
 
-#include(./ads.pri)
+INCLUDEPATH += ../cpress/ciderpress/diskimg/
 
 DEFINES += WS_VIDEO
 
@@ -111,7 +111,10 @@ SOURCES += \
     ./internals/JumpLineManager.cpp \
     ./ui/widgets/FlowLineTextBrowser.cpp \
     ./util/chunkbytelist.cpp \
-    ./util/opcodes.cpp
+    ./util/opcodes.cpp \
+    diskfiles/cpressdiskfs.cpp \
+    diskfiles/cpressdiskimage.cpp \
+    diskfiles/cpressfile.cpp
 
 
 HEADERS += \
@@ -193,7 +196,10 @@ HEADERS += \
     ./util/AppleColors.h \
     ./internals/JumpLineManager.h \
     ./ui/widgets/FlowLineTextBrowser.h \
-    ./ui/widgets/asciiinfodialog.h
+    ./ui/widgets/asciiinfodialog.h \
+    diskfiles/cpressdiskfs.h \
+    diskfiles/cpressdiskimage.h \
+    diskfiles/cpressfile.h
 
 FORMS += \
     ./sequence/sequenceviewer.ui \
@@ -234,16 +240,16 @@ else:unix: LIBS += -L$$OUT_PWD/../cpress/zlib/ -lzlib
 INCLUDEPATH += $$PWD/../cpress/zlib
 DEPENDPATH += $$PWD/../cpress/zlib
 
-#win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../cpress/nufxlib/release/ -lnufxlib
-#else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../cpress/nufxlib/debug/ -lnufxlib
-#else:unix: LIBS += -L$$OUT_PWD/../cpress/nufxlib/ -lnufxlib
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../cpress/nufxlib/release/ -lnufxlib
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../cpress/nufxlib/debug/ -lnufxlib
+else:unix: LIBS += -L$$OUT_PWD/../cpress/nufxlib/ -lnufxlib
 
-#INCLUDEPATH += $$PWD/../cpress/nufxlib
-#DEPENDPATH += $$PWD/../cpress/nufxlib
+INCLUDEPATH += $$PWD/../cpress/nufxlib
+DEPENDPATH += $$PWD/../cpress/nufxlib
 
-#win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../cpress/diskimg/release/ -ldiskimg
-#else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../cpress/diskimg/debug/ -ldiskimg
-#else:unix: LIBS += -L$$OUT_PWD/../cpress/diskimg/ -ldiskimg
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../cpress/diskimg/release/ -ldiskimg
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../cpress/diskimg/debug/ -ldiskimg
+else:unix: LIBS += -L$$OUT_PWD/../cpress/diskimg/ -ldiskimg
 
-#INCLUDEPATH += $$PWD/../cpress/diskimg
-#DEPENDPATH += $$PWD/../cpress/diskimg
+INCLUDEPATH += $$PWD/../cpress/diskimg
+DEPENDPATH += $$PWD/../cpress/diskimg
