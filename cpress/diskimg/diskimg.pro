@@ -2,12 +2,16 @@ CONFIG += c++14
 #CONFIG += debug_and_release
 #TARGET = $$qtLibraryTarget(diskimg)
 TARGET = diskimg
-DEFINES += QT_DEPRECATED_WARNINGS
 
 TEMPLATE = lib
 
 CONFIG += dll
+
+DEFINES += EXCISE_GPL_CODE
 DEFINES += DISKIMG_EXPORTS
+DEFINES += QT_NO_DEPRECATED_WARNINGS
+DEFINES += _CRT_NONSTDC_NO_WARNINGS
+DEFINES += _CRT_SECURE_NO_WARNINGS
 
 SOURCES += $$files($$PWD/../ciderpress/diskimg/*.cpp)
 
