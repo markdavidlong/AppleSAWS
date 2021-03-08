@@ -114,7 +114,10 @@ SOURCES += \
     ./util/opcodes.cpp \
     diskfiles/cpressdiskfs.cpp \
     diskfiles/cpressdiskimage.cpp \
-    diskfiles/cpressfile.cpp
+    diskfiles/cpressfile.cpp \
+    diskfiles/diskstore/asdiskdata.cpp \
+    diskfiles/diskstore/asdiskimporter.cpp \
+    diskfiles/diskstore/asdiskstore.cpp
 
 
 HEADERS += \
@@ -199,7 +202,10 @@ HEADERS += \
     ./ui/widgets/asciiinfodialog.h \
     diskfiles/cpressdiskfs.h \
     diskfiles/cpressdiskimage.h \
-    diskfiles/cpressfile.h
+    diskfiles/cpressfile.h \
+    diskfiles/diskstore/asdiskdata.h \
+    diskfiles/diskstore/asdiskimporter.h \
+    diskfiles/diskstore/asdiskstore.h
 
 FORMS += \
     ./sequence/sequenceviewer.ui \
