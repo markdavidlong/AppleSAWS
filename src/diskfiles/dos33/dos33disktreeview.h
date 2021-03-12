@@ -34,7 +34,6 @@ public:
 
 protected:
 
-
 signals:
     void fileClicked(const FileDescriptiveEntry &fde);
     void fileRightClicked(const FileDescriptiveEntry &fde);
@@ -45,13 +44,10 @@ signals:
     void sectorRightClicked(TSPair ts);
     void sectorDoubleClicked(TSPair ts);
 
-
 private slots:
     void handleClick(const QModelIndex &index);
     void handleDoubleClick(const QModelIndex &index);
     void handlePress(const QModelIndex &index);
-
-
 
 };
 

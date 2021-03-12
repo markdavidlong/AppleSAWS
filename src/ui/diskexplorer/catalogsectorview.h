@@ -37,12 +37,12 @@ public:
     explicit CatalogSectorView(QWidget *parent = nullptr);
     ~CatalogSectorView();
 
-    void setSector(Sector *sec);
+    void setSector(QSharedPointer<Sector> sec);
 
 private:
     Ui::CatalogSectorView *ui;
 
-    Sector *m_sector;
+    QSharedPointer<Sector> m_sector;
 };
 
 #endif // CATALOGSECTORVIEW_H

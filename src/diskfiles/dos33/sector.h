@@ -1,14 +1,3 @@
-#ifndef SECTOR_H
-#define SECTOR_H
-
-#include <QByteArray>
-
-#include "rawdiskimage.h"
-
-#include "vtoc.h"
-#include "catalogsector.h"
-#include "tracksectorlist.h"
-
 /*****************************************************************************
 *    AppleSAWS - The Apple Software Analysis WorkShop                        *
 *    Copyright (C) 2015-2021  Mark D. Long                                   *
@@ -27,68 +16,78 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
+#ifndef SECTOR_H
+#define SECTOR_H
 
+#include <QByteArray>
+#include <QSharedPointer>
+//#include "rawdiskimage.h"
 
-class Sector
+#include "vtoc.h"
+#include "catalogsector.h"
+#include "tracksectorlist.h"
+
+#include "asdiskdata.h"
+
+class Sector;
+
+using pSector = QSharedPointer<Sector>;
+
+class Sector : public QEnableSharedFromThis<Sector>
 {
 public:
 
-    Sector(SectorData *data = nullptr) {
-        setData(data);
-        m_track = 255;
-        m_sector = 255;
-    }
-
-    void setData(SectorData *data)
+    Sector(QByteArray &data, int track, int sector )
     {
-        m_raw_data = data;
+        qDebug() << "Sector ctor: Datasize: " << data.size() << " t/s: " << track << "," << sector;
+         m_track = track;
+         m_sector = sector;
+         m_raw_data = data;
+         m_raw_data.append(12);
+         m_raw_data.chop(1);
+         if (m_raw_data.size() != 256)
+         {
+             qWarning() << "Setting sector with invalid sized data! [Size = " << data.size() << "]";
+         }
     }
 
-    VTOC promoteToVTOC() {
-        return VTOC(this);
+    ~Sector() { qDebug() << "Sector dtor for " << m_track << "," << m_sector; }
+
+    VTOC promoteToVTOC() const {
+        return VTOC(sharedFromThis());
     }
 
-    CatalogSector asCatalogSector() {
-        return CatalogSector(this);
+    CatalogSector asCatalogSector() const {
+        return CatalogSector(sharedFromThis());
     }
 
-    TrackSectorList asTrackSectorList()  {
-        return TrackSectorList(this);
+    TrackSectorList asTrackSectorList() const {
+        return TrackSectorList(sharedFromThis());
     }
 
-    int sector() { return m_sector; }
-    int track() { return m_track; }
+    int sector() const { return m_sector; }
+    int track() const { return m_track; }
 
-    void setTrackSector(int track, int sector) {
-        setTrack(track);
-        setSector(sector);
+    quint8 at(int offset) const {
+        if (offset >= m_raw_data.size()) {
+
+            qWarning() << "sector::at()  offset = " << offset
+                       << ". m_raw_data.size() == " << m_raw_data.size();
+        }
+
+        return m_raw_data.at(offset);
     }
 
-    void setTrackSector(TSPair ts)
-    {
-        setTrackSector(ts.track(),ts.sector());
-    }
+    void dump() const;
 
-    void setTrack(int track) { m_track = track; }
-    void setSector(int sector) { m_sector = sector; }
-
-    quint8 operator[](uint offset) const;
-    quint8 at(int offset) {
-        if (offset >= m_raw_data->size()) return 0;
-
-        return m_raw_data->at(offset);
-    }
-
-    void dump();
-
-    SectorData *rawData() { return m_raw_data; }
+    QByteArray rawData()  { return m_raw_data; }
 
 private:
-  //  QByteArray m_data;
     int m_track;
     int m_sector;
 
-    SectorData *m_raw_data;
+    QByteArray m_raw_data;
 };
+
 
 #endif // SECTOR_H

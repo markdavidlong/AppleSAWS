@@ -33,11 +33,10 @@
 class Sector;
 
 
-
 class CatalogSector
 {
 public:
-    CatalogSector(Sector *sector);
+    CatalogSector(QSharedPointer<const Sector> sector);
 
     FileDescriptiveEntry getFDE(quint8 number) {
         if (m_fdes.length() == 0) { return FileDescriptiveEntry(); }
@@ -53,7 +52,7 @@ public:
 
     void dumpFDEs();
 
-    Sector *getSector() const { return m_data; }
+    QSharedPointer<const Sector>  getSector() const { return m_data; }
 
     FileDescriptiveEntry makeFDE(int offset);
 
@@ -61,7 +60,7 @@ public:
 private:
 
 private:
-    Sector *m_data;
+    QSharedPointer<const Sector> m_data;
     QList<FileDescriptiveEntry> m_fdes;
     TSPair m_next;
 };

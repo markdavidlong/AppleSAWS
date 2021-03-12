@@ -29,11 +29,11 @@ ViewWidgetStack::ViewWidgetStack(QWidget *parent) : QTabWidget(parent)
     setSector(nullptr);
 }
 
-void ViewWidgetStack::setSector(Sector *sec, PreferredViewer viewer)
+void ViewWidgetStack::setSector(QSharedPointer<Sector> sec, PreferredViewer viewer)
 {
     if (sec)
     {
-        m_hdv->setRawData(*(sec->rawData()));
+        m_hdv->setRawData(sec->rawData());
     }
     else
     {
@@ -79,7 +79,7 @@ void ViewWidgetStack::makeWidgets()
     setCurrentWidget(m_hdv);
 }
 
-void ViewWidgetStack::handleShowSectorData(Sector *data, int /*track*/,
+void ViewWidgetStack::handleShowSectorData(pSector data, int /*track*/,
                                            int /*sector*/, DiskSectorRole role)
 {
     ViewWidgetStack::PreferredViewer viewer =

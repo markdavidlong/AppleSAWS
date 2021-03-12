@@ -180,7 +180,7 @@ public:
 
 signals:
     void showSectorData(QByteArray data, int track, int sector, QVariant metadata);
-    void showSector(Sector *sec, int track, int sector, DiskSectorRole role);
+    void showSector(pSector sec, int track, int sector, DiskSectorRole role);
 
 public slots:
     void handleButtonCheck(int track, int sector, bool checked);

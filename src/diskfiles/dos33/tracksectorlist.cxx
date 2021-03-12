@@ -20,7 +20,7 @@
 
 #include "sector.h"
 
-TrackSectorList::TrackSectorList(Sector *data)
+TrackSectorList::TrackSectorList(QSharedPointer<const Sector> data)
 {
     m_data = data;
 

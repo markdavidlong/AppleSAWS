@@ -19,7 +19,7 @@
 #include "catalogsector.h"
 #include "sector.h"
 
-CatalogSector::CatalogSector(Sector *data)
+CatalogSector::CatalogSector(QSharedPointer<const Sector> data)
 {
     m_data = data;
 
@@ -42,13 +42,13 @@ CatalogSector::CatalogSector(Sector *data)
     {
         FileDescriptiveEntry fde = makeFDE(idx*0x23+0x0B);
         if (fde.firstTSListSector() !=  TSPair(0,0)) {
-       //     if (fde.firstTSListSector().isValid())
+            if (fde.firstTSListSector().isValid())
             {
                 m_fdes.append(fde);
             }
-       //     else qDebug() << "Not appending invalid TSPair.";
+            else qDebug() << "Not appending invalid TSPair.";
         }
-    //    else { qWarning("fde.firstTSListSector() is 0,0"); }
+       // else { qWarning("fde.firstTSListSector() is 0,0"); }
     }
 }
 

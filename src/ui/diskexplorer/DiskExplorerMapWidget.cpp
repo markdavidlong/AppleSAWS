@@ -170,10 +170,10 @@ void DiskExplorerMapWidget::handleButtonCheck(int track, int sector, bool checke
 
     if (checked)
     {
-        Sector sec = m_disk->getSector(track,sector);
-        QByteArray *data = sec.rawData();
-        emit showSectorData(*data,track,sector,QVariant((int) m_roles[TSPair(track,sector)]));
-        emit showSector(&sec,track,sector,m_roles[TSPair(track,sector)]);
+        pSector sec = m_disk->getSector(track,sector);
+        const QByteArray data = sec->rawData();
+        emit showSectorData(data,track,sector,QVariant((int) m_roles[TSPair(track,sector)]));
+        emit showSector(sec,track,sector,m_roles[TSPair(track,sector)]);
 
         m_trackSectorLabel->setText(
                     QString("Track: %1 Sector: %2 (%3)")
@@ -338,6 +338,8 @@ void DiskExplorerMapWidget::defineRoles(TSPair vtoc)
     m_numbers.clear();
     m_roles.clear();
 
+    qDebug() << "in defineRoles with vtoc at : " << vtoc.track() << "," << vtoc.sector();
+
     int buttonNumber = 0;
 
     for (auto track = 0; track < m_numtracks; track++)
@@ -380,14 +382,19 @@ void DiskExplorerMapWidget::defineRoles(TSPair vtoc)
 void DiskExplorerMapWidget::mapCatalogSectors(int &buttonNumber)
 {
     int catSectorCount = 0;
-    foreach (CatalogSector cs, m_disk->getCatalogSectors())
+    foreach (auto  cs, m_disk->getCatalogSectors())
     {
-        TSPair ts(cs.sectorLocation());
+        qDebug() << "Processing buttons for catalog sectors";
+        TSPair ts = cs.sectorLocation();
+        qDebug() << "Sector location: " << ts.track() << "," << ts.sector();
         if (setButtonRole(ts,DiskSectorRole::CatalogSector))
         {
             QString desc = QString("Catalog Sector #%1").arg(++catSectorCount);
+            qDebug() << "Desc: " << desc;
             setDescription(ts,desc);
             setButtonNumber(ts,buttonNumber++);
+//            qDebug() << "Setting button number " << buttonNumber-1
+//                     << " at " << ts.track() << "," << ts.sector();
 
             int fdeNum = 0;
             foreach (FileDescriptiveEntry fde, cs.getFDEs())
@@ -444,7 +451,7 @@ void DiskExplorerMapWidget::mapTSListSector(TSPair location,
         return;
     }
 
-    Sector *s = &(m_disk->getSector(location));
+    pSector s = m_disk->getSector(location);
     TrackSectorList tsl(s);
 
     if (setButtonRole(location,DiskSectorRole::TSList))
@@ -608,7 +615,7 @@ void DiskExplorerMapWidget::mapButtonsFromRoles()
 
 void DiskExplorerMapWidget::checkForUsedButUnknown(TSPair vtoc)
 {
-    auto vtocsector = m_disk->getSector(vtoc).promoteToVTOC();
+    auto vtocsector = m_disk->getSector(vtoc)->promoteToVTOC();
 
     for (auto track = 0; track < m_numtracks; track++)
     {

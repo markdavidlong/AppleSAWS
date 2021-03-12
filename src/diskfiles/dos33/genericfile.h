@@ -55,7 +55,7 @@ public:
 
     virtual quint8 rawDataAt(int offset) ;
     virtual quint16 rawDataWordAt(int offset);
-    virtual ChunkByteList &rawData();
+    virtual QByteArray rawData();
 
 
     [[deprecated("Only used for legacy purposes")]]
@@ -93,7 +93,7 @@ public:
     void initDataFromImage();
 
 protected:
-    SectorData *peekFirstSector() const;
+    QByteArray peekFirstSector() const;
 
 private:
     Dos33DiskImage * m_diskfile;
@@ -106,7 +106,7 @@ private:
     bool m_locked;
 
     QString m_filename;
-    ChunkByteList m_data;
+    QByteArray m_data;
 
     bool m_data_loaded;
 

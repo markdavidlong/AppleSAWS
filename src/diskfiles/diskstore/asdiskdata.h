@@ -20,32 +20,33 @@
 #define ASDISKDATA_H
 
 #include <QString>
-#include <QMap>
+#include <QVector>
 #include <QVariant>
 #include <QDataStream>
 
-class ASDiskData
+class ASDiskData : public QObject
 {
+    Q_OBJECT
+
     using AttributeMap = QMap<QString, QVariant>;
     using ChunkData    = QByteArray;
-    using DataMap      = QMap<int,ChunkData>;
+
 
 public:
-    using SectorData   = QByteArray;
-    using BlockData    = QByteArray;
+ //   using SectorData   = QByteArray;
+ //   using BlockData    = QByteArray;
 
     enum class DataFormat { Sectors, Blocks };
 
-    ASDiskData();
+    ASDiskData(QObject *parent = nullptr);
     virtual ~ASDiskData();
 
     QStringList attributeList() const { return m_metadata.keys(); }
     QVariant getAttribute(QString key) const;
     bool setAttribute(QString key, QVariant value);
 
-    void setUseSectors(int numSectors = 16, int numTracks = 35);
+    void setUseSectors(int numTracks = 35, int numSectors = 16);
     void setUseBlocks(int numBlocks);
-    void setDataFormat(DataFormat format) { m_dataformat = format; }
 
     bool useSectors() const { return m_dataformat == DataFormat::Sectors; }
     bool useBlocks() const  { return m_dataformat == DataFormat::Blocks; }
@@ -54,8 +55,8 @@ public:
     void addSector(int track, int sector, QByteArray sectordata);
     void addBlock(int number, QByteArray blockdata);
 
-    SectorData &getSector(int track, int sector);
-    BlockData  &getBlock(int blocknum);
+    QByteArray getSector(int track, int sector) const;
+    QByteArray getBlock(int blocknum) const;
 
     int  numTracks() const;
     int  numSectorsPerTrack() const;
@@ -84,7 +85,7 @@ public:
     QDataStream &write(QDataStream &dataStream) const;
 
 protected:
-    int tsToOffset(int track, int sector);
+    int tsToOffset(int track, int sector) const;
 
 protected:
     QString    m_filename     { "[unknown]" };
@@ -102,9 +103,11 @@ protected:
 
     AttributeMap m_metadata;
 
-    DataMap m_chunks;
+    QByteArray m_chunk_data;
 
     QByteArray m_original_file_contents;
+
+    QByteArray m_nulldata;
 };
 
 QDataStream &operator<<(QDataStream &out, const ASDiskData &outData);

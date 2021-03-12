@@ -31,6 +31,7 @@ public:
     TSPair(int trackval, int secval) { m_track=trackval; m_sector = secval; }
     TSPair(QPair<int,int> pair) { m_track = pair.first; m_sector = pair.second;}
 
+
     void setTrack(int tracknum)
     {
         if (tracknum > 34 && tracknum != 0xff) {

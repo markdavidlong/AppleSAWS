@@ -62,9 +62,11 @@ bool ASDiskImporter::importImage(QString filename, ASDiskData &into)
                 int numsectors = image.GetNumSectPerTrack();\
                 into.setNumSectorsPerTrack(numsectors);
 
+
+
                 if (image.ShowAsBlocks())
                 {
-                    into.setDataFormat(ASDiskData::DataFormat::Blocks);
+                    into.setUseBlocks(numblocks);
 
                     char *buffer = new char[512]; // Todo: Remove magic number
                     for (int idx = 0; idx < numblocks; idx++)
@@ -77,7 +79,7 @@ bool ASDiskImporter::importImage(QString filename, ASDiskData &into)
                 }
                 else
                 {
-                    into.setDataFormat(ASDiskData::DataFormat::Sectors);
+                    into.setUseSectors(numtracks,numsectors);
 
                     char *buffer = new char[256]; // Todo: Remove magic number
                     for (int track = 0; track < numtracks; track++)

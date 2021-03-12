@@ -24,7 +24,7 @@ TSListView::TSListView(QWidget *parent) : QTextBrowser(parent)
 
 }
 
-void TSListView::setSector(Sector *sec)
+void TSListView::setSector(pSector sec)
 {
         m_sector = sec;
         if (sec)

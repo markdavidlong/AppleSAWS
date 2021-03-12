@@ -28,7 +28,7 @@ BinaryFile::BinaryFile(Dos33DiskImage *image, FileDescriptiveEntry &fde)
 
 void BinaryFile::setupData()
 {
-    QByteArray data = rawData().asQByteArray();
+    QByteArray data = rawData();
 
     if (data.length() >= 4) {
         QByteArray metadata = data.left(4);

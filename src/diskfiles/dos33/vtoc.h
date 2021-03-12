@@ -26,15 +26,18 @@
 #include "tspair.h"
 
 class Sector;
+
+
+
 class QString;
 
 class VTOC
 {
 public:
-    VTOC(Sector *data);
+    VTOC(QSharedPointer<const Sector> data);
 
     void   dump();
-    TSPair firstCatalogSector();
+    TSPair firstCatalogSector() const;
     quint8 dosVersion();
     quint8 volumeNumber();
     quint8 maxTSPairs();
@@ -53,7 +56,18 @@ public:
 private:
     QString buildUseString(quint8 track);
 
-    Sector *m_data;
+    QSharedPointer<const Sector> m_data;
+
+    TSPair m_first_catalog_sector;
+    quint8 m_dos_version;
+    quint8 m_volnum;
+    quint8 m_max_ts_pairs;
+    quint8 m_last_track_alloc;
+    qint8 m_dir_of_alloc;
+    quint8 m_tracks_per_disk;
+    quint8 m_sec_per_track;
+    quint16 m_byte_per_sec;
+
 };
 
 #endif // VTOC_H

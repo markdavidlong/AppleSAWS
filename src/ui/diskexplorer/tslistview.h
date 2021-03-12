@@ -31,12 +31,12 @@ class TSListView : public QTextBrowser
 public:
     explicit TSListView(QWidget *parent = nullptr);
 
-    void setSector(Sector *sec);
+    void setSector(QSharedPointer<Sector> sec);
 
 signals:
 
 private:
-    Sector *m_sector;
+    QSharedPointer<Sector> m_sector;
 
 };
 

@@ -230,7 +230,7 @@ void DiskExplorer::handleShowSectorData(QByteArray /*data*/, int track, int sect
         }
     }
     auto sec = m_disk->getSector(track,sector);
-    m_vws->setSector(&sec, viewer);
+    m_vws->setSector(sec, viewer);
 }
 
 void DiskExplorer::showLoadDialog(bool parentToThis)

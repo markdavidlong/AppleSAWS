@@ -24,35 +24,54 @@
 #include "sector.h"
 #include "util.h"
 
-VTOC::VTOC(Sector *data)
+VTOC::VTOC(QSharedPointer<const Sector> data)
 {
     m_data = data;
+    m_first_catalog_sector = TSPair(m_data->at(0x01), m_data->at(0x02));
+    m_dos_version = m_data->at(0x03);
+    m_volnum = m_data->at(0x06);
+    m_max_ts_pairs = m_data->at(0x27);
+    m_last_track_alloc = m_data->at(0x30);
+    m_dir_of_alloc= m_data->at(0x31);
+    m_tracks_per_disk = m_data->at(0x34);
+    m_sec_per_track = m_data->at(0x35);
+    m_byte_per_sec = makeWord(m_data->at(0x36),
+                              m_data->at(0x37));
+
 }
 
-TSPair VTOC::firstCatalogSector() {
+TSPair VTOC::firstCatalogSector() const {
+
+
   //  return TSPair(0x11,0x0f); // Force to look at the normal location
 
-    return TSPair(m_data->at(0x01), m_data->at(0x02));
+ //   return TSPair(m_data->at(0x01), m_data->at(0x02));
+    return m_first_catalog_sector;
 }
 
 quint8 VTOC::dosVersion() {
-    return m_data->at(0x03);
+    return m_dos_version;
+    //return m_data->at(0x03);
 }
 
 quint8 VTOC::volumeNumber() {
-    return m_data->at(0x06);
+    return m_volnum;
+    //return m_data->at(0x06);
 }
 
 quint8 VTOC::maxTSPairs() {
-    return m_data->at(0x27);
+    //return m_data->at(0x27);
+    return m_max_ts_pairs;
 }
 
 quint8 VTOC::lastTrackAllocated() {
-    return m_data->at(0x30);
+    return m_last_track_alloc;
+    //return m_data->at(0x30);
 }
 
 qint8 VTOC::directionOfAllocation() {
-    return m_data->at(0x31);
+    return m_dir_of_alloc;
+    //return m_data->at(0x31);
 }
 
 quint8 VTOC::tracksPerDisk() {
@@ -60,12 +79,14 @@ quint8 VTOC::tracksPerDisk() {
 }
 
 quint8 VTOC::sectorsPerTrack() {
-    return m_data->at(0x35);
+    return m_sec_per_track;
+    //return m_data->at(0x35);
 }
 
 qint16 VTOC::bytesPerSector() {
-    return makeWord(m_data->at(0x36),
-                    m_data->at(0x37));
+    return m_byte_per_sec;
+//    return makeWord(m_data->at(0x36),
+//                    m_data->at(0x37));
 }
 
 bool VTOC::isSectorInUse(TSPair ts) const {

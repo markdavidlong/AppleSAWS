@@ -18,7 +18,9 @@
 
 #include "asdiskdata.h"
 
-ASDiskData::ASDiskData()
+#include <QDebug>
+
+ASDiskData::ASDiskData(QObject *parent) : QObject(parent)
 {
 
 }
@@ -28,39 +30,63 @@ ASDiskData::~ASDiskData()
 
 }
 
-void ASDiskData::setUseSectors(int numSectors, int numTracks)
+void ASDiskData::setUseSectors(int numTracks, int numSectors)
 {
     m_numsectors = numSectors;
     m_numtracks = numTracks;
     m_dataformat = DataFormat::Sectors;
+    m_chunk_data.resize(m_numsectors * m_numtracks * 256); // Todo: magic number
 }
 
 void ASDiskData::setUseBlocks(int numBlocks)
 {
     m_numblocks = numBlocks;
     m_dataformat = DataFormat::Blocks;
+    m_chunk_data.resize(m_numblocks * 512);// Todo: magic number
 }
 
 void ASDiskData::addSector(int track, int sector, QByteArray sectordata)
 {
+    if (sectordata.length() != 256 || track >= m_numtracks || sector >= m_numsectors
+            || track < 0 || sector < 0)
+    {
+        qWarning("Invalid data in addSector.");
+        return;
+    }
     auto offset = tsToOffset(track,sector);
-    m_chunks[offset] = sectordata;
+    m_chunk_data.replace(offset*256,256,sectordata);
 }
 
 void ASDiskData::addBlock(int number, QByteArray blockdata)
 {
-    m_chunks[number] = blockdata;
+    if (blockdata.length() != 512 ||  number >= m_numblocks || number < 0)
+    {
+        qWarning("Invalid data in addBlock.");
+        return;
+    };
+    m_chunk_data.replace(number*512,512,blockdata);
 }
 
-ASDiskData::SectorData &ASDiskData::getSector(int track, int sector)
+QByteArray ASDiskData::getSector(int track, int sector) const
 {
     auto offset = tsToOffset(track,sector);
-    return m_chunks[offset];
+
+    if (offset >= m_chunk_data.size() / 256)
+    {
+        qWarning("Sector %d,%d out of bounds!  Returning null data!",track,sector);
+        return QByteArray();
+    }
+    return m_chunk_data.mid(offset*256,256);
 }
 
-ASDiskData::BlockData &ASDiskData::getBlock(int blocknum)
+QByteArray ASDiskData::getBlock(int blocknum) const
 {
-    return m_chunks[blocknum];
+    if (blocknum >= m_chunk_data.size() / 256)
+    {
+        qWarning("Block %d out of bounds!  Returning null data!",blocknum);
+        return QByteArray();
+    }
+    return m_chunk_data.mid(blocknum*512,512);
 }
 
 int ASDiskData::numTracks() const
@@ -119,8 +145,8 @@ QDataStream &ASDiskData::read(QDataStream &dataStream)
             dataStream >> m_fsname;
             m_metadata.clear();
             dataStream >> m_metadata;
-            m_chunks.clear();
-            dataStream >> m_chunks;
+            m_chunk_data.clear();
+            dataStream >> m_chunk_data;
             m_original_file_contents.clear();
             dataStream >> m_original_file_contents;
         }
@@ -147,7 +173,7 @@ QDataStream &ASDiskData::write(QDataStream &dataStream) const
     dataStream << m_fstype;
     dataStream << m_fsname;
     dataStream << m_metadata;
-    dataStream << m_chunks;
+    dataStream << m_chunk_data;
     dataStream << m_original_file_contents;
 
     return dataStream;
@@ -159,9 +185,11 @@ void ASDiskData::setFSInfo(QString name, int fstypeval)
     m_fstype = fstypeval;
 }
 
-int ASDiskData::tsToOffset(int track, int sector)
+int ASDiskData::tsToOffset(int track, int sector) const
 {
-    return (track * m_numsectors) + sector;
+    int val =  (track * m_numsectors) + sector;
+    //qDebug() << "TsToOffset: " << track << "," << sector << " = " << val;
+    return val;
 }
 
 QDataStream &operator<<(QDataStream &out, const ASDiskData &outObject)

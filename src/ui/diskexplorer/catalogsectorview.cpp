@@ -48,7 +48,7 @@ CatalogSectorView::~CatalogSectorView()
     delete ui;
 }
 
-void CatalogSectorView::setSector(Sector *sec)
+void CatalogSectorView::setSector(QSharedPointer<Sector>sec)
 {
 
     m_sector = sec;

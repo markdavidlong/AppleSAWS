@@ -19,8 +19,6 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-
-
 #include "dos33treeitem.h"
 #include "dos33diskimage.h"
 
@@ -42,7 +40,6 @@ enum class Dos33ItemType {
     DiskImage
 };
 
-
 class Dos33ImageModel : public QStandardItemModel
 {
     Q_OBJECT
@@ -56,8 +53,6 @@ public:
     bool addDiskImage(Dos33DiskImage *image, QString name = "");
     Dos33DiskImage *getDiskImage(QString name);
     Dos33DiskImage *removeDiskImage(QString name);
-
-
 
 private:
     QIcon m_icon_A;

@@ -31,7 +31,7 @@ VTOCView::~VTOCView()
 {
     delete ui;
 }
-void VTOCView::setSector(Sector *sec)
+void VTOCView::setSector(QSharedPointer<const Sector> sec)
 {
     m_sector = sec;
 

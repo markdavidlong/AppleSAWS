@@ -45,7 +45,7 @@ void ApplesoftFile::processData()
     }
 
     m_length = dataWordAt(0);
-    QByteArray tmp = rawData().asQByteArray().mid(2);
+    QByteArray tmp = rawData().mid(2);
 
     m_retokenizer->setData(tmp);
     m_retokenizer->parse();

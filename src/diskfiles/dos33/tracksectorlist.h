@@ -23,6 +23,8 @@
 
 #include "tspair.h"
 
+#include <QSharedPointer>
+
 class Sector;
 
 using TSPairList = QList<TSPair>;
@@ -30,7 +32,7 @@ using TSPairList = QList<TSPair>;
 class TrackSectorList
 {
 public:
-    TrackSectorList(Sector *data);
+    TrackSectorList(QSharedPointer<const Sector> data);
 
     TSPair getNextTSList() const { return m_next_tslist; }
     bool isNextTSListValid() const;
@@ -47,7 +49,7 @@ private:
     TSPair m_sector_offset;
     TSPairList m_ts_pairs_for_data;
 
-    Sector *m_data;
+    QSharedPointer<const Sector> m_data;
 };
 
 #endif // TRACKSECTORLIST_H

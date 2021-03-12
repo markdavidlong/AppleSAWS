@@ -31,16 +31,17 @@ INCLUDEPATH += ./memory
 INCLUDEPATH += ./memory/roles
 INCLUDEPATH += ./sequence
 INCLUDEPATH += ./ui/central
+INCLUDEPATH += ./diskfiles/diskstore
 
 INCLUDEPATH += ../ads/src/
 
 INCLUDEPATH += ../cpress/ciderpress/diskimg/
 
+
 DEFINES += WS_VIDEO
 
 SOURCES += \
     ./diskfiles/dos33/dos33disktreeview.cpp \
-    ./diskfiles/rawdiskimage.cpp \
     ./intbasic/IntBasicFile.cxx \
     ./main.cpp \
     ./diskfiles/dos33/dos33diskimage.cxx \
@@ -132,7 +133,6 @@ HEADERS += \
     ./diskfiles/tspair.h \
     ./diskfiles/dos33/dos33imagemodel.h\
     ./diskfiles/dos33/dos33treeitem.h\
-    ./diskfiles/rawdiskimage.h \
     ./intbasic/IntBasicFile.h \
     ./memory/attributedmemory.h \
     ./memory/memorycell.h \
@@ -205,7 +205,8 @@ HEADERS += \
     diskfiles/cpressfile.h \
     diskfiles/diskstore/asdiskdata.h \
     diskfiles/diskstore/asdiskimporter.h \
-    diskfiles/diskstore/asdiskstore.h
+    diskfiles/diskstore/asdiskstore.h \
+    util/referencelist.h
 
 FORMS += \
     ./sequence/sequenceviewer.ui \

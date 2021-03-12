@@ -47,9 +47,9 @@ public:
     explicit ViewWidgetStack(QWidget *parent = nullptr);
 
 public slots:
-    void setSector(Sector *sec, PreferredViewer viewer = PreferredViewer::DontCare);
+    void setSector(QSharedPointer<Sector> sec, PreferredViewer viewer = PreferredViewer::DontCare);
 
-    void handleShowSectorData(Sector *data, int track, int sector, DiskSectorRole role);
+    void handleShowSectorData(QSharedPointer<Sector> data, int track, int sector, DiskSectorRole role);
 
 
 

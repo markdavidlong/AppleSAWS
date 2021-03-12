@@ -37,12 +37,12 @@ public:
     explicit VTOCView(QWidget *parent = nullptr);
     ~VTOCView();
 
-    void setSector(Sector *sec);
+    void setSector(QSharedPointer<const Sector> sec);
 
 
 private:
     Ui::VTOCView *ui;
-    Sector *m_sector;
+    QSharedPointer<const Sector> m_sector;
 
 };
 

@@ -51,7 +51,7 @@ QByteArray GenericFile::data()
     {
         if (m_data_cache.size() == 0)
         {
-            m_data_cache = rawData().asQByteArray();
+            m_data_cache = rawData();
         }
     }
     else
@@ -72,7 +72,7 @@ void GenericFile::resetToDefaultData()
 }
 
 
-ChunkByteList &GenericFile::rawData()
+QByteArray GenericFile::rawData()
 {
     if (!m_data_loaded)
     {
@@ -87,20 +87,13 @@ void GenericFile::updateFromFDE(FileDescriptiveEntry &fde)
     setLength(fde.lengthInSectors * m_diskfile->rawImage()->sectorSize());
 }
 
-SectorData *GenericFile::peekFirstSector() const
+QByteArray GenericFile::peekFirstSector() const
 {
-    SectorData *retval = nullptr;
+    auto tsl = m_diskfile->getSector(m_fde.firstTSListSector())->asTrackSectorList();
+    TSPairList pairs = tsl.getValidTSPairs();
 
-    if (m_diskfile)
-    {
-        auto tsl = m_diskfile->getSector(m_fde.firstTSListSector()).asTrackSectorList();
-        TSPairList pairs = tsl.getValidTSPairs();
-        if (pairs.size())
-        {
-            retval = m_diskfile->getSector(pairs.first()).rawData();
-        }
-    }
-    return retval;
+    return m_diskfile->getSector(pairs.first())->rawData();
+
 }
 
 void GenericFile::initDataFromImage()
@@ -109,7 +102,7 @@ void GenericFile::initDataFromImage()
     {
         if (m_diskfile)
         {
-            auto tsl = m_diskfile->getSector(m_fde.firstTSListSector()).asTrackSectorList();
+            auto tsl = m_diskfile->getSector(m_fde.firstTSListSector())->asTrackSectorList();
             TSPairList pairs = tsl.getValidTSPairs();
             m_data_loaded = true;
             m_data = m_diskfile->getDataFromTSPairList(pairs);

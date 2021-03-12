@@ -34,7 +34,7 @@ QByteArray IntBasicFile::detokenize()
 //    uint  =  unsigned int
 //    quint8    =  unsigned char
 //    ==========================================================================
-    return dumpBufferAsIntBasicFile(rawData().asQByteArray());
+    return dumpBufferAsIntBasicFile(rawData());
 }
 
 
@@ -152,9 +152,10 @@ QByteArray IntBasicFile::dumpBufferAsIntBasicFile(QByteArray origdata)
 
     QByteArray retval;
 
-    QVector<quint8> data;
+    QList<quint8> data;
     QByteArray data0 = origdata;
 
+    if (origdata.size() == 0) return retval;
 
     foreach (quint8 value, origdata)
     {
