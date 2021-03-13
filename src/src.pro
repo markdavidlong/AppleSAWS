@@ -43,15 +43,15 @@ DEFINES += WS_VIDEO
 
 SOURCES += \
     ./diskfiles/dos33/dos33disktreeview.cpp \
-    ./intbasic/IntBasicFile.cxx \
+    ./intbasic/intbasicfile.cpp \
     ./main.cpp \
-    ./diskfiles/dos33/dos33diskimage.cxx \
-    ./diskfiles/dos33/sector.cxx \
-    ./diskfiles/dos33/vtoc.cxx \
-    ./diskfiles/dos33/catalogsector.cxx \
-    ./diskfiles/dos33/tracksectorlist.cxx \
-    ./diskfiles/dos33/filedescriptiveentry.cxx \
-    ./diskfiles/dos33/genericfile.cxx \
+    ./diskfiles/dos33/dos33diskimage.cpp \
+    ./diskfiles/dos33/sector.cpp \
+    ./diskfiles/dos33/vtoc.cpp \
+    ./diskfiles/dos33/catalogsector.cpp \
+    ./diskfiles/dos33/tracksectorlist.cpp \
+    ./diskfiles/dos33/filedescriptiveentry.cpp \
+    ./diskfiles/dos33/genericfile.cpp \
     ./diskfiles/tspair.cpp \
     ./diskfiles/dos33/dos33imagemodel.cpp \
     ./diskfiles/dos33/dos33treeitem.cpp \
@@ -75,43 +75,43 @@ SOURCES += \
     ./ui/diskexplorer/viewwidgetstack.cpp \
     ./ui/diskexplorer/vtocview.cpp \
     ./ui/startupdialog.cpp \
-    ./ui/viewers/intbasicfileviewer.cxx \
+    ./ui/viewers/intbasicfileviewer.cpp \
     ./ui/widgets/notesdialog.cpp \
-    ./util/applestring.cxx \
-    ./applesoftfile/applesoftfile.cxx \
-    ./applesoftfile/applesofttoken.cxx \
-    ./applesoftfile/applesoftformatter.cxx \
-    ./binaryfile/disassembler.cxx \
-    ./binaryfile/binaryfile.cxx \
-    ./textfile/textfile.cxx \
-    ./ui/catalogwidget.cxx \
-    ./ui/viewers/hiresviewwidget.cxx \
-    ./ui/viewers/applesoftfileviewer.cxx \
+    ./util/applestring.cpp \
+    ./applesoftfile/applesoftfile.cpp \
+    ./applesoftfile/applesofttoken.cpp \
+    ./applesoftfile/applesoftformatter.cpp \
+    ./binaryfile/disassembler.cpp \
+    ./binaryfile/binaryfile.cpp \
+    ./textfile/textfile.cpp \
+    ./ui/catalogwidget.cpp \
+    ./ui/viewers/hiresviewwidget.cpp \
+    ./ui/viewers/applesoftfileviewer.cpp \
     ./ui/viewers/disassemblerviewer.cpp \
     ./ui/viewers/hexdumpviewer.cpp \
     ./ui/viewers/texthexdumpviewer.cpp \
     ./ui/viewers/mazeviewer.cpp \
     ./ui/viewers/charsetviewer.cpp \
-    ./relocatablefile/relocatablefile.cxx \
+    ./relocatablefile/relocatablefile.cpp \
     ./binaryfile/binaryfilemetadata.cpp \
     ./util/charset.cpp \
     ./ui/widgets/characterwidget.cpp \
     ./ui/viewers/applesoftfiledetailviewer.cpp \
     ./ui/widgets/hexconverter.cpp \
     ./ui/viewers/viewerbase.cpp \
-    ./ui/widgets/CharacterSetExplorer.cpp \
-    ./ui/widgets/HiresScreenWidget.cpp \
-    ./ui/widgets/DisassemblerMetadataDialog.cpp \
-    ./binaryfile/EntryPointModel.cpp \
-    ./ui/widgets/LocationInfoDialog.cpp \
-    ./binaryfile/EntryPoints.cpp \
-    ./binaryfile/AssemblerSymbols.cpp \
-    ./binaryfile/AssemblerSymbolModel.cpp \
-    ./ui/diskexplorer/DiskExplorer.cpp \
-    ./ui/diskexplorer/DiskExplorerMapWidget.cpp \
-    ./applesoftfile/ApplesoftRetokenizer.cpp \
-    ./internals/JumpLineManager.cpp \
-    ./ui/widgets/FlowLineTextBrowser.cpp \
+    ./ui/widgets/charactersetexplorer.cpp \
+    ./ui/widgets/hiresscreenwidget.cpp \
+    ./ui/widgets/disassemblermetadatadialog.cpp \
+    ./binaryfile/entrypointmodel.cpp \
+    ./ui/widgets/locationinfodialog.cpp \
+    ./binaryfile/entrypoints.cpp \
+    ./binaryfile/assemblersymbols.cpp \
+    ./binaryfile/assemblersymbolmodel.cpp \
+    ./ui/diskexplorer/diskexplorer.cpp \
+    ./ui/diskexplorer/diskexplorermapwidget.cpp \
+    ./applesoftfile/applesoftretokenizer.cpp \
+    ./internals/jumplinemanager.cpp \
+    ./ui/widgets/flowlinetextbrowser.cpp \
     ./util/opcodes.cpp \
     diskfiles/cpressdiskfs.cpp \
     diskfiles/cpressdiskimage.cpp \
@@ -133,7 +133,7 @@ HEADERS += \
     ./diskfiles/tspair.h \
     ./diskfiles/dos33/dos33imagemodel.h\
     ./diskfiles/dos33/dos33treeitem.h\
-    ./intbasic/IntBasicFile.h \
+    ./intbasic/intbasicfile.h \
     ./memory/attributedmemory.h \
     ./memory/memorycell.h \
     ./memory/memrole.h \
@@ -183,21 +183,21 @@ HEADERS += \
     ./ui/widgets/hrcgcontrolsinfo.h \
     ./ui/viewers/viewerbase.h \
     ./ui/viewers/fileviewerinterface.h \
-    ./ui/widgets/CharacterSetExplorer.h \
-    ./ui/widgets/HiresScreenWidget.h \
-    ./ui/widgets/DisassemblerMetadataDialog.h \
-    ./binaryfile/EntryPointModel.h \
-    ./ui/widgets/LocationInfoDialog.h \
-    ./binaryfile/EntryPoints.h \
-    ./binaryfile/AssemblerSymbols.h \
-    ./binaryfile/AssemblerSymbolModel.h \
-    ./binaryfile/MemoryUsageMap.h \
-    ./ui/diskexplorer/DiskExplorer.h \
-    ./ui/diskexplorer/DiskExplorerMapWidget.h \
-    ./applesoftfile/ApplesoftRetokenizer.h \
-    ./util/AppleColors.h \
-    ./internals/JumpLineManager.h \
-    ./ui/widgets/FlowLineTextBrowser.h \
+    ./ui/widgets/charactersetexplorer.h \
+    ./ui/widgets/hiresscreenwidget.h \
+    ./ui/widgets/disassemblermetadatadialog.h \
+    ./binaryfile/entrypointmodel.h \
+    ./ui/widgets/locationinfodialog.h \
+    ./binaryfile/entrypoints.h \
+    ./binaryfile/assemblersymbols.h \
+    ./binaryfile/assemblersymbolmodel.h \
+    ./binaryfile/memoryusagemap.h \
+    ./ui/diskexplorer/diskexplorer.h \
+    ./ui/diskexplorer/diskexplorermapwidget.h \
+    ./applesoftfile/applesoftretokenizer.h \
+    ./util/applecolors.h \
+    ./internals/jumplinemanager.h \
+    ./ui/widgets/flowlinetextbrowser.h \
     ./ui/widgets/asciiinfodialog.h \
     diskfiles/cpressdiskfs.h \
     diskfiles/cpressdiskimage.h \
@@ -222,9 +222,9 @@ FORMS += \
     ./ui/widgets/hexconverter.ui \
     ./ui/widgets/hrcgcontrolsinfo.ui \
     ./ui/viewers/viewerbase.ui \
-    ./ui/widgets/CharacterSetExplorer.ui \
-    ./ui/widgets/DisassemblerMetadataDialog.ui \
-    ./ui/widgets/LocationInfoDialog.ui \
+    ./ui/widgets/charactersetexplorer.ui \
+    ./ui/widgets/disassemblermetadatadialog.ui \
+    ./ui/widgets/locationinfodialog.ui \
     ./ui/widgets/asciiinfodialog.ui \
     ./ui/widgets/notesdialog.ui
 

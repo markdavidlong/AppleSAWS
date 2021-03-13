@@ -18,7 +18,7 @@
 *****************************************************************************/
 
 
-#include "ApplesoftRetokenizer.h"
+#include "applesoftretokenizer.h"
 #include "applesofttoken.h"
 #include "util.h"
 
