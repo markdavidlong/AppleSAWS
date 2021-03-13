@@ -18,7 +18,6 @@
 
 #include "genericfile.h"
 
-
 quint8 GenericFile::rawDataAt(int offset)
 {
     return rawData().at(offset);

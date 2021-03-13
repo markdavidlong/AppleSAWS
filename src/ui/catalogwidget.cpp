@@ -22,7 +22,8 @@
 #include "binaryfile.h"
 #include "applesoftfile.h"
 #include "genericfile.h"
-#include "IntBasicFile.h"
+#include "intbasicfile.h"
+
 #include <QUrl>
 #include <QDebug>
 #include <QMenu>

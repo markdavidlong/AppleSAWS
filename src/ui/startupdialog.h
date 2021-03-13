@@ -19,14 +19,13 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-
-
 #include "notesdialog.h"
 #include "hrcgcontrolsinfo.h"
 #include "hexconverter.h"
 #include "hexdumpviewer.h"
-#include <QDialog>
 #include "asciiinfodialog.h"
+
+#include <QDialog>
 
 namespace Ui {
 class StartupDialog;

@@ -19,14 +19,12 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-
-
 #include "binaryfilemetadata.h"
-#include "EntryPoints.h"
-#include "EntryPointModel.h"
-#include "AssemblerSymbolModel.h"
-#include "AssemblerSymbols.h"
-#include "LocationInfoDialog.h"
+#include "entrypoints.h"
+#include "entrypointmodel.h"
+#include "assemblersymbolmodel.h"
+#include "assemblersymbols.h"
+#include "locationinfodialog.h"
 
 #include <QDialog>
 #include <QItemSelection>

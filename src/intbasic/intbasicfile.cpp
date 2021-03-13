@@ -16,7 +16,7 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-#include "IntBasicFile.h"
+#include "intbasicfile.h"
 #include <QDebug>
 
 #include "util.h"

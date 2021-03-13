@@ -16,10 +16,7 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-#include "DiskExplorerMapWidget.h"
-
-//#include "vtoc.h"
-//#include "catalogsector.h"
+#include "diskexplorermapwidget.h"
 #include "util.h"
 
 #include <QPushButton>

@@ -24,7 +24,6 @@
 #include "relocatablefile.h"
 #include "opcodes.h"
 
-
 #include <QSettings>
 #include <QMenu>
 #include <QAction>

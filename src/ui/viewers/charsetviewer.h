@@ -19,12 +19,10 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-
-
 #include "binaryfile.h"
 #include "characterwidget.h"
 #include "fileviewerinterface.h"
-#include "CharacterSetExplorer.h"
+#include "charactersetexplorer.h"
 
 #include <QWidget>
 

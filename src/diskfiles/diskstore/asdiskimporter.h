@@ -19,9 +19,9 @@
 #ifndef ASDISKIMPORTER_H
 #define ASDISKIMPORTER_H
 
-#include <QObject>
-
 #include "asdiskdata.h"
+
+#include <QObject>
 
 class ASDiskImporter : public QObject
 {

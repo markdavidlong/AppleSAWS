@@ -16,7 +16,7 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-#include "JumpLineManager.h"
+#include "jumplinemanager.h"
 
 JumpLineManager::JumpLineManager(quint16 from, quint16 to)
     : m_start(from),

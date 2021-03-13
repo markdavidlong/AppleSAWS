@@ -17,6 +17,7 @@
 *****************************************************************************/
 
 #include "charsetviewer.h"
+
 #include <QGridLayout>
 #include <QSettings>
 #include <QAction>

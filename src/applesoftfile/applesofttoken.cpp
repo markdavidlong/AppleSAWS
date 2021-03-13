@@ -17,7 +17,6 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-
 #include "applesofttoken.h"
 
 QMap<quint16, QString> ApplesoftToken::m_tokens = QMap<quint16, QString>();

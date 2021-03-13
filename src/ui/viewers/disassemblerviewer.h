@@ -19,8 +19,6 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-
-
 #include <QWidget>
 #include <QByteArray>
 
@@ -28,8 +26,8 @@
 #include "binaryfile.h"
 #include "relocatablefile.h"
 #include "fileviewerinterface.h"
-#include "DisassemblerMetadataDialog.h"
-#include "JumpLineManager.h"
+#include "disassemblermetadatadialog.h"
+#include "jumplinemanager.h"
 
 namespace Ui {
 class DisassemblerViewer;

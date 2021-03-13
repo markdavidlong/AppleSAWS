@@ -18,7 +18,7 @@
 *****************************************************************************/
 
 
-#include "AssemblerSymbolModel.h"
+#include "assemblersymbolmodel.h"
 #include "util.h"
 
 #include <QDebug>

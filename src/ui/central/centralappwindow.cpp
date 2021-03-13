@@ -23,7 +23,7 @@
 #include "dos33imagemodel.h"
 #include "dos33disktreeview.h"
 #include "sequencetoolbox.h"
-#include "DiskExplorerMapWidget.h"
+#include "diskexplorermapwidget.h"
 
 #include <QTreeView>
 #include <QAction>
@@ -108,7 +108,7 @@ void CentralAppWindow::initMenuBar()
     filemenu->addAction(m_quitAction);
 
 
-    auto toolsmenu = menuBar()->addMenu(tr("&Tools"));
+    /*auto toolsmenu =*/ menuBar()->addMenu(tr("&Tools"));
 }
 
 void CentralAppWindow::initStatusBar()

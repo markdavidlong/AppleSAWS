@@ -22,7 +22,6 @@
 #include <QObject>
 #include "DiskImg.h"
 
-
 class CPressDiskFS : public QObject
 {
     Q_OBJECT

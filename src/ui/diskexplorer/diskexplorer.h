@@ -24,13 +24,14 @@
 #include <QMainWindow>
 
 #include "catalogwidget.h"
-#include "DiskExplorerMapWidget.h"
+#include "diskexplorermapwidget.h"
 #include "dos33diskimage.h"
 #include "hrcgcontrolsinfo.h"
 #include "hexconverter.h"
-//#include "hexdumpviewer.h"
 #include "viewerbase.h"
 #include "asciiinfodialog.h"
+
+//#include "hexdumpviewer.h"
 //#include "notesdialog.h"
 
 #include "viewwidgetstack.h"

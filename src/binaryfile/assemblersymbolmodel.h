@@ -19,7 +19,7 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-#include "AssemblerSymbols.h"
+#include "assemblersymbols.h"
 
 #include <QDataStream>
 #include <QAbstractTableModel>

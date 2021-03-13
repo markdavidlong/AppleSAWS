@@ -19,16 +19,14 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-
-
-#include <QWidget>
-#include <QMenu>
-#include <QAction>
-
 #include "applesoftfile.h"
 #include "applesoftformatter.h"
 #include "viewerbase.h"
 #include "applesoftfiledetailviewer.h"
+
+#include <QWidget>
+#include <QMenu>
+#include <QAction>
 
 
 namespace Ui {

@@ -22,8 +22,6 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-
-
 #include "dos33diskimage.h"
 
 namespace Ui {

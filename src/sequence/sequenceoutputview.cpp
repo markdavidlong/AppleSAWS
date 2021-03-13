@@ -34,7 +34,7 @@ SequenceOutputView::SequenceOutputView(QWidget *parent) : QPlainTextEdit(parent)
     updateLineNumberAreaWidth(0);
     highlightCurrentLine();
 
-    auto hl = new TestHighlighter(document());
+    /*auto hl = */new TestHighlighter(document());
 }
 
 void SequenceOutputView::lineNumberAreaPaintEvent(QPaintEvent *event)

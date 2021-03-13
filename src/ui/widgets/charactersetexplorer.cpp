@@ -16,8 +16,8 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-#include "CharacterSetExplorer.h"
-#include "ui_CharacterSetExplorer.h"
+#include "charactersetexplorer.h"
+#include "ui_charactersetexplorer.h"
 
 CharacterSetExplorer::CharacterSetExplorer(QWidget *parent) :
     QDialog(parent),

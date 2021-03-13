@@ -16,9 +16,10 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-#include <QDebug>
 #include "relocatablefile.h"
 #include "util.h"
+
+#include <QDebug>
 
 RelocatableFile::RelocatableFile(Dos33DiskImage *image, FileDescriptiveEntry &fde)
                                  : GenericFile(image,fde)

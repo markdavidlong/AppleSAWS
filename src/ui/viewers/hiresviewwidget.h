@@ -19,11 +19,9 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-
-
 #include "binaryfile.h"
 #include "fileviewerinterface.h"
-#include "HiresScreenWidget.h"
+#include "hiresscreenwidget.h"
 
 #include <QWidget>
 #include <QPixmap>

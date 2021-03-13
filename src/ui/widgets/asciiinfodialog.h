@@ -19,10 +19,9 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-
+#include "ui_asciiinfodialog.h"
 
 #include <QDialog>
-#include "ui_asciiinfodialog.h"
 
 namespace Ui {
 class AsciiInfoDialog;

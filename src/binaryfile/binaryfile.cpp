@@ -16,9 +16,10 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-#include <QDebug>
 #include "binaryfile.h"
 #include "util.h"
+
+#include <QDebug>
 
 BinaryFile::BinaryFile(Dos33DiskImage *image, FileDescriptiveEntry &fde)
     : GenericFile(image,fde)

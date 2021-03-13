@@ -16,8 +16,9 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-#include <QDebug>
 #include "textfile.h"
+
+#include <QDebug>
 
 TextFile::TextFile(Dos33DiskImage *image, FileDescriptiveEntry &fde)
     : GenericFile(image,fde)

@@ -21,7 +21,7 @@
 
 
 
-#include "EntryPoints.h"
+#include "entrypoints.h"
 
 #include <QDataStream>
 #include <QAbstractTableModel>

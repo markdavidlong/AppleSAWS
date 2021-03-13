@@ -1,7 +1,5 @@
-#ifndef INTBASICFILE_H
-#define INTBASICFILE_H
-
 /*****************************************************************************
+
 *    AppleSAWS - The Apple Software Analysis WorkShop                        *
 *    Copyright (C) 2015-2021  Mark D. Long                                   *
 *                                                                            *
@@ -19,7 +17,8 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-
+#ifndef INTBASICFILE_H
+#define INTBASICFILE_H
 
 #include "genericfile.h"
 

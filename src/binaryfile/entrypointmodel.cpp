@@ -16,7 +16,7 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-#include "EntryPointModel.h"
+#include "entrypointmodel.h"
 #include "util.h"
 
 #include <QDebug>

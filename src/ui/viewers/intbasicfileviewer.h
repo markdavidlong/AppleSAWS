@@ -19,10 +19,8 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-
-
 #include "fileviewerinterface.h"
-#include "IntBasicFile.h"
+#include "intbasicfile.h"
 
 namespace Ui {
 class IntBasicFileViewer;

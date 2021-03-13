@@ -19,16 +19,11 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-
-
 #include <Qt>
 #include "util.h"
 #include "tspair.h"
 
 class Sector;
-
-
-
 class QString;
 
 class VTOC

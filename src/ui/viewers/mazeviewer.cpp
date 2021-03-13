@@ -17,11 +17,11 @@
 *****************************************************************************/
 
 #include "mazeviewer.h"
+#include "memory.h"
+
 #include <QPainter>
 #include <QResizeEvent>
 #include <QDebug>
-
-#include "memory.h"
 
 MazeViewer::MazeViewer(QWidget *parent) : FileViewerInterface(parent)
 {

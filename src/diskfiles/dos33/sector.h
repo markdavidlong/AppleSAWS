@@ -21,7 +21,6 @@
 
 #include <QByteArray>
 #include <QSharedPointer>
-//#include "rawdiskimage.h"
 
 #include "vtoc.h"
 #include "catalogsector.h"

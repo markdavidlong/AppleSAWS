@@ -1,4 +1,3 @@
-
 /*****************************************************************************
 *    AppleSAWS - The Apple Software Analysis WorkShop                        *
 *    Copyright (C) 2015-2021  Mark D. Long                                   *
@@ -17,9 +16,9 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-
 #include "applesoftfile.h"
 #include "util.h"
+
 #include <QDebug>
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>

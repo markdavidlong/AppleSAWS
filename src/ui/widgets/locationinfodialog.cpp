@@ -16,8 +16,8 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-#include "LocationInfoDialog.h"
-#include "ui_LocationInfoDialog.h"
+#include "locationinfodialog.h"
+#include "ui_locationinfodialog.h"
 
 LocationInfoDialog::LocationInfoDialog(QWidget *parent) :
     QDialog(parent,  Qt::CustomizeWindowHint | Qt::WindowTitleHint ),

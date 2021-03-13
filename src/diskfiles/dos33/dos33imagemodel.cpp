@@ -17,10 +17,9 @@
 *****************************************************************************/
 
 #include "dos33imagemodel.h"
+#include "tspair.h"
 
 #include <QIcon>
-
-#include "tspair.h"
 
 Dos33ImageModel::Dos33ImageModel(QObject *parent) : QStandardItemModel(parent)
 {

@@ -18,20 +18,20 @@
 
 #include "dos33diskimage.h"
 
+#include "tracksectorlist.h"
+#include "genericfile.h"
+#include "applesoftfile.h"
+#include "binaryfile.h"
+#include "intbasicfile.h"
+#include "relocatablefile.h"
+#include "textfile.h"
+#include "sector.h"
+
 #include <QFile>
 #include <QDataStream>
 #include <QFileInfo>
 #include <QDebug>
 #include <QDir>
-
-#include "tracksectorlist.h"
-#include "genericfile.h"
-#include "applesoftfile.h"
-#include "binaryfile.h"
-#include "IntBasicFile.h"
-#include "relocatablefile.h"
-#include "textfile.h"
-#include "sector.h"
 
 Dos33DiskImage::Dos33DiskImage(QString filename)
 {

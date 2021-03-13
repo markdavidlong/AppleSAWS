@@ -29,7 +29,7 @@
 #include "applesoftline.h"
 #include "genericfile.h"
 #include "applesofttoken.h"
-#include "ApplesoftRetokenizer.h"
+#include "applesoftretokenizer.h"
 
 
 class ApplesoftFile : public GenericFile

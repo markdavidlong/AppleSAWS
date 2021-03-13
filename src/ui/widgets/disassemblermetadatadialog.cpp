@@ -16,9 +16,10 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-#include "DisassemblerMetadataDialog.h"
-#include "ui_DisassemblerMetadataDialog.h"
+#include "disassemblermetadatadialog.h"
+#include "ui_disassemblermetadatadialog.h"
 #include "util.h"
+
 #include <QDebug>
 
 

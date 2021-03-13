@@ -19,11 +19,10 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-
-
 #include "tspair.h"
-#include <QDebug>
 #include "applestring.h"
+
+#include <QDebug>
 
 class GenericFile;
 

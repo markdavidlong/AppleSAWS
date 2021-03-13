@@ -17,6 +17,7 @@
 *****************************************************************************/
 
 #include "asdiskimporter.h"
+
 #include "DiskImg.h"
 
 #include <QDir>

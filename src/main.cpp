@@ -29,22 +29,9 @@
 #include "applesoftfile.h"
 #include "startupdialog.h"
 
-//#include <QByteArray>
-//#include "sector.h"
 
 int main(int argc, char** argv)
 {
-//    QByteArray ba(256,0xff);
-//    Sector s(ba,1,2);
-//    s.dump();
-//    Sector t(s);
-//    t.dump();
-
-//qDebug () << "S at 1: " << s.at(1);
-//qDebug () << "T at 1: " << s.at(1);
-//qDebug () << "S at 2: " << s.at(2);
-//qDebug () << "T at 2: " << s.at(2);
-//    return 0;
 
 
     QCoreApplication::setOrganizationName("LydianScaleSoftware");

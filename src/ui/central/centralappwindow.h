@@ -20,10 +20,8 @@
 *****************************************************************************/
 
 
-
-#include <QMainWindow>
-
 #include "mainapptoolbar.h"
+
 class QTreeView;
 class QAction;
 class QStatusBar;
@@ -34,6 +32,7 @@ class QStackedWidget;
 #include "DockWidget.h"
 #include "DockManager.h"
 #include <QActionGroup>
+#include <QMainWindow>
 
 
 class CentralAppWindow : public QMainWindow

@@ -35,7 +35,7 @@ void SequenceTool::setSequenceEvent(SequenceEvent *event)
 
 }
 
-void SequenceTool::mousePressEvent(QMouseEvent *event)
+void SequenceTool::mousePressEvent(QMouseEvent * /*event*/)
 {
 
 }

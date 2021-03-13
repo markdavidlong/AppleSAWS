@@ -21,9 +21,11 @@
 #include "role_asm_opcode.h"
 #include "role_asm_operand.h"
 #include "util.h"
+
 #include <QByteArray>
 #include <QDebug>
 #include <QList>
+
 #include <math.h>
 
 

@@ -16,7 +16,7 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-#include "EntryPoints.h"
+#include "entrypoints.h"
 #include <QDebug>
 
 EntryPoints::EntryPoints(QObject *parent) : QObject(parent)

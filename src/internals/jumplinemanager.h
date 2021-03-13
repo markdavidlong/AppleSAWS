@@ -1,7 +1,5 @@
-#ifndef JUMPLINEMANAGER_H
-#define JUMPLINEMANAGER_H
-
 /*****************************************************************************
+
 *    AppleSAWS - The Apple Software Analysis WorkShop                        *
 *    Copyright (C) 2015-2021  Mark D. Long                                   *
 *                                                                            *
@@ -18,8 +16,8 @@
 *    You should have received a copy of the GNU General Public License       *
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
-
-
+#ifndef JUMPLINEMANAGER_H
+#define JUMPLINEMANAGER_H
 
 #include <QPair>
 #include <QMap>

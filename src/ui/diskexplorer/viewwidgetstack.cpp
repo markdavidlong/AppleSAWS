@@ -21,7 +21,7 @@
 #include "vtocview.h"
 #include "catalogsectorview.h"
 #include "tslistview.h"
-#include "DiskExplorerMapWidget.h"
+#include "diskexplorermapwidget.h"
 
 ViewWidgetStack::ViewWidgetStack(QWidget *parent) : QTabWidget(parent)
 {

@@ -19,11 +19,9 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-
+#include "charset.h"
 
 #include <QDialog>
-
-#include "charset.h"
 
 namespace Ui {
 class CharacterSetExplorer;

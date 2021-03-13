@@ -17,12 +17,11 @@
 *****************************************************************************/
 
 #include "vtoc.h"
+#include "sector.h"
+#include "util.h"
 
 #include <QDebug>
 #include <QString>
-
-#include "sector.h"
-#include "util.h"
 
 VTOC::VTOC(QSharedPointer<const Sector> data)
 {

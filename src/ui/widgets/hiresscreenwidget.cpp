@@ -16,7 +16,7 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-#include "HiresScreenWidget.h"
+#include "hiresscreenwidget.h"
 
 #include "binaryfile.h"
 

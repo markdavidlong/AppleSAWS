@@ -21,8 +21,8 @@
 
 
 
-#include "EntryPoints.h"
-#include "AssemblerSymbols.h"
+#include "entrypoints.h"
+#include "assemblersymbols.h"
 #include "genericfile.h"
 #include "binaryfile.h"
 

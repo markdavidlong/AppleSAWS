@@ -19,10 +19,8 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-
-
 #include "binaryfile.h"
-#include "AppleColors.h"
+#include "applecolors.h"
 
 #include <QWidget>
 #include <QPixmap>

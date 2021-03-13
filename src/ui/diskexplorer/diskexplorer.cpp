@@ -16,7 +16,7 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-#include "DiskExplorer.h"
+#include "diskexplorer.h"
 
 #include <QGridLayout>
 #include <QMenuBar>

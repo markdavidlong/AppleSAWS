@@ -19,7 +19,7 @@
 #include "startupdialog.h"
 #include "ui_startupdialog.h"
 
-#include "diskexplorer/DiskExplorer.h"
+#include "diskexplorer.h"
 
 #include <QFileDialog>
 #include "centralappwindow.h"

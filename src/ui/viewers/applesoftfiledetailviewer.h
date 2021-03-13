@@ -19,13 +19,12 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-
-
-#include <QWidget>
 #include "applesoftline.h"
 #include "applesofttoken.h"
 #include "applesoftfile.h"
+
 #include <QDebug>
+#include <QWidget>
 
 namespace Ui {
 class ApplesoftFileDetailViewer;

@@ -19,9 +19,9 @@
 *    along with this program.  If not, see <https://www.gnu.org/licenses/>.  *
 *****************************************************************************/
 
-#include "MemoryUsageMap.h"
+#include "memoryusagemap.h"
 #include "util.h"
-#include "JumpLineManager.h"
+#include "jumplinemanager.h"
 #include "opcodes.h"
 #include "attributedmemory.h"
 

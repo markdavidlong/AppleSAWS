@@ -19,23 +19,23 @@
 #include "viewerbase.h"
 #include "ui_viewerbase.h"
 
+#include "applesoftfileviewer.h"
+#include "hexdumpviewer.h"
+#include "texthexdumpviewer.h"
+#include "charsetviewer.h"
+#include "intbasicfile.h"
+#include "intbasicfileviewer.h"
+#include "hiresviewwidget.h"
+#include "disassemblerviewer.h"
+#include "textfile.h"
+#include "mazeviewer.h"
+
 #include <QCloseEvent>
 #include <QToolBar>
 #include <QComboBox>
 #include <QLabel>
 #include <QDebug>
 #include <QScrollArea>
-
-#include "applesoftfileviewer.h"
-#include "hexdumpviewer.h"
-#include "texthexdumpviewer.h"
-#include "charsetviewer.h"
-#include "IntBasicFile.h"
-#include "intbasicfileviewer.h"
-#include "hiresviewwidget.h"
-#include "disassemblerviewer.h"
-#include "textfile.h"
-#include "mazeviewer.h"
 
 ViewerBase::ViewerBase(QWidget *parent) :
     QMainWindow(parent),
