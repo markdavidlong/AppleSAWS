@@ -104,8 +104,8 @@ bool ASDiskImporter::importImage(QString filename, ASDiskData &into)
                     retval = true;
                 }
 
-                image.RemoveDiskFS(fs);
             }
+            image.RemoveDiskFS(fs);
         }
         image.CloseImage();
     }

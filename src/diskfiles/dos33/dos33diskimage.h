@@ -32,8 +32,6 @@
 #include "vtoc.h"
 #include "tracksectorlist.h"
 
-#include "chunkbytelist.h"
-
 #include "asdiskimporter.h"
 #include "asdiskdata.h"
 

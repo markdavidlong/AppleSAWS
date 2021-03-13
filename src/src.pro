@@ -1,6 +1,7 @@
 
 QT += core gui printsupport
 CONFIG += c++11
+CONFIG += debug_and_release
 
 MOC_DIR = ./.build
 UI_DIR = ./.build
@@ -111,7 +112,6 @@ SOURCES += \
     ./applesoftfile/ApplesoftRetokenizer.cpp \
     ./internals/JumpLineManager.cpp \
     ./ui/widgets/FlowLineTextBrowser.cpp \
-    ./util/chunkbytelist.cpp \
     ./util/opcodes.cpp \
     diskfiles/cpressdiskfs.cpp \
     diskfiles/cpressdiskimage.cpp \
@@ -156,7 +156,6 @@ HEADERS += \
     ./ui/startupdialog.h \
     ./ui/viewers/intbasicfileviewer.h \
     ./ui/widgets/notesdialog.h \
-    ./util/chunkbytelist.h \
     ./util/opcodes.h \
     ./util/util.h \
     ./util/applestring.h \
@@ -233,7 +232,7 @@ RESOURCES += \
     ./resource/resources.qrc \
     ./qdarkstyle/style.qrc
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../ads/lib/ -lqtadvanceddockingd
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../ads/lib/ -lqtadvanceddocking
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../ads/lib/ -lqtadvanceddockingd
 else:unix: LIBS += -L$$OUT_PWD/../ads/src/ -lqtadvanceddockingd
 
@@ -241,21 +240,21 @@ INCLUDEPATH += $$PWD/../ads/src
 DEPENDPATH += $$PWD/../ads/src
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../cpress/zlib/release/ -lzlib
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../cpress/zlib/debug/ -lzlib
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../cpress/zlib/debug/ -lzlibd
 else:unix: LIBS += -L$$OUT_PWD/../cpress/zlib/ -lzlib
 
 INCLUDEPATH += $$PWD/../cpress/zlib
 DEPENDPATH += $$PWD/../cpress/zlib
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../cpress/nufxlib/release/ -lnufxlib
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../cpress/nufxlib/debug/ -lnufxlib
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../cpress/nufxlib/debug/ -lnufxlibd
 else:unix: LIBS += -L$$OUT_PWD/../cpress/nufxlib/ -lnufxlib
 
 INCLUDEPATH += $$PWD/../cpress/nufxlib
 DEPENDPATH += $$PWD/../cpress/nufxlib
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../cpress/diskimg/release/ -ldiskimg
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../cpress/diskimg/debug/ -ldiskimg
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../cpress/diskimg/debug/ -ldiskimgd
 else:unix: LIBS += -L$$OUT_PWD/../cpress/diskimg/ -ldiskimg
 
 INCLUDEPATH += $$PWD/../cpress/diskimg

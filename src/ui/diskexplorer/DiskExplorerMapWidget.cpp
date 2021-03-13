@@ -48,6 +48,7 @@ DiskExplorerMapWidget::DiskExplorerMapWidget(int numtracks, int numsectors, QWid
     gridlayout->setVerticalSpacing(1);
 
     initColors();
+    makeStatusWidget();
 
     m_bgroup = new QButtonGroup(this);
 
@@ -88,7 +89,7 @@ DiskExplorerMapWidget::DiskExplorerMapWidget(int numtracks, int numsectors, QWid
         }
     }
 
-    gridlayout->addWidget(new QLabel(""),18,0,1,5); // Stretchy Row
+    gridlayout->addWidget(getStatusWidget(),18,0,1,35); // Stretchy Row
    // gridlayout->setRowStretch(18,900);
 
     for (auto rownum = 0; rownum < gridlayout->rowCount(); rownum++)
@@ -102,7 +103,6 @@ DiskExplorerMapWidget::DiskExplorerMapWidget(int numtracks, int numsectors, QWid
         gridlayout->setColumnStretch(colnum,1);
     }
 
-    makeStatusWidget();
 }
 
 void DiskExplorerMapWidget::makeStatusWidget()
@@ -126,7 +126,7 @@ void DiskExplorerMapWidget::makeStatusWidget()
 
 QString DiskExplorerMapWidget::getSectorDescription(int track, int sector)
 {
-    if (track == 0) {
+    if (track == 0 && sector == 0) {
         return "Boot Sector";
     }
     else if (track <= 2)
@@ -347,7 +347,7 @@ void DiskExplorerMapWidget::defineRoles(TSPair vtoc)
         for (auto sec = 0; sec < m_numsectors; sec++)
         {
             TSPair ts(track,sec);
-            if (track == 0)
+            if (track == 0 && sec == 0)
             {
                 if (setButtonRole(ts,DiskSectorRole::BootSector))
                 {

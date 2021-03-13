@@ -1,7 +1,9 @@
+warning (In libhfs.pro)
+
 CONFIG += c++14
-#CONFIG += debug_and_release
-#TARGET = $$qtLibraryTarget(zlib)
-TARGET = libhfs
+CONFIG += debug_and_release
+TARGET = $$qtLibraryTarget(libhfs)
+#TARGET = libhfs
 TEMPLATE = lib
 DEFINES += QT_NO_DEPRECATED_WARNINGS
 DEFINES += _CRT_NONSTDC_NO_WARNINGS

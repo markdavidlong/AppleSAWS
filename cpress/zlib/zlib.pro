@@ -1,7 +1,9 @@
+warning (In zlib.pro)
+
 CONFIG += c++14
-#CONFIG += debug_and_release
-#TARGET = $$qtLibraryTarget(zlib)
-TARGET = zlib
+CONFIG += debug_and_release
+TARGET = $$qtLibraryTarget(zlib)
+#TARGET = zlib
 TEMPLATE = lib
 
 DEFINES += QT_NO_DEPRECATED_WARNINGS

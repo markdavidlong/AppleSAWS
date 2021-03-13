@@ -46,11 +46,12 @@ int main(int argc, char** argv)
 //qDebug () << "T at 2: " << s.at(2);
 //    return 0;
 
-    QApplication a(argc, argv);
 
     QCoreApplication::setOrganizationName("LydianScaleSoftware");
     QCoreApplication::setOrganizationDomain("lydianscale.com");
     QCoreApplication::setApplicationName("AppleSAWS");
+
+    QApplication a(argc, argv);
 
     auto x = QFontDatabase::addApplicationFont(":/fonts/Print_Char_21.ttf");
     auto y = QFontDatabase::addApplicationFont(":/fonts/PR_Number_3.ttf");
