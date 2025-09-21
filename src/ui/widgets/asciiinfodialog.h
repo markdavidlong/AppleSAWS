@@ -38,7 +38,7 @@ public:
 
                 if (jdx < 5 || jdx > 9)
                 {
-                    ui->tableWidget->item(idx,jdx )->setBackgroundColor(QColor(235,235,235));
+		    ui->tableWidget->item(idx, jdx)->setBackground(QBrush(QColor(235, 235, 235)));
                 }
             }
         }

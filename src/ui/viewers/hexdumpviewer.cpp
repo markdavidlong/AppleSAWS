@@ -66,7 +66,7 @@ void HexDumpViewer::showHexAndAsciiValues()
     //TODO: Align text from x00 to xFF.  Currently it will start with whatever the offset is.
 
     quint16 addr = m_offset;
-    for (int idx = 0; idx <= m_data.count()/16; idx++) {
+    for (int idx = 0; idx <= m_data.length()/16; idx++) {
         QString line = QString("(%1) %2: ")
                 .arg(m_offset+(idx*16),4,10,QChar('0'))
                 .arg(m_offset+(idx*16),4,16,QChar('0'));
@@ -74,7 +74,7 @@ void HexDumpViewer::showHexAndAsciiValues()
 
         for (int jdx = (idx*16); jdx < (idx*16)+16; jdx++) {
             addr++;
-            if (jdx < m_data.count()) {
+            if (jdx < m_data.length()) {
                 asciiline += valToAppleAscii(m_data[jdx]);
 
                 line += QString(" %1").arg((quint8) m_data[jdx],2,16,QChar('0'));
@@ -214,8 +214,9 @@ void HexDumpViewer::doPrint()
 
     QPrintDialog dialog(&printer, this);
     dialog.setWindowTitle(tr("Print Hex Dump"));
-    if (ui->textArea->textCursor().hasSelection())
-        dialog.addEnabledOption(QAbstractPrintDialog::PrintSelection);
+//TODO: Fix this for Qt6
+//    if (ui->textArea->textCursor().hasSelection())
+//        dialog.addEnabledOption(QAbstractPrintDialog::PrintSelection);
     if (dialog.exec() != QDialog::Accepted) {
         return;
     }

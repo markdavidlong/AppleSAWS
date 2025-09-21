@@ -40,7 +40,7 @@ public:
     void setTrack(int track) { m_track = track; }
     void setSector(int sector) { m_sector = sector; }
 
-    QByteRef operator[](uint offset);
+    char&  operator[](uint offset);
 
     bool setData(QByteArray data);
 

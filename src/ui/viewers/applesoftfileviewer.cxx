@@ -408,8 +408,9 @@ void ApplesoftFileViewer::doPrint()
 
     QPrintDialog dialog(&printer, this);
     dialog.setWindowTitle(tr("Print Applesoft File"));
-    if (ui->textArea->textCursor().hasSelection())
-        dialog.addEnabledOption(QAbstractPrintDialog::PrintSelection);
+// TODO: Fix this for Qt6
+//    if (ui->textArea->textCursor().hasSelection())
+//        dialog.setEnabledOptions(QAbstractPrintDialog::PrintSelection);
     if (dialog.exec() != QDialog::Accepted) {
         return;
     }

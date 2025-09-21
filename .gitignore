@@ -1,3 +1,9 @@
 AppleSAWS.pro.user*
 disk-images/*
-
+.vscode
+.build
+compile_commands.json
+.qmake.stash
+qrc_resources.cpp
+AppleSAWS
+Makefile

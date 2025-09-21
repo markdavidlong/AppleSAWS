@@ -92,7 +92,7 @@ void TextHexDumpViewer::setFile(GenericFile *file, quint16 offset)
 
     QByteArray tmpval = data;
 
-    while (tmpval.count()) {
+    while (tmpval.length()) {
         QByteArray tmpchunk = tmpval.left(16);
         tmpval.remove(0,16);
         chunks.append(tmpchunk);
@@ -144,8 +144,9 @@ void TextHexDumpViewer::doPrint()
 
     QPrintDialog dialog(&printer, this);
     dialog.setWindowTitle(tr("Print Text File Hex Dump"));
-    if (ui->textArea->textCursor().hasSelection())
-        dialog.addEnabledOption(QAbstractPrintDialog::PrintSelection);
+    //TODO: Fix for At6
+//    if (ui->textArea->textCursor().hasSelection())
+//        dialog.addEnabledOption(QAbstractPrintDialog::PrintSelection);
     if (dialog.exec() != QDialog::Accepted) {
         return;
     }

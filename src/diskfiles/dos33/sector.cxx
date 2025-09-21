@@ -3,7 +3,7 @@
 #include <QString>
 #include <QDebug>
 
-QByteRef Sector::operator[](uint offset) {
+char& Sector::operator[](uint offset) {
     if (offset > 255) {
         offset = 255;
     }

@@ -1583,7 +1583,7 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address)
     if (address == 0xffcc) { return "MON.CHRTBL"; }
     if (address == 0xffe3) { return "MON.SUBTBL"; }
 
-    return QString::Null();
+    return QString();
 }
 
 bool DisassemblerViewer::optionsMenuItems(QMenu *menu)
@@ -1656,8 +1656,9 @@ void DisassemblerViewer::doPrint()
 
     QPrintDialog dialog(&printer, this);
     dialog.setWindowTitle(tr("Print Dissassembly"));
-    if (ui->textArea->textCursor().hasSelection())
-        dialog.addEnabledOption(QAbstractPrintDialog::PrintSelection);
+// TODO: Fix this for Qt6
+//    if (ui->textArea->textCursor().hasSelection())
+//        dialog.addEnabledOption(QAbstractPrintDialog::PrintSelection);
     if (dialog.exec() != QDialog::Accepted) {
         //      qDebug() << "Cancelled";
 

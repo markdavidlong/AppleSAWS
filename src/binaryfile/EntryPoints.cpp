@@ -1,5 +1,9 @@
 #include "EntryPoints.h"
 #include <QDebug>
+#include <QListIterator>
+#include <algorithm>
+#include <iterator>
+
 
 EntryPoints::EntryPoints(QObject *parent) : QObject(parent)
 {
@@ -8,15 +12,12 @@ EntryPoints::EntryPoints(QObject *parent) : QObject(parent)
 
 bool EntryPoints::hasEntryPointAtAddress(quint16 address)
 {
-    // Assume list m_entryPoints is sorted by address (it should be)
-    QListIterator<EntryPoint> it(m_entryPoints);
-    while (it.hasNext())
-    {
-        EntryPoint ep = it.next();
-        if (ep.address == address) return true;
-        if (ep.address > address) return false;
-    }
-    return false;
+    // Use binary search since list is sorted by address - O(log n)
+    return std::binary_search(m_entryPoints.begin(), m_entryPoints.end(),
+                              EntryPoint{address, QString()},
+                              [](const EntryPoint& a, const EntryPoint& b) {
+                                  return a.address < b.address;
+                              });
 }
 
 void EntryPoints::editPoint(int location, EntryPoint newPoint)
@@ -38,15 +39,16 @@ void EntryPoints::addPoint(EntryPoint ep)
 {
     if (hasEntryPointAtAddress(ep.address)) return;
 
-    int idx = 0;
-    for (; idx < m_entryPoints.count(); idx++)
-    {
-        if (ep.address < m_entryPoints[idx].address)
-            break;
-    }
-    m_entryPoints.insert(idx,ep);
+    // Use binary search to find insertion point - O(log n)
+    auto it = std::lower_bound(m_entryPoints.begin(), m_entryPoints.end(), ep,
+                               [](const EntryPoint& a, const EntryPoint& b) {
+                                   return a.address < b.address;
+                               });
+    
+    int idx = std::distance(m_entryPoints.begin(), it);
+    m_entryPoints.insert(it, ep);
     emit pointAddedAt(idx);
-    emit pointAdded(ep,idx);
+    emit pointAdded(ep, idx);
 }
 
 void EntryPoints::removePointAt(int location)
@@ -81,12 +83,12 @@ QDataStream &EntryPoints::write(QDataStream &dataStream) const
 QList<quint16> EntryPoints::getEntryPointAddresses() const
 {
     QList<quint16> retval;
-
-    QListIterator<EntryPoint> it(m_entryPoints);
-    while (it.hasNext())
-    {
-        retval.append(it.next().address);
-    }
+    retval.reserve(m_entryPoints.size()); // Pre-allocate memory
+    
+    std::transform(m_entryPoints.begin(), m_entryPoints.end(),
+                   std::back_inserter(retval),
+                   [](const EntryPoint& ep) { return ep.address; });
+    
     return retval;
 }
 

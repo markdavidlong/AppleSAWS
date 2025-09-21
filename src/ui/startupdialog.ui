@@ -129,7 +129,7 @@
    <item row="1" column="0" colspan="2">
     <widget class="QLabel" name="copyrightLabel">
      <property name="text">
-      <string>(C) 2015-2021   Mark D. Long</string>
+      <string>(C) 2015-2025   Mark D. Long</string>
      </property>
     </widget>
    </item>

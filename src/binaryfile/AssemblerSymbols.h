@@ -57,5 +57,9 @@ protected:
 QDataStream &operator<<(QDataStream &out, const AssemblerSymbols &model);
 QDataStream &operator>>(QDataStream &in, AssemblerSymbols &model);
 
+// Serialization operators for AssemblerSymbol struct
+QDataStream &operator<<(QDataStream &out, const AssemblerSymbol &symbol);
+QDataStream &operator>>(QDataStream &in, AssemblerSymbol &symbol);
+
 
 #endif // ASSEMBLERSYMBOLS_H

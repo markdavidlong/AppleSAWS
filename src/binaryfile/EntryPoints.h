@@ -2,12 +2,19 @@
 #define ENTRYPOINTS_H
 
 #include <QObject>
+#include <QString>
+#include <QList>
+#include <QListIterator>
 #include <QDataStream>
 
 struct EntryPoint {
     quint16 address;
     QString note;
 };
+
+// QDataStream operators for EntryPoint
+QDataStream &operator<<(QDataStream &out, const EntryPoint &entry);
+QDataStream &operator>>(QDataStream &in, EntryPoint &entry);
 
 class EntryPoints : public QObject
 {

@@ -155,7 +155,7 @@ void ApplesoftFormatter::formatDocument(QTextDocument *doc)
                     {
                         if (m_format_options.testFlag(ShowCtrlChars))
                         {
-                            QChar newch = ch.unicode()+0x40;
+			    QChar newch = QChar(static_cast<ushort>(ch.unicode() + 0x40));
                             cursor.insertText(newch,invFormat);
                         }
                     }

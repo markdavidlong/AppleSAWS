@@ -7,7 +7,7 @@
 #include <QDebug>
 #include <QResizeEvent>
 #include <QSettings>
-
+#include <QActionGroup>
 #include "util.h"
 
 #include <math.h>

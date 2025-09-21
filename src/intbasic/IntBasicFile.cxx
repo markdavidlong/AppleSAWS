@@ -164,7 +164,7 @@ QByteArray IntBasicFile::dumpBufferAsIntBasicFile(QByteArray origdata)
         lineno = get16(data[position],data[position+1]);
         position += 2;
         //fprintf( fptr, "%u ", lineno );
-        retval.append(QString::asprintf("%u ", lineno ).toLocal8Bit());
+        retval.append(QString::asprintf("%u ", lineno ).toUtf8());
 
         for( ;  position < data.length() && data[position]!=0x01  ; position++)
         {
@@ -176,7 +176,7 @@ QByteArray IntBasicFile::dumpBufferAsIntBasicFile(QByteArray origdata)
                 {
                     qint16 integerval = get16(data[position+1],data[position+2]);
                     int leadspace = lastTOK && leadSP;
-                    retval.append(QString::asprintf(leadspace ? " %d" : "%d", (int) integerval ));
+		    retval.append(QString::asprintf(leadspace ? " %d" : "%d", (int)integerval).toUtf8());
                     position += 2;
                     leadSP = 1;
                 }
@@ -186,12 +186,13 @@ QByteArray IntBasicFile::dumpBufferAsIntBasicFile(QByteArray origdata)
                     int leadspace = !inREM && !inQUOTE &&
                                     lastTOK && leadSP && isalnum(c);
                     if ( leadspace )
-                        retval.append(QString::asprintf(" "));
+		    	retval.append(QString::asprintf(" ").toUtf8());
+
 
                     if ( c >= 0x20 )
-                        retval.append(QString::asprintf("%c", c ));
+                        retval.append(QString::asprintf("%c", c ).toUtf8());
                     else
-                        retval.append(QString::asprintf("^%c", c+0x40 ));
+                        retval.append(QString::asprintf("^%c", c+0x40 ).toUtf8());
                     lastAN = isalnum(c);
                 }
                 lastTOK = 0;
@@ -212,7 +213,7 @@ QByteArray IntBasicFile::dumpBufferAsIntBasicFile(QByteArray origdata)
                     case QUOTE_END:   inQUOTE = false;  break;
                     default:  break;
                 }
-                retval.append(QString::asprintf(leadspace ? " %s" : "%s", tok ));
+                retval.append(QString::asprintf(leadspace ? " %s" : "%s", tok ).toUtf8());
                 lastAN  = 0;
                 leadSP = isalnum(lastchar) || lastchar == ')' || lastchar == '\"';
                 lastTOK = 1;
