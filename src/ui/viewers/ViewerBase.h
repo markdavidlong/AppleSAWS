@@ -1,6 +1,6 @@
 #pragma once
 
-#include "fileviewerinterface.h"
+#include "FileViewerInterface.h"
 #include "GenericFile.h"
 
 #include <QMainWindow>

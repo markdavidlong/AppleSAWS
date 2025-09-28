@@ -1,7 +1,7 @@
 #pragma once
 
 #include "characterwidget.h"
-#include "fileviewerinterface.h"
+#include "FileViewerInterface.h"
 #include "CharacterSetExplorer.h"
 
 #include <QWidget>

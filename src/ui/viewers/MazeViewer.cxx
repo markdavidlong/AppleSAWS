@@ -1,4 +1,4 @@
-#include "mazeviewer.h"
+#include "MazeViewer.h"
 #include "BinaryFile.h"
 #include <QPainter>
 #include <QResizeEvent>

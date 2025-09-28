@@ -38,7 +38,7 @@
   <customwidget>
    <class>FileViewerInterface</class>
    <extends>QWidget</extends>
-   <header>viewerbase.h</header>
+   <header>ViewerBase.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

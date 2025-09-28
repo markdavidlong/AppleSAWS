@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GenericFile.h"
-#include "fileviewerinterface.h"
+#include "FileViewerInterface.h"
 
 #include <QString>
 #include <QByteArray>

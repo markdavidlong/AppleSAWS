@@ -1,7 +1,7 @@
 #pragma once
 
 #include "AttributedMemory.h"
-#include "fileviewerinterface.h"
+#include "FileViewerInterface.h"
 
 #include <QObject>
 #include <QWidget>

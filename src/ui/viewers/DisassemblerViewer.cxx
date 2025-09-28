@@ -1,5 +1,5 @@
-#include "disassemblerviewer.h"
-#include "ui_disassemblerviewer.h"
+#include "DisassemblerViewer.h"
+#include "ui_DisassemblerViewer.h"
 #include "Disassembler.h"
 #include "memory.h"
 #include "util.h"

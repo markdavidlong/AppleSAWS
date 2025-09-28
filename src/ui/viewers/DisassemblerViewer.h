@@ -1,7 +1,7 @@
 #pragma once
 
 #include "AttributedMemory.h"
-#include "fileviewerinterface.h"
+#include "FileViewerInterface.h"
 #include "DisassemblerMetadataDialog.h"
 #include "JumpLineManager.h"
 

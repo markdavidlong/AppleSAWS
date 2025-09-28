@@ -5,7 +5,7 @@
 #include "BinaryFile.h"
 #include "IntBasicFile.h"
 #include "RelocatableFile.h"
-#include "textfile.h"
+#include "TextFile.h"
 
 #include <QFile>
 #include <QDataStream>

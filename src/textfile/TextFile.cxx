@@ -1,5 +1,5 @@
 #include <QDebug>
-#include "textfile.h"
+#include "TextFile.h"
 
 TextFile::TextFile(QByteArray data) : GenericFile(data)
 {

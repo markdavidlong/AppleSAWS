@@ -1,5 +1,5 @@
-#include "texthexdumpviewer.h"
-#include "ui_texthexdumpviewer.h"
+#include "TextHexDumpViewer.h"
+#include "ui_TextHexDumpViewer.h"
 #include "applestring.h"
 
 #include <QVector>

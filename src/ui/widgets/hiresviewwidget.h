@@ -1,7 +1,7 @@
 #pragma once
 
 #include "BinaryFile.h"
-#include "fileviewerinterface.h"
+#include "FileViewerInterface.h"
 #include "HiresScreenWidget.h"
 
 #include <QWidget>

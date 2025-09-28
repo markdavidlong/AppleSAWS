@@ -6,8 +6,7 @@
 #include "DiskFile.h"
 #include "hrcgcontrolsinfo.h"
 #include "hexconverter.h"
-#include "hexdumpviewer.h"
-#include "viewerbase.h"
+#include "HexDumpViewer.h"
 #include "asciiinfodialog.h"
 //#include "notesdialog.h"
 
@@ -15,6 +14,7 @@
 #include <QFrame>
 #include <QTimer>
 
+class ViewerBase;
 
 class DiskExplorer : public QMainWindow
 {

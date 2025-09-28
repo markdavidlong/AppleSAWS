@@ -1,5 +1,17 @@
-#include "viewerbase.h"
-#include "ui_viewerbase.h"
+#include "ViewerBase.h"
+#include "ui_ViewerBase.h"
+
+#include "ApplesoftFileViewer.h"
+#include "HexDumpViewer.h"
+#include "TextHexDumpViewer.h"
+#include "CharSetViewer.h"
+#include "IntBasicFile.h"
+#include "IntBasicFileViewer.h"
+#include "hiresviewwidget.h"
+#include "DisassemblerViewer.h"
+#include "TextFile.h"
+#include "RelocatableFile.h"
+#include "MazeViewer.h"
 
 #include <QCloseEvent>
 #include <QToolBar>
@@ -8,17 +20,6 @@
 #include <QDebug>
 #include <QScrollArea>
 
-#include "applesoftfileviewer.h"
-#include "hexdumpviewer.h"
-#include "texthexdumpviewer.h"
-#include "charsetviewer.h"
-#include "IntBasicFile.h"
-#include "intbasicfileviewer.h"
-#include "hiresviewwidget.h"
-#include "disassemblerviewer.h"
-#include "textfile.h"
-#include "RelocatableFile.h"
-#include "mazeviewer.h"
 
 ViewerBase::ViewerBase(QWidget *parent) :
     QMainWindow(parent),

@@ -1,5 +1,5 @@
-#include "hexdumpviewer.h"
-#include "ui_hexdumpviewer.h"
+#include "HexDumpViewer.h"
+#include "ui_HexDumpViewer.h"
 #include "util.h"
 #include <QDebug>
 #include <QScrollBar>

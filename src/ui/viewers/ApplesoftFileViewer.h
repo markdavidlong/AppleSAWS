@@ -2,7 +2,7 @@
 
 #include "ApplesoftFile.h"
 #include "ApplesoftFormatter.h"
-#include "viewerbase.h"
+#include "ViewerBase.h"
 #include "ApplesoftFileDetailViewer.h"
 
 #include <QAction>

@@ -1,6 +1,5 @@
-#include "intbasicfileviewer.h"
-#include "ui_intbasicfileviewer.h"
-#include "fileviewerinterface.h"
+#include "IntBasicFileViewer.h"
+#include "ui_IntBasicFileViewer.h"
 
 IntBasicFileViewer::IntBasicFileViewer(QWidget *parent) :
     FileViewerInterface(parent),

@@ -1,7 +1,7 @@
 #include "DiskExplorer.h"
 
 #include "GenericFile.h"
-#include "viewerbase.h"
+#include "ViewerBase.h"
 
 #include <QGridLayout>
 #include <QMenuBar>

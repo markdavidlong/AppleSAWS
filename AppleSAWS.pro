@@ -48,7 +48,7 @@ SOURCES += \
     src/memory/roles/RoleAsmOpcode.cxx \
     src/memory/roles/RoleAsmOperand.cxx \
     src/ui/widgets/startupdialog.cxx \
-    src/ui/viewers/intbasicfileviewer.cxx \
+    src/ui/viewers/IntBasicFileViewer.cxx \
     src/ui/widgets/notesdialog.cxx \
     src/util/applestring.cxx \
     src/applesoftfile/ApplesoftFile.cxx \
@@ -56,22 +56,22 @@ SOURCES += \
     src/applesoftfile/ApplesoftFormatter.cxx \
     src/binaryfile/Disassembler.cxx \
     src/binaryfile/BinaryFile.cxx \
-    src/textfile/textfile.cxx \
+    src/textfile/TextFile.cxx \
     src/ui/widgets/catalogwidget.cxx \
     src/ui/widgets/hiresviewwidget.cxx \
-    src/ui/viewers/applesoftfileviewer.cxx \
-    src/ui/viewers/disassemblerviewer.cpp \
-    src/ui/viewers/hexdumpviewer.cpp \
-    src/ui/viewers/texthexdumpviewer.cpp \
-    src/ui/viewers/mazeviewer.cpp \
-    src/ui/viewers/charsetviewer.cpp \
+    src/ui/viewers/ApplesoftFileViewer.cxx \
+    src/ui/viewers/DisassemblerViewer.cxx \
+    src/ui/viewers/HexDumpViewer.cxx \
+    src/ui/viewers/TextHexDumpViewer.cxx \
+    src/ui/viewers/MazeViewer.cxx \
+    src/ui/viewers/CharSetViewer.cxx \
     src/relocatablefile/RelocatableFile.cxx \
     src/binaryfile/BinaryFileMetadata.cxx \
     src/util/charset.cpp \
     src/ui/widgets/characterwidget.cpp \
     src/ui/viewers/ApplesoftFileDetailViewer.cxx \
     src/ui/widgets/hexconverter.cpp \
-    src/ui/viewers/viewerbase.cpp \
+    src/ui/viewers/ViewerBase.cxx \
     src/ui/widgets/CharacterSetExplorer.cpp \
     src/ui/widgets/HiresScreenWidget.cpp \
     src/ui/widgets/DisassemblerMetadataDialog.cpp \
@@ -80,8 +80,8 @@ SOURCES += \
     src/binaryfile/EntryPoints.cxx \
     src/binaryfile/AssemblerSymbols.cxx \
     src/binaryfile/AssemblerSymbolModel.cxx \
-    src/ui/diskexplorer/DiskExplorer.cpp \
-    src/ui/diskexplorer/DiskExplorerMapWidget.cpp \
+    src/ui/diskexplorer/DiskExplorer.cxx \
+    src/ui/diskexplorer/DiskExplorerMapWidget.cxx \
     src/applesoftfile/ApplesoftRetokenizer.cxx \
     src/internals/JumpLineManager.cxx \
     src/ui/widgets/FlowLineTextBrowser.cpp \
@@ -103,7 +103,7 @@ HEADERS += \
     src/memory/roles/RoleAsmOpcode.h \
     src/memory/roles/RoleAsmOperand.h \
     src/ui/widgets/startupdialog.h \
-    src/ui/viewers/intbasicfileviewer.h \
+    src/ui/viewers/IntBasicFileViewer.h \
     src/ui/widgets/notesdialog.h \
     src/util/opcodes.h \
     src/util/util.h \
@@ -112,26 +112,26 @@ HEADERS += \
     src/applesoftfile/ApplesoftToken.h \
     src/binaryfile/Disassembler.h \
     src/binaryfile/BinaryFile.h \
-    src/textfile/textfile.h \
+    src/textfile/TextFile.h \
     src/ui/widgets/catalogwidget.h \
     src/ui/widgets/hiresviewwidget.h \
-    src/ui/viewers/applesoftfileviewer.h \
+    src/ui/viewers/ApplesoftFileViewer.h \
     src/applesoftfile/ApplesoftFormatter.h \
     src/applesoftfile/ApplesoftLine.h  \
     src/ui/viewers/disassemblerviewer.h \
-    src/ui/viewers/hexdumpviewer.h \
-    src/ui/viewers/texthexdumpviewer.h \
+    src/ui/viewers/HexDumpViewer.h \
+    src/ui/viewers/TextHexDumpViewer.h \
     src/relocatablefile/RelocatableFile.h \
-    src/ui/viewers/mazeviewer.h \
+    src/ui/viewers/MazeViewer.h \
     src/binaryfile/BinaryFileMetadata.h \
     src/ui/widgets/characterwidget.h \
     src/util/charset.h \
-    src/ui/viewers/charsetviewer.h \
+    src/ui/viewers/CharSetViewer.h \
     src/ui/viewers/ApplesoftFileDetailViewer.h \
     src/ui/widgets/hexconverter.h \
     src/ui/widgets/hrcgcontrolsinfo.h \
-    src/ui/viewers/viewerbase.h \
-    src/ui/viewers/fileviewerinterface.h \
+    src/ui/viewers/ViewerBase.h \
+    src/ui/viewers/FileViewerInterface.h \
     src/ui/widgets/CharacterSetExplorer.h \
     src/ui/widgets/HiresScreenWidget.h \
     src/ui/widgets/DisassemblerMetadataDialog.h \
@@ -152,15 +152,15 @@ HEADERS += \
 FORMS += \
     src/ui/widgets/catalogwidget.ui \
     src/ui/widgets/startupdialog.ui \
-    src/ui/viewers/applesoftfileviewer.ui \
-    src/ui/viewers/disassemblerviewer.ui \
-    src/ui/viewers/hexdumpviewer.ui \
-    src/ui/viewers/intbasicfileviewer.ui \
-    src/ui/viewers/texthexdumpviewer.ui \
+    src/ui/viewers/ApplesoftFileViewer.ui \
+    src/ui/viewers/DisassemblerViewer.ui \
+    src/ui/viewers/HexDumpViewer.ui \
+    src/ui/viewers/IntBasicFileViewer.ui \
+    src/ui/viewers/TextHexDumpViewer.ui \
     src/ui/viewers/ApplesoftFileDetailViewer.ui \
     src/ui/widgets/hexconverter.ui \
     src/ui/widgets/hrcgcontrolsinfo.ui \
-    src/ui/viewers/viewerbase.ui \
+    src/ui/viewers/ViewerBase.ui \
     src/ui/widgets/CharacterSetExplorer.ui \
     src/ui/widgets/DisassemblerMetadataDialog.ui \
     src/ui/widgets/LocationInfoDialog.ui \

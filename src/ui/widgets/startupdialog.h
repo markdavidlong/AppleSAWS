@@ -3,7 +3,6 @@
 #include "notesdialog.h"
 #include "hrcgcontrolsinfo.h"
 #include "hexconverter.h"
-#include "hexdumpviewer.h"
 #include "asciiinfodialog.h"
 
 #include <QDialog>
