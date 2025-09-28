@@ -1,12 +1,12 @@
-AppleSAWS.pro.user*
-disk-images/*
-.vscode
-.build
-compile_commands.json
-.qmake.stash
-qrc_resources.cpp
+# VS Code
+.vscode/
+.build/
+
+# Build output
 AppleSAWS
-Makefile
+
+# Disk images
+disk-images/*
 
 # CMake build directories and files
 build/
@@ -17,3 +17,6 @@ cmake_install.cmake
 *.cmake
 !CMakeLists.txt
 !CMakePresets.json
+
+# Compilation database
+compile_commands.json
