@@ -1,11 +1,10 @@
-#ifndef RELOCATABLEFILE_H
-#define RELOCATABLEFILE_H
-
-#include <QPair>
-#include <QByteArray>
+#pragma once
 
 #include "genericfile.h"
 #include "util.h"
+
+#include <QPair>
+#include <QByteArray>
 
 
 typedef enum { RFS1Byte, RFS2Byte } FieldSize;
@@ -106,4 +105,3 @@ protected:
 
 };
 
-#endif

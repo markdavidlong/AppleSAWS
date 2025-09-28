@@ -1,12 +1,12 @@
-#ifndef STARTUPDIALOG_H
-#define STARTUPDIALOG_H
+#pragma once
 
 #include "notesdialog.h"
 #include "hrcgcontrolsinfo.h"
 #include "hexconverter.h"
 #include "hexdumpviewer.h"
-#include <QDialog>
 #include "asciiinfodialog.h"
+
+#include <QDialog>
 
 namespace Ui {
 class StartupDialog;
@@ -37,5 +37,3 @@ private:
     HexConverter *m_hexConverter;
     AsciiInfoDialog *m_AsciiInfoDialog;
 };
-
-#endif // STARTUPDIALOG_H

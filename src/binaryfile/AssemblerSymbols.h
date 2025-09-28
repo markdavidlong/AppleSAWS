@@ -1,5 +1,4 @@
-#ifndef ASSEMBLERSYMBOLS_H
-#define ASSEMBLERSYMBOLS_H
+#pragma once
 
 #include <QObject>
 #include <QDataStream>
@@ -61,5 +60,3 @@ QDataStream &operator>>(QDataStream &in, AssemblerSymbols &model);
 QDataStream &operator<<(QDataStream &out, const AssemblerSymbol &symbol);
 QDataStream &operator>>(QDataStream &in, AssemblerSymbol &symbol);
 
-
-#endif // ASSEMBLERSYMBOLS_H

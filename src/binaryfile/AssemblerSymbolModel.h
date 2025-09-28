@@ -1,6 +1,4 @@
-#ifndef ASSEMBLERSYMBOLMODEL_H
-#define ASSEMBLERSYMBOLMODEL_H
-
+#pragma once
 
 #include "AssemblerSymbols.h"
 
@@ -56,5 +54,3 @@ private:
     AssemblerSymbols *assemblerSymbols;
 };
 
-
-#endif // ASSEMBLERSYMBOLMODEL_H

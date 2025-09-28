@@ -1,5 +1,4 @@
-#ifndef ENTRYPOINTMODEL_H
-#define ENTRYPOINTMODEL_H
+#pragma once
 
 #include "EntryPoints.h"
 
@@ -55,6 +54,3 @@ private:
 };
 
 
-
-
-#endif // ENTRYPOINTMODEL_H

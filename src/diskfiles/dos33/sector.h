@@ -1,11 +1,10 @@
-#ifndef SECTOR_H
-#define SECTOR_H
-
-#include <QByteArray>
+#pragma once
 
 #include "vtoc.h"
 #include "catalogsector.h"
 #include "tracksectorlist.h"
+
+#include <QByteArray>
 
 class Sector
 {
@@ -54,4 +53,3 @@ private:
     int m_sector;
 };
 
-#endif // SECTOR_H

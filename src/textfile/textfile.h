@@ -1,5 +1,4 @@
-#ifndef TEXTFILE_H
-#define TEXTFILE_H
+#pragma once
 
 #include "genericfile.h"
 
@@ -14,4 +13,4 @@ public:
 protected:
 };
 
-#endif // TEXTFILE_H
+

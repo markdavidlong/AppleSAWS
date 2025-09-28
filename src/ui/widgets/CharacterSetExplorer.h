@@ -1,9 +1,8 @@
-#ifndef CHARACTERSETEXPLORER_H
-#define CHARACTERSETEXPLORER_H
-
-#include <QDialog>
+#pragma once
 
 #include "charset.h"
+
+#include <QDialog>
 
 namespace Ui {
 class CharacterSetExplorer;
@@ -30,5 +29,3 @@ private:
 
     CharacterSet m_charset;
 };
-
-#endif // CHARACTERSETEXPLORER_H

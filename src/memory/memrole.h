@@ -1,5 +1,4 @@
-#ifndef MEMROLE_H
-#define MEMROLE_H
+#pragma once
 
 #include <QString>
 
@@ -26,4 +25,3 @@ protected:
 
 };
 
-#endif // MEMROLE_H

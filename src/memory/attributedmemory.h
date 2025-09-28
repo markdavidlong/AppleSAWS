@@ -1,5 +1,4 @@
-#ifndef ATTRIBUTEDMEMORY_H
-#define ATTRIBUTEDMEMORY_H
+#pragma once
 
 #include "memorycell.h"
 
@@ -41,4 +40,3 @@ protected:
     QList<MemoryCell> m_cells;
 };
 
-#endif // ATTRIBUTEDMEMORY_H

@@ -1,5 +1,4 @@
-#ifndef LOCATIONINFODIALOG_H
-#define LOCATIONINFODIALOG_H
+#pragma once
 
 #include <QDialog>
 #include <QLabel>
@@ -29,4 +28,3 @@ private:
     Ui::LocationInfoDialog *ui;
 };
 
-#endif // LOCATIONINFODIALOG_H

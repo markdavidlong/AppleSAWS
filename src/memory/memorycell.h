@@ -1,9 +1,9 @@
-#ifndef MEMORYCELL_H
-#define MEMORYCELL_H
+#pragma once
 
 #include "memrole.h"
 
-#include <Qt>
+#include <QtGlobal>
+#include <QList>
 #include <QHash>
 
 class MemoryCell
@@ -33,4 +33,3 @@ private:
     QHash<int,MemRole *> m_roles;
 };
 
-#endif // MEMORYCELL_H

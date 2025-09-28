@@ -1,10 +1,9 @@
-#ifndef CATALOGWIDGET_H
-#define CATALOGWIDGET_H
+#pragma once
+
+#include "diskfile.h"
 
 #include <QWidget>
 #include <QListWidgetItem>
-
-#include "diskfile.h"
 
 namespace Ui {
 class  CatalogWidget;
@@ -43,4 +42,3 @@ private:
     QString m_diskname;
 };
 
-#endif // CATALOGWIDGET_H

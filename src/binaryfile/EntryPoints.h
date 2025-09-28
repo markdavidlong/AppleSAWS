@@ -1,5 +1,4 @@
-#ifndef ENTRYPOINTS_H
-#define ENTRYPOINTS_H
+#pragma once
 
 #include <QObject>
 #include <QString>
@@ -56,4 +55,3 @@ protected:
 QDataStream &operator<<(QDataStream &out, const EntryPoints &model);
 QDataStream &operator>>(QDataStream &in, EntryPoints &model);
 
-#endif // ENTRYPOINTS_H

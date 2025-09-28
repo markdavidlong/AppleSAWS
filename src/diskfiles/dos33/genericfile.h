@@ -1,5 +1,4 @@
-#ifndef GENERICFILE_H
-#define GENERICFILE_H
+#pragma once
 
 #include "diskfile.h"
 
@@ -38,5 +37,3 @@ protected:
     DiskFile * m_diskfile;
 
 };
-
-#endif // GENERICFILE_H

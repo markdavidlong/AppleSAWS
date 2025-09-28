@@ -1,5 +1,4 @@
-#ifndef TRACKSECTORLIST_H
-#define TRACKSECTORLIST_H
+#pragma once
 
 #include "util.h"
 
@@ -24,4 +23,3 @@ private:
     Sector *m_data;
 };
 
-#endif // TRACKSECTORLIST_H

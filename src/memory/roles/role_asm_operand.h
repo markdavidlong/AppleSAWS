@@ -1,8 +1,8 @@
-#ifndef ROLEASMOPERAND_H
-#define ROLEASMOPERAND_H
+#pragma once
+
+#include "memrole.h"
 
 #include <QString>
-#include "memrole.h"
 
 class RoleAsmOperand : public MemRole
 {
@@ -30,4 +30,3 @@ protected:
 
 };
 
-#endif // ROLEASMOPERAND_H

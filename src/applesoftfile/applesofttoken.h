@@ -1,5 +1,4 @@
-#ifndef APPLESOFTTOKEN_H
-#define APPLESOFTTOKEN_H
+#pragma once
 
 #include <QString>
 #include <QVariant>
@@ -218,4 +217,3 @@ private:
 };
 
 
-#endif // APPLESOFTTOKEN_H

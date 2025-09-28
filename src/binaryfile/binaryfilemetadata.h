@@ -1,5 +1,4 @@
-#ifndef BINARYFILEMETADATA_H
-#define BINARYFILEMETADATA_H
+#pragma once
 
 #include "EntryPoints.h"
 #include "AssemblerSymbols.h"
@@ -44,4 +43,3 @@ private:
     quint16 m_defaultAddress;
 };
 
-#endif // BINARYFILEMETADATA_H

@@ -1,9 +1,7 @@
-#ifndef CHARSETCHARACTER_H
-#define CHARSETCHARACTER_H
+#pragma once
 
 #include <QByteArray>
 #include <QMap>
-
 
 
 class CharSetCharacter
@@ -39,4 +37,3 @@ private:
 
 
 
-#endif // CHARSETCHARACTER_H

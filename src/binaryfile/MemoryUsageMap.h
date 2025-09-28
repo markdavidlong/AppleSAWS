@@ -1,5 +1,4 @@
-#ifndef MEMORYUSAGEMAP_H
-#define MEMORYUSAGEMAP_H
+#pragma once
 
 #include <QFlag>
 #include <QFlags>
@@ -106,4 +105,3 @@ private:
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(MemoryUsages)
 
-#endif // MEMORYUSAGEMAP_H

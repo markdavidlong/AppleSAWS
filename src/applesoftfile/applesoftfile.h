@@ -1,15 +1,14 @@
-#ifndef APPLESOFTFILE_H
-#define APPLESOFTFILE_H
-
-#include <QByteArray>
-#include <QStringList>
-#include <QMap>
-#include <QVector>
+#pragma once
 
 #include "applesoftline.h"
 #include "genericfile.h"
 #include "applesofttoken.h"
 #include "ApplesoftRetokenizer.h"
+
+#include <QByteArray>
+#include <QStringList>
+#include <QMap>
+#include <QVector>
 
 
 class ApplesoftFile : public GenericFile
@@ -37,7 +36,3 @@ private:
     QList<QPair<quint16, quint16> > m_flowTargets;
 
 };
-
-
-
-#endif // APPLESOFTFILE_H

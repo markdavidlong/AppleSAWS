@@ -1,12 +1,12 @@
-#ifndef APPLESOFTFORMATTER_H
-#define APPLESOFTFORMATTER_H
+#pragma once
+
+#include "applesoftfile.h"
 
 #include <QObject>
 #include <QFlags>
 #include <QTextDocument>
 #include <QSharedPointer>
 
-#include "applesoftfile.h"
 
 class ApplesoftFormatter : public QObject
 {
@@ -50,4 +50,3 @@ private:
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(ApplesoftFormatter::FormatOptions)
 
-#endif // APPLESOFTFORMATTER_H

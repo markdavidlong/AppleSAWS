@@ -1,13 +1,12 @@
-#ifndef MAZEVIEWER_H
-#define MAZEVIEWER_H
-
-#include <QObject>
-#include <QWidget>
-#include <QImage>
+#pragma once
 
 #include "binaryfile.h"
 #include "attributedmemory.h"
 #include "fileviewerinterface.h"
+
+#include <QObject>
+#include <QWidget>
+#include <QImage>
 
 
 /// A class for viewing maze files in "The Missing Ring" by DataMost.
@@ -51,5 +50,3 @@ private:
     QString inventoryToString(quint8 inv);
     QString monsterToString(quint8 mc);
 };
-
-#endif // MAZEVIEWER_H

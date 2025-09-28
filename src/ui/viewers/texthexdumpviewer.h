@@ -1,5 +1,4 @@
-#ifndef TEXTHEXDUMPVIEWER_H
-#define TEXTHEXDUMPVIEWER_H
+#pragma once
 
 #include "genericfile.h"
 #include "fileviewerinterface.h"
@@ -47,5 +46,3 @@ private:
 
     GenericFile *m_file;
 };
-
-#endif // TEXTHEXDUMPVIEWER_H

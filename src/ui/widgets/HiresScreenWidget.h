@@ -1,5 +1,4 @@
-#ifndef HIRESSCREENWIDGET_H
-#define HIRESSCREENWIDGET_H
+#pragma once
 
 #include "binaryfile.h"
 #include "AppleColors.h"
@@ -143,4 +142,3 @@ private:
     quint16 m_offset;
 };
 
-#endif // HIRESSCREENWIDGET_H

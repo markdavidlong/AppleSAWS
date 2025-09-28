@@ -1,13 +1,12 @@
-#ifndef CATALOGSECTOR_H
-#define CATALOGSECTOR_H
-
-#include <Qt>
-#include <QByteArray>
-#include <QDebug>
+#pragma once
 
 #include "util.h"
 #include "applestring.h"
 #include "filedescriptiveentry.h"
+
+#include <QtGlobal>
+#include <QByteArray>
+#include <QDebug>
 
 class Sector;
 
@@ -42,4 +41,3 @@ private:
     TSPair m_next;
 };
 
-#endif // CATALOGSECTOR_H

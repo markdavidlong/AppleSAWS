@@ -1,13 +1,12 @@
-#ifndef OPCODES_H
-#define OPCODES_H
+#pragma once
 
 #include "util.h"
 
 #include <QString>
 #include <QHash>
 
-
-enum AddressMode {
+enum AddressMode
+{
     AM_InvalidOp,
     AM_Absolute,                    // a
     AM_AbsoluteIndexedIndirect,     // (a,x)
@@ -26,41 +25,38 @@ enum AddressMode {
     AM_ZeroPageIndirectIndexedWithY // (zp),y
 };
 
-
 class OpCodes
 {
 
-    struct AssyInstruction {
-        public:
+    struct AssyInstruction
+    {
+    public:
+        AssyInstruction(quint8 opcode = 0x00, QString mnemonic = "???", AddressMode am = AM_InvalidOp, bool reads = false, bool writes = false, bool stack = false);
 
-            AssyInstruction(quint8 opcode = 0x00, QString mnemonic = "???", AddressMode am = AM_InvalidOp, bool reads = false, bool writes = false, bool stack = false);
+        AddressMode addressMode() { return m_addressMode; }
 
-            AddressMode addressMode() { return m_addressMode; }
+        QString mnemonic() const { return m_mnemonic; }
 
-            QString mnemonic() const { return m_mnemonic; }
+        quint8 opcode() const { return m_opcode; }
 
-            quint8 opcode() const { return m_opcode; }
+        quint8 numArgs() const;
 
-            quint8 numArgs() const;
+        bool readsMem() const { return m_reads; }
+        bool writesMem() const { return m_writes; }
+        bool modifiesStack() const { return m_stack; }
 
-            bool readsMem() const { return m_reads; }
-            bool writesMem() const { return m_writes; }
-            bool modifiesStack() const { return m_stack; }
+        //  QString debugStr() { return QString("%1 %2 %3").arg(uint8ToHex(m_opcode)).arg(m_mnemonic).arg(m_addressMode); }
 
-          //  QString debugStr() { return QString("%1 %2 %3").arg(uint8ToHex(m_opcode)).arg(m_mnemonic).arg(m_addressMode); }
-
-        private:
-            QString m_mnemonic;
-            quint8 m_opcode;
-            AddressMode m_addressMode;
-            bool m_reads;
-            bool m_writes;
-            bool m_stack;
+    private:
+        QString m_mnemonic;
+        quint8 m_opcode;
+        AddressMode m_addressMode;
+        bool m_reads;
+        bool m_writes;
+        bool m_stack;
     };
 
-
 public:
-
     static QString getMnemonic(quint8 opcode)
     {
         return getAssyInstruction(opcode).mnemonic();
@@ -68,7 +64,7 @@ public:
 
     static AssyInstruction &getAssyInstruction(quint8 id)
     {
-        static QHash<quint8,AssyInstruction> m_opcodeinfo;
+        static QHash<quint8, AssyInstruction> m_opcodeinfo;
         if (m_opcodeinfo.size() == 0)
         {
             makeOpcodeTable(&m_opcodeinfo);
@@ -93,9 +89,5 @@ public:
 
 protected:
     OpCodes();
-    static void makeOpcodeTable(QHash<quint8,AssyInstruction>* m_opcodeinfo);
-
+    static void makeOpcodeTable(QHash<quint8, AssyInstruction> *m_opcodeinfo);
 };
-
-
-#endif // OPCODES_H

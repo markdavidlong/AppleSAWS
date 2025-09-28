@@ -1,8 +1,8 @@
-#ifndef VTOC_H
-#define VTOC_H
+#pragma once
 
-#include <Qt>
 #include "util.h"
+#include <QtGlobal>
+
 class Sector;
 class QString;
 
@@ -30,4 +30,3 @@ private:
     Sector *m_data;
 };
 
-#endif // VTOC_H

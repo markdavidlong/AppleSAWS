@@ -1,5 +1,4 @@
-#ifndef HIRESVIEWWIDGET_H
-#define HIRESVIEWWIDGET_H
+#pragma once
 
 #include "binaryfile.h"
 #include "fileviewerinterface.h"
@@ -42,6 +41,3 @@ private:
 
     BinaryFile *m_file;
 };
-
-
-#endif // HIRESVIEWWIDGET_H

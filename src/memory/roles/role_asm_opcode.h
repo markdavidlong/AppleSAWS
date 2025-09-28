@@ -1,5 +1,4 @@
-#ifndef ROLE_ASM_OPCODE_H
-#define ROLE_ASM_OPCODE_H
+#pragma once
 
 #include "memrole.h"
 #include "opcodes.h"
@@ -25,4 +24,3 @@ protected:
 
 };
 
-#endif // ROLE_ASM_OPCODE_H

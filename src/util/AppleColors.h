@@ -1,5 +1,4 @@
-#ifndef APPLECOLORS_H
-#define APPLECOLORS_H
+#pragma once
 
 #include <QColor>
 
@@ -20,4 +19,3 @@ static const QColor yellowColor    = QColor(0xd0,0xdd,0x8d);
 static const QColor aquaColor      = QColor(0x72,0xff,0xd0);
 static const QColor whiteColor     = QColor(0xff,0xff,0xff);
 
-#endif // APPLECOLORS_H

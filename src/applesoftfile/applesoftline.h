@@ -1,6 +1,6 @@
-#ifndef APPLESOFTLINE_H
-#define APPLESOFTLINE_H
-#include <Qt>
+#pragma once
+
+#include <QtGlobal>
 #include <QVector>
 
 class ApplesoftToken;
@@ -13,4 +13,3 @@ struct ApplesoftLine {
 };
 
 
-#endif // APPLESOFTLINE_H

@@ -1,5 +1,4 @@
-#ifndef DISASSEMBLERMETADATADIALOG_H
-#define DISASSEMBLERMETADATADIALOG_H
+#pragma once
 
 #include "binaryfilemetadata.h"
 #include "EntryPoints.h"
@@ -53,5 +52,3 @@ private:
     bool m_isRelocatable;
 };
 
-
-#endif // DISASSEMBLERMETADATADIALOG_H

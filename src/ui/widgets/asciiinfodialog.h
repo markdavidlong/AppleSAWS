@@ -1,8 +1,8 @@
-#ifndef ASCIIINFODIALOG_H
-#define ASCIIINFODIALOG_H
+#pragma once
+
+#include "ui_asciiinfodialog.h"
 
 #include <QDialog>
-#include "ui_asciiinfodialog.h"
 
 namespace Ui {
 class AsciiInfoDialog;
@@ -58,4 +58,3 @@ private:
     Ui::AsciiInfoDialog *ui;
 };
 
-#endif // ASCIIINFODIALOG_H

@@ -1,15 +1,14 @@
-#ifndef DISKFILE_H
-#define DISKFILE_H
-
-#include <Qt>
-#include <QMap>
-#include <QString>
-#include <QDebug>
-#include <QCryptographicHash>
+#pragma once
 
 #include "util.h"
 #include "sector.h"
 #include "vtoc.h"
+
+#include <QtGlobal>
+#include <QMap>
+#include <QString>
+#include <QDebug>
+#include <QCryptographicHash>
 
 class GenericFile;
 
@@ -56,4 +55,3 @@ private:
 
 };
 
-#endif // DISKFILE_H

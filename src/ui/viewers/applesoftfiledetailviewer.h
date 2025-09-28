@@ -1,10 +1,10 @@
-#ifndef APPLESOFTFILEDETAILVIEWER_H
-#define APPLESOFTFILEDETAILVIEWER_H
+#pragma once
 
-#include <QWidget>
 #include "applesoftline.h"
 #include "applesofttoken.h"
 #include "applesoftfile.h"
+
+#include <QWidget>
 #include <QDebug>
 
 namespace Ui {
@@ -38,4 +38,3 @@ private:
     ApplesoftFile *m_file;
 };
 
-#endif // APPLESOFTFILEDETAILVIEWER_H

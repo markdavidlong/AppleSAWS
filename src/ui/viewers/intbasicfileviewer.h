@@ -1,5 +1,4 @@
-#ifndef INTBASICFILEVIEWER_H
-#define INTBASICFILEVIEWER_H
+#pragma once
 
 #include "fileviewerinterface.h"
 #include "IntBasicFile.h"
@@ -25,4 +24,3 @@ private:
     Ui::IntBasicFileViewer *ui;
 };
 
-#endif // INTBASICFILEVIEWER_H

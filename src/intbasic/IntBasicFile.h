@@ -1,5 +1,4 @@
-#ifndef INTBASICFILE_H
-#define INTBASICFILE_H
+#pragma once
 
 #include "genericfile.h"
 
@@ -15,4 +14,3 @@ private:
     QByteArray dumpBufferAsIntBasicFile(QByteArray origdata);
 };
 
-#endif // INTBASICFILE_H

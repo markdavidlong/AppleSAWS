@@ -1,12 +1,11 @@
-#ifndef APPLESTRING_H
-#define APPLESTRING_H
+#pragma once
+
+#include "util.h"
 
 #include <QVector>
 #include <QChar>
 #include <QString>
 #include <QByteArray>
-
-#include "util.h"
 
 class AppleChar {
 public:
@@ -36,5 +35,4 @@ public:
 
 };
 
-#endif // APPLESTRING_H
 

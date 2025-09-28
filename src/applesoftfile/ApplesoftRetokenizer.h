@@ -1,5 +1,4 @@
-#ifndef APPLESOFTRETOKENIZER_H
-#define APPLESOFTRETOKENIZER_H
+#pragma once
 
 #include "applesoftline.h"
 
@@ -48,5 +47,4 @@ private:
 };
 
 
-#endif // APPLESOFTRETOKENIZER_H
 

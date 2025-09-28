@@ -1,5 +1,4 @@
-#ifndef FILEVIEWERINTERFACE_H
-#define FILEVIEWERINTERFACE_H
+#pragma once
 
 #include <QWidget>
 #include <QString>
@@ -38,4 +37,3 @@ protected:
     QString m_title;
 };
 
-#endif // FILEVIEWERINTERFACE_H

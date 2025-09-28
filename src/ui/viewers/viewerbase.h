@@ -1,13 +1,12 @@
-#ifndef VIEWERBASE_H
-#define VIEWERBASE_H
+#pragma once
+
+#include "fileviewerinterface.h"
+#include "genericfile.h"
 
 #include <QMainWindow>
 #include <QStackedWidget>
 #include <QToolBar>
 #include <QComboBox>
-
-#include "fileviewerinterface.h"
-#include "genericfile.h"
 
 namespace Ui {
 class ViewerBase;
@@ -44,5 +43,3 @@ private:
     QMenu *m_optionMenu;
 
 };
-
-#endif // VIEWERBASE_H

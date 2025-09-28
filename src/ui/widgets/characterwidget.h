@@ -1,10 +1,10 @@
 #pragma once
 
+#include "charset.h"
+
 #include <QWidget>
 #include <QColor>
 #include <QPixmap>
-
-#include "charset.h"
 
 class CharacterWidget : public QWidget
 {

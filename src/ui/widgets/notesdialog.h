@@ -1,5 +1,4 @@
-#ifndef NOTESDIALOG_H
-#define NOTESDIALOG_H
+#pragma once
 
 #include <QDialog>
 
@@ -19,4 +18,3 @@ private:
     Ui::NotesDialog *ui;
 };
 
-#endif // NOTESDIALOG_H

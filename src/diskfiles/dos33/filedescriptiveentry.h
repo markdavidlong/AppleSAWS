@@ -1,9 +1,9 @@
-#ifndef FILEDESCRIPTIVEENTRY_H
-#define FILEDESCRIPTIVEENTRY_H
+#pragma once
 
 #include "util.h"
-#include <QDebug>
 #include "applestring.h"
+
+#include <QDebug>
 
 struct FileDescriptiveEntry {
     int fileTypeAndFlags;
@@ -68,5 +68,3 @@ private:
     TSPair m_firstTSListSector;
 
 };
-
-#endif // FILEDESCRIPTIVEENTRY_H

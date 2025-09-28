@@ -1,9 +1,8 @@
-#ifndef HRCGCONTROLSINFO_H
-#define HRCGCONTROLSINFO_H
+#pragma once
 
-#include <QDialog>
 #include "ui_hrcgcontrolsinfo.h"
 
+#include <QDialog>
 
 namespace Ui {
 class HRCGControlsInfo;
@@ -29,5 +28,3 @@ public:
 private:
     Ui::HRCGControlsInfo *ui;
 };
-
-#endif // HRCGCONTROLSINFO_H

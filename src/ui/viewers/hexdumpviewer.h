@@ -1,5 +1,4 @@
-#ifndef HEXDUMPVIEWER_H
-#define HEXDUMPVIEWER_H
+#pragma once
 
 #include "genericfile.h"
 #include "fileviewerinterface.h"
@@ -52,4 +51,3 @@ private:
     GenericFile *m_file;
 };
 
-#endif // HEXDUMPVIEWER_H

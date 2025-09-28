@@ -1,5 +1,4 @@
-#ifndef DISASSEMBLER_H
-#define DISASSEMBLER_H
+#pragma once
 
 #include "MemoryUsageMap.h"
 #include "util.h"
@@ -160,4 +159,4 @@ private:
 
 };
 
-#endif // DISASSEMBLER_H
+

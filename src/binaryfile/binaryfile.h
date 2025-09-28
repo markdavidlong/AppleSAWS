@@ -1,5 +1,4 @@
-#ifndef BINARYFILE_H
-#define BINARYFILE_H
+#pragma once
 
 #include "genericfile.h"
 
@@ -16,4 +15,3 @@ public:
 protected:
 };
 
-#endif // BINARYFILE_H

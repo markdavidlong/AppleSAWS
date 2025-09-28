@@ -1,8 +1,4 @@
-#ifndef DISASSEMBLERVIEWER_H
-#define DISASSEMBLERVIEWER_H
-
-#include <QWidget>
-#include <QByteArray>
+#pragma once
 
 #include "attributedmemory.h"
 #include "binaryfile.h"
@@ -10,6 +6,9 @@
 #include "fileviewerinterface.h"
 #include "DisassemblerMetadataDialog.h"
 #include "JumpLineManager.h"
+
+#include <QWidget>
+#include <QByteArray>
 
 namespace Ui {
 class DisassemblerViewer;
@@ -69,4 +68,3 @@ private:
     JumpLines m_jumpLines;
 };
 
-#endif // DISASSEMBLERVIEWER_H

@@ -1,12 +1,11 @@
-#ifndef JUMPLINEMANAGER_H
-#define JUMPLINEMANAGER_H
+#pragma once
+
+#include "util.h"
 
 #include <QPair>
 #include <QMap>
 #include <QMapIterator>
 #include <QDebug>
-
-#include "util.h"
 
 typedef QPair<quint16,quint16> TJump;
 typedef enum {
@@ -99,4 +98,3 @@ private:
 
 };
 
-#endif // JUMPLINEMANAGER_H

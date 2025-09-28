@@ -1,5 +1,4 @@
-#ifndef CHARSETVIEWER_H
-#define CHARSETVIEWER_H
+#pragma once
 
 #include "binaryfile.h"
 #include "characterwidget.h"
@@ -52,4 +51,3 @@ private:
     QAction *m_charSetEncoderAction;
 };
 
-#endif // CHARSETVIEWER_H

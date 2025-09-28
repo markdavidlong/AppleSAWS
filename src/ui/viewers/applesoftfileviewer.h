@@ -1,15 +1,13 @@
-#ifndef APPLESOFTFILEVIEWER_H
-#define APPLESOFTFILEVIEWER_H
-
-#include <QWidget>
-#include <QMenu>
-#include <QAction>
+#pragma once
 
 #include "applesoftfile.h"
 #include "applesoftformatter.h"
 #include "viewerbase.h"
 #include "applesoftfiledetailviewer.h"
 
+#include <QAction>
+#include <QWidget>
+#include <QMenu>
 
 namespace Ui {
 class ApplesoftFileViewer;
@@ -83,4 +81,3 @@ private:
     QAction *m_setFontAction;
 };
 
-#endif // APPLESOFTFILEVIEWER_H

@@ -1,5 +1,4 @@
-#ifndef HEXCONVERTER_H
-#define HEXCONVERTER_H
+#pragma once
 
 #include <QDialog>
 
@@ -27,4 +26,3 @@ private:
     Ui::HexConverter *ui;
 };
 
-#endif // HEXCONVERTER_H

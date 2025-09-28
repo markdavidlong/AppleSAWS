@@ -1,7 +1,5 @@
-#ifndef DISKEXPLORER_H
-#define DISKEXPLORER_H
+#pragma once
 
-#include <QMainWindow>
 
 #include "catalogwidget.h"
 #include "DiskExplorerMapWidget.h"
@@ -13,6 +11,7 @@
 #include "asciiinfodialog.h"
 //#include "notesdialog.h"
 
+#include <QMainWindow>
 #include <QFrame>
 #include <QTimer>
 
@@ -80,4 +79,3 @@ private:
     bool m_toolsHidden;
 };
 
-#endif // DISKEXPLORER_H

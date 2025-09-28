@@ -1,5 +1,6 @@
-#ifndef DISKEXPLORERMAPWIDGET_H
-#define DISKEXPLORERMAPWIDGET_H
+#pragma once
+
+#include "diskfile.h"
 
 #include <QWidget>
 #include <QPair>
@@ -8,9 +9,6 @@
 #include <QColor>
 #include <QGroupBox>
 #include <QLabel>
-
-
-#include "diskfile.h"
 
 
 class DEButton : public QPushButton
@@ -168,4 +166,3 @@ private:
     QMap< DETSPair, QString> m_sectorDescriptions;
 };
 
-#endif // DISKEXPLORERMAPWIDGET_H
