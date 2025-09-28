@@ -1,5 +1,5 @@
 #include <QDebug>
-#include "binaryfile.h"
+#include "BinaryFile.h"
 #include "util.h"
 
 BinaryFile::BinaryFile(QByteArray data) : GenericFile(data)

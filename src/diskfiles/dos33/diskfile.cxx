@@ -8,7 +8,7 @@
 
 #include "tracksectorlist.h"
 #include "ApplesoftFile.h"
-#include "binaryfile.h"
+#include "BinaryFile.h"
 #include "IntBasicFile.h"
 #include "relocatablefile.h"
 #include "textfile.h"

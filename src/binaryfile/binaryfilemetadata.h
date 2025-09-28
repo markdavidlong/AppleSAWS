@@ -3,7 +3,6 @@
 #include "EntryPoints.h"
 #include "AssemblerSymbols.h"
 #include "genericfile.h"
-#include "binaryfile.h"
 
 #include <Qt>
 #include <QList>

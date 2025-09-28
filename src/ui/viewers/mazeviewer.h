@@ -1,6 +1,5 @@
 #pragma once
 
-#include "binaryfile.h"
 #include "attributedmemory.h"
 #include "fileviewerinterface.h"
 
@@ -8,6 +7,7 @@
 #include <QWidget>
 #include <QImage>
 
+class BinaryFile;
 
 /// A class for viewing maze files in "The Missing Ring" by DataMost.
 

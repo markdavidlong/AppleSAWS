@@ -1,6 +1,6 @@
 #pragma once
 
-#include "binaryfile.h"
+#include "BinaryFile.h"
 #include "fileviewerinterface.h"
 #include "HiresScreenWidget.h"
 

@@ -5,7 +5,7 @@
 #include "util.h"
 #include "relocatablefile.h"
 #include "opcodes.h"
-
+#include "BinaryFile.h"
 
 #include <QSettings>
 #include <QMenu>

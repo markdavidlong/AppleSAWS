@@ -1,7 +1,7 @@
 #include "catalogwidget.h"
 #include "ui_catalogwidget.h"
 #include "filedescriptiveentry.h"
-#include "binaryfile.h"
+#include "BinaryFile.h"
 #include "ApplesoftFile.h"
 #include "genericfile.h"
 #include "IntBasicFile.h"

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "binaryfile.h"
 #include "AppleColors.h"
 
 #include <QWidget>

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "attributedmemory.h"
-#include "binaryfile.h"
 #include "relocatablefile.h"
 #include "fileviewerinterface.h"
 #include "DisassemblerMetadataDialog.h"
@@ -9,6 +8,8 @@
 
 #include <QWidget>
 #include <QByteArray>
+
+class BinaryFile;
 
 namespace Ui {
 class DisassemblerViewer;

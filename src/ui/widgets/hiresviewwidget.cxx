@@ -1,5 +1,4 @@
 #include "hiresviewwidget.h"
-#include "binaryfile.h"
 #include "util.h"
 
 #include <QPainter>

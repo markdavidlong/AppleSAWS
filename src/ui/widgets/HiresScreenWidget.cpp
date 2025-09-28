@@ -1,7 +1,5 @@
 #include "HiresScreenWidget.h"
 
-#include "binaryfile.h"
-
 #include <QPainter>
 #include <QMap>
 #include <QDebug>

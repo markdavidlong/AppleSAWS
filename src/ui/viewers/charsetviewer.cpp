@@ -1,4 +1,5 @@
 #include "charsetviewer.h"
+#include "BinaryFile.h"
 #include <QGridLayout>
 #include <QSettings>
 #include <QAction>
