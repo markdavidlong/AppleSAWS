@@ -1,6 +1,6 @@
 
 QT += core gui printsupport
-CONFIG += c++11
+CONFIG += c++20 debug
 
 MOC_DIR = ./.build
 UI_DIR = ./.build

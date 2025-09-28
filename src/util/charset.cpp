@@ -34,7 +34,7 @@ void CharSetCharacter::setData(quint8 b0, quint8 b1,
 void CharacterSet::buildSetFromSetBlob(QByteArray data)
 {
     if (data.size() != 768) {
-        qWarning("Unexpected character set size: %d (not 768).  Resizing.",data.size());
+        qWarning("Unexpected character set size: %d (not 768).  Resizing.",(qint32)data.size());
         data.resize(768);
     }
     int val = 32;
