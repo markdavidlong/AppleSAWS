@@ -1,7 +1,7 @@
 #pragma once
 
 #include "fileviewerinterface.h"
-#include "genericfile.h"
+#include "GenericFile.h"
 
 #include <QMainWindow>
 #include <QStackedWidget>

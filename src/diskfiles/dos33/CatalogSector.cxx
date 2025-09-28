@@ -1,5 +1,5 @@
-#include "catalogsector.h"
-#include "sector.h"
+#include "CatalogSector.h"
+#include "Sector.h"
 
 CatalogSector::CatalogSector(Sector *data)
 {

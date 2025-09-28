@@ -1,5 +1,8 @@
 #include "DiskExplorer.h"
 
+#include "GenericFile.h"
+#include "viewerbase.h"
+
 #include <QGridLayout>
 #include <QMenuBar>
 #include <QAction>
@@ -8,9 +11,6 @@
 #include <QShowEvent>
 #include <QDebug>
 #include <QStatusBar>
-
-#include "genericfile.h"
-#include "viewerbase.h"
 
 DiskExplorer::DiskExplorer(QWidget *parent) : QMainWindow(parent)
 {

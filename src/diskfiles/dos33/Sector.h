@@ -1,8 +1,8 @@
 #pragma once
 
-#include "vtoc.h"
-#include "catalogsector.h"
-#include "tracksectorlist.h"
+#include "Vtoc.h"
+#include "CatalogSector.h"
+#include "TrackSectorList.h"
 
 #include <QByteArray>
 

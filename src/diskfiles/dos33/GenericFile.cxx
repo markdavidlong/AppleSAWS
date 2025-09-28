@@ -1,4 +1,4 @@
-#include "genericfile.h"
+#include "GenericFile.h"
 
 GenericFile::GenericFile(QByteArray data)
 {

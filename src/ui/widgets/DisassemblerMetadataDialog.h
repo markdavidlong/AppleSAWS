@@ -1,6 +1,6 @@
 #pragma once
 
-#include "binaryfilemetadata.h"
+#include "BinaryFileMetadata.h"
 #include "EntryPoints.h"
 #include "EntryPointModel.h"
 #include "AssemblerSymbolModel.h"

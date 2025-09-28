@@ -35,13 +35,13 @@ DEFINES += WS_VIDEO
 SOURCES += \
     src/intbasic/IntBasicFile.cxx \
     src/main.cxx \
-    src/diskfiles/dos33/diskfile.cxx \
-    src/diskfiles/dos33/sector.cxx \
-    src/diskfiles/dos33/vtoc.cxx \
-    src/diskfiles/dos33/catalogsector.cxx \
-    src/diskfiles/dos33/tracksectorlist.cxx \
-    src/diskfiles/dos33/filedescriptiveentry.cxx \
-    src/diskfiles/dos33/genericfile.cxx \
+    src/diskfiles/dos33/DiskFile.cxx \
+    src/diskfiles/dos33/Sector.cxx \
+    src/diskfiles/dos33/Vtoc.cxx \
+    src/diskfiles/dos33/CatalogSector.cxx \
+    src/diskfiles/dos33/TrackSectorList.cxx \
+    src/diskfiles/dos33/FileDescriptiveEntry.cxx \
+    src/diskfiles/dos33/GenericFile.cxx \
     src/memory/attributedmemory.cxx \
     src/memory/memorycell.cxx \
     src/memory/memrole.cxx \
@@ -54,7 +54,7 @@ SOURCES += \
     src/applesoftfile/ApplesoftFile.cxx \
     src/applesoftfile/ApplesoftToken.cxx \
     src/applesoftfile/ApplesoftFormatter.cxx \
-    src/binaryfile/disassembler.cxx \
+    src/binaryfile/Disassembler.cxx \
     src/binaryfile/BinaryFile.cxx \
     src/textfile/textfile.cxx \
     src/ui/widgets/catalogwidget.cxx \
@@ -66,7 +66,7 @@ SOURCES += \
     src/ui/viewers/mazeviewer.cpp \
     src/ui/viewers/charsetviewer.cpp \
     src/relocatablefile/relocatablefile.cxx \
-    src/binaryfile/binaryfilemetadata.cpp \
+    src/binaryfile/BinaryFileMetadata.cxx \
     src/util/charset.cpp \
     src/ui/widgets/characterwidget.cpp \
     src/ui/viewers/ApplesoftFileDetailViewer.cxx \
@@ -75,9 +75,9 @@ SOURCES += \
     src/ui/widgets/CharacterSetExplorer.cpp \
     src/ui/widgets/HiresScreenWidget.cpp \
     src/ui/widgets/DisassemblerMetadataDialog.cpp \
-    src/binaryfile/EntryPointModel.cpp \
+    src/binaryfile/EntryPointModel.cxx \
     src/ui/widgets/LocationInfoDialog.cpp \
-    src/binaryfile/EntryPoints.cpp \
+    src/binaryfile/EntryPoints.cxx \
     src/binaryfile/AssemblerSymbols.cxx \
     src/binaryfile/AssemblerSymbolModel.cxx \
     src/ui/diskexplorer/DiskExplorer.cpp \
@@ -89,13 +89,13 @@ SOURCES += \
 
 
 HEADERS += \
-    src/diskfiles/dos33/diskfile.h \
-    src/diskfiles/dos33/sector.h \
-    src/diskfiles/dos33/vtoc.h \
-    src/diskfiles/dos33/catalogsector.h \
-    src/diskfiles/dos33/tracksectorlist.h \
-    src/diskfiles/dos33/filedescriptiveentry.h \
-    src/diskfiles/dos33/genericfile.h \
+    src/diskfiles/dos33/Diskfile.h \
+    src/diskfiles/dos33/Sector.h \
+    src/diskfiles/dos33/Vtoc.h \
+    src/diskfiles/dos33/CatalogSector.h \
+    src/diskfiles/dos33/TrackSectorList.h \
+    src/diskfiles/dos33/FileDescriptiveEntry.h \
+    src/diskfiles/dos33/GenericFile.h \
     src/intbasic/IntBasicFile.h \
     src/memory/attributedmemory.h \
     src/memory/memorycell.h \
@@ -110,7 +110,7 @@ HEADERS += \
     src/util/applestring.h \
     src/applesoftfile/ApplesoftFile.h \
     src/applesoftfile/ApplesoftToken.h \
-    src/binaryfile/disassembler.h \
+    src/binaryfile/Disassembler.h \
     src/binaryfile/BinaryFile.h \
     src/textfile/textfile.h \
     src/ui/widgets/catalogwidget.h \
@@ -123,7 +123,7 @@ HEADERS += \
     src/ui/viewers/texthexdumpviewer.h \
     src/relocatablefile/relocatablefile.h \
     src/ui/viewers/mazeviewer.h \
-    src/binaryfile/binaryfilemetadata.h \
+    src/binaryfile/BinaryFileMetadata.h \
     src/ui/widgets/characterwidget.h \
     src/util/charset.h \
     src/ui/viewers/charsetviewer.h \

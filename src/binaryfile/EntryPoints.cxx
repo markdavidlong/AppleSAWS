@@ -1,4 +1,5 @@
 #include "EntryPoints.h"
+
 #include <QDebug>
 #include <QListIterator>
 #include <algorithm>

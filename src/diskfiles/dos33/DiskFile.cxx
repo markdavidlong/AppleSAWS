@@ -1,4 +1,11 @@
-#include "diskfile.h"
+#include "DiskFile.h"
+
+#include "TrackSectorList.h"
+#include "ApplesoftFile.h"
+#include "BinaryFile.h"
+#include "IntBasicFile.h"
+#include "relocatablefile.h"
+#include "textfile.h"
 
 #include <QFile>
 #include <QDataStream>
@@ -6,12 +13,6 @@
 #include <QDebug>
 #include <QDir>
 
-#include "tracksectorlist.h"
-#include "ApplesoftFile.h"
-#include "BinaryFile.h"
-#include "IntBasicFile.h"
-#include "relocatablefile.h"
-#include "textfile.h"
 
 DiskFile::DiskFile(QString filename)
 {

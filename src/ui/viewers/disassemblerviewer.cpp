@@ -1,6 +1,6 @@
 #include "disassemblerviewer.h"
 #include "ui_disassemblerviewer.h"
-#include "disassembler.h"
+#include "Disassembler.h"
 #include "memory.h"
 #include "util.h"
 #include "relocatablefile.h"

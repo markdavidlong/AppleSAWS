@@ -1,4 +1,4 @@
-#include "sector.h"
+#include "Sector.h"
 
 #include <QString>
 #include <QDebug>

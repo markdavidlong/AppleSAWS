@@ -1,8 +1,8 @@
 #pragma once
 
 #include "util.h"
-#include "sector.h"
-#include "vtoc.h"
+#include "Sector.h"
+#include "Vtoc.h"
 
 #include <QtGlobal>
 #include <QMap>

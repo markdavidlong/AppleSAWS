@@ -1,6 +1,6 @@
 #pragma once
 
-#include "genericfile.h"
+#include "GenericFile.h"
 #include "util.h"
 
 #include <QPair>

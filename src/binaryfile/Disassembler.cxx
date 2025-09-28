@@ -1,6 +1,6 @@
 
 #include "opcodes.h"
-#include "disassembler.h"
+#include "Disassembler.h"
 #include "role_asm_opcode.h"
 #include "role_asm_operand.h"
 #include "util.h"

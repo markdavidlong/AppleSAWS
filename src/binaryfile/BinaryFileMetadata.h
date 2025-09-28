@@ -2,7 +2,7 @@
 
 #include "EntryPoints.h"
 #include "AssemblerSymbols.h"
-#include "genericfile.h"
+#include "GenericFile.h"
 
 #include <Qt>
 #include <QList>

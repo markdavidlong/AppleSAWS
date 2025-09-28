@@ -1,8 +1,9 @@
-#include "binaryfilemetadata.h"
-#include "genericfile.h"
+#include "BinaryFileMetadata.h"
+
 #include <QFile>
 #include <QDataStream>
 #include <QDebug>
+
 BinaryFileMetadata::BinaryFileMetadata(GenericFile *file, quint16 defaultAddress, QObject *parent)
     : QObject(parent)
 {

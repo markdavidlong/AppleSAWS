@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ApplesoftLine.h"
-#include "genericfile.h"
+#include "GenericFile.h"
 #include "ApplesoftToken.h"
 #include "ApplesoftRetokenizer.h"
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "diskfile.h"
+#include "DiskFile.h"
 
 #include <QWidget>
 #include <QListWidgetItem>

@@ -3,7 +3,7 @@
 
 #include "catalogwidget.h"
 #include "DiskExplorerMapWidget.h"
-#include "diskfile.h"
+#include "DiskFile.h"
 #include "hrcgcontrolsinfo.h"
 #include "hexconverter.h"
 #include "hexdumpviewer.h"

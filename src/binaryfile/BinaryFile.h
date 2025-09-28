@@ -1,6 +1,6 @@
 #pragma once
 
-#include "genericfile.h"
+#include "GenericFile.h"
 
 class BinaryFile : public GenericFile
 {

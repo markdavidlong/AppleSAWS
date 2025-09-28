@@ -1,6 +1,6 @@
-#include "tracksectorlist.h"
+#include "TrackSectorList.h"
 
-#include "sector.h"
+#include "Sector.h"
 
 TrackSectorList::TrackSectorList(Sector *data)
 {

@@ -1,9 +1,9 @@
-#include "vtoc.h"
+#include "Vtoc.h"
 
 #include <QDebug>
 #include <QString>
 
-#include "sector.h"
+#include "Sector.h"
 #include "util.h"
 
 VTOC::VTOC(Sector *data)

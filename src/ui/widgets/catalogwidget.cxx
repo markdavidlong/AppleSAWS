@@ -1,9 +1,9 @@
 #include "catalogwidget.h"
 #include "ui_catalogwidget.h"
-#include "filedescriptiveentry.h"
+#include "FileDescriptiveEntry.h"
 #include "BinaryFile.h"
 #include "ApplesoftFile.h"
-#include "genericfile.h"
+#include "GenericFile.h"
 #include "IntBasicFile.h"
 #include <QUrl>
 #include <QDebug>
