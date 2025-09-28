@@ -17,6 +17,7 @@
 #include "hiresviewwidget.h"
 #include "disassemblerviewer.h"
 #include "textfile.h"
+#include "RelocatableFile.h"
 #include "mazeviewer.h"
 
 ViewerBase::ViewerBase(QWidget *parent) :

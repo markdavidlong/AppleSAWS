@@ -42,11 +42,11 @@ SOURCES += \
     src/diskfiles/dos33/TrackSectorList.cxx \
     src/diskfiles/dos33/FileDescriptiveEntry.cxx \
     src/diskfiles/dos33/GenericFile.cxx \
-    src/memory/attributedmemory.cxx \
-    src/memory/memorycell.cxx \
-    src/memory/memrole.cxx \
-    src/memory/roles/role_asm_opcode.cxx \
-    src/memory/roles/role_asm_operand.cxx \
+    src/memory/AttributedMemory.cxx \
+    src/memory/MemoryCell.cxx \
+    src/memory/MemRole.cxx \
+    src/memory/roles/RoleAsmOpcode.cxx \
+    src/memory/roles/RoleAsmOperand.cxx \
     src/ui/widgets/startupdialog.cxx \
     src/ui/viewers/intbasicfileviewer.cxx \
     src/ui/widgets/notesdialog.cxx \
@@ -65,7 +65,7 @@ SOURCES += \
     src/ui/viewers/texthexdumpviewer.cpp \
     src/ui/viewers/mazeviewer.cpp \
     src/ui/viewers/charsetviewer.cpp \
-    src/relocatablefile/relocatablefile.cxx \
+    src/relocatablefile/RelocatableFile.cxx \
     src/binaryfile/BinaryFileMetadata.cxx \
     src/util/charset.cpp \
     src/ui/widgets/characterwidget.cpp \
@@ -83,7 +83,7 @@ SOURCES += \
     src/ui/diskexplorer/DiskExplorer.cpp \
     src/ui/diskexplorer/DiskExplorerMapWidget.cpp \
     src/applesoftfile/ApplesoftRetokenizer.cxx \
-    src/internals/JumpLineManager.cpp \
+    src/internals/JumpLineManager.cxx \
     src/ui/widgets/FlowLineTextBrowser.cpp \
     src/util/opcodes.cpp
 
@@ -97,11 +97,11 @@ HEADERS += \
     src/diskfiles/dos33/FileDescriptiveEntry.h \
     src/diskfiles/dos33/GenericFile.h \
     src/intbasic/IntBasicFile.h \
-    src/memory/attributedmemory.h \
-    src/memory/memorycell.h \
-    src/memory/memrole.h \
-    src/memory/roles/role_asm_opcode.h \
-    src/memory/roles/role_asm_operand.h \
+    src/memory/AttributedMemory.h \
+    src/memory/MemoryCell.h \
+    src/memory/MemRole.h \
+    src/memory/roles/RoleAsmOpcode.h \
+    src/memory/roles/RoleAsmOperand.h \
     src/ui/widgets/startupdialog.h \
     src/ui/viewers/intbasicfileviewer.h \
     src/ui/widgets/notesdialog.h \
@@ -121,7 +121,7 @@ HEADERS += \
     src/ui/viewers/disassemblerviewer.h \
     src/ui/viewers/hexdumpviewer.h \
     src/ui/viewers/texthexdumpviewer.h \
-    src/relocatablefile/relocatablefile.h \
+    src/relocatablefile/RelocatableFile.h \
     src/ui/viewers/mazeviewer.h \
     src/binaryfile/BinaryFileMetadata.h \
     src/ui/widgets/characterwidget.h \

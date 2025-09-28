@@ -1,5 +1,5 @@
 #include <QDebug>
-#include "relocatablefile.h"
+#include "RelocatableFile.h"
 #include "util.h"
 
 RelocatableFile::RelocatableFile(QByteArray data) : GenericFile(data)

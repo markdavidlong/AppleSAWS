@@ -4,7 +4,7 @@
 #include "util.h"
 #include "JumpLineManager.h"
 #include "opcodes.h"
-#include "attributedmemory.h"
+#include "AttributedMemory.h"
 
 #include <QByteArray>
 #include <QStringList>

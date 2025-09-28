@@ -1,4 +1,4 @@
-#include "memorycell.h"
+#include "MemoryCell.h"
 
 MemoryCell::MemoryCell(quint8 val)
 {

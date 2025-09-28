@@ -1,7 +1,6 @@
 #pragma once
 
-#include "attributedmemory.h"
-#include "relocatablefile.h"
+#include "AttributedMemory.h"
 #include "fileviewerinterface.h"
 #include "DisassemblerMetadataDialog.h"
 #include "JumpLineManager.h"
@@ -10,6 +9,7 @@
 #include <QByteArray>
 
 class BinaryFile;
+class RelocatableFile;
 
 namespace Ui {
 class DisassemblerViewer;

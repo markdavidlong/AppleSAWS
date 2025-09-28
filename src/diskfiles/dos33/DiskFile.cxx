@@ -4,7 +4,7 @@
 #include "ApplesoftFile.h"
 #include "BinaryFile.h"
 #include "IntBasicFile.h"
-#include "relocatablefile.h"
+#include "RelocatableFile.h"
 #include "textfile.h"
 
 #include <QFile>

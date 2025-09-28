@@ -1,4 +1,4 @@
-#include "attributedmemory.h"
+#include "AttributedMemory.h"
 
 #include <QDebug>
 

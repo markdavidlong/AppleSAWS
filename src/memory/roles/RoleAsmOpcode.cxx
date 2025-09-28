@@ -1,6 +1,6 @@
-#include "role_asm_opcode.h"
+#include "RoleAsmOpcode.h"
 #include "opcodes.h"
-#include "memorycell.h"
+#include "MemoryCell.h"
 
 
 QString RoleAsmOpcode::mnemonic() const

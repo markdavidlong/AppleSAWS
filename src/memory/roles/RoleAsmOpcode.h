@@ -1,6 +1,6 @@
 #pragma once
 
-#include "memrole.h"
+#include "MemRole.h"
 #include "opcodes.h"
 
 #include <QString>

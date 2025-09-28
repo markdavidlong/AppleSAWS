@@ -1,6 +1,6 @@
 #pragma once
 
-#include "attributedmemory.h"
+#include "AttributedMemory.h"
 #include "fileviewerinterface.h"
 
 #include <QObject>

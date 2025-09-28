@@ -3,7 +3,7 @@
 #include "Disassembler.h"
 #include "memory.h"
 #include "util.h"
-#include "relocatablefile.h"
+#include "RelocatableFile.h"
 #include "opcodes.h"
 #include "BinaryFile.h"
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "memorycell.h"
+#include "MemoryCell.h"
 
 
 class AttributedMemory
