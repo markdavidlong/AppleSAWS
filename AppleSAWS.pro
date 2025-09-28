@@ -58,7 +58,7 @@ SOURCES += \
     src/binaryfile/binaryfile.cxx \
     src/textfile/textfile.cxx \
     src/ui/catalogwidget.cxx \
-    src/ui/viewers/hiresviewwidget.cxx \
+    src/ui/widgets/hiresviewwidget.cxx \
     src/ui/viewers/applesoftfileviewer.cxx \
     src/ui/viewers/disassemblerviewer.cpp \
     src/ui/viewers/hexdumpviewer.cpp \
@@ -114,7 +114,7 @@ HEADERS += \
     src/binaryfile/binaryfile.h \
     src/textfile/textfile.h \
     src/ui/catalogwidget.h \
-    src/ui/viewers/hiresviewwidget.h \
+    src/ui/widgets/hiresviewwidget.h \
     src/ui/viewers/applesoftfileviewer.h \
     src/applesoftfile/applesoftformatter.h \
     src/applesoftfile/applesoftline.h  \
