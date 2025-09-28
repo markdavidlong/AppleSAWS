@@ -9,6 +9,7 @@
 #include "Util.h"
 
 #include <math.h>
+#include <algorithm>
 
 
 HiresScreenWidget::HiresScreenWidget(QWidget *parent) :
@@ -211,8 +212,9 @@ void HiresScreenWidget::drawPixmap()
         pmpainter.setPen(Qt::white);
         pmpainter.setBrush(Qt::white);
 
-        for (int idx = 0; idx <  qMin(workingdata.size(),8192) ; idx++) {
-            ColRow cr = getColRowFromAppleAddress(idx);
+        constexpr qsizetype maxHiresBytes = 8192;
+        for (qsizetype idx = 0; idx < std::min(workingdata.size(), maxHiresBytes); idx++) {
+            ColRow cr = getColRowFromAppleAddress(static_cast<quint16>(idx));
 
             quint8 byte = workingdata[idx];
 
@@ -323,13 +325,12 @@ void HiresScreenWidget::handleNextPageAction(bool)
 
 QByteArray HiresScreenWidget::packData(QByteArray unpackedData)
 {
-    QByteArray packedData;
-    packedData.resize(8192);
-    packedData.fill(0x00);
+    constexpr qsizetype maxHiresBytes = 8192;
+    QByteArray packedData(maxHiresBytes, 0x00);
 
-    for (int idx = 0; idx < qMin(unpackedData.count(),8192); idx++)
+    for (qsizetype idx = 0; idx < std::min(unpackedData.size(), maxHiresBytes); idx++)
     {
-        ColRow cr = getColRowFromRawAddress(idx);
+        ColRow cr = getColRowFromRawAddress(static_cast<quint16>(idx));
 
         if (cr.isDefined())
         {
@@ -380,9 +381,9 @@ void HiresScreenWidget::setData(QByteArray data) {
 
 void HiresScreenWidget::drawMonoLine(QPainter &painter, int lineNum, QBitArray data) {
     painter.setPen(Qt::black);
-    painter.drawLine(0,lineNum,data.count(),lineNum);
+    painter.drawLine(0,lineNum,data.size(),lineNum);
     painter.setPen(Qt::white);
-    for (int idx = 0; idx < data.count(); idx++) {
+    for (int idx = 0; idx < data.size(); idx++) {
 
         if (data.at(idx))
             painter.drawPoint(idx,lineNum);
@@ -391,12 +392,12 @@ void HiresScreenWidget::drawMonoLine(QPainter &painter, int lineNum, QBitArray d
 
 void HiresScreenWidget::drawPerPositionColorLine(QPainter &painter, int lineNum, QBitArray data) {
     painter.setPen(Qt::black);
-    painter.drawLine(0,lineNum,data.count(),lineNum);
+    painter.drawLine(0,lineNum,data.size(),lineNum);
 
     QList<QColor> colorlist;
     colorlist << QColor(orangeColor) << QColor(purpleColor) << QColor(blueColor) << QColor(greenColor);
 
-    for (int idx = 0; idx < data.count(); idx++)
+    for (int idx = 0; idx < data.size(); idx++)
     {
         painter.setPen(colorlist[idx % 4]);
         painter.setBrush(colorlist[idx % 4]);
@@ -494,21 +495,21 @@ QColor HiresScreenWidget::getColorFromBits(QBitArray bits, quint8 phase)
 
 void HiresScreenWidget::drawNtscLine(QPainter &painter, int lineNum, QBitArray data) {
     QVector<QColor> colors;
-    colors.resize(data.count()+3);
+    colors.resize(data.size()+3);
 
-    for (int idx = 0; idx < data.count(); idx++) {
+    for (int idx = 0; idx < data.size(); idx++) {
         QBitArray tmp(4);
         tmp[0]=data.at(idx+0);
-        if (idx < data.count()-1) tmp[1]=data.at(idx+1); else tmp[1] = false;
-        if (idx < data.count()-2) tmp[2]=data.at(idx+2); else tmp[2] = false;
-        if (idx < data.count()-3) tmp[3]=data.at(idx+3); else tmp[3] = false;
+        if (idx < data.size()-1) tmp[1]=data.at(idx+1); else tmp[1] = false;
+        if (idx < data.size()-2) tmp[2]=data.at(idx+2); else tmp[2] = false;
+        if (idx < data.size()-3) tmp[3]=data.at(idx+3); else tmp[3] = false;
         colors[idx]   = getColorFromBits(tmp,idx %4);
         colors[idx+1] = getColorFromBits(tmp,idx %4);
         colors[idx+2] = getColorFromBits(tmp,idx %4);
         colors[idx+3] = getColorFromBits(tmp,idx %4);
     }
 
-    for (int idx = 0; idx < colors.count(); idx++)
+    for (int idx = 0; idx < colors.size(); idx++)
     {
         painter.setPen(colors.at(idx));
         painter.setBrush(colors.at(idx));
@@ -569,12 +570,16 @@ HiresScreenWidget::ColRow HiresScreenWidget::getColRowFromRawAddress(quint16 add
 
 void HiresScreenWidget::makeAddressTables()
 {
-    m_rawAddressToColRowList.resize(8192);
-    m_appleAddressToColRowList.resize(8192);
+    constexpr int hiresRows = 192;
+    constexpr int hiresCols = 40;
+    constexpr int totalCells = 8192;
+    
+    m_rawAddressToColRowList.resize(totalCells);
+    m_appleAddressToColRowList.resize(totalCells);
 
-    for (int row = 0; row < 192; row++)
+    for (int row = 0; row < hiresRows; row++)
     {
-        for (int col = 0; col < 40; col++)
+        for (int col = 0; col < hiresCols; col++)
         {
             ColRow cr(col,row);
 
