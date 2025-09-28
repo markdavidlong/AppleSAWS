@@ -7,3 +7,13 @@ compile_commands.json
 qrc_resources.cpp
 AppleSAWS
 Makefile
+
+# CMake build directories and files
+build/
+build-*/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+*.cmake
+!CMakeLists.txt
+!CMakePresets.json
