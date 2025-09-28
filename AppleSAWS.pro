@@ -55,7 +55,7 @@ SOURCES += \
     src/applesoftfile/ApplesoftToken.cxx \
     src/applesoftfile/ApplesoftFormatter.cxx \
     src/binaryfile/disassembler.cxx \
-    src/binaryfile/binaryfile.cxx \
+    src/binaryfile/BinaryFile.cxx \
     src/textfile/textfile.cxx \
     src/ui/widgets/catalogwidget.cxx \
     src/ui/widgets/hiresviewwidget.cxx \
@@ -111,7 +111,7 @@ HEADERS += \
     src/applesoftfile/ApplesoftFile.h \
     src/applesoftfile/ApplesoftToken.h \
     src/binaryfile/disassembler.h \
-    src/binaryfile/binaryfile.h \
+    src/binaryfile/BinaryFile.h \
     src/textfile/textfile.h \
     src/ui/widgets/catalogwidget.h \
     src/ui/widgets/hiresviewwidget.h \
