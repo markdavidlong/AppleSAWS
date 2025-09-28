@@ -1,4 +1,4 @@
-#include "applesoftfile.h"
+#include "ApplesoftFile.h"
 #include "util.h"
 #include <QDebug>
 #include <QRegularExpression>

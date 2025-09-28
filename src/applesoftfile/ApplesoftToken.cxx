@@ -1,4 +1,4 @@
-#include "applesofttoken.h"
+#include "ApplesoftToken.h"
 
 QMap<quint16, QString> ApplesoftToken::m_tokens = QMap<quint16, QString>();
 

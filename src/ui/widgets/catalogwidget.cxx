@@ -2,7 +2,7 @@
 #include "ui_catalogwidget.h"
 #include "filedescriptiveentry.h"
 #include "binaryfile.h"
-#include "applesoftfile.h"
+#include "ApplesoftFile.h"
 #include "genericfile.h"
 #include "IntBasicFile.h"
 #include <QUrl>

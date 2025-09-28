@@ -1,6 +1,5 @@
 #include "applesoftfileviewer.h"
 #include "ui_applesoftfileviewer.h"
-#include "applesoftformatter.h"
 #include "util.h"
 #include <QDebug>
 #include <QSettings>

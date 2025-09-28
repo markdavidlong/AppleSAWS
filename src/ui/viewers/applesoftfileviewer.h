@@ -1,9 +1,9 @@
 #pragma once
 
-#include "applesoftfile.h"
-#include "applesoftformatter.h"
+#include "ApplesoftFile.h"
+#include "ApplesoftFormatter.h"
 #include "viewerbase.h"
-#include "applesoftfiledetailviewer.h"
+#include "ApplesoftFileDetailViewer.h"
 
 #include <QAction>
 #include <QWidget>

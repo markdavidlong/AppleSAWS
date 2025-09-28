@@ -1,5 +1,5 @@
-#include "applesoftfiledetailviewer.h"
-#include "ui_applesoftfiledetailviewer.h"
+#include "ApplesoftFileDetailViewer.h"
+#include "ui_ApplesoftFileDetailViewer.h"
 
 #include <QMap>
 #include <QString>

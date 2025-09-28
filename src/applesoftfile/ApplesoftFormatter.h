@@ -1,6 +1,6 @@
 #pragma once
 
-#include "applesoftfile.h"
+#include "ApplesoftFile.h"
 
 #include <QObject>
 #include <QFlags>

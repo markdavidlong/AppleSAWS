@@ -1,8 +1,8 @@
 #pragma once
 
-#include "applesoftline.h"
+#include "ApplesoftLine.h"
 #include "genericfile.h"
-#include "applesofttoken.h"
+#include "ApplesoftToken.h"
 #include "ApplesoftRetokenizer.h"
 
 #include <QByteArray>

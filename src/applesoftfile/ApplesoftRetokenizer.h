@@ -1,6 +1,6 @@
 #pragma once
 
-#include "applesoftline.h"
+#include "ApplesoftLine.h"
 
 #include <QByteArray>
 #include <QVector>

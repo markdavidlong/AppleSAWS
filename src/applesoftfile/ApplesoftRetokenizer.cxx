@@ -1,5 +1,5 @@
 #include "ApplesoftRetokenizer.h"
-#include "applesofttoken.h"
+#include "ApplesoftToken.h"
 #include "util.h"
 
 #include <QDebug>

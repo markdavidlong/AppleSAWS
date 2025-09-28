@@ -4,11 +4,11 @@
 #include <QFontDatabase>
 #include <QDebug>
 
-#include "binaryfile.h"
-#include "genericfile.h"
-#include "diskfile.h"
-#include "catalogsector.h"
-#include "applesoftfile.h"
+// #include "binaryfile.h"
+// #include "genericfile.h"
+// #include "diskfile.h"
+// #include "catalogsector.h"
+// //#include "ApplesoftFile.h"
 #include "startupdialog.h"
 
 int main(int argc, char** argv)

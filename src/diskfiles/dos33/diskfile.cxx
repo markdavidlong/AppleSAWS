@@ -7,7 +7,7 @@
 #include <QDir>
 
 #include "tracksectorlist.h"
-#include "applesoftfile.h"
+#include "ApplesoftFile.h"
 #include "binaryfile.h"
 #include "IntBasicFile.h"
 #include "relocatablefile.h"

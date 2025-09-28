@@ -1,8 +1,8 @@
 #pragma once
 
-#include "applesoftline.h"
-#include "applesofttoken.h"
-#include "applesoftfile.h"
+#include "ApplesoftLine.h"
+#include "ApplesoftToken.h"
+#include "ApplesoftFile.h"
 
 #include <QWidget>
 #include <QDebug>
