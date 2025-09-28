@@ -1,5 +1,6 @@
 #include "ApplesoftFile.h"
-#include "util.h"
+#include "Util.h"
+
 #include <QDebug>
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>

@@ -1,5 +1,5 @@
-#include "notesdialog.h"
-#include "ui_notesdialog.h"
+#include "NotesDialog.h"
+#include "ui_NotesDialog.h"
 #include <QFile>
 
 NotesDialog::NotesDialog(QWidget *parent) :

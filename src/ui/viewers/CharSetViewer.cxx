@@ -1,4 +1,6 @@
 #include "CharSetViewer.h"
+#include "CharacterWidget.h"
+
 #include "BinaryFile.h"
 #include <QGridLayout>
 #include <QSettings>
@@ -14,7 +16,7 @@ CharSetViewer::CharSetViewer(QWidget *parent) : FileViewerInterface(parent)
     m_charSetEncoderAction = nullptr;
 
     QGridLayout *qgl = new QGridLayout(this);
-    setLayout(qgl);
+    setLayout(qgl); 
     QString title = QString("Character Set Viewer");
     setWindowTitle(title);
 }

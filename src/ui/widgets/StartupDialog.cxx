@@ -1,7 +1,12 @@
-#include "startupdialog.h"
-#include "ui_startupdialog.h"
+#include "StartupDialog.h"
+#include "ui_StartupDialog.h"
+#include "HexConverter.h"
+#include "DiskExplorer.h"
+#include "HRCGControlsInfo.h"
+#include "NotesDialog.h"
+#include "AsciiInfoDialog.h"
 
-#include "diskexplorer/DiskExplorer.h"
+
 
 #include <QFileDialog>
 

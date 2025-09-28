@@ -1,4 +1,4 @@
-#include "characterwidget.h"
+#include "CharacterWidget.h"
 
 #include <QResizeEvent>
 #include <QSize>

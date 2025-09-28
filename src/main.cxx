@@ -4,8 +4,7 @@
 #include <QFontDatabase>
 #include <QDebug>
 
-
-#include "startupdialog.h"
+#include "StartupDialog.h"
 
 int main(int argc, char** argv)
 {

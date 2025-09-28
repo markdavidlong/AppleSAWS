@@ -1,6 +1,6 @@
 #include "DisassemblerMetadataDialog.h"
 #include "ui_DisassemblerMetadataDialog.h"
-#include "util.h"
+#include "Util.h"
 #include <QDebug>
 
 

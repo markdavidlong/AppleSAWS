@@ -1,5 +1,5 @@
-#include "hexconverter.h"
-#include "ui_hexconverter.h"
+#include "HexConverter.h"
+#include "ui_HexConverter.h"
 #include <QString>
 #include <QIntValidator>
 

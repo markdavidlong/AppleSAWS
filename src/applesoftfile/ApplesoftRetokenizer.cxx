@@ -1,6 +1,6 @@
 #include "ApplesoftRetokenizer.h"
 #include "ApplesoftToken.h"
-#include "util.h"
+#include "Util.h"
 
 #include <QDebug>
 #include <QRegularExpression>

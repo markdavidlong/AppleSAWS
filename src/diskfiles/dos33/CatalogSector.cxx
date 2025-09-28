@@ -1,5 +1,7 @@
 #include "CatalogSector.h"
 #include "Sector.h"
+#include "AppleString.h"
+
 
 CatalogSector::CatalogSector(Sector *data)
 {

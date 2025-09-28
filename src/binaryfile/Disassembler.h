@@ -1,9 +1,9 @@
 #pragma once
 
 #include "MemoryUsageMap.h"
-#include "util.h"
+#include "Util.h"
 #include "JumpLineManager.h"
-#include "opcodes.h"
+#include "OpCodes.h"
 #include "AttributedMemory.h"
 
 #include <QByteArray>

@@ -47,18 +47,18 @@ SOURCES += \
     src/memory/MemRole.cxx \
     src/memory/roles/RoleAsmOpcode.cxx \
     src/memory/roles/RoleAsmOperand.cxx \
-    src/ui/widgets/startupdialog.cxx \
+    src/ui/widgets/StartupDialog.cxx \
     src/ui/viewers/IntBasicFileViewer.cxx \
-    src/ui/widgets/notesdialog.cxx \
-    src/util/applestring.cxx \
+    src/ui/widgets/NotesDialog.cxx \
+    src/util/AppleString.cxx \
     src/applesoftfile/ApplesoftFile.cxx \
     src/applesoftfile/ApplesoftToken.cxx \
     src/applesoftfile/ApplesoftFormatter.cxx \
     src/binaryfile/Disassembler.cxx \
     src/binaryfile/BinaryFile.cxx \
     src/textfile/TextFile.cxx \
-    src/ui/widgets/catalogwidget.cxx \
-    src/ui/widgets/hiresviewwidget.cxx \
+    src/ui/widgets/CatalogWidget.cxx \
+    src/ui/viewers/HiresViewer.cxx \
     src/ui/viewers/ApplesoftFileViewer.cxx \
     src/ui/viewers/DisassemblerViewer.cxx \
     src/ui/viewers/HexDumpViewer.cxx \
@@ -67,16 +67,16 @@ SOURCES += \
     src/ui/viewers/CharSetViewer.cxx \
     src/relocatablefile/RelocatableFile.cxx \
     src/binaryfile/BinaryFileMetadata.cxx \
-    src/util/charset.cpp \
-    src/ui/widgets/characterwidget.cpp \
+    src/util/CharSet.cxx \
+    src/ui/widgets/CharacterWidget.cxx \
     src/ui/viewers/ApplesoftFileDetailViewer.cxx \
-    src/ui/widgets/hexconverter.cpp \
+    src/ui/widgets/HexConverter.cxx \
     src/ui/viewers/ViewerBase.cxx \
-    src/ui/widgets/CharacterSetExplorer.cpp \
-    src/ui/widgets/HiresScreenWidget.cpp \
-    src/ui/widgets/DisassemblerMetadataDialog.cpp \
+    src/ui/widgets/CharacterSetExplorer.cxx \
+    src/ui/widgets/HiresScreenWidget.cxx \
+    src/ui/widgets/DisassemblerMetadataDialog.cxx \
     src/binaryfile/EntryPointModel.cxx \
-    src/ui/widgets/LocationInfoDialog.cpp \
+    src/ui/widgets/LocationInfoDialog.cxx \
     src/binaryfile/EntryPoints.cxx \
     src/binaryfile/AssemblerSymbols.cxx \
     src/binaryfile/AssemblerSymbolModel.cxx \
@@ -84,8 +84,8 @@ SOURCES += \
     src/ui/diskexplorer/DiskExplorerMapWidget.cxx \
     src/applesoftfile/ApplesoftRetokenizer.cxx \
     src/internals/JumpLineManager.cxx \
-    src/ui/widgets/FlowLineTextBrowser.cpp \
-    src/util/opcodes.cpp
+    src/ui/widgets/FlowLineTextBrowser.cxx \
+    src/util/OpCodes.cxx
 
 
 HEADERS += \
@@ -102,19 +102,19 @@ HEADERS += \
     src/memory/MemRole.h \
     src/memory/roles/RoleAsmOpcode.h \
     src/memory/roles/RoleAsmOperand.h \
-    src/ui/widgets/startupdialog.h \
+    src/ui/widgets/StartupDialog.h \
     src/ui/viewers/IntBasicFileViewer.h \
-    src/ui/widgets/notesdialog.h \
-    src/util/opcodes.h \
-    src/util/util.h \
-    src/util/applestring.h \
+    src/ui/widgets/NotesDialog.h \
+    src/util/OpCodes.h \
+    src/util/Util.h \
+    src/util/AppleString.h \
     src/applesoftfile/ApplesoftFile.h \
     src/applesoftfile/ApplesoftToken.h \
     src/binaryfile/Disassembler.h \
     src/binaryfile/BinaryFile.h \
     src/textfile/TextFile.h \
-    src/ui/widgets/catalogwidget.h \
-    src/ui/widgets/hiresviewwidget.h \
+    src/ui/widgets/CatalogWidget.h \
+    src/ui/viewers/HiresViewer.h \
     src/ui/viewers/ApplesoftFileViewer.h \
     src/applesoftfile/ApplesoftFormatter.h \
     src/applesoftfile/ApplesoftLine.h  \
@@ -124,12 +124,12 @@ HEADERS += \
     src/relocatablefile/RelocatableFile.h \
     src/ui/viewers/MazeViewer.h \
     src/binaryfile/BinaryFileMetadata.h \
-    src/ui/widgets/characterwidget.h \
-    src/util/charset.h \
+    src/ui/widgets/CharacterWidget.h \
+    src/util/CharSet.h \
     src/ui/viewers/CharSetViewer.h \
     src/ui/viewers/ApplesoftFileDetailViewer.h \
-    src/ui/widgets/hexconverter.h \
-    src/ui/widgets/hrcgcontrolsinfo.h \
+    src/ui/widgets/HexConverter.h \
+    src/ui/widgets/HRCGControlsInfo.h \
     src/ui/viewers/ViewerBase.h \
     src/ui/viewers/FileViewerInterface.h \
     src/ui/widgets/CharacterSetExplorer.h \
@@ -147,25 +147,25 @@ HEADERS += \
     src/util/AppleColors.h \
     src/internals/JumpLineManager.h \
     src/ui/widgets/FlowLineTextBrowser.h \
-    src/ui/widgets/asciiinfodialog.h
+    src/ui/widgets/AsciiInfoDialog.h
 
 FORMS += \
-    src/ui/widgets/catalogwidget.ui \
-    src/ui/widgets/startupdialog.ui \
+    src/ui/widgets/CatalogWidget.ui \
+    src/ui/widgets/StartupDialog.ui \
     src/ui/viewers/ApplesoftFileViewer.ui \
     src/ui/viewers/DisassemblerViewer.ui \
     src/ui/viewers/HexDumpViewer.ui \
     src/ui/viewers/IntBasicFileViewer.ui \
     src/ui/viewers/TextHexDumpViewer.ui \
     src/ui/viewers/ApplesoftFileDetailViewer.ui \
-    src/ui/widgets/hexconverter.ui \
-    src/ui/widgets/hrcgcontrolsinfo.ui \
+    src/ui/widgets/HexConverter.ui \
+    src/ui/widgets/HRCGControlsInfo.ui \
     src/ui/viewers/ViewerBase.ui \
     src/ui/widgets/CharacterSetExplorer.ui \
     src/ui/widgets/DisassemblerMetadataDialog.ui \
     src/ui/widgets/LocationInfoDialog.ui \
-    src/ui/widgets/asciiinfodialog.ui \
-    src/ui/widgets/notesdialog.ui
+    src/ui/widgets/AsciiInfoDialog.ui \
+    src/ui/widgets/NotesDialog.ui
 
 RESOURCES += \
     src/resource/resources.qrc

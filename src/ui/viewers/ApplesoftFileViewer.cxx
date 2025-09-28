@@ -1,6 +1,6 @@
 #include "ApplesoftFileViewer.h"
 #include "ui_ApplesoftFileViewer.h"
-#include "util.h"
+#include "Util.h"
 #include <QDebug>
 #include <QSettings>
 #include <QPrinter>

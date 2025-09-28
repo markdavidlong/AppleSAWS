@@ -7,7 +7,7 @@
 #include "CharSetViewer.h"
 #include "IntBasicFile.h"
 #include "IntBasicFileViewer.h"
-#include "hiresviewwidget.h"
+#include "HiresViewer.h"
 #include "DisassemblerViewer.h"
 #include "TextFile.h"
 #include "RelocatableFile.h"
@@ -104,7 +104,7 @@ void ViewerBase::setFile(GenericFile *file)
         descriptor = hrcgcharsetviewerstring;
         addViewer(descriptor,csv);
 
-        HiresViewWidget *hrvw = new HiresViewWidget();
+        HiresViewer *hrvw = new HiresViewer();
         hrvw->setFile(bf);
         descriptor = hiresviewerstring;
         addViewer(descriptor,hrvw);

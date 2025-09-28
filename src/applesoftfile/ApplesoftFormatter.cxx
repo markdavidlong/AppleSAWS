@@ -1,5 +1,6 @@
 #include "ApplesoftFormatter.h"
-#include "util.h"
+#include "Util.h"
+
 #include <QTextCursor>
 #include <QTextCharFormat>
 #include <QChar>

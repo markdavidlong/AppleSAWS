@@ -1,6 +1,7 @@
 #pragma once
 
-#include "util.h"
+#include "Util.h"
+
 #include <QtGlobal>
 
 class Sector;

@@ -1,10 +1,9 @@
 #include "DisassemblerViewer.h"
 #include "ui_DisassemblerViewer.h"
 #include "Disassembler.h"
-#include "memory.h"
-#include "util.h"
+#include "Util.h"
 #include "RelocatableFile.h"
-#include "opcodes.h"
+#include "OpCodes.h"
 #include "BinaryFile.h"
 
 #include <QSettings>
@@ -12,6 +11,7 @@
 #include <QAction>
 #include <QDebug>
 #include <QFontDialog>
+#include <memory>
 
 
 DisassemblerViewer::DisassemblerViewer(QWidget *parent) :

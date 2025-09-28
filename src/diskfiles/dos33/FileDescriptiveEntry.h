@@ -1,7 +1,7 @@
 #pragma once
 
-#include "util.h"
-#include "applestring.h"
+#include "Util.h"
+#include "AppleString.h"
 
 #include <QDebug>
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GenericFile.h"
-#include "util.h"
+#include "Util.h"
 
 #include <QPair>
 #include <QByteArray>

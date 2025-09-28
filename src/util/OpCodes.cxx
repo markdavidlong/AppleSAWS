@@ -1,4 +1,4 @@
-#include "opcodes.h"
+#include "OpCodes.h"
 
 OpCodes::OpCodes()
 {

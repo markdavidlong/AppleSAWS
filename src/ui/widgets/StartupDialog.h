@@ -1,11 +1,11 @@
 #pragma once
 
-#include "notesdialog.h"
-#include "hrcgcontrolsinfo.h"
-#include "hexconverter.h"
-#include "asciiinfodialog.h"
-
 #include <QDialog>
+
+class HexConverter;
+class HRCGControlsInfo;
+class NotesDialog;
+class AsciiInfoDialog;
 
 namespace Ui {
 class StartupDialog;

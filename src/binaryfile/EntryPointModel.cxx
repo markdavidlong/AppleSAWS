@@ -1,5 +1,5 @@
 #include "EntryPointModel.h"
-#include "util.h"
+#include "Util.h"
 
 #include <QDebug>
 

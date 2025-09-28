@@ -1,8 +1,7 @@
 #pragma once
 
 #include "FileDescriptiveEntry.h"
-#include "util.h"
-#include "applestring.h"
+#include "Util.h"
 
 #include <QtGlobal>
 #include <QByteArray>

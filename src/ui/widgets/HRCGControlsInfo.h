@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ui_hrcgcontrolsinfo.h"
+#include "ui_HRCGControlsInfo.h"
 
 #include <QDialog>
 

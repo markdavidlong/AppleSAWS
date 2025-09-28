@@ -1,6 +1,6 @@
 #pragma once
 
-#include "charset.h"
+#include "CharSet.h"
 
 #include <QDialog>
 

@@ -1,6 +1,6 @@
 #include "TextHexDumpViewer.h"
 #include "ui_TextHexDumpViewer.h"
-#include "applestring.h"
+#include "AppleString.h"
 
 #include <QVector>
 #include <QByteArray>

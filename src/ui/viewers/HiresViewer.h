@@ -15,12 +15,12 @@
 #include <QLabel>
 
 
-class HiresViewWidget : public FileViewerInterface
+class HiresViewer : public FileViewerInterface
 {
     Q_OBJECT
 public:
 
-     explicit HiresViewWidget(QWidget *parent = 0);
+     explicit HiresViewer(QWidget *parent = 0);
      virtual bool optionsMenuItems(QMenu *);
 
     bool canPrint() const;

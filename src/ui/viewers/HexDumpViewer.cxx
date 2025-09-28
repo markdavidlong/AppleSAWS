@@ -1,13 +1,14 @@
 #include "HexDumpViewer.h"
 #include "ui_HexDumpViewer.h"
-#include "util.h"
+#include "AppleString.h"
+#include "Util.h"
+
 #include <QDebug>
 #include <QScrollBar>
 #include <QSettings>
 #include <QAction>
 #include <QMenu>
 #include <QFontDialog>
-#include "applestring.h"
 #include <QChar>
 
 HexDumpViewer::HexDumpViewer(QWidget *parent, int defaultFontSize) :

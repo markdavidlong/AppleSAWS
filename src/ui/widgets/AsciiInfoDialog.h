@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ui_asciiinfodialog.h"
+#include "ui_AsciiInfoDialog.h"
 
 #include <QDialog>
 

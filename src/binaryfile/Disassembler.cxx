@@ -1,9 +1,9 @@
 
-#include "opcodes.h"
 #include "Disassembler.h"
 #include "RoleAsmOpcode.h"
 #include "RoleAsmOperand.h"
-#include "util.h"
+#include "Util.h"
+
 #include <QByteArray>
 #include <QDebug>
 #include <QList>

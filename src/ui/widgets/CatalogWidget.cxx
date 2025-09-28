@@ -1,5 +1,5 @@
-#include "catalogwidget.h"
-#include "ui_catalogwidget.h"
+#include "CatalogWidget.h"
+#include "ui_CatalogWidget.h"
 #include "FileDescriptiveEntry.h"
 #include "BinaryFile.h"
 #include "ApplesoftFile.h"

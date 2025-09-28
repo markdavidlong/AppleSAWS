@@ -1,5 +1,5 @@
-#include "hiresviewwidget.h"
-#include "util.h"
+#include "HiresViewer.h"
+#include "Util.h"
 
 #include <QPainter>
 #include <QMap>
@@ -12,7 +12,7 @@
 #include <math.h>
 
 
-HiresViewWidget::HiresViewWidget(QWidget *parent) :
+HiresViewer::HiresViewer(QWidget *parent) :
     FileViewerInterface(parent)
 {
     QGridLayout *gv = new QGridLayout(this);
@@ -26,13 +26,13 @@ HiresViewWidget::HiresViewWidget(QWidget *parent) :
     gv->setRowStretch(1,1);
 
     connect(hrsw, &HiresScreenWidget::newOffset,
-            this, &HiresViewWidget::handleNewOffset);
+            this, &HiresViewer::handleNewOffset);
     handleNewOffset(0);
 
     resize(561,384);
 }
 
-void HiresViewWidget::setFile(BinaryFile *file) {
+void HiresViewer::setFile(BinaryFile *file) {
     m_file = file;
 
     QString title = QString("Image: %1").arg(m_file->filename());
@@ -41,7 +41,7 @@ void HiresViewWidget::setFile(BinaryFile *file) {
     hrsw->setData(file->data());
 }
 
-bool HiresViewWidget::optionsMenuItems(QMenu *menu)
+bool HiresViewer::optionsMenuItems(QMenu *menu)
 {
     menu->addAction(hrsw->monochromeAction());
     menu->addAction(hrsw->ntscAction());
@@ -55,7 +55,7 @@ bool HiresViewWidget::optionsMenuItems(QMenu *menu)
     return true;
 }
 
-void HiresViewWidget::setFile(GenericFile *file)
+void HiresViewer::setFile(GenericFile *file)
 {
     BinaryFile *af = dynamic_cast<BinaryFile*>(file);
     if (af)
@@ -64,9 +64,9 @@ void HiresViewWidget::setFile(GenericFile *file)
     }
 }
 
-bool HiresViewWidget::canPrint() const { return true; }
+bool HiresViewer::canPrint() const { return true; }
 
-void HiresViewWidget::doPrint()
+void HiresViewer::doPrint()
 {
     QPrinter printer;
 
@@ -88,9 +88,9 @@ void HiresViewWidget::doPrint()
     }
 }
 
-bool HiresViewWidget::canExport() const { return true; }
+bool HiresViewer::canExport() const { return true; }
 
-void HiresViewWidget::doExport()
+void HiresViewer::doExport()
 {
     QString defaultPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
     QDir savename = QDir(defaultPath).filePath(m_file->filename()+".png");
@@ -113,7 +113,7 @@ void HiresViewWidget::doExport()
     pm.save(savename.path());
 }
 
-void HiresViewWidget::handleNewOffset(quint16 offset)
+void HiresViewer::handleNewOffset(quint16 offset)
 {
     QString text = QString("Offset: %1 (0x%2)").arg(offset).arg(uint16ToHex(offset));
     m_offsetLabel->setText(text);

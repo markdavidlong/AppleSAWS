@@ -2,7 +2,7 @@
 
 //#include "vtoc.h"
 //#include "catalogsector.h"
-#include "util.h"
+#include "Util.h"
 
 #include <QPushButton>
 #include <QGridLayout>

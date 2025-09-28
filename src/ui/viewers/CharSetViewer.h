@@ -1,12 +1,12 @@
 #pragma once
 
-#include "characterwidget.h"
 #include "FileViewerInterface.h"
 #include "CharacterSetExplorer.h"
 
 #include <QWidget>
 
 class BinaryFile;
+class CharacterWidget;
 
 class CharSetViewer : public FileViewerInterface
 {

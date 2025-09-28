@@ -2,6 +2,9 @@
 
 #include "GenericFile.h"
 #include "ViewerBase.h"
+#include "CatalogWidget.h"
+#include "HexConverter.h"
+#include "HRCGControlsInfo.h"
 
 #include <QGridLayout>
 #include <QMenuBar>

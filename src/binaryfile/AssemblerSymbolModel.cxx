@@ -1,5 +1,5 @@
 #include "AssemblerSymbolModel.h"
-#include "util.h"
+#include "Util.h"
 
 #include <QDebug>
 

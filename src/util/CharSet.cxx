@@ -1,4 +1,4 @@
-#include "charset.h"
+#include "CharSet.h"
 
 
 CharSetCharacter::CharSetCharacter(quint8 asciival, QByteArray bytes)

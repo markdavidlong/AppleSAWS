@@ -1,5 +1,4 @@
-#include "applestring.h"
-
+#include "AppleString.h"
 
 
 QString AppleString::printable() const

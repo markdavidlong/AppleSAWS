@@ -6,7 +6,7 @@
 #include <QResizeEvent>
 #include <QSettings>
 #include <QActionGroup>
-#include "util.h"
+#include "Util.h"
 
 #include <math.h>
 

@@ -1,20 +1,19 @@
 #pragma once
 
 
-#include "catalogwidget.h"
 #include "DiskExplorerMapWidget.h"
 #include "DiskFile.h"
-#include "hrcgcontrolsinfo.h"
-#include "hexconverter.h"
 #include "HexDumpViewer.h"
-#include "asciiinfodialog.h"
-//#include "notesdialog.h"
+#include "AsciiInfoDialog.h"
 
 #include <QMainWindow>
 #include <QFrame>
 #include <QTimer>
 
 class ViewerBase;
+class CatalogWidget;
+class HexConverter;
+class HRCGControlsInfo;
 
 class DiskExplorer : public QMainWindow
 {
