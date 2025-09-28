@@ -62,7 +62,7 @@ bool OpCodes::isReturn(quint8 id)
 
 bool OpCodes::isBreak(quint8 id)
 {
-    return (id = 0x00);  // BRK
+    return (id == 0x00);  // BRK
 }
 
 bool OpCodes::readsMemoryLoc(quint8 opcode)
