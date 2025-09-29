@@ -31,74 +31,59 @@ enum MemoryUsage {
 Q_DECLARE_FLAGS(MemoryUsages,MemoryUsage)
 
 
-class MemoryUsageMap : public QList<MemoryUsages>
+class MemoryUsageMap
 {
-
+private:
+    QList<MemoryUsages> m_data;
+    
 public:
     MemoryUsageMap()
     {
-        fill(MemoryUsage::Unknown,65536);
+        m_data.fill(MemoryUsage::Unknown,65536);
     }
 
     void clearData()
     {
-        for (int idx = 0; idx < size(); idx++)
+        for (int idx = 0; idx < m_data.size(); idx++)
         {
-            (*this)[idx] = MemoryUsage::Unknown;
+            m_data[idx] = MemoryUsage::Unknown;
         }
     }
 
     void merge(const MemoryUsageMap &other)
     {
-        if (other.size() != size())
+        if (other.m_data.size() != m_data.size())
         {
             qWarning("Mismatched size of MemoryMaps!");
             return;
         }
-        for (int idx = 0; idx < size(); idx++)
+        for (int idx = 0; idx < m_data.size(); idx++)
         {
-            (*this)[idx] |= other[idx];
+            m_data[idx] |= other.m_data[idx];
         }
     }
 
     QList<quint16> addressesWhichContain(MemoryUsage usage)
     {
         QList<quint16> retval;
-        for (int idx = 0; idx < size(); idx++)
+        for (int idx = 0; idx < m_data.size(); idx++)
         {
-            if (value(idx).testFlag(usage))
+            if (m_data.value(idx).testFlag(usage))
             {
-                retval.append((quint16) idx);
+                retval.append(static_cast<quint16>(idx));
             }
         }
         return retval;
     }
 
-private:
-    void clear();
-    void append(const MemoryUsages &);
-    void append(MemoryUsages &&);
-    void append(const QList<MemoryUsages>);
-    void insert(int,const MemoryUsages &);
-    void insert(int,int,const MemoryUsages &);
-    void move(int,int);
-    void prepend(const MemoryUsages&);
-    void push_back(const MemoryUsages&);
-    void push_back(MemoryUsages&&);
-    void push_front(const MemoryUsages&);
-    void remove(int);
-    void remove(int,int);
-    void removeAll(const MemoryUsages&);
-    void removeAt(int);
-    void removeFirst();
-    void removeLast();
-    bool removeOne(const MemoryUsages&);
-    void reserve(int);
-    void resize(int);
-    void swap(QList<MemoryUsages>&);
-    MemoryUsages &takeAt(int);
-    MemoryUsages &takeFirst();
-    MemoryUsages &takeLast();
+    // Essential interface methods for accessing the data
+    inline int size() const { return m_data.size(); }
+    inline bool isEmpty() const { return m_data.isEmpty(); }
+    inline MemoryUsages& operator[](int i) { return m_data[i]; }
+    inline const MemoryUsages& operator[](int i) const { return m_data[i]; }
+    inline MemoryUsages at(int i) const { return m_data.at(i); }
+    inline MemoryUsages value(int i) const { return m_data.value(i); }
+    inline MemoryUsages value(int i, const MemoryUsages& defaultValue) const { return m_data.value(i, defaultValue); }
 
 };
 
