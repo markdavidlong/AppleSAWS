@@ -27,7 +27,7 @@ ApplesoftFileDetailViewer::~ApplesoftFileDetailViewer()
     delete ui;
 }
 
-void ApplesoftFileDetailViewer::setLineData(QVector<ApplesoftLine> lineData)
+void ApplesoftFileDetailViewer::setLineData(QList<ApplesoftLine> lineData)
 {
     m_lines = lineData;
     process();

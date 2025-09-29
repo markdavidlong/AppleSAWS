@@ -45,7 +45,7 @@ protected slots:
     void handlePointChange(int location)
     {
         QModelIndex ind = createIndex(location,0);
-        emit dataChanged(ind,ind,QVector<int>() << Qt::DisplayRole);
+        emit dataChanged(ind,ind,QList<int>() << Qt::DisplayRole);
     }
 
 

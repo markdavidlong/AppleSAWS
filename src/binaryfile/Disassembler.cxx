@@ -1,12 +1,11 @@
 
 #include "Disassembler.h"
+#include "OpCodes.h"
+#include "AttributedMemory.h"
 #include "RoleAsmOpcode.h"
 #include "RoleAsmOperand.h"
-#include "Util.h"
 
-#include <QByteArray>
 #include <QDebug>
-#include <QList>
 #include <math.h>
 
 
@@ -377,4 +376,37 @@ void DisassembledItem::init() {
     m_has_arg = false;
     m_canNotFollow = false;
     m_isInvalidOp = false;
+}
+
+// Moved inline methods from header
+QString DisassembledItem::hexAddress() const { 
+    return uint16ToHex(m_address); 
+}
+
+bool DisassembledItem::isBranch() const { 
+    return OpCodes::isBranch(m_opcode); 
+}
+
+bool DisassembledItem::isJump() const { 
+    return OpCodes::isJump(m_opcode); 
+}
+
+bool DisassembledItem::isJsr() const { 
+    return OpCodes::isJsr(m_opcode); 
+}
+
+bool DisassembledItem::isReturn() { 
+    return OpCodes::isReturn(m_opcode); 
+}
+
+bool DisassembledItem::isBreak() { 
+    return OpCodes::isBreak(m_opcode); 
+}
+
+QString DisassembledItem::arg8Str() { 
+    return uint8ToHex(arg8());  
+}
+
+QString DisassembledItem::arg16Str() { 
+    return uint16ToHex(arg16());  
 }

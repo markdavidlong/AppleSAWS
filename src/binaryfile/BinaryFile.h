@@ -2,6 +2,9 @@
 
 #include "GenericFile.h"
 
+// Forward declarations
+class QByteArray;
+
 class BinaryFile : public GenericFile
 {
 public:

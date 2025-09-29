@@ -1,38 +1,40 @@
 #pragma once
 
-#include "ApplesoftLine.h"
 #include "GenericFile.h"
-#include "ApplesoftToken.h"
-#include "ApplesoftRetokenizer.h"
+#include "ApplesoftLine.h"
 
 #include <QByteArray>
 #include <QStringList>
-#include <QMap>
-#include <QVector>
+#include <QList>
 
+#include <memory>
+
+class ApplesoftToken;
+class ApplesoftRetokenizer;
 
 class ApplesoftFile : public GenericFile
 {
 public:
-    ApplesoftFile(QByteArray data = QByteArray());
+    explicit ApplesoftFile(QByteArray data = {});
+    ~ApplesoftFile() override = default;
+    
     void setData(QByteArray data);
-    QByteArray extraData();
-    QStringList extraDataHexValues();
+    QByteArray extraData() const;
+    QStringList extraDataHexValues() const;
 
-    QVector<ApplesoftLine> getLines() const { return m_lines; }
+    const QList<ApplesoftLine>& getLines() const { return m_lines; }
 
     quint16 length() const { return m_length; }
 
-    QByteArray rawData();
+    QByteArray rawData() const;
 
 private:
 
-    QVector<ApplesoftLine> m_lines;
-    int m_data_end;
-    quint16 m_length;
+    QList<ApplesoftLine> m_lines;
+    int m_data_end{0};
+    quint16 m_length{0};
 
-    ApplesoftRetokenizer *m_retokenizer;
+    std::unique_ptr<ApplesoftRetokenizer> m_retokenizer{nullptr};
 
-    QList<QPair<quint16, quint16> > m_flowTargets;
-
+    QList<QPair<quint16, quint16>> m_flowTargets;
 };

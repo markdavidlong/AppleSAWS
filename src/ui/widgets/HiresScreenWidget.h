@@ -10,7 +10,7 @@
 #include <QBitArray>
 #include <QAction>
 #include <QMenu>
-#include <QVector>
+#include <QList>
 #include <QDebug>
 
 class HiresScreenWidget : public QWidget
@@ -135,8 +135,8 @@ private:
 
     bool m_showScanLines;
 
-    static QVector<ColRow> m_rawAddressToColRowList;
-    static QVector<ColRow> m_appleAddressToColRowList;
+    static QList<ColRow> m_rawAddressToColRowList;
+    static QList<ColRow> m_appleAddressToColRowList;
 
     quint16 m_offset;
 };

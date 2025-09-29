@@ -1,26 +1,28 @@
 #pragma once
 
-#include "ApplesoftFile.h"
-
 #include <QObject>
 #include <QFlags>
-#include <QTextDocument>
-#include <QSharedPointer>
 
+#include "ApplesoftFile.h"
+#include "ApplesoftToken.h"
+
+// Forward declarations
+class QTextDocument;
 
 class ApplesoftFormatter : public QObject
 {
     Q_OBJECT
 
 public:
-    enum FormatOption {
-        NoOptions          = 0x00,
+    enum FormatOption
+    {
+        NoOptions = 0x00,
 
         SyntaxHighlighting = 0x01,
-        ShowCtrlChars      = 0x02,
-        BreakAfterReturn   = 0x04,
-        ReindentCode       = 0x08,
-        ShowIntsAsHex      = 0x10,
+        ShowCtrlChars = 0x02,
+        BreakAfterReturn = 0x04,
+        ReindentCode = 0x08,
+        ShowIntsAsHex = 0x10,
 
         AllFlags = 0xffffffff
     };
@@ -42,11 +44,7 @@ public slots:
 
 private:
     FormatOptions m_format_options;
-
     ApplesoftFile *m_file;
-
-
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(ApplesoftFormatter::FormatOptions)
-

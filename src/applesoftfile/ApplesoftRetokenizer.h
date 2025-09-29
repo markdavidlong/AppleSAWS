@@ -3,9 +3,10 @@
 #include "ApplesoftLine.h"
 
 #include <QByteArray>
-#include <QVector>
 #include <QList>
 #include <QPair>
+
+class ApplesoftToken;
 
 class ApplesoftRetokenizer
 {
@@ -17,13 +18,12 @@ public:
 
     quint16 getEndOfDataOffset() const { return m_data_end; }
 
-    QVector<ApplesoftLine> getRetokenizedLines() { return m_retokenized_lines; }
+    QList<ApplesoftLine> getRetokenizedLines() { return m_retokenized_lines; }
 
     QList<QPair<quint16, quint16> >  getFlowTargets() const { return m_flowTargets; }
 
 private:
     void retokenizeLinesForFormatting();
-
 
     void retokenizeLine(ApplesoftLine &line);
     QList<ApplesoftToken> retokenizeRems(QList<ApplesoftToken> &datatokens);
@@ -35,12 +35,12 @@ private:
     QList<ApplesoftToken> retokenizeNegativeNumbers(QList<ApplesoftToken> &datatokens);
 
 
-    QVector<ApplesoftLine> m_retokenized_lines;
+    QList<ApplesoftLine> m_retokenized_lines;
     QByteArray m_data;
 
-    quint16 m_data_end;
+    quint16 m_data_end{0};
 
-    bool m_isParsed;
+    bool m_isParsed{false};
 
     QList<QPair<quint16, quint16> > m_flowTargets;
 

@@ -85,7 +85,7 @@ bool EntryPointModel::setData(const QModelIndex &index, const QVariant &value, i
         {
            entryPoints->pointRefAt(index.row()).note = value.toString();
         }
-        emit dataChanged(index, index, QVector<int>() << role);
+        emit dataChanged(index, index, QList<int>() << role);
         return true;
     }
     return false;

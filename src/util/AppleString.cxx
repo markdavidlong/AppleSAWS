@@ -14,9 +14,9 @@ QString AppleString::printable() const
     return retval;
 }
 
-QVector<TextAttribute> AppleString::attributes() const
+QList<TextAttribute> AppleString::attributes() const
 {
-    QVector<TextAttribute> retval(this->length());
+    QList<TextAttribute> retval(this->length());
     int idx = 0;
     foreach (quint8 ch, *this) {
         retval[idx++] = AppleChar(ch).getAttribute();

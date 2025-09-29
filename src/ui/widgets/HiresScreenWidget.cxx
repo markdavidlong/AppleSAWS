@@ -494,7 +494,7 @@ QColor HiresScreenWidget::getColorFromBits(QBitArray bits, quint8 phase)
 }
 
 void HiresScreenWidget::drawNtscLine(QPainter &painter, int lineNum, QBitArray data) {
-    QVector<QColor> colors;
+    QList<QColor> colors;
     colors.resize(data.size()+3);
 
     for (int idx = 0; idx < data.size(); idx++) {
@@ -605,7 +605,7 @@ void HiresScreenWidget::makeAddressTables()
 }
 
 
-QVector<HiresScreenWidget::ColRow> HiresScreenWidget::m_rawAddressToColRowList
-= QVector<HiresScreenWidget::ColRow>();
-QVector<HiresScreenWidget::ColRow> HiresScreenWidget::m_appleAddressToColRowList
-= QVector<HiresScreenWidget::ColRow>();
+QList<HiresScreenWidget::ColRow> HiresScreenWidget::m_rawAddressToColRowList
+= QList<HiresScreenWidget::ColRow>();
+QList<HiresScreenWidget::ColRow> HiresScreenWidget::m_appleAddressToColRowList
+= QList<HiresScreenWidget::ColRow>();

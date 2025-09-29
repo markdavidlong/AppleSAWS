@@ -116,7 +116,6 @@ GenericFile *DiskFile::getFile(FileDescriptiveEntry fde)
     }
     else
     {
-
         if (!fde.firstTSListSector().isValid())
         {
             qWarning("  Not returning a file from invalid TSList!");

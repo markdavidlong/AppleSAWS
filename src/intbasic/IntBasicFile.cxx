@@ -138,7 +138,7 @@ QByteArray IntBasicFile::dumpBufferAsIntBasicFile(QByteArray origdata)
 
     QByteArray retval;
 
-    QVector<quint8> data;
+    QList<quint8> data;
     QByteArray data0 = origdata;
 
 

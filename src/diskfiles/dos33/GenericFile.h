@@ -32,8 +32,8 @@ public:
 protected:
     QByteArray m_data;
     QString m_filename;
-    quint16 m_address;
-    qint16 m_length;
-    DiskFile * m_diskfile;
+    quint16 m_address{0};
+    qint16 m_length{0};
+    DiskFile * m_diskfile{nullptr};
 
 };

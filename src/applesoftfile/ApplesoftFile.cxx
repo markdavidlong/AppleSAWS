@@ -1,4 +1,7 @@
 #include "ApplesoftFile.h"
+#include "ApplesoftLine.h"
+#include "ApplesoftToken.h"
+#include "ApplesoftRetokenizer.h"
 #include "Util.h"
 
 #include <QDebug>
@@ -6,10 +9,10 @@
 #include <QRegularExpressionMatch>
 #include <QRegularExpressionMatchIterator>
 #include <QList>
+#include <QPair>
 
 ApplesoftFile::ApplesoftFile(QByteArray data) : GenericFile(data)
 {
-    m_retokenizer = Q_NULLPTR;
     m_data_end = data.length();
 
     if (!data.isEmpty())
@@ -23,8 +26,7 @@ void ApplesoftFile::setData(QByteArray data)
 {
     if (!m_retokenizer)
     {
-        m_retokenizer = new ApplesoftRetokenizer();
-    }
+        m_retokenizer = std::make_unique<ApplesoftRetokenizer>();    }
 
     GenericFile::setData(data);
 
@@ -41,7 +43,7 @@ void ApplesoftFile::setData(QByteArray data)
     m_flowTargets = m_retokenizer->getFlowTargets();
 }
 
-QByteArray ApplesoftFile::rawData() {
+QByteArray ApplesoftFile::rawData() const {
     QByteArray retval;
     retval.append(m_length % 255);
     retval.append(m_length / 255);
@@ -49,12 +51,12 @@ QByteArray ApplesoftFile::rawData() {
     return retval;
 }
 
-QStringList ApplesoftFile::extraDataHexValues() {
+QStringList ApplesoftFile::extraDataHexValues() const {
     QStringList retval;
 
     QString debugline = "";
     int count = 0;
-    foreach (quint8 val, extraData()) {
+    for (const auto& val : extraData()) {
         debugline.append(QString("%1").arg(val,2,16,QChar('0')).toUpper());
         count++;
         if (count == 16) {
@@ -71,7 +73,7 @@ QStringList ApplesoftFile::extraDataHexValues() {
     return retval;
 }
 
-QByteArray ApplesoftFile::extraData()
+QByteArray ApplesoftFile::extraData() const
 {
     return m_data.mid(m_data_end);
 }

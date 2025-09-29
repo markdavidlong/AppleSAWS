@@ -19,7 +19,7 @@ public:
     explicit ApplesoftFileDetailViewer(ApplesoftFile *file, QWidget *parent = 0);
     ~ApplesoftFileDetailViewer();
 
-    void setLineData(QVector<ApplesoftLine> lineData);
+    void setLineData(QList<ApplesoftLine> lineData);
     void foo() { qDebug() << "AFDV::foo!"; }
 
     bool save();
@@ -31,7 +31,7 @@ private:
     void  process();
 
     Ui::ApplesoftFileDetailViewer *ui;
-    QVector<ApplesoftLine> m_lines;
+    QList<ApplesoftLine> m_lines;
 
     QMap<QString,QString> m_notes;
 

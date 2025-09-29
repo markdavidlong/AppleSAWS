@@ -1,9 +1,11 @@
 #include "ApplesoftRetokenizer.h"
+#include "ApplesoftLine.h"
 #include "ApplesoftToken.h"
 #include "Util.h"
 
 #include <QDebug>
 #include <QRegularExpression>
+#include <QPair>
 
 ApplesoftRetokenizer::ApplesoftRetokenizer()
 {
@@ -25,7 +27,6 @@ void ApplesoftRetokenizer::parse(quint16 start_address)
         return;
     }
 
-    //TODO:  This could be changed to search for hidden space between applesoft lines
     int idx = 0;
     quint8 val = 0;
     m_retokenized_lines.clear();
@@ -69,16 +70,16 @@ void ApplesoftRetokenizer::parse(quint16 start_address)
 
 void ApplesoftRetokenizer::retokenizeLinesForFormatting()
 {
-    QVector<ApplesoftLine> retLines;
+    QList<ApplesoftLine> retLines;
 
-    foreach(ApplesoftLine line, m_retokenized_lines)
+    for (ApplesoftLine line : m_retokenized_lines)
     {
         int indentlevel = 1;
      //   quint16 linenum = line.linenum;
 
         bool firstToken = true;
         ApplesoftToken previousToken;
-        QMutableVectorIterator<ApplesoftToken> tokenIt(line.tokens);
+        QMutableListIterator<ApplesoftToken> tokenIt(line.tokens);
         while (tokenIt.hasNext())
         {
             ApplesoftToken token = tokenIt.next();
@@ -426,7 +427,7 @@ QList<ApplesoftToken> ApplesoftRetokenizer::retokenizeNumbers(QList<ApplesoftTok
 
     QString parsestring;
     // Parse the tokens to find assist
-    for (int idx = 0; idx < tmptokens.count();idx++)
+    for (int idx = 0; idx < tmptokens.size();idx++)
     {
         token = tmptokens.at(idx);
 

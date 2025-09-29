@@ -1,16 +1,18 @@
 #pragma once
 
-#include "MemoryUsageMap.h"
 #include "Util.h"
-#include "JumpLineManager.h"
-#include "OpCodes.h"
-#include "AttributedMemory.h"
+#include "MemoryUsageMap.h"
+#include "../internals/JumpLineManager.h"
 
 #include <QByteArray>
 #include <QStringList>
 #include <QHash>
-#include <QDebug>
 #include <QStack>
+#include <QList>
+
+// Forward declarations
+class AttributedMemory;
+struct JumpLines;
 
 
 class AddressStack
@@ -58,15 +60,15 @@ public:
     quint16 address()  const { return m_address; }
     QString disassembledString();
     QString rawDisassembledString() const { return m_disassembly_text; }
-    QString hexAddress() const { return uint16ToHex(m_address); }
+    QString hexAddress() const;
     QByteArray hexValues() const { return m_hexvalues; }
     QString hexString() const { return m_hexstring; }
 
-    bool isBranch() const { return OpCodes::isBranch(m_opcode); }
-    bool isJump() const { return OpCodes::isJump(m_opcode); }
-    bool isJsr() const { return OpCodes::isJsr(m_opcode); }
-    bool isReturn() { return OpCodes::isReturn(m_opcode); }
-    bool isBreak() { return OpCodes::isBreak(m_opcode); }
+    bool isBranch() const;
+    bool isJump() const;
+    bool isJsr() const;
+    bool isReturn();
+    bool isBreak();
     bool isInvalidOp() { return m_isInvalidOp; }
 
     bool canNotFollow() { return m_canNotFollow; }
@@ -86,10 +88,10 @@ public:
     bool hasArg() const { return m_has_arg; }
 
     quint8 arg8() { return m_raw_arg % 256; }
-    QString arg8Str() { return uint8ToHex(arg8());  }
+    QString arg8Str();
 
     quint16 arg16() { return m_raw_arg; }
-    QString arg16Str() { return uint16ToHex(arg16());  }
+    QString arg16Str();
 
 private:
     void init();

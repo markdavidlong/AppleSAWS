@@ -2,7 +2,7 @@
 #include "ui_TextHexDumpViewer.h"
 #include "AppleString.h"
 
-#include <QVector>
+#include <QList>
 #include <QByteArray>
 #include <QSettings>
 #include <QMenu>
@@ -88,7 +88,7 @@ void TextHexDumpViewer::setFile(GenericFile *file, quint16 offset)
     QStringList outputlines;
 
 
-    QVector<QByteArray> chunks;
+    QList<QByteArray> chunks;
 
     QByteArray tmpval = data;
 

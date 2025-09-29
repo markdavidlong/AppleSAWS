@@ -96,7 +96,7 @@ bool AssemblerSymbolModel::setData(const QModelIndex &index, const QVariant &val
         {
             assemblerSymbols->symbolRefAt(index.row()).name = value.toString();
         }
-        emit dataChanged(index, index, QVector<int>() << role);
+        emit dataChanged(index, index, QList<int>() << role);
         return true;
     }
     return false;

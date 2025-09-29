@@ -1,8 +1,10 @@
 #include "ApplesoftFormatter.h"
+#include "ApplesoftFile.h"
 #include "Util.h"
 
 #include <QTextCursor>
 #include <QTextCharFormat>
+#include <QTextDocument>
 #include <QChar>
 
 #define HEXPREFIX "0x"
@@ -10,7 +12,7 @@
 ApplesoftFormatter::ApplesoftFormatter(QObject *parent) :
     QObject(parent)
 {
-    m_file = Q_NULLPTR;
+    m_file = nullptr;
 }
 
 void ApplesoftFormatter::setFile(ApplesoftFile *file)
@@ -29,7 +31,7 @@ void ApplesoftFormatter::formatDocument(QTextDocument *doc)
 
     bool synhl = (m_format_options.testFlag(SyntaxHighlighting));
 
-    foreach (ApplesoftLine line, m_file->getLines())
+    for (const auto& line : m_file->getLines())
     {
         QString linestring = QString("%1 ").arg(line.linenum,5,10,QChar(' '));
 
@@ -43,7 +45,7 @@ void ApplesoftFormatter::formatDocument(QTextDocument *doc)
             cursor.insertText(linestring,ApplesoftToken::defaultTextFormat());
         }
 
-        QVectorIterator<ApplesoftToken>tokenIt(line.tokens);
+        QListIterator<ApplesoftToken> tokenIt(line.tokens);
         bool isBranchTarget = false;
         while (tokenIt.hasNext())
         {
@@ -146,7 +148,7 @@ void ApplesoftFormatter::formatDocument(QTextDocument *doc)
                                 ApplesoftToken::ControlCharTokenVal);
 
 
-                foreach (QChar ch, tokenstr)
+                for (const auto& ch : tokenstr)
                 {
                     if (ch == QChar(0x7f))
                     {

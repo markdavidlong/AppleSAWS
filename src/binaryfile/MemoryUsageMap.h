@@ -2,7 +2,6 @@
 
 #include <QFlag>
 #include <QFlags>
-#include <QVector>
 #include <QList>
 
 
@@ -32,7 +31,7 @@ enum MemoryUsage {
 Q_DECLARE_FLAGS(MemoryUsages,MemoryUsage)
 
 
-class MemoryUsageMap : public QVector<MemoryUsages>
+class MemoryUsageMap : public QList<MemoryUsages>
 {
 
 public:
@@ -79,7 +78,7 @@ private:
     void clear();
     void append(const MemoryUsages &);
     void append(MemoryUsages &&);
-    void append(const QVector<MemoryUsages>);
+    void append(const QList<MemoryUsages>);
     void insert(int,const MemoryUsages &);
     void insert(int,int,const MemoryUsages &);
     void move(int,int);
@@ -96,7 +95,7 @@ private:
     bool removeOne(const MemoryUsages&);
     void reserve(int);
     void resize(int);
-    void swap(QVector<MemoryUsages>&);
+    void swap(QList<MemoryUsages>&);
     MemoryUsages &takeAt(int);
     MemoryUsages &takeFirst();
     MemoryUsages &takeLast();
