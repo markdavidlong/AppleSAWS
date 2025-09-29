@@ -12,7 +12,6 @@
 ApplesoftFormatter::ApplesoftFormatter(QObject *parent) :
     QObject(parent)
 {
-    m_file = nullptr;
 }
 
 void ApplesoftFormatter::setFile(ApplesoftFile *file)
@@ -29,7 +28,7 @@ void ApplesoftFormatter::formatDocument(QTextDocument *doc)
     QTextCursor cursor(doc);
     cursor.beginEditBlock();
 
-    bool synhl = (m_format_options.testFlag(SyntaxHighlighting));
+    bool synhl = (m_format_options.testFlag(FormatOption::SyntaxHighlighting));
 
     for (const auto& line : m_file->getLines())
     {
@@ -57,26 +56,26 @@ void ApplesoftFormatter::formatDocument(QTextDocument *doc)
 
                 case ApplesoftToken::OptFmtFlagFlowTargetNextTokenValue:
                 {
-                    if (m_format_options.testFlag(ShowIntsAsHex))
+                    if (m_format_options.testFlag(FormatOption::ShowIntsAsHex))
                         isBranchTarget = true;
                     break;
                 }
 
                 case ApplesoftToken::OptFmtIndentLineBreakTokenValue:
                 {
-                    if (m_format_options.testFlag(ReindentCode))
+                    if (m_format_options.testFlag(FormatOption::ReindentCode))
                         cursor.insertBlock();
                     break;
                 }
                 case ApplesoftToken::OptFmtIndentSpaceTokenValue:
                 {
-                    if (m_format_options.testFlag(ReindentCode))
+                    if (m_format_options.testFlag(FormatOption::ReindentCode))
                         cursor.insertText(" ",ApplesoftToken::defaultTextFormat());
                     break;
                 }
                 case ApplesoftToken::OptFmtIndentTabTokenValue:
                 {
-                    if (m_format_options.testFlag(ReindentCode))
+                    if (m_format_options.testFlag(FormatOption::ReindentCode))
                         cursor.insertText("      ",ApplesoftToken::defaultTextFormat());
                     break;
                 }
@@ -87,7 +86,7 @@ void ApplesoftFormatter::formatDocument(QTextDocument *doc)
                 }
                 case ApplesoftToken::OptFmtReturnLineBreakTokenValue:
                 {
-                    if (m_format_options.testFlag(BreakAfterReturn))
+                    if (m_format_options.testFlag(FormatOption::BreakAfterReturn))
                         cursor.insertBlock();
                     break;
                 }
@@ -108,7 +107,7 @@ void ApplesoftFormatter::formatDocument(QTextDocument *doc)
 
                 if (token.getTokenId() == ApplesoftToken::IntegerTokenVal)
                 {
-                    if (m_format_options.testFlag(ShowIntsAsHex) && !isBranchTarget)
+                    if (m_format_options.testFlag(FormatOption::ShowIntsAsHex) && !isBranchTarget)
                     {
                         quint32 ui32val = token.getUnsignedIntegerValue();
                         qint32  i32val = token.getIntegerValue();
@@ -143,7 +142,7 @@ void ApplesoftFormatter::formatDocument(QTextDocument *doc)
 
 
                 QTextCharFormat invFormat = ApplesoftToken::defaultInverseTextFormat();
-                if (m_format_options.testFlag(SyntaxHighlighting))
+                if (m_format_options.testFlag(FormatOption::SyntaxHighlighting))
                     invFormat = ApplesoftToken::textFormat(
                                 ApplesoftToken::ControlCharTokenVal);
 
@@ -156,7 +155,7 @@ void ApplesoftFormatter::formatDocument(QTextDocument *doc)
                     }
                     else if (ch < QChar(' '))
                     {
-                        if (m_format_options.testFlag(ShowCtrlChars))
+                        if (m_format_options.testFlag(FormatOption::ShowCtrlChars))
                         {
 			    QChar newch = QChar(static_cast<ushort>(ch.unicode() + 0x40));
                             cursor.insertText(newch,invFormat);

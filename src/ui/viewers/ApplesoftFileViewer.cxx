@@ -29,7 +29,7 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
     setWindowTitle(title);
 
     m_formatter = new ApplesoftFormatter(this);
-    m_formatter->setFlags(ApplesoftFormatter::ShowCtrlChars);
+    m_formatter->setFlags(ApplesoftFormatter::FormatOption::ShowCtrlChars);
     connect(ui->findButton, &QToolButton::clicked, this, &ApplesoftFileViewer::findText);
     m_isFirstFind = true;
     ui->textArea->setUndoRedoEnabled(false);
@@ -208,11 +208,11 @@ void ApplesoftFileViewer::setIndentCode(bool enabled, ReformatRule reformat)
 {
     if (enabled)
     {
-        m_formatter->setFlags(m_formatter->flags() | ApplesoftFormatter::ReindentCode);
+        m_formatter->setFlags(m_formatter->flags() | ApplesoftFormatter::FormatOption::ReindentCode);
     }
     else
     {
-        m_formatter->setFlags(m_formatter->flags() & ~ApplesoftFormatter::ReindentCode);
+        m_formatter->setFlags(m_formatter->flags() & ~ApplesoftFormatter::FormatOptions(ApplesoftFormatter::FormatOption::ReindentCode));
     }
     QSettings settings;
     settings.setValue("ASViewer.indentCode",enabled);
@@ -224,11 +224,11 @@ void ApplesoftFileViewer::setBreakAfterReturn(bool enabled, ReformatRule reforma
 {
     if (enabled)
     {
-        m_formatter->setFlags(m_formatter->flags() | ApplesoftFormatter::BreakAfterReturn);
+        m_formatter->setFlags(m_formatter->flags() | ApplesoftFormatter::FormatOption::BreakAfterReturn);
     }
     else
     {
-        m_formatter->setFlags(m_formatter->flags() & ~ApplesoftFormatter::BreakAfterReturn);
+        m_formatter->setFlags(m_formatter->flags() & ~ApplesoftFormatter::FormatOptions(ApplesoftFormatter::FormatOption::BreakAfterReturn));
     }
     QSettings settings;
     settings.setValue("ASViewer.breakAfterReturn",enabled);
@@ -240,11 +240,11 @@ void ApplesoftFileViewer::setShowCtrlChars(bool enabled, ReformatRule reformat)
 {
     if (enabled)
     {
-        m_formatter->setFlags(m_formatter->flags() | ApplesoftFormatter::ShowCtrlChars);
+        m_formatter->setFlags(m_formatter->flags() | ApplesoftFormatter::FormatOption::ShowCtrlChars);
     }
     else
     {
-        m_formatter->setFlags(m_formatter->flags() & ~ApplesoftFormatter::ShowCtrlChars);
+        m_formatter->setFlags(m_formatter->flags() & ~ApplesoftFormatter::FormatOptions(ApplesoftFormatter::FormatOption::ShowCtrlChars));
     }
     QSettings settings;
     settings.setValue("ASViewer.showCtrlChars",enabled);
@@ -261,11 +261,11 @@ void ApplesoftFileViewer::setSyntaxHighlighting(bool enabled, ReformatRule refor
 {
     if (enabled)
     {
-        m_formatter->setFlags(m_formatter->flags() | ApplesoftFormatter::SyntaxHighlighting);
+        m_formatter->setFlags(m_formatter->flags() | ApplesoftFormatter::FormatOption::SyntaxHighlighting);
     }
     else
     {
-        m_formatter->setFlags(m_formatter->flags() & ~ApplesoftFormatter::SyntaxHighlighting);
+        m_formatter->setFlags(m_formatter->flags() & ~ApplesoftFormatter::FormatOptions(ApplesoftFormatter::FormatOption::SyntaxHighlighting));
     }
     QSettings settings;
     settings.setValue("ASViewer.syntaxHighlighting",enabled);
@@ -277,11 +277,11 @@ void ApplesoftFileViewer::setIntsAsHex(bool enabled, ReformatRule reformat)
 {
     if (enabled)
     {
-        m_formatter->setFlags(m_formatter->flags() | ApplesoftFormatter::ShowIntsAsHex);
+        m_formatter->setFlags(m_formatter->flags() | ApplesoftFormatter::FormatOption::ShowIntsAsHex);
     }
     else
     {
-        m_formatter->setFlags(m_formatter->flags() & ~ApplesoftFormatter::ShowIntsAsHex);
+        m_formatter->setFlags(m_formatter->flags() & ~ApplesoftFormatter::FormatOptions(ApplesoftFormatter::FormatOption::ShowIntsAsHex));
     }
     QSettings settings;
     settings.setValue("ASViewer.intsAsHex",enabled);

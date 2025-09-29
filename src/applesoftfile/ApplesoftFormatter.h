@@ -14,7 +14,7 @@ class ApplesoftFormatter : public QObject
     Q_OBJECT
 
 public:
-    enum FormatOption
+    enum class FormatOption
     {
         NoOptions = 0x00,
 
@@ -24,7 +24,7 @@ public:
         ReindentCode = 0x08,
         ShowIntsAsHex = 0x10,
 
-        AllFlags = 0xffffffff
+        AllFlags = ~0
     };
     Q_DECLARE_FLAGS(FormatOptions, FormatOption)
 
@@ -43,8 +43,8 @@ signals:
 public slots:
 
 private:
-    FormatOptions m_format_options;
-    ApplesoftFile *m_file;
+    FormatOptions m_format_options{FormatOption::NoOptions};
+    ApplesoftFile *m_file{nullptr};
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(ApplesoftFormatter::FormatOptions)
