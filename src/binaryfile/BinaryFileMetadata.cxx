@@ -58,6 +58,11 @@ void BinaryFileMetadata::save()
 
 }
 
+void BinaryFileMetadata::requestDisassembly()
+{
+    emit doDisassemble(m_eps.getEntryPointAddresses());
+}
+
 
 
 

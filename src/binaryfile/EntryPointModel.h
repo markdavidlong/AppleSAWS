@@ -45,13 +45,11 @@ public:
 
 protected slots:
     void handlePointAddition(int location) { insertRows(location,1); }
-//    void handlePointRemoval(int location) { removeRows(location, 1); }
     void handlePointChange(int location)
     {
         QModelIndex ind = createIndex(location,0);
         emit dataChanged(ind,ind,QList<int>() << Qt::DisplayRole);
     }
-
 
 private:
     EntryPoints &m_entryPoints;

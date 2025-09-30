@@ -77,6 +77,7 @@ set(SOURCES
     src/applesoftfile/ApplesoftToken.cxx
     src/applesoftfile/ApplesoftFormatter.cxx
     src/binaryfile/Disassembler.cxx
+    src/binaryfile/DisassembledItem.cxx
     src/binaryfile/BinaryFile.cxx
     src/textfile/TextFile.cxx
     src/ui/widgets/CatalogWidget.cxx
@@ -134,6 +135,7 @@ set(HEADERS
     src/applesoftfile/ApplesoftFile.h
     src/applesoftfile/ApplesoftToken.h
     src/binaryfile/Disassembler.h
+    src/binaryfile/DisassembledItem.h
     src/binaryfile/BinaryFile.h
     src/textfile/TextFile.h
     src/ui/widgets/CatalogWidget.h

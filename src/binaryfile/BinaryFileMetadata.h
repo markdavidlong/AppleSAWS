@@ -30,7 +30,7 @@ public slots:
     void load();
     void save();
 
-    void requestDisassembly() { emit doDisassemble(m_eps.getEntryPointAddresses()); }
+    void requestDisassembly();
 
 private:
     AssemblerSymbols m_as;
@@ -38,6 +38,6 @@ private:
 
     GenericFile &m_file;
 
-    quint16 m_defaultAddress;
+    quint16 m_defaultAddress{0};
 };
 
