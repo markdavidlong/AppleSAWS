@@ -1,7 +1,7 @@
 #include "IntBasicFile.h"
 #include <QDebug>
 
-IntBasicFile::IntBasicFile(QByteArray data)
+IntBasicFile::IntBasicFile(const QByteArray& data)
 {
     setData(data);
 

@@ -4,7 +4,7 @@
 #include <QDebug>
 #include <QByteArray>
 
-BinaryFile::BinaryFile(QByteArray data) : GenericFile(data)
+BinaryFile::BinaryFile(const QByteArray& data) : GenericFile(data)
 {
     m_length = 0;
 
@@ -13,7 +13,7 @@ BinaryFile::BinaryFile(QByteArray data) : GenericFile(data)
     }
 }
 
-void BinaryFile::setData(QByteArray data)
+void BinaryFile::setData(const QByteArray& data)
 {
     if (data.length() >= 4) {
         QByteArray metadata = data.left(4);

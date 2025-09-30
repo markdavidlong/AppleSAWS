@@ -9,31 +9,31 @@
 class GenericFile
 {
 public:
-    GenericFile(QByteArray data = QByteArray());
+    GenericFile(const QByteArray& data = QByteArray());
     virtual ~GenericFile() { }
   
-    virtual void setData(QByteArray data);
-    virtual QByteArray data() { return m_data; }
+    virtual void setData(const QByteArray& data);
+    virtual QByteArray data() const { return m_data; }
     
-    void setFilename(QString filename) { m_filename = filename; }
-    QString filename() const { return m_filename; }
+    inline void setFilename(const QString& filename) { m_filename = filename; }
+    inline QString filename() const { return m_filename; }
     
     virtual void setAddress(quint16 location) { m_address = location; }
-    virtual quint16 address() { return m_address; }
+    virtual quint16 address() const { return m_address; }
    
-    virtual QByteArray rawData() { return m_data; }
+    virtual QByteArray rawData() const { return m_data; }
 
     virtual void setLength(quint16 length) { m_length = length; }
     virtual quint16 length() const { return m_length; }
 
-    DiskFile *diskFile() const { return m_diskfile; }
-    void setDiskFile(DiskFile *diskfile) { m_diskfile = diskfile; }
+    inline DiskFile *diskFile() const { return m_diskfile; }
+    inline void setDiskFile(DiskFile *diskfile) { m_diskfile = diskfile; }
 
 protected:
-    QByteArray m_data;
-    QString m_filename;
+    QByteArray m_data{};
+    QString m_filename{};
     quint16 m_address{0};
-    qint16 m_length{0};
-    DiskFile * m_diskfile{nullptr};
+    quint16 m_length{0};
+    DiskFile *m_diskfile{nullptr};
 
 };

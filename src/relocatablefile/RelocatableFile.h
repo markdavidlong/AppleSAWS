@@ -78,10 +78,10 @@ class RelocatableFile : public GenericFile
 {
 public:
 
-    RelocatableFile(QByteArray data = QByteArray());
-    void setData(QByteArray data);
+    RelocatableFile(const QByteArray& data = QByteArray());
+    void setData(const QByteArray& data) override;
 
-    virtual quint16 length() const { return m_data.length(); }
+    virtual quint16 length() const override { return m_data.length(); }
 
     void dump();
 

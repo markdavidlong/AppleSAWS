@@ -11,7 +11,7 @@
 #include <QList>
 #include <QPair>
 
-ApplesoftFile::ApplesoftFile(QByteArray data) : GenericFile(data)
+ApplesoftFile::ApplesoftFile(const QByteArray& data) : GenericFile(data)
 {
     m_data_end = data.length();
 
@@ -22,7 +22,7 @@ ApplesoftFile::ApplesoftFile(QByteArray data) : GenericFile(data)
     setAddress(0x801);
 }
 
-void ApplesoftFile::setData(QByteArray data)
+void ApplesoftFile::setData(const QByteArray& data)
 {
     if (!m_retokenizer)
     {

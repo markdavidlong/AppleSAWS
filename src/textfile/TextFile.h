@@ -5,8 +5,8 @@
 class TextFile : public GenericFile
 {
 public:
-    TextFile(QByteArray data = QByteArray());
-    void setData(QByteArray data);
+    TextFile(const QByteArray& data = QByteArray());
+    void setData(const QByteArray& data) override;
 
     void dump();
 

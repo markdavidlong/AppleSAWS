@@ -15,18 +15,18 @@ class ApplesoftRetokenizer;
 class ApplesoftFile : public GenericFile
 {
 public:
-    explicit ApplesoftFile(QByteArray data = {});
+    explicit ApplesoftFile(const QByteArray& data = QByteArray());
     ~ApplesoftFile() override = default;
     
-    void setData(QByteArray data);
+    void setData(const QByteArray& data) override;
     QByteArray extraData() const;
     QStringList extraDataHexValues() const;
 
     const QList<ApplesoftLine>& getLines() const { return m_lines; }
 
-    quint16 length() const { return m_length; }
+    quint16 length() const override { return m_length; }
 
-    QByteArray rawData() const;
+    QByteArray rawData() const override;
 
 private:
 

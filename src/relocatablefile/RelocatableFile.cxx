@@ -1,7 +1,7 @@
 #include <QDebug>
 #include "RelocatableFile.h"
 
-RelocatableFile::RelocatableFile(QByteArray data) : GenericFile(data)
+RelocatableFile::RelocatableFile(const QByteArray& data) : GenericFile(data)
 {
  //   qDebug() << "Relocatable file ctor";
     if (!data.isEmpty()) {
@@ -9,7 +9,7 @@ RelocatableFile::RelocatableFile(QByteArray data) : GenericFile(data)
     }
 }
 
-void RelocatableFile::setData(QByteArray data)
+void RelocatableFile::setData(const QByteArray& data)
 {
  //   qDebug() << "setData()";
     if (data.length() >= 6) {

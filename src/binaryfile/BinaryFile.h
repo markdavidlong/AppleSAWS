@@ -8,8 +8,8 @@ class QByteArray;
 class BinaryFile : public GenericFile
 {
 public:
-    BinaryFile(QByteArray data = QByteArray());
-    void setData(QByteArray data) override;
+    BinaryFile(const QByteArray& data = QByteArray());
+    void setData(const QByteArray& data) override;
 
     virtual quint16 length() const override { return m_length; }
 
