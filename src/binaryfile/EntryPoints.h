@@ -7,7 +7,7 @@
 #include <QDataStream>
 
 struct EntryPoint {
-    quint16 address;
+    quint16 address{0};
     QString note;
 };
 

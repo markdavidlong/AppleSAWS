@@ -104,7 +104,7 @@ void DisassemblerViewer::setFile(RelocatableFile *file) {
 
     setCursor(Qt::WaitCursor);
 
-    m_bfm = new BinaryFileMetadata(*m_file, file->address() + 6, this);
+    m_bfm = new BinaryFileMetadata(*m_file, file->address(), this);
 
     connect(m_bfm, &BinaryFileMetadata::doDisassemble,
             this, &DisassemblerViewer::handleDisassembleRequest);
@@ -112,8 +112,9 @@ void DisassemblerViewer::setFile(RelocatableFile *file) {
     QString title = QString("Disassembler Viewer: %1 (Relocatable)").arg(m_file->filename());
     setWindowTitle(title);
 
-    quint16 address = file->address() + 6 ; // Handle offset for relocatable metadata
-    m_mem.addFile(m_file->data(), address);
+    quint16 address = file->address(); // Handle offset for relocatable metadata
+    m_mem.addFile(file->data(), address);
+    qDebug("Added %d bytes at $%s", file->data().length(), uint16ToHex(address).toStdString().c_str());
 
     QList<quint16> addresses = m_bfm->entryPoints().getEntryPointAddresses();
     if (!addresses.count()) { addresses.append(address); }

@@ -7,7 +7,9 @@
 BinaryFileMetadata::BinaryFileMetadata(GenericFile &file, quint16 defaultAddress, QObject *parent)
     : QObject(parent), m_file(file), m_defaultAddress(defaultAddress)
 {
-    load();
+    EntryPoint p {defaultAddress, "Start"};
+    m_eps.addPoint(p);
+    //load();
 }
 
 void BinaryFileMetadata::load()
