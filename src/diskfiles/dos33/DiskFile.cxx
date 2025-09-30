@@ -82,7 +82,7 @@ bool DiskFile::read(QString filename)
     return false;
 }
 
-VTOC DiskFile::getVTOC()
+VTOC DiskFile::getVTOC() const
 {
     return getSector(17,0).promoteToVTOC();
 }
@@ -93,7 +93,7 @@ QList<CatalogSector> DiskFile::getCatalogSectors()
 
     QList<CatalogSector> retval;
     VTOC vtoc = getVTOC();
-    TSPair ts = vtoc.firstCatalogSector();
+    TSPair ts = vtoc.firstCatalogSector;
 
     CatalogSector cs = getSector(ts).promoteToCatalogSector();
     retval.append(cs);

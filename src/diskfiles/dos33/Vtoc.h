@@ -3,31 +3,36 @@
 #include "Util.h"
 
 #include <QtGlobal>
+#include <QBitArray>
 
 class Sector;
 class QString;
 
 
-class VTOC
+struct VTOC
 {
 public:
-    VTOC(Sector *data);
+    VTOC(const Sector &data);
 
-    void dump();
-    TSPair firstCatalogSector();
-    quint8 dosVersion();
-    quint8 volumeNumber();
-    quint8 maxTSPairs();
-    quint8 lastTrackAllocated();
-    qint8 directionOfAllocation();
-    quint8 tracksPerDisk();
-    quint8 sectorsPerDisk();
-    qint16 bytesPerSector();
-    bool isSectorInUse(TSPair ts);
+    int track{0};
+    int sector{0};
+    TSPair firstCatalogSector{0, 0};
+    quint8 dosVersion{0};
+    quint8 volumeNumber{0};
+    quint8 maxTSPairs{0};
+    quint8 lastTrackAllocated{0};
+    qint8 directionOfAllocation{0};
+    quint8 tracksPerDisk{0};
+    quint8 sectorsPerDisk{0};
+    qint16 bytesPerSector{0};
+    
+    bool isSectorInUse(TSPair ts) const;
+    void dump() const;
 
 private:
-    QString buildUseString(quint8 track);
+    void makeSectorsInUse(const Sector &data, quint8 tracksPerDisk, quint8 sectorsPerDisk);
+    QString buildUseString(quint8 track) const;
 
-    Sector *m_data;
+    QBitArray m_sectorsInUse; // One bit per sector on disk.  1 = in use, 0 = free
 };
 

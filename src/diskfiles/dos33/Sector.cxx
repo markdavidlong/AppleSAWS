@@ -10,6 +10,13 @@ char& Sector::operator[](uint offset) {
     return m_data[offset];
 }
 
+char Sector::at(uint offset) const {
+    if (offset > 255) {
+        offset = 255;
+    }
+    return m_data.at(offset);
+}
+
 bool Sector::setData(QByteArray data) {
     if (data.length() != 256) return false;
 

@@ -21,33 +21,38 @@ public:
     bool read(QString filename);
 
     Sector &getSector(TSPair ts) { return getSector(ts.track(), ts.sector()); }
+    const Sector &getSector(TSPair ts) const { return getSector(ts.track(), ts.sector()); }
 
     Sector &getSector(int track, int sector) {
         return m_contents[track][sector];
     }
+    
+    const Sector &getSector(int track, int sector) const {
+        return m_contents[track][sector];
+    }
 
-    VTOC getVTOC();
-
+    VTOC getVTOC() const;
+    
     QList<CatalogSector> getCatalogSectors();
-
+    
     GenericFile *getFile(FileDescriptiveEntry fde);
-
+    
     QByteArray getDataFromTrackSectorList(TrackSectorList tsl);
-
+    
     QList<FileDescriptiveEntry> getAllFDEs();
-
+    
     QByteArray fileHash() const { return m_hash; }
-
+    
     QString getDiskImageName() const { return m_imageName; }
     QString getFullDiskImageName() const { return m_fullImageName; }
     QString getMetaDataPath() const;
-
+    
 private:
-
+    
     QMap< int, QMap< int, Sector> > m_contents;
     QMap<FileDescriptiveEntry,GenericFile *> m_files;
     QByteArray m_hash;
-
+    
     QString m_imageName;
     QString m_fullImageName;
 

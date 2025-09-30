@@ -16,8 +16,8 @@ public:
         m_sector = 255;
     }
 
-    VTOC promoteToVTOC() {
-        return VTOC(this);
+    const VTOC promoteToVTOC() const {
+        return VTOC(*this);
     }
 
     CatalogSector promoteToCatalogSector() {
@@ -28,8 +28,8 @@ public:
         return TrackSectorList(this);
     }
 
-    int sector() { return m_sector; }
-    int track() { return m_track; }
+    int sector() const { return m_sector; }
+    int track() const { return m_track; }
 
     void setTrackSector(int track, int sector) {
         setTrack(track);
@@ -40,10 +40,13 @@ public:
     void setSector(int sector) { m_sector = sector; }
 
     char&  operator[](uint offset);
+    char  at(uint offset) const;
 
     bool setData(QByteArray data);
 
     void dump();
+
+    QByteArray data() const { return m_data; }
 
     QByteArray rawData() { return m_data; }
 

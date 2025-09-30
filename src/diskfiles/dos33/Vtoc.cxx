@@ -6,90 +6,68 @@
 #include <QString>
 
 
-VTOC::VTOC(Sector *data)
+VTOC::VTOC(const Sector &sectorData)
 {
-    m_data = data;
+    track = sectorData.track();
+    sector = sectorData.sector();
+    firstCatalogSector = TSPair(sectorData.data().at(0x01), sectorData.data().at(0x02));
+    dosVersion = sectorData.data().at(0x03);
+    volumeNumber = sectorData.data().at(0x06);
+    maxTSPairs = sectorData.data().at(0x27);
+    lastTrackAllocated = sectorData.data().at(0x30);
+    directionOfAllocation = (qint8) sectorData.data().at(0x31);
+    tracksPerDisk = sectorData.data().at(0x34);
+    sectorsPerDisk = sectorData.data().at(0x35);
+    bytesPerSector = makeWord(sectorData.data().at(0x36),
+                             sectorData.data().at(0x37));
+    makeSectorsInUse(sectorData,tracksPerDisk,sectorsPerDisk);                             
 }
 
-TSPair VTOC::firstCatalogSector() {
-  //  return TSPair(0x11,0x0f); // Force to look at the normal location
-    return TSPair(m_data->rawData()[0x01], m_data->rawData()[0x02]);
+void VTOC::makeSectorsInUse(const Sector &data, quint8 tracksPerDisk, quint8 sectorsPerDisk)
+{
+    m_sectorsInUse.resize(tracksPerDisk * sectorsPerDisk);
+    m_sectorsInUse.fill(false);
+    for (quint8 track = 0; track < tracksPerDisk; track++)
+    {
+        quint8 baseaddr = (track * 4) + 0x38;
+        quint16 word = makeWord(data.data().at(baseaddr+1),
+                                data.data().at(baseaddr));
+        for (quint8 sec = 0; sec < sectorsPerDisk; sec++)
+        {
+            quint16 bitpos = (quint16) 0x01 << (quint16) sec;
+            bool inuse = !(word & bitpos);
+            m_sectorsInUse.setBit((track * sectorsPerDisk) + sec, inuse);
+        }
+    }
 }
 
-quint8 VTOC::dosVersion() {
-    return m_data->rawData()[0x03];
-}
-
-quint8 VTOC::volumeNumber() {
-    return m_data->rawData()[0x06];
-}
-
-quint8 VTOC::maxTSPairs() {
-    return m_data->rawData()[0x27];
-}
-
-quint8 VTOC::lastTrackAllocated() {
-    return m_data->rawData()[0x30];
-}
-
-qint8 VTOC::directionOfAllocation() {
-    return m_data->rawData()[0x31];
-}
-
-quint8 VTOC::tracksPerDisk() {
-    return m_data->rawData()[0x34];
-}
-
-quint8 VTOC::sectorsPerDisk() {
-    return m_data->rawData()[0x35];
-}
-
-qint16 VTOC::bytesPerSector() {
-    return makeWord(m_data->rawData()[0x36],
-                    m_data->rawData()[0x37]);
-}
-
-bool VTOC::isSectorInUse(TSPair ts) {
+bool VTOC::isSectorInUse(TSPair ts) const {
     quint8 track = ts.track();
     quint8 sec = ts.sector();
-    quint8 baseaddr = (track * 4) + 0x38;
-
-    //quint16 word = (((quint16) m_data->rawData()[baseaddr]) *256) + (quint8) m_data->rawData()[baseaddr+1];
-    quint16 word = makeWord(m_data->rawData()[baseaddr+1],
-                            m_data->rawData()[baseaddr]);
-    quint16 bitpos = (quint16) 0x01 << (quint16) sec;
-
-    return !(word & bitpos);
+    return m_sectorsInUse.testBit((track * sectorsPerDisk) + sec);
 }
 
-void VTOC::dump()
+void VTOC::dump() const
 {
-    /*
-    for (qint8 idx = 0x0f; idx >= 0; idx--) {
-        quint8 shift;
-        if (idx < 0x08) { shift = idx; } else { shift = idx-0x08; }
-        qDebug() << "Idx: " << idx << "Shift: " << (quint8) shift << "Bitpos: " << (quint8) (0x01 << shift);
-    }
-*/
-    qDebug() << "Dumping VTOC Track " << m_data->track() << "Sector " << m_data->sector() << " ...";
-    qDebug() << "   Track number of first catalog sector: " << QString::number(firstCatalogSector().track());
-    qDebug() << "   Sector number of first catalog sector: " << QString::number(firstCatalogSector().sector());
-    qDebug() << "   Release number of DOS used to INIT disk: " << QString::number(dosVersion());
-    qDebug() << "   Disk Volume Number: " << QString::number(volumeNumber());
-    qDebug() << "   Max track/sector pairs that fit in t/s list sector (122=256): " << QString::number(maxTSPairs());
-    qDebug() << "   Last track where sectors were allocated: " << QString::number(lastTrackAllocated());
-    qDebug() << "   Direction of track allocations (+/- 1): " << QString::number(directionOfAllocation());
-    qDebug() << "   Number tracks per disk: " << QString::number(tracksPerDisk());
-    qDebug() << "   Number sectors per disk: " << QString::number(sectorsPerDisk());
-    qDebug() << "   Number bytes/sector: " << QString::number(bytesPerSector());
+    qDebug() << "Dumping VTOC Track " << track << "Sector " << sector << " ...";
+    qDebug() << "   Track number of first catalog sector: " << QString::number(firstCatalogSector.track());
+    qDebug() << "   Sector number of first catalog sector: " << QString::number(firstCatalogSector.sector());
+    qDebug() << "   Release number of DOS used to INIT disk: " << QString::number(dosVersion);
+    qDebug() << "   Disk Volume Number: " << QString::number(volumeNumber);
+    qDebug() << "   Max track/sector pairs that fit in t/s list sector (122=256): " << QString::number(maxTSPairs);
+    qDebug() << "   Last track where sectors were allocated: " << QString::number(lastTrackAllocated);
+    qDebug() << "   Direction of track allocations (+/- 1): " << QString::number(directionOfAllocation);
+    qDebug() << "   Number tracks per disk: " << QString::number(tracksPerDisk);
+    qDebug() << "   Number sectors per disk: " << QString::number(sectorsPerDisk);
+    qDebug() << "   Number bytes/sector: " << QString::number(bytesPerSector);
     qDebug() << "   Track Usage (.=free, 0-F=used):";
-    for (quint8 track = 0; track < m_data->rawData()[0x34];track++)
+    for (quint8 track = 0; track < tracksPerDisk;track++)
     {
         qDebug() << "      " << QString("Track %1:").arg((int) track,2,10,QChar('0')) << buildUseString(track);
     }
  }
 
-QString VTOC::buildUseString(quint8 track) {
+QString VTOC::buildUseString(quint8 track) const {
     QString usestr;
     for (qint8 sec = 0x0f; sec >= 0; sec--)
     {
