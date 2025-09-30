@@ -13,7 +13,7 @@ int AssemblerSymbols::locationOfSymbolAtAddress(quint16 address) const
 {
     // Use modern algorithm with const reference to avoid copy
     const auto it = std::find_if(m_assemblerSymbols.cbegin(), m_assemblerSymbols.cend(),
-                                 [address](const AssemblerSymbol& symbol) {
+                                 [address](const Symbol& symbol) {
                                      return symbol.address == address;
                                  });
     
@@ -30,12 +30,12 @@ bool AssemblerSymbols::hasAssemSymbolAtAddress(quint16 address) const
 {
     // Use modern algorithm for better performance and clarity
     return std::any_of(m_assemblerSymbols.cbegin(), m_assemblerSymbols.cend(),
-                       [address](const AssemblerSymbol& symbol) {
+                       [address](const Symbol& symbol) {
                            return symbol.address == address;
                        });
 }
 
-void AssemblerSymbols::editSymbol(int location, AssemblerSymbol newSymbol)
+void AssemblerSymbols::editSymbol(int location, Symbol newSymbol)
 {
 
     if (m_assemblerSymbols.at(location).address == newSymbol.address)
@@ -50,7 +50,7 @@ void AssemblerSymbols::editSymbol(int location, AssemblerSymbol newSymbol)
     }
 }
 
-void AssemblerSymbols::addSymbol(AssemblerSymbol ep)
+void AssemblerSymbols::addSymbol(Symbol ep)
 {
     if (hasAssemSymbolAtAddress(ep.address)) return;
 
@@ -104,7 +104,7 @@ QDataStream &operator>>(QDataStream &in, AssemblerSymbols&model)
     return model.read(in);
 }
 
-QDataStream &operator<<(QDataStream &out, const AssemblerSymbol &model)
+QDataStream &operator<<(QDataStream &out, const AssemblerSymbols::Symbol &model)
 {
     out << model.address;
     out << model.name;
@@ -112,13 +112,13 @@ QDataStream &operator<<(QDataStream &out, const AssemblerSymbol &model)
     return out;
 }
 
-QDataStream &operator>>(QDataStream &in, AssemblerSymbol &model)
+QDataStream &operator>>(QDataStream &in, AssemblerSymbols::Symbol &model)
 {
     in >> model.address;
     in >> model.name;
     qint32 size;
     in >> size;
-    model.symbolsize = static_cast<SymbolSize>(size);
+    model.symbolsize = static_cast<AssemblerSymbols::SymbolSize>(size);
     return in;
 }
 

@@ -105,16 +105,16 @@ void DisassemblerMetadataDialog::handleAddSymbolButton()
     lid.showSizeWidgets(true);
     if (lid.exec() == Accepted)
     {
-        AssemblerSymbol as;
+        AssemblerSymbols::Symbol as;
         as.address = lid.getAddress();
         as.name = lid.getInfo();
         if (lid.getSymbolSize() == 0) // Byte
         {
-            as.symbolsize = SymbolSize::Byte;
+            as.symbolsize = AssemblerSymbols::SymbolSize::Byte;
         }
         else
         {
-            as.symbolsize = SymbolSize::Word;
+            as.symbolsize = AssemblerSymbols::SymbolSize::Word;
         }
         m_bfm->assemblerSymbols().addSymbol(as);
         ui->symbolTable->resizeRowsToContents();

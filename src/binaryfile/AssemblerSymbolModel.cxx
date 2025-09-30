@@ -57,8 +57,8 @@ QVariant AssemblerSymbolModel::data(const QModelIndex &index, int role) const
             // Use switch for better performance and readability
             switch (m_assemblerSymbols.at(index.row()).symbolsize)
             {
-                case SymbolSize::Word: return QStringLiteral("WORD");
-                case SymbolSize::Byte: return QStringLiteral("BYTE");
+                case AssemblerSymbols::SymbolSize::Word: return QStringLiteral("WORD");
+                case AssemblerSymbols::SymbolSize::Byte: return QStringLiteral("BYTE");
                 default: return QVariant();
             }
         }
