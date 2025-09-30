@@ -13,14 +13,14 @@ class ApplesoftRetokenizer
 public:
     ApplesoftRetokenizer();
 
-    void setData(QByteArray data);
+    void setData(const QByteArray& data);
     void parse(quint16 start_address = 0x0801);
 
-    quint16 getEndOfDataOffset() const { return m_data_end; }
+    [[nodiscard]] quint16 getEndOfDataOffset() const noexcept { return m_data_end; }
 
-    QList<ApplesoftLine> getRetokenizedLines() { return m_retokenized_lines; }
+    [[nodiscard]] const QList<ApplesoftLine>& getRetokenizedLines() const noexcept { return m_retokenized_lines; }
 
-    QList<QPair<quint16, quint16> >  getFlowTargets() const { return m_flowTargets; }
+    [[nodiscard]] const QList<QPair<quint16, quint16>>& getFlowTargets() const noexcept { return m_flowTargets; }
 
 private:
     void retokenizeLinesForFormatting();

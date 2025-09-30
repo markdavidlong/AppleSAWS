@@ -235,41 +235,41 @@ public:
     };
 
     ApplesoftToken();
-    ApplesoftToken(quint16 id);
+    explicit ApplesoftToken(quint16 id);
     ApplesoftToken(quint16 id, QVariant payload);
 
     void setTokenId(quint16 id);
-    inline quint16 getTokenId() const { return m_token_id; }
+    [[nodiscard]] inline quint16 getTokenId() const noexcept { return m_token_id; }
 
     void setValue(QVariant value);
-    inline QVariant getValue() const { return m_payload; }
+    [[nodiscard]] inline QVariant getValue() const noexcept { return m_payload; }
 
-    inline QByteArray getByteStringValue() const { return m_payload.toByteArray(); }
-    QString getStringValue() const;
-    inline quint32 getUnsignedIntegerValue() const { return m_payload.toUInt(); }
-    inline qint32 getIntegerValue() const { return m_payload.toInt(); }
+    [[nodiscard]] inline QByteArray getByteStringValue() const noexcept { return m_payload.toByteArray(); }
+    [[nodiscard]] QString getStringValue() const;
+    [[nodiscard]] inline quint32 getUnsignedIntegerValue() const noexcept { return m_payload.toUInt(); }
+    [[nodiscard]] inline qint32 getIntegerValue() const noexcept { return m_payload.toInt(); }
 
-    inline quint16 getWordValue() const { return quint16(m_payload.toUInt() & 0xFFFF); }
-    inline quint8 getByteValue() const { return quint8(m_payload.toUInt() & 0xFF); }
+    [[nodiscard]] inline quint16 getWordValue() const noexcept { return quint16(m_payload.toUInt() & 0xFFFF); }
+    [[nodiscard]] inline quint8 getByteValue() const noexcept { return quint8(m_payload.toUInt() & 0xFF); }
 
-    inline TokenType getTokenType() const { return m_token_type; }
-    inline CommandType getCommandType() const { return m_command_type; }
+    [[nodiscard]] inline TokenType getTokenType() const noexcept { return m_token_type; }
+    [[nodiscard]] inline CommandType getCommandType() const noexcept { return m_command_type; }
 
-    QString getRawPrintableString() const;
+    [[nodiscard]] QString getRawPrintableString() const;
 
-    QTextCharFormat textFormat();
+    [[nodiscard]] QTextCharFormat textFormat();
 
-    static QTextCharFormat defaultTextFormat();
-    static QTextCharFormat defaultInverseTextFormat();
-    static QTextCharFormat textFormat(quint16 tokentype) ;
+    [[nodiscard]] static QTextCharFormat defaultTextFormat();
+    [[nodiscard]] static QTextCharFormat defaultInverseTextFormat();
+    [[nodiscard]] static QTextCharFormat textFormat(quint16 tokentype);
 
-    QString getStringForToken(quint8 token);
+    [[nodiscard]] QString getStringForToken(quint8 token);
 
-    inline bool isOptFmtToken() const { return (m_token_id >= OptFmtRangeStart && m_token_id < OptFmtRangeEnd); }
+    [[nodiscard]] inline bool isOptFmtToken() const noexcept { return (m_token_id >= OptFmtRangeStart && m_token_id < OptFmtRangeEnd); }
 
 private:
     quint16 m_token_id{0};
-    QString m_tokenname{""};
+    QString m_tokenname{};
     QVariant m_payload{};
     TokenType m_token_type{TokenType::Unknown};
     CommandType m_command_type{CommandType::None};

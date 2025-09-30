@@ -14,7 +14,7 @@ ApplesoftFormatter::ApplesoftFormatter(QObject *parent) :
 {
 }
 
-void ApplesoftFormatter::setFile(ApplesoftFile *file)
+void ApplesoftFormatter::setFile(ApplesoftFile *file) noexcept
 {
     m_file = file;
     emit newFile(file);

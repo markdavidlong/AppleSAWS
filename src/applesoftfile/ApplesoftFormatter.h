@@ -29,18 +29,16 @@ public:
     Q_DECLARE_FLAGS(FormatOptions, FormatOption)
 
 public:
-    explicit ApplesoftFormatter(QObject *parent = 0);
-    void setFlags(FormatOptions options) { m_format_options = options; }
-    void setFile(ApplesoftFile *file);
+    explicit ApplesoftFormatter(QObject *parent = nullptr);
+    void setFlags(FormatOptions options) noexcept { m_format_options = options; }
+    void setFile(ApplesoftFile *file) noexcept;
 
-    FormatOptions flags() { return m_format_options; }
+    [[nodiscard]] FormatOptions flags() const noexcept { return m_format_options; }
 
     void formatDocument(QTextDocument *doc);
 
 signals:
     void newFile(ApplesoftFile *file);
-
-public slots:
 
 private:
     FormatOptions m_format_options{FormatOption::NoOptions};

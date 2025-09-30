@@ -12,7 +12,7 @@ ApplesoftRetokenizer::ApplesoftRetokenizer()
     m_isParsed = false;
 }
 
-void ApplesoftRetokenizer::setData(QByteArray data)
+void ApplesoftRetokenizer::setData(const QByteArray& data)
 {
     m_data = data;
     m_data_end = data.length();
