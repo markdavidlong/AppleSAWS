@@ -80,7 +80,7 @@ void DisassemblerViewer::setFile(BinaryFile *file) {
     m_isRelo = false;
 
     setCursor(Qt::WaitCursor);
-    m_bfm = new BinaryFileMetadata(m_file, file->address(), this);
+    m_bfm = new BinaryFileMetadata(*m_file, file->address(), this);
 
     connect(m_bfm, &BinaryFileMetadata::doDisassemble,
             this, &DisassemblerViewer::handleDisassembleRequest);
@@ -104,7 +104,7 @@ void DisassemblerViewer::setFile(RelocatableFile *file) {
 
     setCursor(Qt::WaitCursor);
 
-    m_bfm = new BinaryFileMetadata(m_file, file->address() + 6, this);
+    m_bfm = new BinaryFileMetadata(*m_file, file->address() + 6, this);
 
     connect(m_bfm, &BinaryFileMetadata::doDisassemble,
             this, &DisassemblerViewer::handleDisassembleRequest);
