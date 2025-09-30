@@ -1,9 +1,9 @@
-#include <QDebug>
 #include "RelocatableFile.h"
+#include <QDebug>
 
-RelocatableFile::RelocatableFile(const QByteArray& data) : GenericFile(data)
+RelocatableFile::RelocatableFile(const QByteArray& data) noexcept 
+    : GenericFile(data)
 {
- //   qDebug() << "Relocatable file ctor";
     if (!data.isEmpty()) {
         setData(data);
     }
@@ -46,53 +46,53 @@ void RelocatableFile::setData(const QByteArray& data)
 void RelocatableFile::dump()
 {
     qDebug() << "\nTotalLength: " << length();
-    qDebug() << "Starting Ram Address: " << (quint16) m_starting_ram_address << uint16ToHex(m_starting_ram_address);
-    qDebug() << "Length of Ram Image: " << (quint16) m_ram_image_length << uint16ToHex(m_ram_image_length);
-    qDebug() << "Length of Code Image: " << (quint16) m_code_image_length << uint16ToHex(m_code_image_length);
+    qDebug() << "Starting Ram Address: " << m_starting_ram_address << uint16ToHex(m_starting_ram_address);
+    qDebug() << "Length of Ram Image: " << m_ram_image_length << uint16ToHex(m_ram_image_length);
+    qDebug() << "Length of Code Image: " << m_code_image_length << uint16ToHex(m_code_image_length);
 
     int itemIdx = 0;
-    foreach (RelocatableDictItem item, m_relocatable_dict) {
-        Byte4ReturnType b4rt = item.getByte4();
+    for (const auto& item : m_relocatable_dict) {
+        const auto b4rt = item.getByte4();
         QString typestr;
-        if (b4rt.first == ESDSymbol) { typestr = "ESDSymbol"; }
-        else if (b4rt.first == ByteHi) { typestr = "Hi Byte"; }
-        else { typestr = "Lo Byte"; }
-        quint16 fo = item.getFieldOffset();
+        if (b4rt.first == RelocatableTypes::Byte4Type::ESDSymbol) { 
+            typestr = QStringLiteral("ESDSymbol"); 
+        } else if (b4rt.first == RelocatableTypes::Byte4Type::ByteHi) { 
+            typestr = QStringLiteral("Hi Byte"); 
+        } else { 
+            typestr = QStringLiteral("Lo Byte"); 
+        }
+        const quint16 fo = item.getFieldOffset();
         qDebug() << "  Item #" << itemIdx++
                  << "Field Offset: " << uint16ToHex(fo)
-                 << "FieldSize: " << ((item.getFieldSize()==RFS2Byte)?"2-Byte":"1-Byte")
+                 << "FieldSize: " << ((item.getFieldSize() == RelocatableTypes::FieldSize::TwoByte) ? "2-Byte" : "1-Byte")
                  << typestr << uint8ToHex(b4rt.second)
-                 << ((item.isNotEndOfRLD())?"NotEndOfRLD":"EndOfRLD")
-                 << "    " << ((item.isExtern())?"Extern":"Not Extern");
+                 << ((item.isNotEndOfRLD()) ? "NotEndOfRLD" : "EndOfRLD")
+                 << "    " << ((item.isExtern()) ? "Extern" : "Not Extern");
     }
-
-
 }
 
 QStringList RelocatableFile::decodeRelocatableDict() const
 {
     QStringList retval;
     int idx = 0;
-    foreach (RelocatableDictItem item, m_relocatable_dict) {
-        Byte4ReturnType b4rt = item.getByte4();
+    for (const auto& item : m_relocatable_dict) {
+        const auto b4rt = item.getByte4();
         QString typestr;
-        if (b4rt.first == ESDSymbol) { typestr = "ESDSymbol"; }
-        else if (b4rt.first == ByteHi) { typestr = "Hi Byte"; }
-        else { typestr = "Lo Byte"; }
-        quint16 fo = item.getFieldOffset();
-//        qDebug() << "  Item #" << idx
-//                 << "Field Offset: " << uint16ToHex(fo)
-//                 << "FieldSize: " << ((item.getFieldSize()==RFS2Byte)?"2-Byte":"1-Byte")
-//                 << typestr << uint8ToHex(b4rt.second)
-//                 << ((item.isNotEndOfRLD())?"NotEndOfRLD":"EndOfRLD")
-//                 << "    " << ((item.isExtern())?"Extern":"Not Extern");
+        if (b4rt.first == RelocatableTypes::Byte4Type::ESDSymbol) { 
+            typestr = QStringLiteral("ESDSymbol"); 
+        } else if (b4rt.first == RelocatableTypes::Byte4Type::ByteHi) { 
+            typestr = QStringLiteral("Hi Byte"); 
+        } else { 
+            typestr = QStringLiteral("Lo Byte"); 
+        }
+        const quint16 fo = item.getFieldOffset();
 
-        retval.append(QString("Item %1, Offset %2, @ %3, %4 Field, %5")
+        retval.append(QStringLiteral("Item %1, Offset %2, @ %3, %4 Field, %5")
                 .arg(idx++)
                 .arg(uint16ToHex(fo))
-                .arg(uint16ToHex(fo+address()+6))
-                .arg((item.getFieldSize()==RFS2Byte)?"2-Byte":"1-Byte")
-                .arg((item.isExtern())?"Extern":"Not Extern"));
+                .arg(uint16ToHex(fo + address() + 6))
+                .arg((item.getFieldSize() == RelocatableTypes::FieldSize::TwoByte) ? "2-Byte" : "1-Byte")
+                .arg((item.isExtern()) ? "Extern" : "Not Extern"));
     }
 
     return retval;

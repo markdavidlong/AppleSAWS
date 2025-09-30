@@ -7,20 +7,20 @@
 
 class RoleAsmOpcode : public MemRole
 {
-
 public:
-    static const int RoleID = 1;
-    RoleAsmOpcode() { m_am = AddressMode::AM_InvalidOp; }
-    virtual ~RoleAsmOpcode() { }
+    static constexpr int RoleID = 1;
+    
+    RoleAsmOpcode() = default;
+    ~RoleAsmOpcode() noexcept override = default;
 
-    virtual int id() const override { return RoleID; }
-    virtual QString name() const override { return "RoleAsmOpcode"; }
+    [[nodiscard]] constexpr int id() const noexcept override { return RoleID; }
+    [[nodiscard]] QString name() const override { return QStringLiteral("RoleAsmOpcode"); }
 
-    QString mnemonic() const;
-    AddressMode addressMode() const;
+    [[nodiscard]] QString mnemonic() const;
+    [[nodiscard]] AddressMode addressMode() const;
 
 protected:
-    AddressMode m_am;
+    AddressMode m_am{AddressMode::AM_InvalidOp};
 
 };
 

@@ -1,6 +1,4 @@
 #include "RoleAsmOperand.h"
 
-RoleAsmOperand::RoleAsmOperand()
-{
-
-}
+// Implementation file for RoleAsmOperand class
+// Constructor is defaulted in header for performance

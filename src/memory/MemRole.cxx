@@ -1,13 +1,6 @@
 #include "MemRole.h"
 
-MemRole::MemRole()
-{
-    m_parent = nullptr;
-}
-
-
-
-void MemRole::setParent(MemoryCell *parent)
+void MemRole::setParent(MemoryCell* parent) noexcept
 {
     m_parent = parent;
 }

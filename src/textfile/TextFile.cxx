@@ -1,7 +1,8 @@
-#include <QDebug>
 #include "TextFile.h"
+#include <QDebug>
 
-TextFile::TextFile(const QByteArray& data) : GenericFile(data)
+TextFile::TextFile(const QByteArray& data) noexcept 
+    : GenericFile(data)
 {
     if (!data.isEmpty()) {
         setData(data);
@@ -15,4 +16,5 @@ void TextFile::setData(const QByteArray& data)
 
 void TextFile::dump()
 {
+    // TODO: Implement text file dumping functionality
 }

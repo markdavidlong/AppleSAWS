@@ -1,30 +1,26 @@
 #include "IntBasicFile.h"
 #include <QDebug>
 
-IntBasicFile::IntBasicFile(const QByteArray& data)
+IntBasicFile::IntBasicFile(const QByteArray& data) noexcept
 {
     setData(data);
 
-    qDebug()<<detokenize();
+    qDebug() << detokenize();
 
     setData(detokenize());
 }
 
 QByteArray IntBasicFile::detokenize()
 {
-
-//    uint  =  unsigned int
-//    quint8    =  unsigned char
-//    ==========================================================================
     return dumpBufferAsIntBasicFile(data());
 }
 
-quint16 IntBasicFile::get16(quint8 v1, quint8 v2)
+constexpr quint16 IntBasicFile::get16(quint8 v1, quint8 v2) noexcept
 {
-    return (quint16) v1 + ((quint16) v2 * 256);
+    return static_cast<quint16>(v1) + (static_cast<quint16>(v2) * 256);
 }
 
-QByteArray IntBasicFile::dumpBufferAsIntBasicFile(const QByteArray& origdata)
+QByteArray IntBasicFile::dumpBufferAsIntBasicFile(const QByteArray& origdata) const
 /*
  * THIS CODE IS MODIFIED FROM PAUL SCHYLTER'S SAMPLE CODE AVAILABLE AT:
  * https://macgui.com/usenet/?group=1&start=14720&id=184603

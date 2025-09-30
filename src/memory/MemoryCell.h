@@ -9,27 +9,26 @@
 class MemoryCell
 {
 public:
-    MemoryCell(quint8 val = 0);
-    virtual ~MemoryCell();
+    explicit MemoryCell(quint8 val = 0) noexcept : m_value(val) {}
+    ~MemoryCell();
 
-    void setAddress(quint16 address) { m_address = address; }
-    quint16 address() const { return m_address; }
+    void setAddress(quint16 address) noexcept { m_address = address; }
+    [[nodiscard]] constexpr quint16 address() const noexcept { return m_address; }
 
-    bool setRole(MemRole *role);
-    MemRole *getRole(int id);
-    bool hasRole(int id) const;
+    bool setRole(MemRole* role);
+    [[nodiscard]] MemRole* getRole(int id);
+    [[nodiscard]] bool hasRole(int id) const;
     bool removeRole(int id);
 
-    void setValue(quint8 val) { m_value = val; }
-    quint8 value() const { return m_value; }
-    operator quint8() const { return m_value; }
+    void setValue(quint8 val) noexcept { m_value = val; }
+    [[nodiscard]] constexpr quint8 value() const noexcept { return m_value; }
+    [[nodiscard]] constexpr operator quint8() const noexcept { return m_value; }
 
-    QList<MemRole *> getAllRoles();
+    [[nodiscard]] QList<MemRole*> getAllRoles();
 
 private:
-    quint8 m_value;
-    quint16 m_address;
-
-    QHash<int,MemRole *> m_roles;
+    quint8 m_value{0};
+    quint16 m_address{0};
+    QHash<int, MemRole*> m_roles;
 };
 

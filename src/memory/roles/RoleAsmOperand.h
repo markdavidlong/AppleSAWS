@@ -6,27 +6,25 @@
 
 class RoleAsmOperand : public MemRole
 {
-
 public:
-    static const int RoleID = 2;
+    static constexpr int RoleID = 2;
 
-    typedef enum
-    {
+    enum class Type {
         Byte,
         WordLo,
         WordHi,
-    } Type;
+    };
 
-    RoleAsmOperand();
+    RoleAsmOperand() = default;
 
-    virtual int id() const override { return RoleID; }
-    virtual QString name() const override { return "RoleAsmOperand"; }
+    [[nodiscard]] constexpr int id() const noexcept override { return RoleID; }
+    [[nodiscard]] QString name() const override { return QStringLiteral("RoleAsmOperand"); }
 
-    void setOperandType(Type type) { m_optype = type; }
-    Type operandType() const { return m_optype; }
+    void setOperandType(Type type) noexcept { m_optype = type; }
+    [[nodiscard]] constexpr Type operandType() const noexcept { return m_optype; }
 
 protected:
-    Type m_optype;
+    Type m_optype{Type::Byte};
 
 };
 
