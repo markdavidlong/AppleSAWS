@@ -2,42 +2,13 @@
 
 #include "Util.h"
 #include "JumpLine.h"
+#include "JumpLines.h"
 
 #include <QPair>
 #include <QMap>
 #include <QMapIterator>
 #include <QDebug>
 #include <QList>
-
-//////////////////
-
-class JumpLines
-{
-public:
-    // Type aliases for compatibility with existing code
-    using TJump = JumpLine::TJump;
-    using JumpType = JumpLine::JumpType;
-    using JumpMap = JumpLine::JumpMap;
-    
-    // Legacy enum values for backward compatibility
-    static constexpr JumpType IsUnknownJump = JumpType::Unknown;
-    static constexpr JumpType IsJMP = JumpType::JMP;
-    static constexpr JumpType IsBranch = JumpType::Branch;
-    static constexpr JumpType IsJSR = JumpType::JSR;
-    static constexpr JumpType IsBRA = JumpType::BRA;
-
-    JumpLines() : m_maxChannel(0) {}
-
-    [[nodiscard]] QList<int> channelsAtAddress(quint16 address) const {
-        return m_channelsAtAddress.value(address);
-    }
-
-    [[nodiscard]] QList<JumpLine> jumpLinesAtAddress(quint16 addrs) const;
-
-    QList<JumpLine> jumpLines;
-    int m_maxChannel;
-    QMap<quint16, QList<int>> m_channelsAtAddress;
-};
 
 //////////////////
 

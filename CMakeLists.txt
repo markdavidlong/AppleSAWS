@@ -108,6 +108,7 @@ set(SOURCES
     src/ui/diskexplorer/DiskExplorerMapWidget.cxx
     src/applesoftfile/ApplesoftRetokenizer.cxx
     src/binaryfile/JumpLine.cxx
+    src/binaryfile/JumpLines.cxx
     src/binaryfile/JumpLineManager.cxx
     src/ui/widgets/FlowLineTextBrowser.cxx
     src/util/OpCodes.cxx
@@ -174,6 +175,7 @@ set(HEADERS
     src/applesoftfile/ApplesoftRetokenizer.h
     src/util/AppleColors.h
     src/binaryfile/JumpLine.h
+    src/binaryfile/JumpLines.h
     src/binaryfile/JumpLineManager.h
     src/ui/widgets/FlowLineTextBrowser.h
     src/ui/widgets/AsciiInfoDialog.h

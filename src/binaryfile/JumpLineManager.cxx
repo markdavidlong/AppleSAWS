@@ -158,16 +158,3 @@ bool JumpLineManager::isLineWithinRange(quint16 line, JumpLine::TJump& jm) const
 
     return (line > min && line < max);
 }
-
-QList<JumpLine> JumpLines::jumpLinesAtAddress(quint16 addrs) const
-{
-    QList<JumpLine> list;
-    foreach (const JumpLine& jl, jumpLines)
-    {
-        if (addrs >= jl.min() && addrs <= jl.max())
-        {
-            list.append(jl);
-        }
-    }
-    return list;
-}
