@@ -1,6 +1,8 @@
 #include "RelocatableFile.h"
 #include <QDebug>
 
+// This file format is documented in the "Apple 6502 Assembler/Editor" manual.
+
 RelocatableFile::RelocatableFile(const QByteArray &data) noexcept
     : GenericFile(data)
 {
