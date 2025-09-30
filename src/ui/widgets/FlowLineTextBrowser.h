@@ -1,6 +1,6 @@
 #pragma once
 
-#include "JumpLineManager.h"
+#include "../../binaryfile/JumpLineManager.h"
 
 #include <QTextBrowser>
 #include <QObject>

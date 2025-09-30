@@ -3,7 +3,7 @@
 #include "Util.h"
 #include "MemoryUsageMap.h"
 #include "DisassembledItem.h"
-#include "../internals/JumpLineManager.h"
+#include "JumpLineManager.h"
 
 #include <QByteArray>
 #include <QStringList>

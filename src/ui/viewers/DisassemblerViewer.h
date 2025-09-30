@@ -3,7 +3,7 @@
 #include "AttributedMemory.h"
 #include "FileViewerInterface.h"
 #include "DisassemblerMetadataDialog.h"
-#include "JumpLineManager.h"
+#include "../../binaryfile/JumpLineManager.h"
 
 #include <QWidget>
 #include <QByteArray>
