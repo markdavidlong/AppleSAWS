@@ -11,7 +11,7 @@ public:
     BinaryFile(const QByteArray& data = QByteArray());
     void setData(const QByteArray& data) override;
 
-    virtual quint16 length() const override { return m_length; }
+    [[nodiscard]] virtual quint16 length() const override { return m_length; }
 
     void dump();
 

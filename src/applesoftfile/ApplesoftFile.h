@@ -19,14 +19,14 @@ public:
     ~ApplesoftFile() override = default;
     
     void setData(const QByteArray& data) override;
-    QByteArray extraData() const;
-    QStringList extraDataHexValues() const;
+    [[nodiscard]] QByteArray extraData() const;
+    [[nodiscard]] QStringList extraDataHexValues() const;
 
-    const QList<ApplesoftLine>& getLines() const { return m_lines; }
+    [[nodiscard]] const QList<ApplesoftLine>& getLines() const { return m_lines; }
 
-    quint16 length() const override { return m_length; }
+    [[nodiscard]] quint16 length() const override { return m_length; }
 
-    QByteArray rawData() const override;
+    [[nodiscard]] QByteArray rawData() const override;
 
 private:
 

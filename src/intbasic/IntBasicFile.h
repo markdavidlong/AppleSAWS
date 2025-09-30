@@ -8,9 +8,9 @@ class IntBasicFile : public GenericFile
 public:
     IntBasicFile(const QByteArray& data = QByteArray());
 
-    QByteArray detokenize();
+    [[nodiscard]] QByteArray detokenize();
 private:
-    quint16 get16(quint8 v1, quint8 v2);
-    QByteArray dumpBufferAsIntBasicFile(QByteArray origdata);
+    [[nodiscard]] quint16 get16(quint8 v1, quint8 v2);
+    [[nodiscard]] QByteArray dumpBufferAsIntBasicFile(const QByteArray& origdata);
 };
 

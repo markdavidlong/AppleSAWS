@@ -81,17 +81,17 @@ public:
     RelocatableFile(const QByteArray& data = QByteArray());
     void setData(const QByteArray& data) override;
 
-    virtual quint16 length() const override { return m_data.length(); }
+    [[nodiscard]] virtual quint16 length() const override { return m_data.length(); }
 
     void dump();
 
-    QByteArray getBinaryCodeImage() { return m_binary_code_image; }
-    QList<RelocatableDictItem> getRelocatableDict() { return m_relocatable_dict; }
+    [[nodiscard]] QByteArray getBinaryCodeImage() { return m_binary_code_image; }
+    [[nodiscard]] QList<RelocatableDictItem> getRelocatableDict() { return m_relocatable_dict; }
 
-    quint16 address() { return m_starting_ram_address; }
-    quint16 codeImageLength() { return m_code_image_length; }
+    [[nodiscard]] quint16 address() { return m_starting_ram_address; }
+    [[nodiscard]] quint16 codeImageLength() { return m_code_image_length; }
 
-    QStringList decodeRelocatableDict();
+    [[nodiscard]] QStringList decodeRelocatableDict();
 
 protected:
     quint16 m_starting_ram_address;

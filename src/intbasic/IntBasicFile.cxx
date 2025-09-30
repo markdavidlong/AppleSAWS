@@ -24,7 +24,7 @@ quint16 IntBasicFile::get16(quint8 v1, quint8 v2)
     return (quint16) v1 + ((quint16) v2 * 256);
 }
 
-QByteArray IntBasicFile::dumpBufferAsIntBasicFile(QByteArray origdata)
+QByteArray IntBasicFile::dumpBufferAsIntBasicFile(const QByteArray& origdata)
 /*
  * THIS CODE IS MODIFIED FROM PAUL SCHYLTER'S SAMPLE CODE AVAILABLE AT:
  * https://macgui.com/usenet/?group=1&start=14720&id=184603
