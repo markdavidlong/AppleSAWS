@@ -5,20 +5,20 @@
 #include <QMap>
 #include <QTextCharFormat>
 
-enum class TextCharFormatType {
-    Default,
-    CtrlChar,
-    Ascii,
-    Function,
-    Operator,
-    UnusedToken,
-    Number,
-    String,
-    Variable,
-    DataString,
-    RemString,
-    Unknown
-};
+// enum class TextCharFormatType {
+//     Default,
+//     CtrlChar,
+//     Ascii,
+//     Function,
+//     Operator,
+//     UnusedToken,
+//     Number,
+//     String,
+//     Variable,
+//     DataString,
+//     RemString,
+//     Unknown
+// };
 
 
 class ApplesoftToken
