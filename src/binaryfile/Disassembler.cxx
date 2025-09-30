@@ -9,10 +9,8 @@
 #include <math.h>
 
 
-Disassembler::Disassembler(AttributedMemory &mem)
+Disassembler::Disassembler(AttributedMemory &mem) : m_mem(mem)
 {
-    m_mem = &mem;
-    m_memusagemap.clearData();
 }
 
 QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to,
@@ -91,7 +89,7 @@ QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to,
         while (!m_stack.isEmpty())
         {
             quint16 num = m_stack.pop();
-            if (!m_memusagemap[num].testFlag(MemoryUsage::Operation))
+            if (!m_memusagemap[num].testFlag(MemoryUsageMap::UsageRole::Operation))
             {
                 if (num >= from && num <= to) // TODO: remove this to not limit disassembly to program range
                 {
@@ -119,18 +117,18 @@ bool Disassembler::disassembleOp(quint16 address, DisassembledItem &retval, Memo
 
     if (memuse)
     {
-        if ((*memuse)[address].testFlag(MemoryUsage::Operation)) return false;
+        if ((*memuse)[address].testFlag(MemoryUsageMap::UsageRole::Operation)) return false;
     }
 
-    quint8 opcode = m_mem->at(address);
+    quint8 opcode = m_mem.at(address);
 
     retval.setOpcode(opcode);
 
 
-    if (!m_mem->hasRoleAt(address,RoleAsmOpcode::RoleID))
+    if (!m_mem.hasRoleAt(address,RoleAsmOpcode::RoleID))
     {
         auto opRole = new RoleAsmOpcode();
-        if (!m_mem->setRoleAt(address,opRole))
+        if (!m_mem.setRoleAt(address,opRole))
         {
             qWarning("Cannot set role %s at address %s for opcode %s",
                      qPrintable(opRole->name()),
@@ -171,7 +169,7 @@ bool Disassembler::disassembleOp(quint16 address, DisassembledItem &retval, Memo
                 oprndRole->setOperandType(RoleAsmOperand::Type::WordHi);
             }
         }
-        if (!m_mem->setRoleAt(address+idx,oprndRole))
+        if (!m_mem.setRoleAt(address+idx,oprndRole))
         {
             qWarning(">> Cannot set role %s at address %s",
                      qPrintable(oprndRole->name()),
@@ -179,16 +177,16 @@ bool Disassembler::disassembleOp(quint16 address, DisassembledItem &retval, Memo
             delete oprndRole;
         }
 
-        quint8 val = m_mem->at(address+idx);
+        quint8 val = m_mem.at(address+idx);
         hexValues.append(val);
     }
 
     if (memuse)
     {
-        (*memuse)[address].setFlag(MemoryUsage::Operation);
+        (*memuse)[address].setFlag(MemoryUsageMap::UsageRole::Operation);
         for (int idx = 1; idx < OpCodes::numArgs(opcode)+1; idx++)
         {
-            (*memuse)[address+idx].setFlag(MemoryUsage::OperationArg);
+            (*memuse)[address+idx].setFlag(MemoryUsageMap::UsageRole::OperationArg);
         }
     }
 
@@ -341,9 +339,9 @@ void Disassembler::setUnknownToData(quint16 from, quint16 to)
 {
     for (int idx = from; idx <= to; idx++)
     {
-        if (m_memusagemap[idx].testFlag(MemoryUsage::Unknown))
+        if (m_memusagemap[idx].testFlag(MemoryUsageMap::UsageRole::Unknown))
         {
-            m_memusagemap[idx].setFlag(MemoryUsage::Data);
+            m_memusagemap[idx].setFlag(MemoryUsageMap::UsageRole::Data);
         }
     }
 }

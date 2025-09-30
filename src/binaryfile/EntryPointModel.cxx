@@ -108,4 +108,10 @@ bool EntryPointModel::removeRows(int row, int count, const QModelIndex &parent)
     return success;
 }
 
+void EntryPointModel::handlePointChange(int location)
+{
+    QModelIndex ind = createIndex(location, 0);
+    emit dataChanged(ind, ind, QList<int>() << Qt::DisplayRole);
+}
+
 

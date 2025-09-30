@@ -206,8 +206,8 @@ void DisassemblerViewer::disassemble(QList<quint16> entryPoints) {
 
     for (int idx = m_file->address(); idx < m_file->address()+length; idx++)
     {
-        if (dis.memoryUsageMap()->at(idx).testFlag(MemoryUsage::Data) ||
-                dis.memoryUsageMap()->at(idx).testFlag(MemoryUsage::Unknown))
+        if (dis.memoryUsageMap()->at(idx).testFlag(MemoryUsageMap::UsageRole::Data) ||
+                dis.memoryUsageMap()->at(idx).testFlag(MemoryUsageMap::UsageRole::Unknown))
         {
             QString newline;
             bool usedefault = false;

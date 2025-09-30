@@ -2,9 +2,8 @@
 #include "Util.h"
 #include "OpCodes.h"
 
-DisassembledItem::DisassembledItem(quint8 opcode) {
-    m_canNotFollow = false;
-    m_opcode = opcode;
+DisassembledItem::DisassembledItem(quint8 opcode) : m_opcode{opcode}
+{
 }
 
 QString DisassembledItem::disassembledString() {
@@ -17,17 +16,6 @@ QString DisassembledItem::disassembledString() {
         }
     }
     return retval;
-}
-
-void DisassembledItem::init() {
-    m_address = m_target_address = 0;
-    m_nextContiguousAddress = 0;
-    m_nextFlowAddress = 0;
-    m_unknown_ta = true;
-    m_raw_arg = 0;
-    m_has_arg = false;
-    m_canNotFollow = false;
-    m_isInvalidOp = false;
 }
 
 QString DisassembledItem::hexAddress() const { 

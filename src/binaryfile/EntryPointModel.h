@@ -40,16 +40,10 @@ public:
     // Remove data:
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
 
-    void doTestData();
-
 
 protected slots:
     void handlePointAddition(int location) { insertRows(location,1); }
-    void handlePointChange(int location)
-    {
-        QModelIndex ind = createIndex(location,0);
-        emit dataChanged(ind,ind,QList<int>() << Qt::DisplayRole);
-    }
+    void handlePointChange(int location);
 
 private:
     EntryPoints &m_entryPoints;

@@ -5,7 +5,7 @@
 
 class DisassembledItem {
 public:
-    DisassembledItem() { init(); }
+    DisassembledItem() = default;
 
     explicit DisassembledItem(quint8 opcode);
 
@@ -59,22 +59,20 @@ public:
     [[nodiscard]] QString arg16Str();
 
 private:
-    void init();
+    quint8 m_opcode{0};
 
-    quint8 m_opcode;
-
-    quint16 m_address;
-    quint16 m_nextContiguousAddress;
-    quint16 m_nextFlowAddress;
-    quint16 m_target_address;
+    quint16 m_address{0};
+    quint16 m_nextContiguousAddress{0};
+    quint16 m_nextFlowAddress{0};
+    quint16 m_target_address{0};
 
     QByteArray m_hexvalues;
     QString m_disassembly_text;
     QString m_hexstring;
 
-    bool m_unknown_ta;
-    quint16 m_raw_arg;
-    bool m_has_arg;
-    bool m_isInvalidOp;
-    bool m_canNotFollow;
+    bool m_unknown_ta{true};
+    quint16 m_raw_arg{0};
+    bool m_has_arg{false};
+    bool m_isInvalidOp{false};
+    bool m_canNotFollow{false};
 };
