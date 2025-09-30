@@ -92,7 +92,7 @@ void DisassemblerViewer::setFile(BinaryFile *file) {
 
     m_mem.addFile(m_file->data(), address);
 
-    QList<quint16> addresses = m_bfm->entryPoints()->getEntryPointAddresses();
+    QList<quint16> addresses = m_bfm->entryPoints().getEntryPointAddresses();
     if (!addresses.count()) { addresses.append(address); }
     handleDisassembleRequest(addresses);
     unsetCursor();
@@ -115,7 +115,7 @@ void DisassemblerViewer::setFile(RelocatableFile *file) {
     quint16 address = file->address() + 6 ; // Handle offset for relocatable metadata
     m_mem.addFile(m_file->data(), address);
 
-    QList<quint16> addresses = m_bfm->entryPoints()->getEntryPointAddresses();
+    QList<quint16> addresses = m_bfm->entryPoints().getEntryPointAddresses();
     if (!addresses.count()) { addresses.append(address); }
     handleDisassembleRequest(addresses);
     unsetCursor();

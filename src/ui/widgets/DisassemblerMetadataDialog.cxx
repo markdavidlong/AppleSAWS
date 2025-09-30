@@ -15,7 +15,7 @@ DisassemblerMetadataDialog::DisassemblerMetadataDialog(BinaryFileMetadata *bfm, 
 
     m_bfm = bfm;
 
-    m_epmodel = new EntryPointModel(this,m_bfm->entryPoints());
+    m_epmodel = new EntryPointModel(m_bfm->entryPoints(),this);
     m_asmodel = new AssemblerSymbolModel(m_bfm->assemblerSymbols(), this);
 
     ui->entryTable->setModel(m_epmodel);
@@ -79,7 +79,7 @@ void DisassemblerMetadataDialog::handleAddEntryPointButton()
         EntryPoint ep;
         ep.address = lid.getAddress();
         ep.note = lid.getInfo();
-        m_bfm->entryPoints()->addPoint(ep);
+        m_bfm->entryPoints().addPoint(ep);
         ui->entryTable->resizeRowsToContents();
         ui->entryTable->resizeRowsToContents();
     }

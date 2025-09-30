@@ -13,9 +13,8 @@ class EntryPointModel : public QAbstractTableModel
     Q_OBJECT
 
 public:
-    explicit EntryPointModel(QObject *parent = nullptr, EntryPoints *points = nullptr);
-    void setEntryPointsData(EntryPoints *points) noexcept;
-
+    
+    explicit EntryPointModel(EntryPoints &points, QObject *parent = nullptr);
     // Header:
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
     // Basic functionality:
@@ -55,7 +54,7 @@ protected slots:
 
 
 private:
-    EntryPoints *m_entryPoints{nullptr};
+    EntryPoints &m_entryPoints;
 };
 
 

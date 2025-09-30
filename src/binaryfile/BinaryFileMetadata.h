@@ -20,7 +20,7 @@ public:
 
     [[nodiscard]] QString filename() const { return m_file->filename(); }
 
-    [[nodiscard]] EntryPoints *entryPoints() noexcept { return m_eps; }
+    [[nodiscard]] EntryPoints &entryPoints() noexcept { return m_eps; }
     [[nodiscard]] AssemblerSymbols &assemblerSymbols() noexcept { return m_as; }
 
 signals:
@@ -30,12 +30,11 @@ public slots:
     void load();
     void save();
 
-    void requestDisassembly() { emit doDisassemble(m_eps->getEntryPointAddresses()); }
+    void requestDisassembly() { emit doDisassemble(m_eps.getEntryPointAddresses()); }
 
 private:
     AssemblerSymbols m_as;
-
-    EntryPoints *m_eps;
+    EntryPoints m_eps;
 
     GenericFile *m_file;
 

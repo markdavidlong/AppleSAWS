@@ -9,10 +9,6 @@ BinaryFileMetadata::BinaryFileMetadata(GenericFile *file, quint16 defaultAddress
 {
     m_file = file;
     m_defaultAddress = defaultAddress;
-
-    m_eps = new EntryPoints(this);
-    
-
     load();
 }
 
@@ -29,7 +25,7 @@ void BinaryFileMetadata::load()
                     .arg(m_file->filename())
                     .arg(".bfm");
         QDataStream ds(&infile);
-        ds >> *m_eps;
+        ds >> m_eps;
         ds >> m_as;
         infile.close();
     }
@@ -53,7 +49,7 @@ void BinaryFileMetadata::save()
                     .arg(m_file->filename())
                     .arg(".bfm");
         QDataStream ds(&outfile);
-        ds << *m_eps;
+        ds << m_eps;
         ds << m_as;
         outfile.close();
     }
