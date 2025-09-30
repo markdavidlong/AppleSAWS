@@ -78,20 +78,20 @@ class RelocatableFile : public GenericFile
 {
 public:
 
-    RelocatableFile(const QByteArray& data = QByteArray());
+    explicit RelocatableFile(const QByteArray& data = QByteArray());
     void setData(const QByteArray& data) override;
 
-    [[nodiscard]] virtual quint16 length() const override { return m_data.length(); }
+    [[nodiscard]] virtual quint16 length() const noexcept override { return m_data.length(); }
 
     void dump();
 
-    [[nodiscard]] QByteArray getBinaryCodeImage() { return m_binary_code_image; }
-    [[nodiscard]] QList<RelocatableDictItem> getRelocatableDict() { return m_relocatable_dict; }
+    [[nodiscard]] QByteArray getBinaryCodeImage() const noexcept { return m_binary_code_image; }
+    [[nodiscard]] const QList<RelocatableDictItem>& getRelocatableDict() const noexcept { return m_relocatable_dict; }
 
-    [[nodiscard]] quint16 address() { return m_starting_ram_address; }
-    [[nodiscard]] quint16 codeImageLength() { return m_code_image_length; }
+    [[nodiscard]] quint16 startingAddress() const noexcept { return m_starting_ram_address; }
+    [[nodiscard]] quint16 codeImageLength() const noexcept { return m_code_image_length; }
 
-    [[nodiscard]] QStringList decodeRelocatableDict();
+    [[nodiscard]] QStringList decodeRelocatableDict() const;
 
 protected:
     quint16 m_starting_ram_address;

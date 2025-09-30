@@ -43,7 +43,7 @@ void ApplesoftFile::setData(const QByteArray& data)
     m_flowTargets = m_retokenizer->getFlowTargets();
 }
 
-QByteArray ApplesoftFile::rawData() const {
+QByteArray ApplesoftFile::rawData() const noexcept {
     QByteArray retval;
     retval.append(m_length % 255);
     retval.append(m_length / 255);

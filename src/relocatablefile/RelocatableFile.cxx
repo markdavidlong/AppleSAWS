@@ -69,7 +69,7 @@ void RelocatableFile::dump()
 
 }
 
-QStringList RelocatableFile::decodeRelocatableDict()
+QStringList RelocatableFile::decodeRelocatableDict() const
 {
     QStringList retval;
     int idx = 0;

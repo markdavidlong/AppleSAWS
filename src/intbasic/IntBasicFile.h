@@ -6,7 +6,7 @@
 class IntBasicFile : public GenericFile
 {
 public:
-    IntBasicFile(const QByteArray& data = QByteArray());
+    explicit IntBasicFile(const QByteArray& data = QByteArray());
 
     [[nodiscard]] QByteArray detokenize();
 private:

@@ -24,9 +24,9 @@ public:
 
     [[nodiscard]] const QList<ApplesoftLine>& getLines() const { return m_lines; }
 
-    [[nodiscard]] quint16 length() const override { return m_length; }
+    [[nodiscard]] quint16 length() const noexcept override { return m_length; }
 
-    [[nodiscard]] QByteArray rawData() const override;
+    [[nodiscard]] QByteArray rawData() const noexcept override;
 
 private:
 
