@@ -8,9 +8,9 @@ JumpLineManager::JumpLineManager(quint16 from, quint16 to)
 
 }
 
-void JumpLineManager::addJump(quint16 src, quint16 dest, JumpType type, quint16 from, quint16 to)
+void JumpLineManager::addJump(quint16 src, quint16 dest, JumpLine::JumpType type, quint16 from, quint16 to)
 {
-    TJump jump(src,dest);
+    JumpLine::TJump jump(src,dest);
     if (src >= from && src <= to && dest >= from && dest <= to)
     {
         if (!m_jumpmap.contains(jump))
@@ -34,19 +34,19 @@ void JumpLineManager::dumpJumps() const {
     dumpJumps(m_jumpmap);
 }
 
-void JumpLineManager::dumpJumps(JumpMap map) const
+void JumpLineManager::dumpJumps(JumpLine::JumpMap map) const
 {
     //qDebug() << "JumpLineManager::dumpJumps()\n  JumpTable:";
-    QMapIterator<TJump,JumpType> it(map);
+    QMapIterator<JumpLine::TJump,JumpLine::JumpType> it(map);
     while (it.hasNext())
     {
         it.next();
         QString jumptypelabel;
-        if (it.value() == IsUnknownJump) { jumptypelabel = "Unknown Jump"; }
-        if (it.value() == IsJMP) { jumptypelabel = "JMP"; }
-        if (it.value() == IsBranch) { jumptypelabel = "Branch"; }
-        if (it.value() == IsJSR) { jumptypelabel = "JSR"; }
-        if (it.value() == IsBRA) { jumptypelabel = "BRA"; }
+        if (it.value() == JumpLine::JumpType::Unknown) { jumptypelabel = "Unknown Jump"; }
+        if (it.value() == JumpLine::JumpType::JMP) { jumptypelabel = "JMP"; }
+        if (it.value() == JumpLine::JumpType::Branch) { jumptypelabel = "Branch"; }
+        if (it.value() == JumpLine::JumpType::JSR) { jumptypelabel = "JSR"; }
+        if (it.value() == JumpLine::JumpType::BRA) { jumptypelabel = "BRA"; }
         //qDebug() << "    Jump from" << uint16ToHex(it.key().first) << "to"
          //        << uint16ToHex(it.key().second) << jumptypelabel;
     }
@@ -58,11 +58,11 @@ JumpLines JumpLineManager::buildJumpLines()
 
     m_channelsAtAddress.clear();
     m_jumplines.m_maxChannel = 0;
-    QMapIterator<TJump, JumpType> it(m_jumpmap);
+    QMapIterator<JumpLine::TJump, JumpLine::JumpType> it(m_jumpmap);
     while (it.hasNext())
     {
         it.next();
-        TJump range = it.key();
+        JumpLine::TJump range = it.key();
 
         JumpLine jl;
         jl.type = it.value();
@@ -83,7 +83,7 @@ JumpLines JumpLineManager::buildJumpLines()
 
 
 
-int JumpLineManager::findBestChannel(JumpLine &jl)
+int JumpLineManager::findBestChannel(JumpLine& jl)
 {
     //qDebug() << "findBestChannel()";
     if (m_jumplines.jumpLines.count() == 0)
@@ -118,7 +118,7 @@ int JumpLineManager::findBestChannel(JumpLine &jl)
     return potentialChannel;
 }
 
-void JumpLineManager::setChannelForJumpLine(int channel, JumpLine &jl)
+void JumpLineManager::setChannelForJumpLine(int channel, JumpLine& jl)
 {
     jl.channel = channel;
     for (quint16 addr = jl.min(); addr <= jl.max(); addr++)
@@ -129,7 +129,7 @@ void JumpLineManager::setChannelForJumpLine(int channel, JumpLine &jl)
 
 void JumpLineManager::dumpJumpLines() const
 {
-    //foreach (JumpLine jl, m_jumplines.jumpLines)
+    //foreach (JumpLines::JumpLine jl, m_jumplines.jumpLines)
    // {
         //qDebug() << " JumpLine from:" << uint16ToHex(jl.from)
          //        << " to:" << uint16ToHex(jl.to)
@@ -137,7 +137,7 @@ void JumpLineManager::dumpJumpLines() const
    // }
 }
 
-bool JumpLineManager::doJumpsIntersect(TJump &A, TJump &B) const
+bool JumpLineManager::doJumpsIntersect(JumpLine::TJump& A, JumpLine::TJump& B) const noexcept
 {
 
     if (A == B) return false;
@@ -151,7 +151,7 @@ bool JumpLineManager::doJumpsIntersect(TJump &A, TJump &B) const
 
 }
 
-bool JumpLineManager::isLineWithinRange(quint16 line, TJump &jm) const
+bool JumpLineManager::isLineWithinRange(quint16 line, JumpLine::TJump& jm) const noexcept
 {
     quint16 min = qMin(jm.first,jm.second);
     quint16 max = qMax(jm.first,jm.second);
@@ -159,10 +159,10 @@ bool JumpLineManager::isLineWithinRange(quint16 line, TJump &jm) const
     return (line > min && line < max);
 }
 
-QList<JumpLine> JumpLines::jumpLinesAtAddress(quint16 addrs)
+QList<JumpLine> JumpLines::jumpLinesAtAddress(quint16 addrs) const
 {
     QList<JumpLine> list;
-    foreach (JumpLine jl, jumpLines)
+    foreach (const JumpLine& jl, jumpLines)
     {
         if (addrs >= jl.min() && addrs <= jl.max())
         {

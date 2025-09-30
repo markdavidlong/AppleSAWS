@@ -140,7 +140,7 @@ bool Disassembler::disassembleOp(quint16 address, DisassembledItem &retval, Memo
 
     if (OpCodes::isIndirectJump(opcode)) // Indirect jumps
     {
-        m_jlm.addJump(address,address,IsUnknownJump,m_from,m_to);
+        m_jlm.addJump(address,address,JumpLine::JumpType::Unknown,m_from,m_to);
         retval.setCanNotFollow(true);
     }
 
@@ -259,9 +259,9 @@ bool Disassembler::disassembleOp(quint16 address, DisassembledItem &retval, Memo
 
         retval.setTargetAddress(offsetAddress);
         if (opcode == 0x80) // BRA
-            m_jlm.addJump(address,offsetAddress,IsBRA,m_from,m_to);
+            m_jlm.addJump(address,offsetAddress,JumpLine::JumpType::BRA,m_from,m_to);
         else
-            m_jlm.addJump(address,offsetAddress,IsBranch,m_from,m_to);
+            m_jlm.addJump(address,offsetAddress,JumpLine::JumpType::Branch,m_from,m_to);
 
         disassemblyLine = QString("%1 _ARG16_ {%2%3}").arg(mnemonic)
                 .arg((offset<0)?"-":"+")
@@ -315,13 +315,13 @@ bool Disassembler::disassembleOp(quint16 address, DisassembledItem &retval, Memo
         {
             qDebug() << "JMP: Adding flow address "
                      << uint16ToHex(makeWord(hexValues[1],hexValues[2])) << "to jump table";
-            m_jlm.addJump(address,argval,IsJMP,m_from,m_to);
+            m_jlm.addJump(address,argval,JumpLine::JumpType::JMP,m_from,m_to);
             m_stack.push(argval);
             retval.setCanNotFollow(true);
         }
         else // JSR
         {
-            m_jlm.addJump(address,argval,IsJSR,m_from,m_to);
+            m_jlm.addJump(address,argval,JumpLine::JumpType::JSR,m_from,m_to);
         }
     }
 

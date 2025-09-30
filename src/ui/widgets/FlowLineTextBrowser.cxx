@@ -109,15 +109,15 @@ void FlowLineTextBrowser::lineAreaPaintEvent(QPaintEvent *event)
 
             QList<JumpLine> jllist = m_jl->jumpLinesAtAddress(linenum);
 
-            foreach (JumpLine jl, jllist)
+            foreach (const JumpLine& jl, jllist)
             {
-                if (jl.type == IsBranch || jl.type == IsBRA)
+                if (jl.type == JumpLine::JumpType::Branch || jl.type == JumpLine::JumpType::BRA)
                 {
                     painter.setPen(Qt::yellow);
                     painter.setBrush(Qt::yellow);
 
                 }
-                else if (jl.type == IsJMP)
+                else if (jl.type == JumpLine::JumpType::JMP)
                 {
                     painter.setPen(Qt::white);
                     painter.setBrush(Qt::white);

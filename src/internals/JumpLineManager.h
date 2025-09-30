@@ -1,58 +1,42 @@
 #pragma once
 
 #include "Util.h"
+#include "JumpLine.h"
 
 #include <QPair>
 #include <QMap>
 #include <QMapIterator>
 #include <QDebug>
-
-typedef QPair<quint16,quint16> TJump;
-typedef enum {
-    IsUnknownJump,
-    IsJMP,
-    IsBranch,
-    IsJSR,
-    IsBRA
-} JumpType;
-typedef QMap<TJump,JumpType> JumpMap;
-
-class JumpLine {
-public:
-    JumpLine() : from(0), to(0), channel(-1), type(IsUnknownJump) { }
-    quint16 from;
-    quint16 to;
-    int channel;
-    JumpType type;
-
-    inline quint16 min() const { return qMin(from,to); }
-    inline quint16 max() const { return qMax(from,to); }
-    inline bool isUp() const { return (from > to); }
-    inline bool isDown() const { return !isUp(); }
-};
+#include <QList>
 
 //////////////////
 
 class JumpLines
 {
 public:
-    JumpLines() : m_maxChannel(0)
-    {
+    // Type aliases for compatibility with existing code
+    using TJump = JumpLine::TJump;
+    using JumpType = JumpLine::JumpType;
+    using JumpMap = JumpLine::JumpMap;
+    
+    // Legacy enum values for backward compatibility
+    static constexpr JumpType IsUnknownJump = JumpType::Unknown;
+    static constexpr JumpType IsJMP = JumpType::JMP;
+    static constexpr JumpType IsBranch = JumpType::Branch;
+    static constexpr JumpType IsJSR = JumpType::JSR;
+    static constexpr JumpType IsBRA = JumpType::BRA;
 
+    JumpLines() : m_maxChannel(0) {}
+
+    [[nodiscard]] QList<int> channelsAtAddress(quint16 address) const {
+        return m_channelsAtAddress.value(address);
     }
 
-    QList<int> channelsAtAddress(quint16 address)
-    {
-       return m_channelsAtAddress[address];
-    }
-
-    QList<JumpLine> jumpLinesAtAddress(quint16 addrs);
+    [[nodiscard]] QList<JumpLine> jumpLinesAtAddress(quint16 addrs) const;
 
     QList<JumpLine> jumpLines;
-
     int m_maxChannel;
-
-    QMap<quint16, QList<int> > m_channelsAtAddress;
+    QMap<quint16, QList<int>> m_channelsAtAddress;
 };
 
 //////////////////
@@ -60,41 +44,31 @@ public:
 class JumpLineManager
 {
 public:
-    JumpLineManager(quint16 from = 0x0000, quint16 to = 0xffff);
+    explicit JumpLineManager(quint16 from = 0x0000, quint16 to = 0xffff);
 
-    void addJump(quint16 src, quint16 dest, JumpType type,quint16 from = 0, quint16 to = 0xffff);
+    void addJump(quint16 src, quint16 dest, JumpLine::JumpType type, quint16 from = 0, quint16 to = 0xffff);
     void dumpJumps() const;
 
-    JumpLines buildJumpLines();
-    JumpLines getJumpLines() const { return m_jumplines; }
+    [[nodiscard]] JumpLines buildJumpLines();
+    [[nodiscard]] JumpLines getJumpLines() const noexcept { return m_jumplines; }
 
-
-
-    void clear() { m_jumpmap.clear(); }
+    void clear() noexcept { m_jumpmap.clear(); }
     void dumpJumpLines() const;
 
-    int getNumJumpLineChannels() const { return m_jumplines.m_maxChannel; }
+    [[nodiscard]] int getNumJumpLineChannels() const noexcept { return m_jumplines.m_maxChannel; }
 
 protected:
-    int findBestChannel(JumpLine &jl);
-
-    void setChannelForJumpLine(int channel, JumpLine &jl);
+    [[nodiscard]] int findBestChannel(JumpLine& jl);
+    void setChannelForJumpLine(int channel, JumpLine& jl);
 
 private:
     quint16 m_start;
     quint16 m_end;
-
-    JumpMap m_jumpmap;
-
+    JumpLine::JumpMap m_jumpmap;
     JumpLines m_jumplines;
-
     QMap<quint16, QList<int>> m_channelsAtAddress;
 
-
-    bool doJumpsIntersect(TJump &A, TJump &B) const;
-    bool isLineWithinRange(quint16 line, TJump &jm) const;
-
-    void dumpJumps(JumpMap map) const;
-
+    [[nodiscard]] bool doJumpsIntersect(JumpLine::TJump& A, JumpLine::TJump& B) const noexcept;
+    [[nodiscard]] bool isLineWithinRange(quint16 line, JumpLine::TJump& jm) const noexcept;
+    void dumpJumps(JumpLine::JumpMap map) const;
 };
-
