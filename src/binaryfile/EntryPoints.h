@@ -19,22 +19,22 @@ class EntryPoints : public QObject
 {
     Q_OBJECT
 public:
-    explicit EntryPoints(QObject *parent = 0);
+    explicit EntryPoints(QObject *parent = nullptr);
 
-    bool hasEntryPointAtAddress(quint16 address);
+    [[nodiscard]] bool hasEntryPointAtAddress(quint16 address) const noexcept;
 
-    const EntryPoint &at(int location) const { return m_entryPoints.at(location); }
-    EntryPoint &pointRefAt(int location) { return m_entryPoints[location]; }
-    EntryPoint &operator[](int location) { return m_entryPoints[location]; }
+    [[nodiscard]] const EntryPoint &at(int location) const { return m_entryPoints.at(location); }
+    [[nodiscard]] EntryPoint &pointRefAt(int location) { return m_entryPoints[location]; }
+    [[nodiscard]] EntryPoint &operator[](int location) { return m_entryPoints[location]; }
 
     void editPoint(int at, EntryPoint newPoint);
 
     QDataStream &read(QDataStream &dataStream);
-    QDataStream &write(QDataStream &dataStream) const;
+    [[nodiscard]] QDataStream &write(QDataStream &dataStream) const;
 
-    int numEntryPoints() const { return m_entryPoints.count(); }
+    [[nodiscard]] int numEntryPoints() const noexcept { return m_entryPoints.count(); }
 
-    QList<quint16> getEntryPointAddresses() const;
+    [[nodiscard]] QList<quint16> getEntryPointAddresses() const;
 
     void doTestData();
 

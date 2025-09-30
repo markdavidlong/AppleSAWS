@@ -1,50 +1,38 @@
 #include "AssemblerSymbols.h"
 
+#include <algorithm>
+#include <iterator>
+
 
 AssemblerSymbols::AssemblerSymbols(QObject *parent) : QObject(parent)
 {
 
 }
 
-int AssemblerSymbols::locationOfSymbolAtAddress(quint16 address)
+int AssemblerSymbols::locationOfSymbolAtAddress(quint16 address) const
 {
-    // Assume list m_assemblerSymbols is sorted by address (it should be)
-    QListIterator<AssemblerSymbol> it(m_assemblerSymbols);
-    int idx = 0;
-    while (it.hasNext())
-    {
-        AssemblerSymbol ep = it.next();
-        if (ep.address == address) return idx;
-        if (ep.address > address) return -1;
-        idx++;
-    }
-    return -1;
+    // Use modern algorithm with const reference to avoid copy
+    const auto it = std::find_if(m_assemblerSymbols.cbegin(), m_assemblerSymbols.cend(),
+                                 [address](const AssemblerSymbol& symbol) {
+                                     return symbol.address == address;
+                                 });
+    
+    return (it != m_assemblerSymbols.cend()) ? std::distance(m_assemblerSymbols.cbegin(), it) : -1;
 }
 
-QString AssemblerSymbols::getSymbolAtAddress(quint16 address)
+QString AssemblerSymbols::getSymbolAtAddress(quint16 address) const
 {
-    int loc = locationOfSymbolAtAddress(address);
-    if (loc < 0)
-    {
-        return "";
-    }
-    else
-    {
-        return m_assemblerSymbols.at(loc).name;
-    }
+    const int loc = locationOfSymbolAtAddress(address);
+    return (loc >= 0) ? m_assemblerSymbols.at(loc).name : QString{};
 }
 
-bool AssemblerSymbols::hasAssemSymbolAtAddress(quint16 address)
+bool AssemblerSymbols::hasAssemSymbolAtAddress(quint16 address) const
 {
-    // Assume list m_assemblerSymbols is sorted by address (it should be)
-    QListIterator<AssemblerSymbol> it(m_assemblerSymbols);
-    while (it.hasNext())
-    {
-        AssemblerSymbol ep = it.next();
-        if (ep.address == address) return true;
-        if (ep.address > address) return false;
-    }
-    return false;
+    // Use modern algorithm for better performance and clarity
+    return std::any_of(m_assemblerSymbols.cbegin(), m_assemblerSymbols.cend(),
+                       [address](const AssemblerSymbol& symbol) {
+                           return symbol.address == address;
+                       });
 }
 
 void AssemblerSymbols::editSymbol(int location, AssemblerSymbol newSymbol)
@@ -120,7 +108,7 @@ QDataStream &operator<<(QDataStream &out, const AssemblerSymbol &model)
 {
     out << model.address;
     out << model.name;
-    out << (qint32) model.symbolsize;
+    out << static_cast<qint32>(model.symbolsize);
     return out;
 }
 
@@ -130,7 +118,7 @@ QDataStream &operator>>(QDataStream &in, AssemblerSymbol &model)
     in >> model.name;
     qint32 size;
     in >> size;
-    model.symbolsize = (SymbolSize) size;
+    model.symbolsize = static_cast<SymbolSize>(size);
     return in;
 }
 
@@ -139,17 +127,10 @@ QDataStream &operator>>(QDataStream &in, AssemblerSymbol &model)
 
 void AssemblerSymbols::doTestData()
 {
-    AssemblerSymbol ep;
-    ep.address = 0x0100;
-    ep.name = "Test Symbol 1";
-    addSymbol(ep);
-    ep.address = 0x0200;
-    ep.name = "Test Symbol 2";
-    addSymbol(ep);
-    ep.address = 0x0300;
-    ep.name = "Test Symbol 3";
-    addSymbol(ep);
-
+    // Use aggregate initialization for cleaner code
+    addSymbol({0x0100, QStringLiteral("Test Symbol 1"), SymbolSize::Byte});
+    addSymbol({0x0200, QStringLiteral("Test Symbol 2"), SymbolSize::Word});
+    addSymbol({0x0300, QStringLiteral("Test Symbol 3"), SymbolSize::Byte});
 }
 
 

@@ -2,7 +2,6 @@
 
 #include "GenericFile.h"
 
-// Forward declarations
 class QByteArray;
 
 class BinaryFile : public GenericFile
@@ -14,7 +13,5 @@ public:
     [[nodiscard]] virtual quint16 length() const noexcept override { return m_length; }
 
     void dump();
-
-protected:
 };
 

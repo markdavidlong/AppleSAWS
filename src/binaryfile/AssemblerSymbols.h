@@ -3,16 +3,15 @@
 #include <QObject>
 #include <QDataStream>
 
-typedef enum {
- //   SizeUnknown = 0,
-    SizeByte = 1,
-    SizeWord = 2
-} SymbolSize;
+enum class SymbolSize : quint8 {
+    Byte = 1,
+    Word = 2
+};
 
 struct AssemblerSymbol {
-    quint16 address;
-    QString name;
-    SymbolSize symbolsize;
+    quint16 address{0};
+    QString name{};
+    SymbolSize symbolsize{SymbolSize::Byte};
 };
 
 
@@ -20,25 +19,26 @@ class AssemblerSymbols : public QObject
 {
     Q_OBJECT
 public:
-    explicit AssemblerSymbols(QObject *parent = 0);
+    explicit AssemblerSymbols(QObject *parent = nullptr);
 
-    bool hasAssemSymbolAtAddress(quint16 address);
+    [[nodiscard]] bool hasAssemSymbolAtAddress(quint16 address) const;
 
-    const AssemblerSymbol &at(int location) const { return m_assemblerSymbols.at(location); }
-    AssemblerSymbol &symbolRefAt(int location) { return m_assemblerSymbols[location]; }
-    AssemblerSymbol &operator[](int location) { return m_assemblerSymbols[location]; }
+    [[nodiscard]] const AssemblerSymbol &at(int location) const { return m_assemblerSymbols.at(location); }
+    [[nodiscard]] AssemblerSymbol &symbolRefAt(int location) { return m_assemblerSymbols[location]; }
+    [[nodiscard]] AssemblerSymbol &operator[](int location) { return m_assemblerSymbols[location]; }
 
     void editSymbol(int at, AssemblerSymbol newSymbol);
 
-    QDataStream &read(QDataStream &dataStream);
-    QDataStream &write(QDataStream &dataStream) const;
+    [[nodiscard]] QDataStream &read(QDataStream &dataStream);
+    [[nodiscard]] QDataStream &write(QDataStream &dataStream) const;
 
-    int numAssemblerSymbols() const { return m_assemblerSymbols.count(); }
+    [[nodiscard]] int numAssemblerSymbols() const noexcept { return m_assemblerSymbols.count(); }
 
     void doTestData();
 
-    int locationOfSymbolAtAddress(quint16 address);
-    QString getSymbolAtAddress(quint16 address);
+    [[nodiscard]] int locationOfSymbolAtAddress(quint16 address) const;
+    [[nodiscard]] QString getSymbolAtAddress(quint16 address) const;
+
 signals:
     void symbolAdded(AssemblerSymbol &AssemblerSymbol, int location);
     void symbolAddedAt(int location);

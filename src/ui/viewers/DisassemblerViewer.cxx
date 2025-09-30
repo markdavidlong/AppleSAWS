@@ -206,8 +206,8 @@ void DisassemblerViewer::disassemble(QList<quint16> entryPoints) {
 
     for (int idx = m_file->address(); idx < m_file->address()+length; idx++)
     {
-        if (dis.memoryUsageMap()->at(idx).testFlag(Data) ||
-                dis.memoryUsageMap()->at(idx).testFlag(Unknown))
+        if (dis.memoryUsageMap()->at(idx).testFlag(MemoryUsage::Data) ||
+                dis.memoryUsageMap()->at(idx).testFlag(MemoryUsage::Unknown))
         {
             QString newline;
             bool usedefault = false;
@@ -215,13 +215,13 @@ void DisassemblerViewer::disassemble(QList<quint16> entryPoints) {
             if (m_bfm->assemblerSymbols()->hasAssemSymbolAtAddress(idx))
             {
                 int loc = m_bfm->assemblerSymbols()->locationOfSymbolAtAddress(idx);
-                if (m_bfm->assemblerSymbols()->at(loc).symbolsize == SizeByte)
+                if (m_bfm->assemblerSymbols()->at(loc).symbolsize == SymbolSize::Byte)
                 {
                     newline = QString("%1: .Byte $%2                 ; %3").arg(uint16ToHex(idx))
                             .arg(uint8ToHex(m_mem.at(idx)))
                             .arg(m_bfm->assemblerSymbols()->at(loc).name);;
                 }
-                else if (m_bfm->assemblerSymbols()->at(loc).symbolsize == SizeWord)
+                else if (m_bfm->assemblerSymbols()->at(loc).symbolsize == SymbolSize::Word)
                 {
                     newline = QString("%1: .Word $%2               ; %3").arg(uint16ToHex(idx))
                             .arg(uint16ToHex(m_mem.at(idx) + (m_mem.at(idx+1)*256)))

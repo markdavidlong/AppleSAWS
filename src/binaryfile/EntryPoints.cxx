@@ -11,7 +11,7 @@ EntryPoints::EntryPoints(QObject *parent) : QObject(parent)
 
 }
 
-bool EntryPoints::hasEntryPointAtAddress(quint16 address)
+bool EntryPoints::hasEntryPointAtAddress(quint16 address) const noexcept
 {
     // Use binary search since list is sorted by address - O(log n)
     return std::binary_search(m_entryPoints.begin(), m_entryPoints.end(),

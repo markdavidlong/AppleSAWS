@@ -4,42 +4,44 @@
 #include <QDebug>
 
 AssemblerSymbolModel::AssemblerSymbolModel(QObject *parent, AssemblerSymbols *symbols)
-    :QAbstractTableModel(parent)
+    : QAbstractTableModel(parent), m_assemblerSymbols{nullptr}
 {
     setAssemblerSymbolsData(symbols);
 }
 
-void AssemblerSymbolModel::setAssemblerSymbolsData(AssemblerSymbols *symbols)
+void AssemblerSymbolModel::setAssemblerSymbolsData(AssemblerSymbols *symbols) noexcept
 {
-    assemblerSymbols = symbols;
+    m_assemblerSymbols = symbols;
 
-    if (assemblerSymbols)
+    if (m_assemblerSymbols)
     {
-        connect(assemblerSymbols, &AssemblerSymbols::symbolAddedAt, this, &AssemblerSymbolModel::handleSymbolAddition);
-        connect(assemblerSymbols, &AssemblerSymbols::symbolChangedAt, this, &AssemblerSymbolModel::handleSymbolChange);
-        connect(assemblerSymbols, &AssemblerSymbols::symbolRemovedAt, this, &AssemblerSymbolModel::handleSymbolRemoval);
+        connect(m_assemblerSymbols, &AssemblerSymbols::symbolAddedAt, this, &AssemblerSymbolModel::handleSymbolAddition);
+        connect(m_assemblerSymbols, &AssemblerSymbols::symbolChangedAt, this, &AssemblerSymbolModel::handleSymbolChange);
+        connect(m_assemblerSymbols, &AssemblerSymbols::symbolRemovedAt, this, &AssemblerSymbolModel::handleSymbolRemoval);
     }
 
 }
 
 QVariant AssemblerSymbolModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (!assemblerSymbols) return QVariant();
+    if (!m_assemblerSymbols) return QVariant();
 
-    if (orientation == Qt::Horizontal)
+    if (role == Qt::DisplayRole)
     {
-        if (role == Qt::DisplayRole)
+        if (orientation == Qt::Horizontal)
         {
-            if (section == 0)
-                return "";
-
+            // Column headers
+            switch (section)
+            {
+                case TYPE_COLUMN: return QStringLiteral("Type");
+                case NAME_COLUMN: return QStringLiteral("Symbol");
+                default: return QVariant();
+            }
         }
-    }
-    else // Orientation == Qt::Vertical
-    {
-        if (role == Qt::DisplayRole)
+        else // Orientation == Qt::Vertical
         {
-            return "0x"+uint16ToHex(assemblerSymbols->at(section).address);
+            // Row headers showing addresses
+            return QStringLiteral("0x") + uint16ToHex(m_assemblerSymbols->at(section).address);
         }
     }
     return QVariant();
@@ -49,39 +51,36 @@ QVariant AssemblerSymbolModel::headerData(int section, Qt::Orientation orientati
 int AssemblerSymbolModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    if (!assemblerSymbols) return 0;
+    if (!m_assemblerSymbols) return 0;
 
-    return assemblerSymbols->numAssemblerSymbols();
+    return m_assemblerSymbols->numAssemblerSymbols();
 }
 
 int AssemblerSymbolModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return 2;
+    return COLUMN_COUNT;
 }
 
 QVariant AssemblerSymbolModel::data(const QModelIndex &index, int role) const
 {
-    if (!assemblerSymbols) return QVariant();
+    if (!m_assemblerSymbols) return QVariant();
 
     if (role == Qt::DisplayRole)
     {
-        if (index.column() == 0)
+        if (index.column() == TYPE_COLUMN)
         {
-            QString val;
-            if (assemblerSymbols->at(index.row()).symbolsize == SizeWord)
+            // Use switch for better performance and readability
+            switch (m_assemblerSymbols->at(index.row()).symbolsize)
             {
-                val = "WORD";
+                case SymbolSize::Word: return QStringLiteral("WORD");
+                case SymbolSize::Byte: return QStringLiteral("BYTE");
+                default: return QVariant();
             }
-            else if (assemblerSymbols->at(index.row()).symbolsize == SizeByte)
-            {
-                val = "BYTE";
-            }
-            return val;
         }
-        else if (index.column() == 1)
+        else if (index.column() == NAME_COLUMN)
         {
-            return assemblerSymbols->at(index.row()).name;
+            return m_assemblerSymbols->at(index.row()).name;
         }
     }
     return QVariant();
@@ -89,12 +88,12 @@ QVariant AssemblerSymbolModel::data(const QModelIndex &index, int role) const
 
 bool AssemblerSymbolModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (!assemblerSymbols) return false;
+    if (!m_assemblerSymbols) return false;
 
     if (data(index, role) != value) {
-        if (index.column() == 1)
+        if (index.column() == NAME_COLUMN)
         {
-            assemblerSymbols->symbolRefAt(index.row()).name = value.toString();
+            m_assemblerSymbols->symbolRefAt(index.row()).name = value.toString();
         }
         emit dataChanged(index, index, QList<int>() << role);
         return true;
@@ -104,8 +103,7 @@ bool AssemblerSymbolModel::setData(const QModelIndex &index, const QVariant &val
 
 Qt::ItemFlags AssemblerSymbolModel::flags(const QModelIndex &index) const
 {
-    Q_UNUSED(index);
-    if (index.column() == 1)
+    if (index.column() == NAME_COLUMN)
         return Qt::ItemIsEditable | QAbstractTableModel::flags(index);
     else
         return QAbstractTableModel::flags(index);
@@ -120,13 +118,13 @@ bool AssemblerSymbolModel::insertRows(int row, int count, const QModelIndex &par
 
 bool AssemblerSymbolModel::removeRows(int row, int count, const QModelIndex &parent)
 {
-    if (!assemblerSymbols) return false;
+    if (!m_assemblerSymbols) return false;
     bool success = false;
 
     beginRemoveRows(parent, row, row + count - 1);
     for (int idx = 0; idx < count; idx++)
     {
-        assemblerSymbols->removeSymbolAt(row);
+        m_assemblerSymbols->removeSymbolAt(row);
         success = true;
     }
     endRemoveRows();

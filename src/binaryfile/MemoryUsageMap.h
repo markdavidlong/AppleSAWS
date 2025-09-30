@@ -5,7 +5,7 @@
 #include <QList>
 
 
-enum MemoryUsage {
+enum class MemoryUsage : quint32 {
     Unknown            = 0x00000000,
     Data               = 0x00000001,
     Operation          = 0x00000002,
@@ -15,13 +15,13 @@ enum MemoryUsage {
 
     RefAddressHi       = 0x00000100,
     RefAddressLo       = 0x00000200,
-    RefAddress         = RefAddressLo | RefAddressHi,
+    RefAddress         = static_cast<quint32>(RefAddressLo) | static_cast<quint32>(RefAddressHi),
     ZeroPageRefAddress = 0x00000400,
 
     InvalidOperation   = 0x00001000,
     Break              = 0x00002000,
     UndeterminedJump   = 0x00004000,
-    StopsExecution     = InvalidOperation | Break | UndeterminedJump,
+    StopsExecution     = static_cast<quint32>(InvalidOperation) | static_cast<quint32>(Break) | static_cast<quint32>(UndeterminedJump),
 
     EntryPointAddr     = 0x00010000,
     BranchOffsetAddr   = 0x00020000,
@@ -37,9 +37,8 @@ private:
     QList<MemoryUsages> m_data;
     
 public:
-    MemoryUsageMap()
+    MemoryUsageMap() : m_data(65536, MemoryUsage::Unknown)
     {
-        m_data.fill(MemoryUsage::Unknown,65536);
     }
 
     void clearData()
@@ -63,7 +62,7 @@ public:
         }
     }
 
-    QList<quint16> addressesWhichContain(MemoryUsage usage)
+    [[nodiscard]] QList<quint16> addressesWhichContain(MemoryUsage usage) const
     {
         QList<quint16> retval;
         for (int idx = 0; idx < m_data.size(); idx++)
@@ -77,13 +76,13 @@ public:
     }
 
     // Essential interface methods for accessing the data
-    inline int size() const { return m_data.size(); }
-    inline bool isEmpty() const { return m_data.isEmpty(); }
-    inline MemoryUsages& operator[](int i) { return m_data[i]; }
-    inline const MemoryUsages& operator[](int i) const { return m_data[i]; }
-    inline MemoryUsages at(int i) const { return m_data.at(i); }
-    inline MemoryUsages value(int i) const { return m_data.value(i); }
-    inline MemoryUsages value(int i, const MemoryUsages& defaultValue) const { return m_data.value(i, defaultValue); }
+    [[nodiscard]] inline int size() const noexcept { return m_data.size(); }
+    [[nodiscard]] inline bool isEmpty() const noexcept { return m_data.isEmpty(); }
+    [[nodiscard]] inline MemoryUsages& operator[](int i) { return m_data[i]; }
+    [[nodiscard]] inline const MemoryUsages& operator[](int i) const { return m_data[i]; }
+    [[nodiscard]] inline MemoryUsages at(int i) const { return m_data.at(i); }
+    [[nodiscard]] inline MemoryUsages value(int i) const { return m_data.value(i); }
+    [[nodiscard]] inline MemoryUsages value(int i, const MemoryUsages& defaultValue) const { return m_data.value(i, defaultValue); }
 
 };
 

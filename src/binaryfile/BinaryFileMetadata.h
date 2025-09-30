@@ -16,12 +16,12 @@ class BinaryFileMetadata : public QObject
 {
     Q_OBJECT
 public:
-    BinaryFileMetadata(GenericFile *file, quint16 defaultAddress, QObject *parent = 0);
+    explicit BinaryFileMetadata(GenericFile *file, quint16 defaultAddress, QObject *parent = nullptr);
 
-    QString filename() const { return m_file->filename(); }
+    [[nodiscard]] QString filename() const { return m_file->filename(); }
 
-    EntryPoints *entryPoints() { return m_eps; }
-    AssemblerSymbols *assemblerSymbols() { return m_as; }
+    [[nodiscard]] EntryPoints *entryPoints() noexcept { return m_eps; }
+    [[nodiscard]] AssemblerSymbols *assemblerSymbols() noexcept { return m_as; }
 
 signals:
     void doDisassemble(QList<quint16>);

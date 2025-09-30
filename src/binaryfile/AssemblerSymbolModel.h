@@ -13,23 +13,28 @@ class AssemblerSymbolModel : public QAbstractTableModel
     Q_OBJECT
 
 public:
-    explicit AssemblerSymbolModel(QObject *parent = 0, AssemblerSymbols *symbols = Q_NULLPTR);
-    void setAssemblerSymbolsData(AssemblerSymbols *symbols);
+    explicit AssemblerSymbolModel(QObject *parent = nullptr, AssemblerSymbols *symbols = nullptr);
+    void setAssemblerSymbolsData(AssemblerSymbols *symbols) noexcept;
 
     // Header:
-    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;//DONE
+    [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
     // Basic functionality:
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+    [[nodiscard]] int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    [[nodiscard]] int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+    
+    // Constants for better maintainability
+    static constexpr int COLUMN_COUNT = 2;
+    static constexpr int TYPE_COLUMN = 0;
+    static constexpr int NAME_COLUMN = 1;
 
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    [[nodiscard]] QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
     // Editable:
     bool setData(const QModelIndex &index, const QVariant &value,
                  int role = Qt::EditRole) override;
 
-    Qt::ItemFlags flags(const QModelIndex& index) const override;
+    [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
 
     // Add data:
     bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
@@ -51,6 +56,6 @@ protected slots:
 
 
 private:
-    AssemblerSymbols *assemblerSymbols;
+    AssemblerSymbols *m_assemblerSymbols{nullptr};
 };
 

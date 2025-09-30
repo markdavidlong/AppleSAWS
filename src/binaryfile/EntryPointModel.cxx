@@ -6,19 +6,19 @@
 
 
 EntryPointModel::EntryPointModel(QObject *parent, EntryPoints *points)
-    : QAbstractTableModel(parent)
+    : QAbstractTableModel(parent), m_entryPoints{nullptr}
 {
     setEntryPointsData(points);
 }
 
-void EntryPointModel::setEntryPointsData(EntryPoints *points)
+void EntryPointModel::setEntryPointsData(EntryPoints *points) noexcept
 {
-    entryPoints = points;
+    m_entryPoints = points;
 
-    if (entryPoints)
+    if (m_entryPoints)
     {
-        connect(entryPoints, &EntryPoints::pointAddedAt,   this, &EntryPointModel::handlePointAddition);
-        connect(entryPoints, &EntryPoints::pointChangedAt, this, &EntryPointModel::handlePointChange);
+        connect(m_entryPoints, &EntryPoints::pointAddedAt,   this, &EntryPointModel::handlePointAddition);
+        connect(m_entryPoints, &EntryPoints::pointChangedAt, this, &EntryPointModel::handlePointChange);
 
     }
 
@@ -26,22 +26,24 @@ void EntryPointModel::setEntryPointsData(EntryPoints *points)
 
 QVariant EntryPointModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (!entryPoints) return QVariant();
+    if (!m_entryPoints) return QVariant();
 
-    if (orientation == Qt::Horizontal)
+    if (role == Qt::DisplayRole)
     {
-        if (role == Qt::DisplayRole)
+        if (orientation == Qt::Horizontal)
         {
-            if (section == 0)
-                return "";
-
+            // Column headers
+            switch (section)
+            {
+                case ADDRESS_COLUMN: return QStringLiteral("Address");
+                case NOTE_COLUMN: return QStringLiteral("Note");
+                default: return QVariant();
+            }
         }
-    }
-    else // Orientation == Qt::Vertical
-    {
-        if (role == Qt::DisplayRole)
+        else // Orientation == Qt::Vertical
         {
-            return "0x"+uint16ToHex(entryPoints->at(section).address);
+            // Row headers showing addresses
+            return QStringLiteral("0x") + uint16ToHex(m_entryPoints->at(section).address);
         }
     }
     return QVariant();
@@ -51,26 +53,31 @@ QVariant EntryPointModel::headerData(int section, Qt::Orientation orientation, i
 int EntryPointModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    if (!entryPoints) return 0;
+    if (!m_entryPoints) return 0;
 
-    return entryPoints->numEntryPoints();
+    return m_entryPoints->numEntryPoints();
 }
 
 int EntryPointModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return 1;
+    return COLUMN_COUNT;
 }
 
 QVariant EntryPointModel::data(const QModelIndex &index, int role) const
 {
-    if (!entryPoints) return QVariant();
+    if (!m_entryPoints) return QVariant();
 
     if (role == Qt::DisplayRole)
     {
-        if (index.column() == 0)
+        switch (index.column())
         {
-            return entryPoints->at(index.row()).note;
+            case ADDRESS_COLUMN:
+                return QStringLiteral("0x") + uint16ToHex(m_entryPoints->at(index.row()).address);
+            case NOTE_COLUMN:
+                return m_entryPoints->at(index.row()).note;
+            default:
+                return QVariant();
         }
     }
     return QVariant();
@@ -78,12 +85,12 @@ QVariant EntryPointModel::data(const QModelIndex &index, int role) const
 
 bool EntryPointModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (!entryPoints) return false;
+    if (!m_entryPoints) return false;
 
     if (data(index, role) != value) {
-        if (index.column() == 0)
+        if (index.column() == NOTE_COLUMN)
         {
-           entryPoints->pointRefAt(index.row()).note = value.toString();
+           m_entryPoints->pointRefAt(index.row()).note = value.toString();
         }
         emit dataChanged(index, index, QList<int>() << role);
         return true;
@@ -93,8 +100,7 @@ bool EntryPointModel::setData(const QModelIndex &index, const QVariant &value, i
 
 Qt::ItemFlags EntryPointModel::flags(const QModelIndex &index) const
 {
-    Q_UNUSED(index);
-    if (index.column() == 0)
+    if (index.column() == NOTE_COLUMN)
         return Qt::ItemIsEditable | QAbstractTableModel::flags(index);
     else
         return QAbstractTableModel::flags(index);
@@ -109,25 +115,16 @@ bool EntryPointModel::insertRows(int row, int count, const QModelIndex &parent)
 
 bool EntryPointModel::removeRows(int row, int count, const QModelIndex &parent)
 {
-    qDebug() << __FILE__ << __LINE__;
-
-    if (!entryPoints) return false;
-    qDebug() << __FILE__ << __LINE__;
+    if (!m_entryPoints) return false;
     bool success = false;
-    qDebug() << __FILE__ << __LINE__;
 
     beginRemoveRows(parent, row, row + count - 1);
-    qDebug() << __FILE__ << __LINE__;
     for (int idx = 0; idx < count; idx++)
     {
-        qDebug() << __FILE__ << __LINE__;
-        entryPoints->removePointAt(row);
-        qDebug() << __FILE__ << __LINE__;
+        m_entryPoints->removePointAt(row);
         success = true;
     }
-    qDebug() << __FILE__ << __LINE__;
     endRemoveRows();
-    qDebug() << __FILE__ << __LINE__;
     return success;
 }
 

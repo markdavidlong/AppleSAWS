@@ -13,22 +13,27 @@ class EntryPointModel : public QAbstractTableModel
     Q_OBJECT
 
 public:
-    explicit EntryPointModel(QObject *parent = 0, EntryPoints *points = Q_NULLPTR);
-    void setEntryPointsData(EntryPoints *points);
+    explicit EntryPointModel(QObject *parent = nullptr, EntryPoints *points = nullptr);
+    void setEntryPointsData(EntryPoints *points) noexcept;
 
     // Header:
-    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+    [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
     // Basic functionality:
-    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+    [[nodiscard]] int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    [[nodiscard]] int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    // Constants for better maintainability
+    static constexpr int COLUMN_COUNT = 2;
+    static constexpr int ADDRESS_COLUMN = 0;
+    static constexpr int NOTE_COLUMN = 1;
+
+    [[nodiscard]] QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
     // Editable:
     bool setData(const QModelIndex &index, const QVariant &value,
                  int role = Qt::EditRole) override;
 
-    Qt::ItemFlags flags(const QModelIndex& index) const override;
+    [[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
 
     // Add data:
     bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
@@ -50,7 +55,7 @@ protected slots:
 
 
 private:
-    EntryPoints *entryPoints;
+    EntryPoints *m_entryPoints{nullptr};
 };
 
 

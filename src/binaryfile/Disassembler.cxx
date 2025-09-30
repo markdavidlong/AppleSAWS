@@ -88,7 +88,7 @@ QList<DisassembledItem> Disassembler::disassemble(quint16 from, quint16 to,
         while (!m_stack.isEmpty())
         {
             quint16 num = m_stack.pop();
-            if (!m_memusagemap[num].testFlag(Operation))
+            if (!m_memusagemap[num].testFlag(MemoryUsage::Operation))
             {
                 if (num >= from && num <= to) // TODO: remove this to not limit disassembly to program range
                 {
@@ -116,7 +116,7 @@ bool Disassembler::disassembleOp(quint16 address, DisassembledItem &retval, Memo
 
     if (memuse)
     {
-        if ((*memuse)[address].testFlag(Operation)) return false;
+        if ((*memuse)[address].testFlag(MemoryUsage::Operation)) return false;
     }
 
     quint8 opcode = m_mem->at(address);
@@ -182,10 +182,10 @@ bool Disassembler::disassembleOp(quint16 address, DisassembledItem &retval, Memo
 
     if (memuse)
     {
-        (*memuse)[address].setFlag(Operation);
+        (*memuse)[address].setFlag(MemoryUsage::Operation);
         for (int idx = 1; idx < OpCodes::numArgs(opcode)+1; idx++)
         {
-            (*memuse)[address+idx].setFlag(OperationArg);
+            (*memuse)[address+idx].setFlag(MemoryUsage::OperationArg);
         }
     }
 
@@ -338,9 +338,9 @@ void Disassembler::setUnknownToData(quint16 from, quint16 to)
 {
     for (int idx = from; idx <= to; idx++)
     {
-        if (m_memusagemap[idx].testFlag(Unknown))
+        if (m_memusagemap[idx].testFlag(MemoryUsage::Unknown))
         {
-            m_memusagemap[idx].setFlag(Data);
+            m_memusagemap[idx].setFlag(MemoryUsage::Data);
         }
     }
 }
@@ -395,11 +395,11 @@ bool DisassembledItem::isJsr() const {
     return OpCodes::isJsr(m_opcode); 
 }
 
-bool DisassembledItem::isReturn() { 
+bool DisassembledItem::isReturn() const { 
     return OpCodes::isReturn(m_opcode); 
 }
 
-bool DisassembledItem::isBreak() { 
+bool DisassembledItem::isBreak() const { 
     return OpCodes::isBreak(m_opcode); 
 }
 
