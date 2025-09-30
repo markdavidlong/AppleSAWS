@@ -16,7 +16,7 @@ DisassemblerMetadataDialog::DisassemblerMetadataDialog(BinaryFileMetadata *bfm, 
     m_bfm = bfm;
 
     m_epmodel = new EntryPointModel(this,m_bfm->entryPoints());
-    m_asmodel = new AssemblerSymbolModel(this,m_bfm->assemblerSymbols());
+    m_asmodel = new AssemblerSymbolModel(m_bfm->assemblerSymbols(), this);
 
     ui->entryTable->setModel(m_epmodel);
     ui->symbolTable->setModel(m_asmodel);
@@ -116,7 +116,7 @@ void DisassemblerMetadataDialog::handleAddSymbolButton()
         {
             as.symbolsize = SymbolSize::Word;
         }
-        m_bfm->assemblerSymbols()->addSymbol(as);
+        m_bfm->assemblerSymbols().addSymbol(as);
         ui->symbolTable->resizeRowsToContents();
     }
 }

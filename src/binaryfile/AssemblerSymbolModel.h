@@ -13,8 +13,7 @@ class AssemblerSymbolModel : public QAbstractTableModel
     Q_OBJECT
 
 public:
-    explicit AssemblerSymbolModel(QObject *parent = nullptr, AssemblerSymbols *symbols = nullptr);
-    void setAssemblerSymbolsData(AssemblerSymbols *symbols) noexcept;
+    explicit AssemblerSymbolModel(AssemblerSymbols &symbols, QObject *parent = nullptr);
 
     // Header:
     [[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
@@ -56,6 +55,6 @@ protected slots:
 
 
 private:
-    AssemblerSymbols *m_assemblerSymbols{nullptr};
+    AssemblerSymbols &m_assemblerSymbols;
 };
 

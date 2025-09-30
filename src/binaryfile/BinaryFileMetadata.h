@@ -21,7 +21,7 @@ public:
     [[nodiscard]] QString filename() const { return m_file->filename(); }
 
     [[nodiscard]] EntryPoints *entryPoints() noexcept { return m_eps; }
-    [[nodiscard]] AssemblerSymbols *assemblerSymbols() noexcept { return m_as; }
+    [[nodiscard]] AssemblerSymbols &assemblerSymbols() noexcept { return m_as; }
 
 signals:
     void doDisassemble(QList<quint16>);
@@ -33,9 +33,9 @@ public slots:
     void requestDisassembly() { emit doDisassemble(m_eps->getEntryPointAddresses()); }
 
 private:
+    AssemblerSymbols m_as;
 
     EntryPoints *m_eps;
-    AssemblerSymbols *m_as;
 
     GenericFile *m_file;
 

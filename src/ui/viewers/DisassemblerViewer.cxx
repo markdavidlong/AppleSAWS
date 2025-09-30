@@ -188,12 +188,12 @@ void DisassemblerViewer::disassemble(QList<quint16> entryPoints) {
 
         QString newline;
 
-        if (m_bfm->assemblerSymbols()->hasAssemSymbolAtAddress(di.address()))
+        if (m_bfm->assemblerSymbols().hasAssemSymbolAtAddress(di.address()))
         {
-            int loc = m_bfm->assemblerSymbols()->locationOfSymbolAtAddress(di.address());
+            int loc = m_bfm->assemblerSymbols().locationOfSymbolAtAddress(di.address());
             newline += (QString("%1: [%2]\n       %3 %4")
                         .arg(di.hexAddress())
-                        .arg(m_bfm->assemblerSymbols()->at(loc).name)
+                        .arg(m_bfm->assemblerSymbols().at(loc).name)
                         .arg(di.hexString()).arg(ds)
                         );
         }
@@ -212,20 +212,20 @@ void DisassemblerViewer::disassemble(QList<quint16> entryPoints) {
             QString newline;
             bool usedefault = false;
 
-            if (m_bfm->assemblerSymbols()->hasAssemSymbolAtAddress(idx))
+            if (m_bfm->assemblerSymbols().hasAssemSymbolAtAddress(idx))
             {
-                int loc = m_bfm->assemblerSymbols()->locationOfSymbolAtAddress(idx);
-                if (m_bfm->assemblerSymbols()->at(loc).symbolsize == SymbolSize::Byte)
+                int loc = m_bfm->assemblerSymbols().locationOfSymbolAtAddress(idx);
+                if (m_bfm->assemblerSymbols().at(loc).symbolsize == SymbolSize::Byte)
                 {
                     newline = QString("%1: .Byte $%2                 ; %3").arg(uint16ToHex(idx))
                             .arg(uint8ToHex(m_mem.at(idx)))
-                            .arg(m_bfm->assemblerSymbols()->at(loc).name);;
+                            .arg(m_bfm->assemblerSymbols().at(loc).name);;
                 }
-                else if (m_bfm->assemblerSymbols()->at(loc).symbolsize == SymbolSize::Word)
+                else if (m_bfm->assemblerSymbols().at(loc).symbolsize == SymbolSize::Word)
                 {
                     newline = QString("%1: .Word $%2               ; %3").arg(uint16ToHex(idx))
                             .arg(uint16ToHex(m_mem.at(idx) + (m_mem.at(idx+1)*256)))
-                            .arg(m_bfm->assemblerSymbols()->at(loc).name);
+                            .arg(m_bfm->assemblerSymbols().at(loc).name);
                     idx++;
                 }
                 else
@@ -261,9 +261,9 @@ QString DisassemblerViewer::getPotentialLabel(quint16 address)
 {
     if (m_bfm)
     {
-        if (m_bfm->assemblerSymbols()->hasAssemSymbolAtAddress(address))
+        if (m_bfm->assemblerSymbols().hasAssemSymbolAtAddress(address))
         {
-            return m_bfm->assemblerSymbols()->getSymbolAtAddress(address);
+            return m_bfm->assemblerSymbols().getSymbolAtAddress(address);
         }
     }
     if (address == 0x20) { return "MON.WINDOW_LEFT"; }

@@ -11,7 +11,7 @@ BinaryFileMetadata::BinaryFileMetadata(GenericFile *file, quint16 defaultAddress
     m_defaultAddress = defaultAddress;
 
     m_eps = new EntryPoints(this);
-    m_as = new AssemblerSymbols(this);
+    
 
     load();
 }
@@ -30,7 +30,7 @@ void BinaryFileMetadata::load()
                     .arg(".bfm");
         QDataStream ds(&infile);
         ds >> *m_eps;
-        ds >> *m_as;
+        ds >> m_as;
         infile.close();
     }
     else qDebug() << "Cannot open " << QString("%1%2%3")
@@ -54,7 +54,7 @@ void BinaryFileMetadata::save()
                     .arg(".bfm");
         QDataStream ds(&outfile);
         ds << *m_eps;
-        ds << *m_as;
+        ds << m_as;
         outfile.close();
     }
     else qDebug() << "Cannot open " << QString("%1%2%3")
