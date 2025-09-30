@@ -3,12 +3,9 @@
 #include "AppleString.h"
 
 
-CatalogSector::CatalogSector(Sector *data)
+CatalogSector::CatalogSector(Sector* data) : m_data(data), m_next(0, 0)
 {
  //   qDebug() << "### Start CatalogSector ctor";
-    m_data = data;
-
-    m_next = TSPair(0,0);
 
     TSPair next(m_data->rawData()[0x01],m_data->rawData()[0x02]);
 
@@ -41,7 +38,7 @@ CatalogSector::CatalogSector(Sector *data)
   //  qDebug() << "### End CatalogSector ctor";
 }
 
-void CatalogSector::dumpFDEs() {
+void CatalogSector::dumpFDEs() const {
     for (int idx = 0; idx<7; idx++)
     {
         FileDescriptiveEntry fde = m_fdes[idx];
@@ -52,7 +49,7 @@ void CatalogSector::dumpFDEs() {
     }
 }
 
-FileDescriptiveEntry CatalogSector::makeFDE(int offset)
+FileDescriptiveEntry CatalogSector::makeFDE(int offset) const
 {
     FileDescriptiveEntry fde;
     fde.firstTSListSector().setTrack(m_data->rawData()[offset + 0x00]);
@@ -82,4 +79,30 @@ FileDescriptiveEntry CatalogSector::makeFDE(int offset)
     }
 
     return fde;
+}
+
+FileDescriptiveEntry& CatalogSector::getFDE(quint8 number) {
+    if (number >= m_fdes.length()) {
+        number = m_fdes.length() - 1;
+    }
+    return m_fdes[number];
+}
+
+const FileDescriptiveEntry& CatalogSector::getFDE(quint8 number) const {
+    if (number >= m_fdes.length()) {
+        number = m_fdes.length() - 1;
+    }
+    return m_fdes[number];
+}
+
+QList<FileDescriptiveEntry> CatalogSector::getFDEs() const {
+    return m_fdes;
+}
+
+TSPair CatalogSector::nextCatalogSector() const noexcept {
+    return m_next;
+}
+
+Sector* CatalogSector::getSector() const noexcept {
+    return m_data;
 }

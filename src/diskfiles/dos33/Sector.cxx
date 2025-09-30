@@ -17,7 +17,7 @@ char Sector::at(uint offset) const {
     return m_data.at(offset);
 }
 
-bool Sector::setData(QByteArray data) {
+bool Sector::setData(const QByteArray& data) {
     if (data.length() != 256) return false;
 
     m_data = data;

@@ -2,10 +2,8 @@
 
 #include "Sector.h"
 
-TrackSectorList::TrackSectorList(Sector *data)
+TrackSectorList::TrackSectorList(Sector* data) : m_data(data)
 {
-    m_data = data;
-
     m_next_tslist.setTrack(m_data->rawData()[0x01]);
     m_next_tslist.setSector(m_data->rawData()[0x02]);
 

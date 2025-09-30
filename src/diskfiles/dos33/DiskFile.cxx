@@ -14,7 +14,7 @@
 #include <QDir>
 
 
-DiskFile::DiskFile(QString filename)
+DiskFile::DiskFile(const QString& filename)
 {
     if (!filename.isEmpty())
     {
@@ -30,7 +30,7 @@ DiskFile::~DiskFile()
     }
 }
 
-bool DiskFile::read(QString filename)
+bool DiskFile::read(const QString& filename)
 {
     m_fullImageName = filename;
     m_imageName = QFileInfo(filename).fileName();
@@ -60,7 +60,10 @@ bool DiskFile::read(QString filename)
        //             qDebug() << "Track " << track << " Sector " << sector;
                     Sector sec;
                     sec.setTrackSector(track,sector);
-                    sec.setData(QByteArray(buffer,256));
+                    if (!sec.setData(QByteArray(buffer,256))) {
+                        qDebug() << "Failed to set sector data for Track " << track << " Sector " << sector;
+                        return false;
+                    }
                     m_contents[track][sector] = sec;
                 }
                 else

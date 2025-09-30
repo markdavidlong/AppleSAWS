@@ -10,49 +10,48 @@ class Sector
 {
 public:
 
-    Sector() {
-        m_data.resize(256);
-        m_track = 255;
-        m_sector = 255;
+    Sector() : m_data(256, '\0'), m_track{255}, m_sector{255}
+    {
     }
 
-    const VTOC promoteToVTOC() const {
+    [[nodiscard]] const VTOC promoteToVTOC() const {
         return VTOC(*this);
     }
 
-    CatalogSector promoteToCatalogSector() {
+    [[nodiscard]] CatalogSector promoteToCatalogSector() {
         return CatalogSector(this);
     }
 
-    TrackSectorList promoteToTrackSectorList()  {
+    [[nodiscard]] TrackSectorList promoteToTrackSectorList()  {
         return TrackSectorList(this);
     }
 
-    int sector() const { return m_sector; }
-    int track() const { return m_track; }
+    [[nodiscard]] int sector() const noexcept { return m_sector; }
+    [[nodiscard]] int track() const noexcept { return m_track; }
 
-    void setTrackSector(int track, int sector) {
+    void setTrackSector(int track, int sector) noexcept {
         setTrack(track);
         setSector(sector);
     }
 
-    void setTrack(int track) { m_track = track; }
-    void setSector(int sector) { m_sector = sector; }
+    void setTrack(int track) noexcept { m_track = track; }
+    void setSector(int sector) noexcept { m_sector = sector; }
 
-    char&  operator[](uint offset);
-    char  at(uint offset) const;
+    [[nodiscard]] char&  operator[](uint offset);
+    [[nodiscard]] char  at(uint offset) const;
 
-    bool setData(QByteArray data);
+    [[nodiscard]] bool setData(const QByteArray& data);
 
     void dump();
 
-    QByteArray data() const { return m_data; }
+    [[nodiscard]] QByteArray data() const { return m_data; }
 
-    QByteArray rawData() { return m_data; }
+    [[nodiscard]] QByteArray& rawData() noexcept { return m_data; }
+    [[nodiscard]] const QByteArray& rawData() const noexcept { return m_data; }
 
 private:
     QByteArray m_data;
-    int m_track;
-    int m_sector;
+    int m_track{0};
+    int m_sector{0};
 };
 

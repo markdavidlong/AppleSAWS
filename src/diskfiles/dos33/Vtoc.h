@@ -12,7 +12,7 @@ class QString;
 struct VTOC
 {
 public:
-    VTOC(const Sector &data);
+    explicit VTOC(const Sector& data);
 
     int track{0};
     int sector{0};
@@ -26,12 +26,12 @@ public:
     quint8 sectorsPerDisk{0};
     qint16 bytesPerSector{0};
     
-    bool isSectorInUse(TSPair ts) const;
+    [[nodiscard]] bool isSectorInUse(TSPair ts) const noexcept;
     void dump() const;
 
 private:
-    void makeSectorsInUse(const Sector &data, quint8 tracksPerDisk, quint8 sectorsPerDisk);
-    QString buildUseString(quint8 track) const;
+    void makeSectorsInUse(const Sector& data, quint8 tracksPerDisk, quint8 sectorsPerDisk);
+    [[nodiscard]] QString buildUseString(quint8 track) const;
 
     QBitArray m_sectorsInUse; // One bit per sector on disk.  1 = in use, 0 = free
 };

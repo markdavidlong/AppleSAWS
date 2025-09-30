@@ -15,48 +15,45 @@ class GenericFile;
 class DiskFile
 {
 public:
-    DiskFile(QString filename = "");
+    explicit DiskFile(const QString& filename = "");
     ~DiskFile();
 
-    bool read(QString filename);
+    bool read(const QString& filename);
 
-    Sector &getSector(TSPair ts) { return getSector(ts.track(), ts.sector()); }
-    const Sector &getSector(TSPair ts) const { return getSector(ts.track(), ts.sector()); }
+    Sector& getSector(TSPair ts) { return getSector(ts.track(), ts.sector()); }
+    const Sector& getSector(TSPair ts) const { return getSector(ts.track(), ts.sector()); }
 
-    Sector &getSector(int track, int sector) {
+    Sector& getSector(int track, int sector) {
         return m_contents[track][sector];
     }
     
-    const Sector &getSector(int track, int sector) const {
+    const Sector& getSector(int track, int sector) const {
         return m_contents[track][sector];
     }
 
-    VTOC getVTOC() const;
+    [[nodiscard]] VTOC getVTOC() const;
     
-    QList<CatalogSector> getCatalogSectors();
+    [[nodiscard]] QList<CatalogSector> getCatalogSectors();
     
-    GenericFile *getFile(FileDescriptiveEntry fde);
+    [[nodiscard]] GenericFile* getFile(FileDescriptiveEntry fde);
     
-    QByteArray getDataFromTrackSectorList(TrackSectorList tsl);
+    [[nodiscard]] QByteArray getDataFromTrackSectorList(TrackSectorList tsl);
     
-    QList<FileDescriptiveEntry> getAllFDEs();
+    [[nodiscard]] QList<FileDescriptiveEntry> getAllFDEs();
     
-    QByteArray fileHash() const { return m_hash; }
+    [[nodiscard]] QByteArray fileHash() const noexcept { return m_hash; }
     
-    QString getDiskImageName() const { return m_imageName; }
-    QString getFullDiskImageName() const { return m_fullImageName; }
-    QString getMetaDataPath() const;
+    [[nodiscard]] QString getDiskImageName() const noexcept { return m_imageName; }
+    [[nodiscard]] QString getFullDiskImageName() const noexcept { return m_fullImageName; }
+    [[nodiscard]] QString getMetaDataPath() const;
     
 private:
-    
-    QMap< int, QMap< int, Sector> > m_contents;
-    QMap<FileDescriptiveEntry,GenericFile *> m_files;
+    QMap<int, QMap<int, Sector>> m_contents;
+    QMap<FileDescriptiveEntry, GenericFile*> m_files;
     QByteArray m_hash;
-    
     QString m_imageName;
     QString m_fullImageName;
-
-    quint8 m_sectors_per_track;
+    quint8 m_sectors_per_track{16};
 
 };
 

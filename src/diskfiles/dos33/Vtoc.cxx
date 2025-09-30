@@ -6,7 +6,7 @@
 #include <QString>
 
 
-VTOC::VTOC(const Sector &sectorData)
+VTOC::VTOC(const Sector& sectorData)
 {
     track = sectorData.track();
     sector = sectorData.sector();
@@ -23,7 +23,7 @@ VTOC::VTOC(const Sector &sectorData)
     makeSectorsInUse(sectorData,tracksPerDisk,sectorsPerDisk);                             
 }
 
-void VTOC::makeSectorsInUse(const Sector &data, quint8 tracksPerDisk, quint8 sectorsPerDisk)
+void VTOC::makeSectorsInUse(const Sector& data, quint8 tracksPerDisk, quint8 sectorsPerDisk)
 {
     m_sectorsInUse.resize(tracksPerDisk * sectorsPerDisk);
     m_sectorsInUse.fill(false);
@@ -41,7 +41,7 @@ void VTOC::makeSectorsInUse(const Sector &data, quint8 tracksPerDisk, quint8 sec
     }
 }
 
-bool VTOC::isSectorInUse(TSPair ts) const {
+bool VTOC::isSectorInUse(TSPair ts) const noexcept {
     quint8 track = ts.track();
     quint8 sec = ts.sector();
     return m_sectorsInUse.testBit((track * sectorsPerDisk) + sec);

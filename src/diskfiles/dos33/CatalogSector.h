@@ -14,29 +14,26 @@ class Sector;
 class CatalogSector
 {
 public:
-    CatalogSector(Sector *sector);
+    explicit CatalogSector(Sector* sector);
 
-    FileDescriptiveEntry &getFDE(quint8 number) {
-        if (number >= m_fdes.length()) {
-            number = m_fdes.length() - 1;
-        }
-        return m_fdes[number];
-    }
+    // Const and non-const overloads for getFDE
+    [[nodiscard]] FileDescriptiveEntry& getFDE(quint8 number);
+    [[nodiscard]] const FileDescriptiveEntry& getFDE(quint8 number) const;
 
-    QList<FileDescriptiveEntry> getFDEs() { return m_fdes; }
+    [[nodiscard]] QList<FileDescriptiveEntry> getFDEs() const;
 
-    TSPair nextCatalogSector() { return m_next; }
+    [[nodiscard]] TSPair nextCatalogSector() const noexcept;
 
-    void dumpFDEs();
+    void dumpFDEs() const;
 
-    Sector *getSector() const { return m_data; }
+    [[nodiscard]] Sector* getSector() const noexcept;
 
 private:
-    FileDescriptiveEntry makeFDE(int offset);
+    [[nodiscard]] FileDescriptiveEntry makeFDE(int offset) const;
 
 private:
-    Sector *m_data;
+    Sector *m_data{nullptr};
     QList<FileDescriptiveEntry> m_fdes;
-    TSPair m_next;
+    TSPair m_next{0,0};
 };
 
