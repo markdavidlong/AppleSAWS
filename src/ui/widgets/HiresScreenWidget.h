@@ -13,25 +13,26 @@
 #include <QList>
 #include <QDebug>
 
-class HiresScreenWidget : public QWidget
+class HiresScreenWidget final : public QWidget
 {
     Q_OBJECT
 public:
 
-    class ColRow {
+    class ColRow final {
     public:
-        ColRow() { m_col = 0; m_row = 0; m_undefined = true; }
-        ColRow(quint8 col, quint8 row) { setColRow(col,row); }
+        constexpr ColRow() noexcept : m_col(0), m_row(0), m_undefined(true) {}
+        explicit ColRow(quint8 col, quint8 row) { setColRow(col,row); }
+        
         void setColRow(quint8 col, quint8 row) { m_col = col; m_row = row; calc(); }
 
-        quint8 col() const { return m_col; }
-        quint8 row() const { return m_row; }
+        [[nodiscard]] constexpr quint8 col() const noexcept { return m_col; }
+        [[nodiscard]] constexpr quint8 row() const noexcept { return m_row; }
 
-        bool isDefined() const { return !m_undefined; }
-        bool isUndefined() const { return m_undefined; }
+        [[nodiscard]] constexpr bool isDefined() const noexcept { return !m_undefined; }
+        [[nodiscard]] constexpr bool isUndefined() const noexcept { return m_undefined; }
 
-        quint16 appleAddress() { return m_appleAddress; }
-        quint16 rawAddress() { return m_rawAddress; }
+        [[nodiscard]] quint16 appleAddress() const noexcept { return m_appleAddress; }
+        [[nodiscard]] quint16 rawAddress() const noexcept { return m_rawAddress; }
 
     private:
         quint8 m_col;
@@ -63,44 +64,52 @@ public:
 
     };
 
-    enum ViewMode {
+    enum class ViewMode {
          Monochrome,
          PerPixelColor,
          NTSCColor
      };
 
-     explicit HiresScreenWidget(QWidget *parent = 0);
-     void paintEvent(QPaintEvent *event);
+     explicit HiresScreenWidget(QWidget *parent = nullptr);
+     ~HiresScreenWidget() override;
+     
+     // Rule of Five - Qt QObject classes cannot be copied or moved
+     HiresScreenWidget(const HiresScreenWidget&) = delete;
+     HiresScreenWidget& operator=(const HiresScreenWidget&) = delete;
+     HiresScreenWidget(HiresScreenWidget&&) = delete;
+     HiresScreenWidget& operator=(HiresScreenWidget&&) = delete;
 
-     void resizeEvent(QResizeEvent *event);
+     void paintEvent(QPaintEvent *event) override;
 
-     static QBitArray byteToBits(quint8 byte);
-     void contextMenuEvent(QContextMenuEvent *);
+     void resizeEvent(QResizeEvent *event) override;
 
-     QAction *monochromeAction()    { return m_monochromeAction; }
-     QAction *ntscAction()          { return m_ntscAction; }
-     QAction *perPixelColorAction() { return m_perPixelColorAction; }
-     QAction *showScanLinesAction() { return m_showScanLinesAction; }
-     QAction *prevPageAction() { return m_prevPageAction; }
-     QAction *nextPageAction() { return m_nextPageAction; }
+     [[nodiscard]] static QBitArray byteToBits(quint8 byte);
+     void contextMenuEvent(QContextMenuEvent *) override;
 
-     ColRow getColRowFromAppleAddress(quint16 address);
-     ColRow getColRowFromRawAddress(quint16 address);
+     [[nodiscard]] QAction *monochromeAction() const noexcept { return m_monochromeAction; }
+     [[nodiscard]] QAction *ntscAction() const noexcept { return m_ntscAction; }
+     [[nodiscard]] QAction *perPixelColorAction() const noexcept { return m_perPixelColorAction; }
+     [[nodiscard]] QAction *showScanLinesAction() const noexcept { return m_showScanLinesAction; }
+     [[nodiscard]] QAction *prevPageAction() const noexcept { return m_prevPageAction; }
+     [[nodiscard]] QAction *nextPageAction() const noexcept { return m_nextPageAction; }
 
-     QPixmap getPixmap() const { return m_pixmap; }
+     [[nodiscard]] ColRow getColRowFromAppleAddress(quint16 address) const;
+     [[nodiscard]] ColRow getColRowFromRawAddress(quint16 address) const;
 
-     quint16 offset() const;
+     [[nodiscard]] QPixmap getPixmap() const noexcept { return m_pixmap; }
+
+     [[nodiscard]] quint16 offset() const noexcept;
 signals:
     void newOffset(quint16 offset);
 
 public slots:
-    void setData(QByteArray data);
-    void setMode(ViewMode);
-    void setUnpackedData(QByteArray unpackedData);
+    void setData(const QByteArray& data);
+    void setMode(ViewMode mode);
+    void setUnpackedData(const QByteArray& unpackedData);
     void setOffset(quint16 offset);
 protected:
-    int getLineAddressOffset(int line);
-    QByteArray packData(QByteArray unpackedData);
+    [[nodiscard]] int getLineAddressOffset(int line) const;
+    [[nodiscard]] QByteArray packData(const QByteArray& unpackedData) const;
 
 protected slots:
     void handleNtscAction(bool toggled);
@@ -113,31 +122,25 @@ protected slots:
 
 private:
     void makeAddressTables();
-    QColor getColorFromBits(QBitArray bits, quint8 phase);
-    void drawNtscLine(QPainter &painter,int linenum, QBitArray data);
-    void drawMonoLine(QPainter &painter, int lineNum, QBitArray data);
-    void drawPerPositionColorLine(QPainter &painter, int lineNum, QBitArray data);
+    [[nodiscard]] QColor getColorFromBits(const QBitArray& bits, quint8 phase) const;
+    void drawNtscLine(QPainter &painter, int linenum, const QBitArray& data) const;
+    void drawMonoLine(QPainter &painter, int lineNum, const QBitArray& data) const;
+    void drawPerPositionColorLine(QPainter &painter, int lineNum, const QBitArray& data) const;
     void drawPixmap();
-
 
     QPixmap m_pixmap;
     QByteArray m_data;
-
-    ViewMode m_viewMode;
-
-    QAction *m_monochromeAction;
-    QAction *m_ntscAction;
-    QAction *m_perPixelColorAction;
-    QAction *m_showScanLinesAction;
-    QAction *m_prevPageAction;
-    QAction *m_nextPageAction;
-    QActionGroup *formatGroup;
-
-    bool m_showScanLines;
-
+    ViewMode m_viewMode{ViewMode::Monochrome};
+    QAction *m_monochromeAction{nullptr};
+    QAction *m_ntscAction{nullptr};
+    QAction *m_perPixelColorAction{nullptr};
+    QAction *m_showScanLinesAction{nullptr};
+    QAction *m_prevPageAction{nullptr};
+    QAction *m_nextPageAction{nullptr};
+    QActionGroup *formatGroup{nullptr};
+    bool m_showScanLines{false};
     static QList<ColRow> m_rawAddressToColRowList;
     static QList<ColRow> m_appleAddressToColRowList;
-
-    quint16 m_offset;
+    quint16 m_offset{0};
 };
 

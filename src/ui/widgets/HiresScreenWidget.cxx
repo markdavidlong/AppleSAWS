@@ -23,7 +23,7 @@ HiresScreenWidget::HiresScreenWidget(QWidget *parent) :
 
     resize(561,384);
     QSettings settings;
-    m_viewMode = static_cast<ViewMode>(settings.value("HiresScreenWidget.ViewMode",NTSCColor).toInt());
+    m_viewMode = static_cast<ViewMode>(settings.value("HiresScreenWidget.ViewMode", static_cast<int>(ViewMode::NTSCColor)).toInt());
     m_showScanLines = settings.value("HiresScreenWidget.ShowScanLines",true).toBool();
 
     m_pixmap = QPixmap(561,384);
@@ -35,17 +35,17 @@ HiresScreenWidget::HiresScreenWidget(QWidget *parent) :
 
     m_monochromeAction = new QAction("Monochrome Display",this);
     m_monochromeAction->setCheckable(true);
-    m_monochromeAction->setChecked((m_viewMode == Monochrome));
+    m_monochromeAction->setChecked((m_viewMode == ViewMode::Monochrome));
     formatGroup->addAction(m_monochromeAction);
 
     m_ntscAction = new QAction("NTSC Display",this);
     m_ntscAction->setCheckable(true);
-    m_ntscAction->setChecked((m_viewMode == NTSCColor));
+    m_ntscAction->setChecked((m_viewMode == ViewMode::NTSCColor));
     formatGroup->addAction(m_ntscAction);
 
     m_perPixelColorAction= new QAction("Per-Pixel Color Display",this);
     m_perPixelColorAction->setCheckable(true);
-    m_perPixelColorAction->setChecked((m_viewMode == PerPixelColor));
+    m_perPixelColorAction->setChecked((m_viewMode == ViewMode::PerPixelColor));
     formatGroup->addAction(m_perPixelColorAction);
 
     m_showScanLinesAction = new QAction("Show Scan Lines",this);
@@ -77,31 +77,33 @@ HiresScreenWidget::HiresScreenWidget(QWidget *parent) :
     m_offset = 0;
 }
 
+HiresScreenWidget::~HiresScreenWidget() = default;
+
 void HiresScreenWidget::handleNtscAction(bool toggled) {
     if (toggled) {
-        m_viewMode = NTSCColor;
+        m_viewMode = ViewMode::NTSCColor;
         update();
     }
     QSettings settings;
-    settings.setValue("HiresScreenWidget.ViewMode",m_viewMode);
+    settings.setValue("HiresScreenWidget.ViewMode", static_cast<int>(m_viewMode));
 }
 
 void HiresScreenWidget::handleMonochromeAction(bool toggled) {
     if (toggled) {
-        m_viewMode = Monochrome;
+        m_viewMode = ViewMode::Monochrome;
         update();
     }
     QSettings settings;
-    settings.setValue("HiresScreenWidget.ViewMode",m_viewMode);
+    settings.setValue("HiresScreenWidget.ViewMode", static_cast<int>(m_viewMode));
 }
 
 void HiresScreenWidget::handlePerPixelColorAction(bool toggled) {
     if (toggled) {
-        m_viewMode = PerPixelColor;
+        m_viewMode = ViewMode::PerPixelColor;
         update();
     }
     QSettings settings;
-    settings.setValue("HiresScreenWidget.ViewMode",m_viewMode);
+    settings.setValue("HiresScreenWidget.ViewMode", static_cast<int>(m_viewMode));
 }
 
 void HiresScreenWidget::handleShowScanLinesAction(bool toggled) {
@@ -145,7 +147,7 @@ void HiresScreenWidget::drawPixmap()
     pmpainter.setPen(Qt::black);
     pmpainter.drawRect(0,0,m_pixmap.width(),m_pixmap.height());
 
-    if (m_viewMode == Monochrome || m_viewMode == NTSCColor)
+    if (m_viewMode == ViewMode::Monochrome || m_viewMode == ViewMode::NTSCColor)
     {
         pmpainter.setPen(Qt::white);
         pmpainter.setBrush(Qt::white);
@@ -187,12 +189,12 @@ void HiresScreenWidget::drawPixmap()
 
             }
 
-            if (m_viewMode == Monochrome)
+            if (m_viewMode == ViewMode::Monochrome)
             {
                 drawMonoLine(pmpainter, yoff*2, bits);
                 if (!m_showScanLines) drawMonoLine(pmpainter, yoff*2+1, bits);
             }
-            else if (m_viewMode == NTSCColor)
+            else if (m_viewMode == ViewMode::NTSCColor)
             {
                 drawNtscLine(pmpainter, yoff*2, bits);
                 if (!m_showScanLines) drawNtscLine(pmpainter, yoff*2+1, bits);
@@ -207,7 +209,7 @@ void HiresScreenWidget::drawPixmap()
 
         }
     }
-    else if (m_viewMode == PerPixelColor)
+    else if (m_viewMode == ViewMode::PerPixelColor)
     {
         pmpainter.setPen(Qt::white);
         pmpainter.setBrush(Qt::white);
@@ -281,7 +283,7 @@ void HiresScreenWidget::drawPixmap()
 
 }
 
-void HiresScreenWidget::setUnpackedData(QByteArray unpackedData)
+void HiresScreenWidget::setUnpackedData(const QByteArray& unpackedData)
 {
     QByteArray packedData = packData(unpackedData);
     setData(packedData);
@@ -294,7 +296,7 @@ void HiresScreenWidget::setOffset(quint16 offset)
     update();
 }
 
-quint16 HiresScreenWidget::offset() const { return m_offset; }
+quint16 HiresScreenWidget::offset() const noexcept { return m_offset; }
 
 void HiresScreenWidget::handlePrevPageAction(bool)
 {
@@ -323,7 +325,7 @@ void HiresScreenWidget::handleNextPageAction(bool)
 
 
 
-QByteArray HiresScreenWidget::packData(QByteArray unpackedData)
+QByteArray HiresScreenWidget::packData(const QByteArray& unpackedData) const
 {
     constexpr qsizetype maxHiresBytes = 8192;
     QByteArray packedData(maxHiresBytes, 0x00);
@@ -341,7 +343,7 @@ QByteArray HiresScreenWidget::packData(QByteArray unpackedData)
     return packedData;
 }
 
-int HiresScreenWidget::getLineAddressOffset(int line)
+int HiresScreenWidget::getLineAddressOffset(int line) const
 {
     static QList<quint16> blockOffset {
         0x0000, 0x0080, 0x0100, 0x0180, 0x0200, 0x0280, 0x0300, 0x0380,
@@ -359,7 +361,7 @@ int HiresScreenWidget::getLineAddressOffset(int line)
     return blockOffset[block] + boxSub[sub];
 }
 
-void HiresScreenWidget::setData(QByteArray data) {
+void HiresScreenWidget::setData(const QByteArray& data) {
     m_data = data;
 
     if (data.size() > 8192)
@@ -379,7 +381,7 @@ void HiresScreenWidget::setData(QByteArray data) {
     repaint();
 }
 
-void HiresScreenWidget::drawMonoLine(QPainter &painter, int lineNum, QBitArray data) {
+void HiresScreenWidget::drawMonoLine(QPainter &painter, int lineNum, const QBitArray& data) const {
     painter.setPen(Qt::black);
     painter.drawLine(0,lineNum,data.size(),lineNum);
     painter.setPen(Qt::white);
@@ -390,7 +392,7 @@ void HiresScreenWidget::drawMonoLine(QPainter &painter, int lineNum, QBitArray d
     }
 }
 
-void HiresScreenWidget::drawPerPositionColorLine(QPainter &painter, int lineNum, QBitArray data) {
+void HiresScreenWidget::drawPerPositionColorLine(QPainter &painter, int lineNum, const QBitArray& data) const {
     painter.setPen(Qt::black);
     painter.drawLine(0,lineNum,data.size(),lineNum);
 
@@ -409,7 +411,7 @@ void HiresScreenWidget::drawPerPositionColorLine(QPainter &painter, int lineNum,
     }
 }
 
-QColor HiresScreenWidget::getColorFromBits(QBitArray bits, quint8 phase)
+QColor HiresScreenWidget::getColorFromBits(const QBitArray& bits, quint8 phase) const
 {
     quint8 bitval = (bits[0] * 0x08) +
             (bits[1] * 0x04) +
@@ -493,7 +495,7 @@ QColor HiresScreenWidget::getColorFromBits(QBitArray bits, quint8 phase)
     return whiteColor;
 }
 
-void HiresScreenWidget::drawNtscLine(QPainter &painter, int lineNum, QBitArray data) {
+void HiresScreenWidget::drawNtscLine(QPainter &painter, int lineNum, const QBitArray& data) const {
     QList<QColor> colors;
     colors.resize(data.size()+3);
 
@@ -550,7 +552,7 @@ void HiresScreenWidget::contextMenuEvent(QContextMenuEvent *event) {
     menu.exec(event->globalPos());
 }
 
-HiresScreenWidget::ColRow HiresScreenWidget::getColRowFromAppleAddress(quint16 address)
+HiresScreenWidget::ColRow HiresScreenWidget::getColRowFromAppleAddress(quint16 address) const
 {
     if (address > 8191) {
         qDebug() << "Invalid apple address " << address;
@@ -559,7 +561,7 @@ HiresScreenWidget::ColRow HiresScreenWidget::getColRowFromAppleAddress(quint16 a
     return m_appleAddressToColRowList[address];
 }
 
-HiresScreenWidget::ColRow HiresScreenWidget::getColRowFromRawAddress(quint16 address)
+HiresScreenWidget::ColRow HiresScreenWidget::getColRowFromRawAddress(quint16 address) const
 {
     if (address > 8191) {
         qDebug() << "Invalid raw address " << address;

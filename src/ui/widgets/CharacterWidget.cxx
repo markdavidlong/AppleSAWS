@@ -25,6 +25,8 @@ CharacterWidget::CharacterWidget(QWidget *parent, CharSetCharacter ch)
     doRepaint();
 }
 
+CharacterWidget::~CharacterWidget() = default;
+
 bool CharacterWidget::hasHeightForWidth() const { return true; }
 int CharacterWidget::heightForWidth(int w) const { return w * 9 / 8; }
 
@@ -112,19 +114,19 @@ void CharacterWidget::resizeEvent(QResizeEvent *event)
     doRepaint();
 }
 
-void CharacterWidget::setFgColor(QColor color)
+void CharacterWidget::setFgColor(const QColor& color)
 {
     m_fgcolor = color;
     doRepaint();
 }
 
-void CharacterWidget::setBgColor(QColor color)
+void CharacterWidget::setBgColor(const QColor& color)
 {
     m_bgcolor = color;
     doRepaint();
 }
 
-void CharacterWidget::setGridColor(QColor color)
+void CharacterWidget::setGridColor(const QColor& color)
 {
     m_gridcolor = color;
     doRepaint();

@@ -3,19 +3,20 @@
 #include "ui_AsciiInfoDialog.h"
 
 #include <QDialog>
+#include <memory>
 
 namespace Ui {
 class AsciiInfoDialog;
 }
 
-class AsciiInfoDialog : public QDialog
+class AsciiInfoDialog final : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit AsciiInfoDialog(QWidget *parent = 0) :
+    explicit AsciiInfoDialog(QWidget *parent = nullptr) :
         QDialog(parent),
-        ui(new Ui::AsciiInfoDialog)
+        ui(std::make_unique<Ui::AsciiInfoDialog>())
     {
         ui->setupUi(this);
         QFont font = ui->tableWidget->itemAt(0,0)->font();
@@ -28,7 +29,6 @@ public:
 //            ui->tableWidget->item(idx,8 )->setFont(font);
 //            ui->tableWidget->item(idx,9 )->setFont(font);
         }
-
 
         for (int idx = 0; idx < ui->tableWidget->rowCount(); idx++)
         {
@@ -49,12 +49,15 @@ public:
         ui->tableWidget->repaint();
     }
 
-    ~AsciiInfoDialog()
-    {
-        delete ui;
-    }
+    ~AsciiInfoDialog() override = default;
+    
+    // Rule of Five - Qt QObject classes cannot be copied or moved
+    AsciiInfoDialog(const AsciiInfoDialog&) = delete;
+    AsciiInfoDialog& operator=(const AsciiInfoDialog&) = delete;
+    AsciiInfoDialog(AsciiInfoDialog&&) = delete;
+    AsciiInfoDialog& operator=(AsciiInfoDialog&&) = delete;
 
 private:
-    Ui::AsciiInfoDialog *ui;
+    std::unique_ptr<Ui::AsciiInfoDialog> ui;
 };
 

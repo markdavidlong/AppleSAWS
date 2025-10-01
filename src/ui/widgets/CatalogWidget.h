@@ -4,19 +4,25 @@
 
 #include <QWidget>
 #include <QListWidgetItem>
+#include <memory>
 
 namespace Ui {
 class  CatalogWidget;
 }
 
-class  CatalogWidget : public QWidget
+class  CatalogWidget final : public QWidget
 {
     Q_OBJECT
-
 
 public:
     explicit CatalogWidget(QWidget* parent = nullptr);
     ~CatalogWidget() override;
+    
+    // Rule of Five - Qt QObject classes cannot be copied or moved
+    CatalogWidget(const CatalogWidget&) = delete;
+    CatalogWidget& operator=(const CatalogWidget&) = delete;
+    CatalogWidget(CatalogWidget&&) = delete;
+    CatalogWidget& operator=(CatalogWidget&&) = delete;
 
 public slots:
     void prepForNewDisk(const QString& filename, DiskFile* disk);
@@ -35,7 +41,7 @@ private slots:
     void itemDoubleClicked(QListWidgetItem* item);
 
 private:
-    Ui::CatalogWidget* ui{nullptr};
+    std::unique_ptr<Ui::CatalogWidget> ui;
     DiskFile* m_disk{nullptr};
     QString m_diskname;
 };

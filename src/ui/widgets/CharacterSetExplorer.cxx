@@ -3,7 +3,7 @@
 
 CharacterSetExplorer::CharacterSetExplorer(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::CharacterSetExplorer)
+    ui(std::make_unique<Ui::CharacterSetExplorer>())
 {
     m_unpackedScreen.fill(0,8192);
     ui->setupUi(this);
@@ -19,10 +19,7 @@ void CharacterSetExplorer::setCharSet(CharacterSet &charset)
     m_charset = charset;
 }
 
-CharacterSetExplorer::~CharacterSetExplorer()
-{
-    delete ui;
-}
+CharacterSetExplorer::~CharacterSetExplorer() = default;
 
 void CharacterSetExplorer::handleInsertCharButton()
 {

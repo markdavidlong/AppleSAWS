@@ -13,7 +13,7 @@
 
 CatalogWidget::CatalogWidget(QWidget* parent) :
     QWidget(parent),
-    ui(new Ui::CatalogWidget)
+    ui(std::make_unique<Ui::CatalogWidget>())
 {
     ui->setupUi(this);
     QFont catalogFont("PR Number 3",12);
@@ -27,10 +27,7 @@ CatalogWidget::CatalogWidget(QWidget* parent) :
             this, &CatalogWidget::itemDoubleClicked);
 }
 
-CatalogWidget::~CatalogWidget()
-{
-    delete ui;
-}
+CatalogWidget::~CatalogWidget() = default;
 
 void CatalogWidget::prepForNewDisk(const QString& filename, DiskFile* disk)
 {

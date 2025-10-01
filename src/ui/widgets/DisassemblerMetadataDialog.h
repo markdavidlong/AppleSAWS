@@ -9,18 +9,25 @@
 
 #include <QDialog>
 #include <QItemSelection>
+#include <memory>
 
 namespace Ui {
 class DisassemblerMetadataDialog;
 }
 
-class DisassemblerMetadataDialog : public QDialog
+class DisassemblerMetadataDialog final : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit DisassemblerMetadataDialog(BinaryFileMetadata *bfm, QWidget *parent = 0);
-    ~DisassemblerMetadataDialog();
+    explicit DisassemblerMetadataDialog(BinaryFileMetadata *bfm, QWidget *parent = nullptr);
+    ~DisassemblerMetadataDialog() override;
+    
+    // Rule of Five - Qt QObject classes cannot be copied or moved
+    DisassemblerMetadataDialog(const DisassemblerMetadataDialog&) = delete;
+    DisassemblerMetadataDialog& operator=(const DisassemblerMetadataDialog&) = delete;
+    DisassemblerMetadataDialog(DisassemblerMetadataDialog&&) = delete;
+    DisassemblerMetadataDialog& operator=(DisassemblerMetadataDialog&&) = delete;
 
 protected:
     void showEvent(QShowEvent *);
@@ -41,14 +48,10 @@ protected slots:
 
 
 private:
-    Ui::DisassemblerMetadataDialog *ui;
-
-    BinaryFileMetadata *m_bfm;
-
-    EntryPointModel *m_epmodel;
-
-    AssemblerSymbolModel *m_asmodel;
-
-    bool m_isRelocatable;
+    std::unique_ptr<Ui::DisassemblerMetadataDialog> ui;
+    BinaryFileMetadata *m_bfm{nullptr};
+    EntryPointModel *m_epmodel{nullptr};
+    AssemblerSymbolModel *m_asmodel{nullptr};
+    bool m_isRelocatable{false};
 };
 

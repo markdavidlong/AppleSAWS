@@ -13,15 +13,22 @@
 #include <QScrollEvent>
 #include <QToolTip>
 
-class FlowLineTextBrowser : public QTextBrowser
+class FlowLineTextBrowser final : public QTextBrowser
 {
     class LineArea;
 
 public:
-    FlowLineTextBrowser(QWidget *parent = Q_NULLPTR);
+    explicit FlowLineTextBrowser(QWidget *parent = nullptr);
+    ~FlowLineTextBrowser() override;
+    
+    // Rule of Five - Qt QObject classes cannot be copied or moved
+    FlowLineTextBrowser(const FlowLineTextBrowser&) = delete;
+    FlowLineTextBrowser& operator=(const FlowLineTextBrowser&) = delete;
+    FlowLineTextBrowser(FlowLineTextBrowser&&) = delete;
+    FlowLineTextBrowser& operator=(FlowLineTextBrowser&&) = delete;
 
     void lineAreaPaintEvent(QPaintEvent *event);
-    int lineAreaWidth();
+    [[nodiscard]] int lineAreaWidth() const;
 
     void setJumpLines(JumpLines *jl);
 
@@ -34,15 +41,14 @@ public:
     }
 
 protected:
-    void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
-    void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
+    void paintEvent(QPaintEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
 
-    int getFirstVisibleBlock(QTextBlock *firstBlock) const;
-
-    int getChannelOffset(int channel);
-    QRect getBlockGeometry(QTextBlock block) const;
-    bool isBlockVisible(QTextBlock block) const;
-    void showEvent(QShowEvent *) Q_DECL_OVERRIDE;
+    [[nodiscard]] int getFirstVisibleBlock(QTextBlock *firstBlock) const;
+    [[nodiscard]] int getChannelOffset(int channel) const;
+    [[nodiscard]] QRect getBlockGeometry(QTextBlock block) const;
+    [[nodiscard]] bool isBlockVisible(QTextBlock block) const;
+    void showEvent(QShowEvent *) override;
 
 private slots:
     void updateLineAreaWidth();
@@ -52,35 +58,33 @@ public slots:
     void setLineAreaVisible(bool visible);
 
 private:
-    FlowLineTextBrowser::LineArea *m_lineArea;
+    FlowLineTextBrowser::LineArea *m_lineArea{nullptr};
+    JumpLines *m_jl{nullptr};
 
-    JumpLines *m_jl;
-
-    class LineArea : public QWidget
+    class LineArea final : public QWidget
     {
     public:
-        LineArea(FlowLineTextBrowser *browser) : QWidget(browser)
+        explicit LineArea(FlowLineTextBrowser *browser) : QWidget(browser), m_browser(browser)
         {
             setMouseTracking(true);
-            m_browser = browser;
         }
 
-        void setJumpLines(JumpLines *jl) { m_jl = jl; }
+        void setJumpLines(JumpLines *jl) noexcept { m_jl = jl; }
 
-        QSize sizeHint() const Q_DECL_OVERRIDE
+        [[nodiscard]] QSize sizeHint() const override
         {
             return QSize(m_browser->lineAreaWidth(), 0);
         }
 
     protected:
-        void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE
+        void paintEvent(QPaintEvent *event) override
         {
             m_browser->lineAreaPaintEvent(event);
         }
 
-        void wheelEvent(QWheelEvent *ev) Q_DECL_OVERRIDE { m_browser->proxyWheelEvent(ev); }
+        void wheelEvent(QWheelEvent *ev) override { m_browser->proxyWheelEvent(ev); }
 
-        bool event(QEvent *event) Q_DECL_OVERRIDE
+        bool event(QEvent *event) override
         {
             if (event->type() == QEvent::ToolTip)
             {
@@ -101,7 +105,7 @@ private:
             return QWidget::event(event);
         }
 
-        int getChannelForXPos(int xpos)
+        [[nodiscard]] int getChannelForXPos(int xpos) const
         {
             for (int idx = 0; idx < m_browser->m_jl->m_maxChannel; idx++)
             {
@@ -116,6 +120,6 @@ private:
 
     private:
         FlowLineTextBrowser *m_browser;
-        JumpLines *m_jl;
+        JumpLines *m_jl{nullptr};
     };
 };

@@ -3,28 +3,33 @@
 #include "ui_HRCGControlsInfo.h"
 
 #include <QDialog>
+#include <memory>
 
 namespace Ui {
 class HRCGControlsInfo;
 }
 
-class HRCGControlsInfo : public QDialog
+class HRCGControlsInfo final : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit HRCGControlsInfo(QWidget *parent = 0) :
+    explicit HRCGControlsInfo(QWidget *parent = nullptr) :
         QDialog(parent),
-        ui(new Ui::HRCGControlsInfo)
+        ui(std::make_unique<Ui::HRCGControlsInfo>())
     {
         ui->setupUi(this);
         ui->tableWidget->resizeColumnsToContents();
     }
-    ~HRCGControlsInfo()
-    {
-        delete ui;
-    }
+    
+    ~HRCGControlsInfo() override = default;
+    
+    // Rule of Five - Qt QObject classes cannot be copied or moved
+    HRCGControlsInfo(const HRCGControlsInfo&) = delete;
+    HRCGControlsInfo& operator=(const HRCGControlsInfo&) = delete;
+    HRCGControlsInfo(HRCGControlsInfo&&) = delete;
+    HRCGControlsInfo& operator=(HRCGControlsInfo&&) = delete;
 
 private:
-    Ui::HRCGControlsInfo *ui;
+    std::unique_ptr<Ui::HRCGControlsInfo> ui;
 };

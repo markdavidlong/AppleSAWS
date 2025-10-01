@@ -1,28 +1,35 @@
 #pragma once
 
 #include <QDialog>
+#include <memory>
 
 namespace Ui {
 class HexConverter;
 }
 
-class HexConverter : public QDialog
+class HexConverter final : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit HexConverter(QWidget *parent = 0);
-    ~HexConverter();
+    explicit HexConverter(QWidget *parent = nullptr);
+    ~HexConverter() override;
+    
+    // Rule of Five - Qt QObject classes cannot be copied or moved
+    HexConverter(const HexConverter&) = delete;
+    HexConverter& operator=(const HexConverter&) = delete;
+    HexConverter(HexConverter&&) = delete;
+    HexConverter& operator=(HexConverter&&) = delete;
 
 public slots:
-    void calcFromNewUint16(QString value);
-    void calcFromNewInt16(QString value);
-    void calcFromNewHex(QString value);
-    void calcFromNewUint8(QString value);
-    void calcFromNewInt8(QString value);
+    void calcFromNewUint16(const QString& value);
+    void calcFromNewInt16(const QString& value);
+    void calcFromNewHex(const QString& value);
+    void calcFromNewUint8(const QString& value);
+    void calcFromNewInt8(const QString& value);
 
 protected slots:
 private:
-    Ui::HexConverter *ui;
+    std::unique_ptr<Ui::HexConverter> ui;
 };
 

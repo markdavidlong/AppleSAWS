@@ -11,10 +11,12 @@
 FlowLineTextBrowser::FlowLineTextBrowser(QWidget *parent) : QTextBrowser(parent)
 {
     m_lineArea = new LineArea(this);
-    m_jl = Q_NULLPTR;
+    m_jl = nullptr;
 
     updateLineAreaWidth();
 }
+
+FlowLineTextBrowser::~FlowLineTextBrowser() = default;
 
 int FlowLineTextBrowser::getFirstVisibleBlock(QTextBlock *firstBlock) const
 {
@@ -62,7 +64,8 @@ void FlowLineTextBrowser::lineAreaPaintEvent(QPaintEvent *event)
     painter.setBrush(Qt::red);
 
     QTextBlock block;
-    getFirstVisibleBlock(&block);
+    int firstBlockResult = getFirstVisibleBlock(&block);
+    Q_UNUSED(firstBlockResult);
 
  //   qDebug() << block.text();
     bool foundFirst = false;
@@ -261,14 +264,14 @@ bool FlowLineTextBrowser::isBlockVisible(QTextBlock block) const
     return (r1.contains(r2, true) || r1.intersects(r2));
 }
 
-int FlowLineTextBrowser::getChannelOffset(int channel)
+int FlowLineTextBrowser::getChannelOffset(int channel) const
 {
     int width = lineAreaWidth();
     return width - (channel * 9)- 10;
 }
 
 
-int FlowLineTextBrowser::lineAreaWidth()
+int FlowLineTextBrowser::lineAreaWidth() const
 {
     if (!m_jl) return 10;
     return m_jl->m_maxChannel* 9 + 20;

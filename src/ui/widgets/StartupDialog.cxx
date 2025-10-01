@@ -12,16 +12,13 @@
 
 StartupDialog::StartupDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::StartupDialog)
+    ui(std::make_unique<Ui::StartupDialog>())
 {
     m_notes = new NotesDialog(this);
     ui->setupUi(this);
 }
 
-StartupDialog::~StartupDialog()
-{
-    delete ui;
-}
+StartupDialog::~StartupDialog() = default;
 
 void StartupDialog::on_exploreContentsBtn_clicked()
 {

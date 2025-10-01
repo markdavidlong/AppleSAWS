@@ -6,14 +6,13 @@
 
 DisassemblerMetadataDialog::DisassemblerMetadataDialog(BinaryFileMetadata *bfm, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::DisassemblerMetadataDialog)
+    ui(std::make_unique<Ui::DisassemblerMetadataDialog>()),
+    m_bfm(bfm)
 {
     ui->setupUi(this);
     ui->entryTable->verticalHeader()->show();
     ui->removeEntryPointButton->setEnabled(false);
     ui->removeSymbolButton->setEnabled(false);
-
-    m_bfm = bfm;
 
     m_epmodel = new EntryPointModel(m_bfm->entryPoints(),this);
     m_asmodel = new AssemblerSymbolModel(m_bfm->assemblerSymbols(), this);
@@ -42,10 +41,7 @@ DisassemblerMetadataDialog::DisassemblerMetadataDialog(BinaryFileMetadata *bfm, 
            this, &DisassemblerMetadataDialog::handleSymbolSelectionChanged);
 }
 
-DisassemblerMetadataDialog::~DisassemblerMetadataDialog()
-{
-    delete ui;
-}
+DisassemblerMetadataDialog::~DisassemblerMetadataDialog() = default;
 
 void DisassemblerMetadataDialog::showEvent(QShowEvent *)
 {

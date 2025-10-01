@@ -4,7 +4,7 @@
 
 NotesDialog::NotesDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::NotesDialog)
+    ui(std::make_unique<Ui::NotesDialog>())
 {
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -22,7 +22,4 @@ NotesDialog::NotesDialog(QWidget *parent) :
     ui->notesArea->setMarkdown(text);
 }
 
-NotesDialog::~NotesDialog()
-{
-    delete ui;
-}
+NotesDialog::~NotesDialog() = default;

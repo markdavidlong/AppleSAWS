@@ -5,7 +5,7 @@
 
 HexConverter::HexConverter(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::HexConverter)
+    ui(std::make_unique<Ui::HexConverter>())
 {
     ui->setupUi(this);
 
@@ -21,12 +21,9 @@ HexConverter::HexConverter(QWidget *parent) :
     connect(ui->int16LineEdit, &QLineEdit::textEdited, this, &HexConverter::calcFromNewInt16);
 }
 
-HexConverter::~HexConverter()
-{
-    delete ui;
-}
+HexConverter::~HexConverter() = default;
 
-void HexConverter::calcFromNewHex(QString value)
+void HexConverter::calcFromNewHex(const QString& value)
 {
     bool ok = true;
     quint16 ui16 = value.toInt(&ok,16);
@@ -40,7 +37,7 @@ void HexConverter::calcFromNewHex(QString value)
     ui->int8LineEdit->setText(QString::number(i8));
 }
 
-void HexConverter::calcFromNewUint16(QString value)
+void HexConverter::calcFromNewUint16(const QString& value)
 {
     bool ok = true;
     quint16 ui16 = value.toInt(&ok);
@@ -55,7 +52,7 @@ void HexConverter::calcFromNewUint16(QString value)
     ui->hexLineEdit->setText(hex);
 }
 
-void HexConverter::calcFromNewInt16(QString value)
+void HexConverter::calcFromNewInt16(const QString& value)
 {
     bool ok = true;
     qint16 i16 = value.toInt(&ok);
@@ -70,7 +67,7 @@ void HexConverter::calcFromNewInt16(QString value)
     ui->hexLineEdit->setText(hex);
 }
 
-void HexConverter::calcFromNewUint8(QString value)
+void HexConverter::calcFromNewUint8(const QString& value)
 {
     bool ok = true;
     quint8 ui8 = value.toInt(&ok);
@@ -85,7 +82,7 @@ void HexConverter::calcFromNewUint8(QString value)
     ui->hexLineEdit->setText(hex);
 }
 
-void HexConverter::calcFromNewInt8(QString value)
+void HexConverter::calcFromNewInt8(const QString& value)
 {
     bool ok = true;
     qint8 i8 = value.toInt(&ok);
