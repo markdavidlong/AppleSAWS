@@ -114,7 +114,6 @@ void DisassemblerViewer::setFile(RelocatableFile *file) {
 
     quint16 address = file->address(); // Handle offset for relocatable metadata
     m_mem.addFile(file->data(), address);
-    qDebug("Added %d bytes at $%s", file->data().length(), uint16ToHex(address).toStdString().c_str());
 
     QList<quint16> addresses = m_bfm->entryPoints().getEntryPointAddresses();
     if (!addresses.count()) { addresses.append(address); }

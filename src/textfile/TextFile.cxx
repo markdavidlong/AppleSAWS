@@ -18,6 +18,5 @@ void TextFile::dump() const
 {
     qDebug() << "Text File:" << filename();
     qDebug() << "  Size:" << m_data.size() << "bytes";
-    qDebug() << "  Lines:" << asLines().size();
 }
 

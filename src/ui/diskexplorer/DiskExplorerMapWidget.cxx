@@ -1,4 +1,5 @@
 #include "DiskExplorerMapWidget.h"
+#include "DEButton.h"
 
 #include "Util.h"
 

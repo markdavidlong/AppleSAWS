@@ -106,6 +106,7 @@ set(SOURCES
     src/binaryfile/AssemblerSymbolModel.cxx
     src/ui/diskexplorer/DiskExplorer.cxx
     src/ui/diskexplorer/DiskExplorerMapWidget.cxx
+    src/ui/diskexplorer/DEButton.cxx
     src/applesoftfile/ApplesoftRetokenizer.cxx
     src/binaryfile/JumpLine.cxx
     src/binaryfile/JumpLines.cxx
@@ -172,6 +173,8 @@ set(HEADERS
     src/binaryfile/MemoryUsageMap.h
     src/ui/diskexplorer/DiskExplorer.h
     src/ui/diskexplorer/DiskExplorerMapWidget.h
+    src/ui/diskexplorer/DEButton.h
+    src/ui/diskexplorer/DiskExplorerTypes.h
     src/applesoftfile/ApplesoftRetokenizer.h
     src/util/AppleColors.h
     src/binaryfile/JumpLine.h
