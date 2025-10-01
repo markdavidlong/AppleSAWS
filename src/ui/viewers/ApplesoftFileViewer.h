@@ -14,25 +14,28 @@ namespace Ui {
 class ApplesoftFileViewer;
 }
 
-class ApplesoftFileViewer : public FileViewerInterface
+class ApplesoftFileViewer final : public FileViewerInterface
 {
     Q_OBJECT
 
 public:
+    enum class ReformatRule : bool {
+        ForceReformat = true,
+        NoReformat = false
+    };
 
-    typedef enum {
-        ForceReformat,
-        NoReformat
-    } ReformatRule;
+    explicit ApplesoftFileViewer(QWidget *parent = nullptr);
+    ~ApplesoftFileViewer() override;
+    
+    // Rule of Five - Qt QObject classes cannot be copied or moved
+    ApplesoftFileViewer(const ApplesoftFileViewer&) = delete;
+    ApplesoftFileViewer& operator=(const ApplesoftFileViewer&) = delete;
+    ApplesoftFileViewer(ApplesoftFileViewer&&) = delete;
+    ApplesoftFileViewer& operator=(ApplesoftFileViewer&&) = delete;
 
-     ApplesoftFileViewer(QWidget *parent = 0);
-    ~ApplesoftFileViewer();
-
-    virtual bool optionsMenuItems(QMenu *menu);
-
-     virtual bool canPrint() const;
-
-     bool canExport() const;
+    [[nodiscard]] bool optionsMenuItems(QMenu *menu) override;
+    [[nodiscard]] bool canPrint() const override;
+    [[nodiscard]] bool canExport() const override;
 
 public slots:
     void setFile(GenericFile *file);
@@ -48,16 +51,16 @@ protected slots:
     void setSyntaxHighlighting(bool enabled);
     void setSyntaxHighlighting(bool enabled, ReformatRule reformat);
 
-    void setIndentCode(bool enabled) { setIndentCode(enabled, ForceReformat); }
+    void setIndentCode(bool enabled) { setIndentCode(enabled, ReformatRule::ForceReformat); }
     void setIndentCode(bool enabled, ReformatRule reformat);
 
-    void setIntsAsHex(bool enabled) { setIntsAsHex(enabled, ForceReformat); }
+    void setIntsAsHex(bool enabled) { setIntsAsHex(enabled, ReformatRule::ForceReformat); }
     void setIntsAsHex(bool enabled, ReformatRule reformat);
 
-    void setBreakAfterReturn(bool enabled) { setBreakAfterReturn(enabled,ForceReformat); }
+    void setBreakAfterReturn(bool enabled) { setBreakAfterReturn(enabled, ReformatRule::ForceReformat); }
     void setBreakAfterReturn(bool enabled, ReformatRule reformat);
 
-    void setShowCtrlChars(bool enabled) { setShowCtrlChars(enabled,ForceReformat); }
+    void setShowCtrlChars(bool enabled) { setShowCtrlChars(enabled, ReformatRule::ForceReformat); }
     void setShowCtrlChars(bool enabled, ReformatRule reformat);
 
     void setTextFont(const QFont &font, ReformatRule reformat);
@@ -65,20 +68,20 @@ protected slots:
     void reformatText();
 
 private:
-    bool makeMenuOptions(QMenu *menu);
+    [[nodiscard]] bool makeMenuOptions(QMenu *menu);
 
-    ApplesoftFile *m_file;
-    ApplesoftFormatter *m_formatter;
-    bool m_isFirstFind;
+    ApplesoftFile *m_file{nullptr};
+    ApplesoftFormatter *m_formatter{nullptr};
+    bool m_isFirstFind{true};
     std::unique_ptr<Ui::ApplesoftFileViewer> ui;
-    ApplesoftFileDetailViewer *m_afdv;
-    QAction *m_showIntsAction;
-    QAction *m_reindentCodeAction;
-    QAction *m_blankAfterReturnsAction;
-    QAction *m_syntaxHighlightingAction;
-    QAction *m_showVarExplorerAction;
-    QAction *m_wordWrapAction;
-    QAction *m_showCtrlCharsAction;
-    QAction *m_setFontAction;
+    ApplesoftFileDetailViewer *m_afdv{nullptr};
+    QAction *m_showIntsAction{nullptr};
+    QAction *m_reindentCodeAction{nullptr};
+    QAction *m_blankAfterReturnsAction{nullptr};
+    QAction *m_syntaxHighlightingAction{nullptr};
+    QAction *m_showVarExplorerAction{nullptr};
+    QAction *m_wordWrapAction{nullptr};
+    QAction *m_showCtrlCharsAction{nullptr};
+    QAction *m_setFontAction{nullptr};
 };
 

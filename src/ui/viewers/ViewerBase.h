@@ -13,13 +13,19 @@ namespace Ui {
 class ViewerBase;
 }
 
-class ViewerBase : public QMainWindow
+class ViewerBase final : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit ViewerBase(QWidget *parent = 0);
-    ~ViewerBase();
+    explicit ViewerBase(QWidget *parent = nullptr);
+    ~ViewerBase() override;
+    
+    // Rule of Five - Qt QObject classes cannot be copied or moved
+    ViewerBase(const ViewerBase&) = delete;
+    ViewerBase& operator=(const ViewerBase&) = delete;
+    ViewerBase(ViewerBase&&) = delete;
+    ViewerBase& operator=(ViewerBase&&) = delete;
 
     void setFile(GenericFile *file);
 
@@ -30,17 +36,17 @@ public slots:
     void showViewer(int index);
 
 protected:
-    void closeEvent(QCloseEvent *event);
+    void closeEvent(QCloseEvent *event) override;
     void addViewer(QString descriptor, FileViewerInterface *viewer);
 
 private:
     std::unique_ptr<Ui::ViewerBase> ui;
-    QStackedWidget *m_stack;
-    QToolBar *m_toolbar;
-    QComboBox *m_viewercombo;
+    QStackedWidget *m_stack{nullptr};
+    QToolBar *m_toolbar{nullptr};
+    QComboBox *m_viewercombo{nullptr};
 
     QMap<QString,FileViewerInterface *> m_viewers;
-    GenericFile *m_file;
-    QMenu *m_optionMenu;
+    GenericFile *m_file{nullptr};
+    QMenu *m_optionMenu{nullptr};
 
 };

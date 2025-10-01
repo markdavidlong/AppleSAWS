@@ -22,14 +22,6 @@ DisassemblerViewer::DisassemblerViewer(QWidget *parent) :
     QFont textAreaFont;
     textAreaFont.setStyleHint(QFont::Monospace);
 
-
-    m_isRelo = false;
-    m_dmd = Q_NULLPTR;
-    m_wordWrapAction = Q_NULLPTR;
-    m_showMetadataAction = Q_NULLPTR;
-    m_setFontAction = Q_NULLPTR;
-
-
     QString title = QString("Disassembly Viewer");
     setWindowTitle(title);
 

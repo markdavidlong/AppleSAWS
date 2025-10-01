@@ -14,14 +14,9 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
     ui(std::make_unique<Ui::ApplesoftFileViewer>())
 {
     ui->setupUi(this);
-    m_afdv = Q_NULLPTR;
 
     QFont textAreaFont("PR Number 3");
-  //  QFont textAreaFont("Print Char 21");
-   // textAreaFont.setStyleHint(QFont::Monospace);
     textAreaFont.setPointSize(12);
-
-//    qDebug() << "************ " << textAreaFont;
 
     QSettings settings;
     QString title = QString("Applesoft Viewer");
@@ -31,29 +26,19 @@ ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
     m_formatter = new ApplesoftFormatter(this);
     m_formatter->setFlags(ApplesoftFormatter::FormatOption::ShowCtrlChars);
     connect(ui->findButton, &QToolButton::clicked, this, &ApplesoftFileViewer::findText);
-    m_isFirstFind = true;
     ui->textArea->setUndoRedoEnabled(false);
     ui->textArea->setUndoRedoEnabled(true);
 
-    m_showIntsAction = Q_NULLPTR;
-    m_reindentCodeAction = Q_NULLPTR;
-    m_blankAfterReturnsAction = Q_NULLPTR;
-    m_syntaxHighlightingAction = Q_NULLPTR;
-    m_showVarExplorerAction = Q_NULLPTR;
-    m_wordWrapAction = Q_NULLPTR;
-    m_showCtrlCharsAction = Q_NULLPTR;
-    m_setFontAction = Q_NULLPTR;
-
     toggleWordWrap(settings.value("ASViewer.WordWrap",true).toBool());
 
-    setIndentCode(settings.value("ASViewer.indentCode",false).toBool(), NoReformat);
-    setIntsAsHex(settings.value("ASViewer.intsAsHex",false).toBool(), NoReformat);
-    setBreakAfterReturn(settings.value("ASViewer.breakAfterReturn",false).toBool(), NoReformat);
-    setSyntaxHighlighting(settings.value("ASViewer.syntaxHighlighting",true).toBool(), NoReformat);
-    setShowCtrlChars(settings.value("ASViewer.showCtrlChars",true).toBool(), NoReformat);
+    setIndentCode(settings.value("ASViewer.indentCode",false).toBool(), ReformatRule::NoReformat);
+    setIntsAsHex(settings.value("ASViewer.intsAsHex",false).toBool(), ReformatRule::NoReformat);
+    setBreakAfterReturn(settings.value("ASViewer.breakAfterReturn",false).toBool(), ReformatRule::NoReformat);
+    setSyntaxHighlighting(settings.value("ASViewer.syntaxHighlighting",true).toBool(), ReformatRule::NoReformat);
+    setShowCtrlChars(settings.value("ASViewer.showCtrlChars",true).toBool(), ReformatRule::NoReformat);
 
-    setTextFont(fontFromSettings("ASViewer.textFont", textAreaFont), NoReformat);
-    setTextFont(textAreaFont, NoReformat);
+    setTextFont(fontFromSettings("ASViewer.textFont", textAreaFont), ReformatRule::NoReformat);
+    setTextFont(textAreaFont, ReformatRule::NoReformat);
 }
 
 ApplesoftFileViewer::~ApplesoftFileViewer()
@@ -73,7 +58,7 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
         m_showIntsAction = new QAction("Show Ints as &Hex",this);
         m_showIntsAction->setCheckable(true);
         m_showIntsAction->setChecked(settings.value("ASViewer.intsAsHex",false).toBool());
-        setIntsAsHex(settings.value("ASViewer.intsAsHex",false).toBool(),NoReformat);
+        setIntsAsHex(settings.value("ASViewer.intsAsHex",false).toBool(),ReformatRule::NoReformat);
 
         connect(m_showIntsAction, &QAction::toggled, ui->findText, &QLineEdit::clear);
         connect(m_showIntsAction, &QAction::toggled,
@@ -87,7 +72,7 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
     m_reindentCodeAction = new QAction("&Indent code",this);
     m_reindentCodeAction->setCheckable(true);
     m_reindentCodeAction->setChecked(settings.value("ASViewer.indentCode",false).toBool());
-    setIndentCode(settings.value("ASViewer.indentCode",false).toBool(),NoReformat);
+    setIndentCode(settings.value("ASViewer.indentCode",false).toBool(),ReformatRule::NoReformat);
 
     connect(m_reindentCodeAction, &QAction::toggled, ui->findText, &QLineEdit::clear);
     connect(m_reindentCodeAction, &QAction::toggled,
@@ -101,7 +86,7 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
     m_blankAfterReturnsAction = new QAction("Blank &Line after RETURNs",this);
     m_blankAfterReturnsAction->setCheckable(true);
     m_blankAfterReturnsAction->setChecked(settings.value("ASViewer.breakAfterReturn",false).toBool());
-    setIndentCode(settings.value("ASViewer.breakAfterReturn",false).toBool(),NoReformat);
+    setIndentCode(settings.value("ASViewer.breakAfterReturn",false).toBool(),ReformatRule::NoReformat);
 
     connect(m_blankAfterReturnsAction, &QAction::toggled, ui->findText, &QLineEdit::clear);
     connect(m_blankAfterReturnsAction, &QAction::toggled,
@@ -114,7 +99,7 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
     m_showCtrlCharsAction = new QAction("Show &Control Characters",this);
     m_showCtrlCharsAction->setCheckable(true);
     m_showCtrlCharsAction->setChecked(settings.value("ASViewer.showCtrlChars",false).toBool());
-    setIndentCode(settings.value("ASViewer.showCtrlChars",false).toBool(),NoReformat);
+    setIndentCode(settings.value("ASViewer.showCtrlChars",false).toBool(),ReformatRule::NoReformat);
 
     connect(m_showCtrlCharsAction, &QAction::toggled, ui->findText, &QLineEdit::clear);
     connect(m_showCtrlCharsAction, &QAction::toggled,
@@ -140,7 +125,7 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
     m_syntaxHighlightingAction = new QAction("&Syntax Highlighting",this);
     m_syntaxHighlightingAction->setCheckable(true);
     m_syntaxHighlightingAction->setChecked(settings.value("ASViewer.syntaxHighlighting",false).toBool());
-    setIndentCode(settings.value("ASViewer.syntaxHighlighting",false).toBool(),NoReformat);
+    setIndentCode(settings.value("ASViewer.syntaxHighlighting",false).toBool(),ReformatRule::NoReformat);
 
     connect(m_syntaxHighlightingAction, &QAction::toggled, ui->findText, &QLineEdit::clear);
     connect(m_syntaxHighlightingAction, &QAction::toggled,
@@ -172,7 +157,7 @@ bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)
                                               this, "Set Font"
                                               /*, QFontDialog::MonospacedFonts| QFontDialog::DontUseNativeDialog */);
             if (ok) {
-                setTextFont(font,ForceReformat);
+                setTextFont(font,ReformatRule::ForceReformat);
                 fontToSettings("ASViewer.textFont",font);
             }
 
@@ -215,7 +200,7 @@ void ApplesoftFileViewer::setIndentCode(bool enabled, ReformatRule reformat)
     }
     QSettings settings;
     settings.setValue("ASViewer.indentCode",enabled);
-    if (reformat == ForceReformat)
+    if (reformat == ReformatRule::ForceReformat)
         reformatText();
 }
 
@@ -231,7 +216,7 @@ void ApplesoftFileViewer::setBreakAfterReturn(bool enabled, ReformatRule reforma
     }
     QSettings settings;
     settings.setValue("ASViewer.breakAfterReturn",enabled);
-    if (reformat == ForceReformat)
+    if (reformat == ReformatRule::ForceReformat)
         reformatText();
 }
 
@@ -247,13 +232,13 @@ void ApplesoftFileViewer::setShowCtrlChars(bool enabled, ReformatRule reformat)
     }
     QSettings settings;
     settings.setValue("ASViewer.showCtrlChars",enabled);
-    if (reformat == ForceReformat)
+    if (reformat == ReformatRule::ForceReformat)
         reformatText();
 }
 
 void ApplesoftFileViewer::setSyntaxHighlighting(bool enabled)
 {
-    setSyntaxHighlighting(enabled, ForceReformat);
+    setSyntaxHighlighting(enabled, ReformatRule::ForceReformat);
 }
 
 void ApplesoftFileViewer::setSyntaxHighlighting(bool enabled, ReformatRule reformat)
@@ -268,7 +253,7 @@ void ApplesoftFileViewer::setSyntaxHighlighting(bool enabled, ReformatRule refor
     }
     QSettings settings;
     settings.setValue("ASViewer.syntaxHighlighting",enabled);
-    if (reformat == ForceReformat)
+    if (reformat == ReformatRule::ForceReformat)
         reformatText();
 }
 
@@ -284,14 +269,14 @@ void ApplesoftFileViewer::setIntsAsHex(bool enabled, ReformatRule reformat)
     }
     QSettings settings;
     settings.setValue("ASViewer.intsAsHex",enabled);
-    if (reformat == ForceReformat)
+    if (reformat == ReformatRule::ForceReformat)
         reformatText();
 }
 
 void ApplesoftFileViewer::setTextFont(const QFont &font, ReformatRule reformat)
 {
     ui->textArea->setFont(font);
-    if (reformat == ForceReformat)
+    if (reformat == ReformatRule::ForceReformat)
     {
         reformatText();
     }

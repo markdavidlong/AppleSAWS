@@ -13,21 +13,26 @@ namespace Ui {
 class HexDumpViewer;
 }
 
-class HexDumpViewer : public FileViewerInterface
+class HexDumpViewer final : public FileViewerInterface
 {
     Q_OBJECT
 
 public:
-    explicit HexDumpViewer(QWidget *parent = 0, int defaultFontSize = -1);
-    ~HexDumpViewer();
+    explicit HexDumpViewer(QWidget *parent = nullptr, int defaultFontSize = -1);
+    ~HexDumpViewer() override;
+    
+    // Rule of Five - Qt QObject classes cannot be copied or moved
+    HexDumpViewer(const HexDumpViewer&) = delete;
+    HexDumpViewer& operator=(const HexDumpViewer&) = delete;
+    HexDumpViewer(HexDumpViewer&&) = delete;
+    HexDumpViewer& operator=(HexDumpViewer&&) = delete;
 
-    void setFile(GenericFile *file) { setFile(file,0); }
+    void setFile(GenericFile *file) { setFile(file, 0); }
     void setFile(GenericFile *file, quint16 offset);
     void setRawData(QByteArray data, quint16 offset = 0);
-    virtual bool optionsMenuItems(QMenu *menu);
-
-    bool canPrint() const;
-    bool canExport() const;
+    [[nodiscard]] bool optionsMenuItems(QMenu *menu) override;
+    [[nodiscard]] bool canPrint() const override;
+    [[nodiscard]] bool canExport() const override;
 
 public slots:
     void showHexAndAsciiValues();
@@ -40,15 +45,15 @@ protected:
 private:
     void setText(QString text);
     void setData(QByteArray data);
-    QString valToAppleAscii(quint8 val);
+    [[nodiscard]] QString valToAppleAscii(quint8 val);
 
-    QAction *m_setFontAction;
+    QAction *m_setFontAction{nullptr};
     int m_defaultFontSize;
     std::unique_ptr<Ui::HexDumpViewer> ui;
 
-    quint16 m_offset;
+    quint16 m_offset{0};
     QByteArray m_data;
 
-    GenericFile *m_file;
+    GenericFile *m_file{nullptr};
 };
 

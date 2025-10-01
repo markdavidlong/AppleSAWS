@@ -15,29 +15,35 @@
 #include <QLabel>
 
 
-class HiresViewer : public FileViewerInterface
+class HiresViewer final : public FileViewerInterface
 {
     Q_OBJECT
 public:
-
-     explicit HiresViewer(QWidget *parent = 0);
-     virtual bool optionsMenuItems(QMenu *);
-
-    bool canPrint() const;
-    bool canExport() const;
+    explicit HiresViewer(QWidget *parent = nullptr);
+    ~HiresViewer() override = default;
+    
+    // Rule of Five - Qt QObject classes cannot be copied or moved
+    HiresViewer(const HiresViewer&) = delete;
+    HiresViewer& operator=(const HiresViewer&) = delete;
+    HiresViewer(HiresViewer&&) = delete;
+    HiresViewer& operator=(HiresViewer&&) = delete;
+    
+    [[nodiscard]] bool optionsMenuItems(QMenu *) override;
+    [[nodiscard]] bool canPrint() const override;
+    [[nodiscard]] bool canExport() const override;
 
 public slots:
-    void setFile(GenericFile *file);
+    void setFile(GenericFile *file) override;
     void setFile(BinaryFile *file);
 
-    void doPrint();
-    void doExport();
+    void doPrint() override;
+    void doExport() override;
 
     void handleNewOffset(quint16 offset);
 
 private:
-    HiresScreenWidget *hrsw;
-    QLabel *m_offsetLabel;
+    HiresScreenWidget *hrsw{nullptr};
+    QLabel *m_offsetLabel{nullptr};
 
-    BinaryFile *m_file;
+    BinaryFile *m_file{nullptr};
 };

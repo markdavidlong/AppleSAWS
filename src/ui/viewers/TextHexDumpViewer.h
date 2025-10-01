@@ -13,23 +13,28 @@ namespace Ui {
 class TextHexDumpViewer;
 }
 
-class TextHexDumpViewer : public FileViewerInterface
+class TextHexDumpViewer final : public FileViewerInterface
 {
     Q_OBJECT
 
 public:
-    explicit TextHexDumpViewer(QWidget *parent = 0);
-    ~TextHexDumpViewer();
+    explicit TextHexDumpViewer(QWidget *parent = nullptr);
+    ~TextHexDumpViewer() override;
+    
+    // Rule of Five - Qt QObject classes cannot be copied or moved
+    TextHexDumpViewer(const TextHexDumpViewer&) = delete;
+    TextHexDumpViewer& operator=(const TextHexDumpViewer&) = delete;
+    TextHexDumpViewer(TextHexDumpViewer&&) = delete;
+    TextHexDumpViewer& operator=(TextHexDumpViewer&&) = delete;
 
-    void setFile(GenericFile *file) { setFile(file,0); }
+    void setFile(GenericFile *file) { setFile(file, 0); }
     void setFile(GenericFile *file, quint16 offset);
     void setData(QByteArray data);
     void setText(QString text);
 
-    virtual bool optionsMenuItems(QMenu *menu);
-
-    bool canPrint() const;
-    bool canExport() const;
+    [[nodiscard]] bool optionsMenuItems(QMenu *menu) override;
+    [[nodiscard]] bool canPrint() const override;
+    [[nodiscard]] bool canExport() const override;
 
 public slots:
     void toggleWordWrap(bool enabled);
@@ -37,13 +42,13 @@ public slots:
     void doExport();
 
 protected:
-    QString makeTextStr(QByteArray data);
-    QString makeHexStr(QByteArray data);
+    [[nodiscard]] QString makeTextStr(QByteArray data);
+    [[nodiscard]] QString makeHexStr(QByteArray data);
 
 private:
     std::unique_ptr<Ui::TextHexDumpViewer> ui;
 
-    quint16 m_offset;
+    quint16 m_offset{0};
 
-    GenericFile *m_file;
+    GenericFile *m_file{nullptr};
 };

@@ -8,18 +8,24 @@ namespace Ui {
 class IntBasicFileViewer;
 }
 
-class IntBasicFileViewer : public FileViewerInterface
+class IntBasicFileViewer final : public FileViewerInterface
 {
     Q_OBJECT
 
 public:
     explicit IntBasicFileViewer(QWidget *parent = nullptr);
-    ~IntBasicFileViewer();
+    ~IntBasicFileViewer() override;
+    
+    // Rule of Five - Qt QObject classes cannot be copied or moved
+    IntBasicFileViewer(const IntBasicFileViewer&) = delete;
+    IntBasicFileViewer& operator=(const IntBasicFileViewer&) = delete;
+    IntBasicFileViewer(IntBasicFileViewer&&) = delete;
+    IntBasicFileViewer& operator=(IntBasicFileViewer&&) = delete;
 
-    bool optionsMenuItems(QMenu * /*menu*/) { return false; }
+    [[nodiscard]] bool optionsMenuItems(QMenu * /*menu*/) override { return false; }
 
 public slots:
-    void setFile(GenericFile *file);
+    void setFile(GenericFile *file) override;
 
 private:
     std::unique_ptr<Ui::IntBasicFileViewer> ui;

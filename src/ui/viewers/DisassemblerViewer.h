@@ -16,28 +16,32 @@ namespace Ui {
 class DisassemblerViewer;
 }
 
-class DisassemblerViewer : public FileViewerInterface
+class DisassemblerViewer final : public FileViewerInterface
 {
     Q_OBJECT
 
 public:
-    explicit DisassemblerViewer(QWidget *parent = 0);
-    ~DisassemblerViewer();
+    explicit DisassemblerViewer(QWidget *parent = nullptr);
+    ~DisassemblerViewer() override;
+    
+    // Rule of Five - Qt QObject classes cannot be copied or moved
+    DisassemblerViewer(const DisassemblerViewer&) = delete;
+    DisassemblerViewer& operator=(const DisassemblerViewer&) = delete;
+    DisassemblerViewer(DisassemblerViewer&&) = delete;
+    DisassemblerViewer& operator=(DisassemblerViewer&&) = delete;
 
     void setFile(BinaryFile *file);
     void setFile(RelocatableFile *file);
     void setData(QByteArray data);
 
-    QString getPotentialLabel(quint16 address);
-    virtual bool optionsMenuItems(QMenu *);
-
-    bool canPrint() const;
-    bool canExport() const;
-
-    QString makeDescriptorStringForVal(quint8 val);
+    [[nodiscard]] QString getPotentialLabel(quint16 address);
+    [[nodiscard]] bool optionsMenuItems(QMenu *) override;
+    [[nodiscard]] bool canPrint() const override;
+    [[nodiscard]] bool canExport() const override;
+    [[nodiscard]] QString makeDescriptorStringForVal(quint8 val);
 
     void disassemble(QList<quint16> entryPoints);
-    QStringList getDisassemblyStrings();
+    [[nodiscard]] QStringList getDisassemblyStrings();
 
 public slots:
     void setFile(GenericFile *file);
@@ -53,18 +57,18 @@ protected slots:
 private:
     std::unique_ptr<Ui::DisassemblerViewer> ui;
 
-    DisassemblerMetadataDialog *m_dmd;
-    GenericFile *m_file;
+    DisassemblerMetadataDialog *m_dmd{nullptr};
+    GenericFile *m_file{nullptr};
 
-    QAction *m_wordWrapAction;
-    QAction *m_showMetadataAction;
-    QAction *m_setFontAction;
+    QAction *m_wordWrapAction{nullptr};
+    QAction *m_showMetadataAction{nullptr};
+    QAction *m_setFontAction{nullptr};
 
-    BinaryFileMetadata *m_bfm;
+    BinaryFileMetadata *m_bfm{nullptr};
 
     AttributedMemory m_mem;
 
-    bool m_isRelo;
+    bool m_isRelo{false};
 
     QStringList m_disassemblyStrings;
     JumpLines m_jumpLines;
