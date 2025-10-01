@@ -15,6 +15,8 @@ This file contains project-specific information to help AI assistants work effec
 - No Makefile in project root
 - Always use CMake build commands
 
+### Important: Do NOT use `sed` or `awk` to make large changes to files. It corrupts them more often than not. Prefer iteration and updating each item on its own.
+
 ## Application Type & Testing
 
 ### GUI Application - NO Command Line Interface

@@ -210,50 +210,50 @@ bool Disassembler::disassembleOp(quint16 address, DisassembledItem &retval, Memo
     QString mnemonic = OpCodes::mnemonic(opcode);
     // Disassemble instruction
     switch (OpCodes::addressMode(opcode)) {
-    case AM_InvalidOp: {
+    case AddressMode::InvalidOp: {
         disassemblyLine = OpCodes::mnemonic(opcode);
         retval.setIsInvalidOp(true);
         break;
     }
-    case AM_Absolute:{
+    case AddressMode::Absolute:{
         disassemblyLine = QString("%1 _ARG16_").arg(mnemonic);
         retval.setRawArgument(argval);
         break;
     }
-    case AM_AbsoluteIndexedIndirect:{
+    case AddressMode::AbsoluteIndexedIndirect:{
         disassemblyLine = QString("%1 (_ARG16_,x)").arg(mnemonic);
         retval.setRawArgument(argval);
         break;
     }
-    case AM_AbsoluteIndexedWithX:{
+    case AddressMode::AbsoluteIndexedWithX:{
         disassemblyLine = QString("%1 _ARG16_,x").arg(mnemonic);
         retval.setRawArgument(argval);
         break;
     }
-    case AM_AbsoluteIndexedWithY:{
+    case AddressMode::AbsoluteIndexedWithY:{
         disassemblyLine = QString("%1 _ARG16_,y").arg(mnemonic);
         retval.setRawArgument(argval);
         break;
     }
-    case AM_AbsoluteIndirect:{
+    case AddressMode::AbsoluteIndirect:{
         disassemblyLine = QString("%1 (_ARG16_)").arg(mnemonic);
         retval.setRawArgument(argval);
         break;
     }
-    case AM_Immediate:{
+    case AddressMode::Immediate:{
         disassemblyLine = QString("%1 #%2").arg(mnemonic).arg((quint8) hexValues[1],2,16,QChar('0')).toUpper();
         retval.setRawArgument(argval);
         break;
     }
-    case AM_Implied:{
+    case AddressMode::Implied:{
         disassemblyLine = mnemonic;
         break;
     }
-    case AM_Accumulator:{
+    case AddressMode::Accumulator:{
         disassemblyLine = mnemonic;
         break;
     }
-    case AM_ProgramCounterRelative:{
+    case AddressMode::ProgramCounterRelative:{
         qint8 offset = (qint8) hexValues[1];
         quint16 offsetAddress = address+2+offset;
 
@@ -269,32 +269,32 @@ bool Disassembler::disassembleOp(quint16 address, DisassembledItem &retval, Memo
         retval.setRawArgument(offsetAddress);
         break;
     }
-    case AM_ZeroPage:{
+    case AddressMode::ZeroPage:{
         disassemblyLine = QString("%1 _ARG8_").arg(mnemonic);
         retval.setRawArgument(argval);
         break;
     }
-    case AM_ZeroPageIndirectIndexedWithY:{
+    case AddressMode::ZeroPageIndirectIndexedWithY:{
         disassemblyLine = QString("%1 (_ARG8_),Y").arg(mnemonic);
         retval.setRawArgument(argval);
         break;
     }
-    case AM_ZeroPageIndexedIndirect:{
+    case AddressMode::ZeroPageIndexedIndirect:{
         disassemblyLine = QString("%1 (_ARG8_,x)").arg(mnemonic);
         retval.setRawArgument(argval);
         break;
     }
-    case AM_ZeroPageIndexedWithX:{
+    case AddressMode::ZeroPageIndexedWithX:{
         disassemblyLine = QString("%1 _ARG8_,x").arg(mnemonic);
         retval.setRawArgument(argval);
         break;
     }
-    case AM_ZeroPageIndexedWithY:{
+    case AddressMode::ZeroPageIndexedWithY:{
         disassemblyLine = QString("%1 _ARG8_,y").arg(mnemonic);
         retval.setRawArgument(argval);
         break;
     }
-    case AM_ZeroPageIndirect:{
+    case AddressMode::ZeroPageIndirect:{
         disassemblyLine = QString("%1 (_ARG8_)").arg(mnemonic);
         retval.setRawArgument(argval);
         break;

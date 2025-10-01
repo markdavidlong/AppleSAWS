@@ -20,7 +20,7 @@ public:
     [[nodiscard]] AddressMode addressMode() const;
 
 protected:
-    AddressMode m_am{AddressMode::AM_InvalidOp};
+    AddressMode m_am{AddressMode::InvalidOp};
 
 };
 
