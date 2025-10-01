@@ -11,7 +11,7 @@
 
 ApplesoftFileViewer::ApplesoftFileViewer(QWidget *parent) :
     FileViewerInterface(parent),
-    ui(new Ui::ApplesoftFileViewer)
+    ui(std::make_unique<Ui::ApplesoftFileViewer>())
 {
     ui->setupUi(this);
     m_afdv = Q_NULLPTR;
@@ -62,7 +62,6 @@ ApplesoftFileViewer::~ApplesoftFileViewer()
     {
         m_afdv->deleteLater();
     }
-    delete ui;
 }
 
 bool ApplesoftFileViewer::makeMenuOptions(QMenu *menu)

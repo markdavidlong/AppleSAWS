@@ -6,6 +6,7 @@
 #include <QString>
 #include <QByteArray>
 #include <QWidget>
+#include <memory>
 
 
 namespace Ui {
@@ -43,7 +44,7 @@ private:
 
     QAction *m_setFontAction;
     int m_defaultFontSize;
-    Ui::HexDumpViewer *ui;
+    std::unique_ptr<Ui::HexDumpViewer> ui;
 
     quint16 m_offset;
     QByteArray m_data;

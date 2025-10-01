@@ -8,6 +8,7 @@
 #include <QAction>
 #include <QWidget>
 #include <QMenu>
+#include <memory>
 
 namespace Ui {
 class ApplesoftFileViewer;
@@ -69,7 +70,7 @@ private:
     ApplesoftFile *m_file;
     ApplesoftFormatter *m_formatter;
     bool m_isFirstFind;
-    Ui::ApplesoftFileViewer *ui;
+    std::unique_ptr<Ui::ApplesoftFileViewer> ui;
     ApplesoftFileDetailViewer *m_afdv;
     QAction *m_showIntsAction;
     QAction *m_reindentCodeAction;

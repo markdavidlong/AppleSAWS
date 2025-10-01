@@ -7,6 +7,7 @@
 #include <QStackedWidget>
 #include <QToolBar>
 #include <QComboBox>
+#include <memory>
 
 namespace Ui {
 class ViewerBase;
@@ -33,7 +34,7 @@ protected:
     void addViewer(QString descriptor, FileViewerInterface *viewer);
 
 private:
-    Ui::ViewerBase *ui;
+    std::unique_ptr<Ui::ViewerBase> ui;
     QStackedWidget *m_stack;
     QToolBar *m_toolbar;
     QComboBox *m_viewercombo;

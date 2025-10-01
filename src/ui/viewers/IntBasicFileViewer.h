@@ -2,6 +2,7 @@
 
 #include "FileViewerInterface.h"
 #include "IntBasicFile.h"
+#include <memory>
 
 namespace Ui {
 class IntBasicFileViewer;
@@ -21,6 +22,6 @@ public slots:
     void setFile(GenericFile *file);
 
 private:
-    Ui::IntBasicFileViewer *ui;
+    std::unique_ptr<Ui::IntBasicFileViewer> ui;
 };
 

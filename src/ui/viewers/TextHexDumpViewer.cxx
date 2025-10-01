@@ -10,7 +10,7 @@
 
 TextHexDumpViewer::TextHexDumpViewer(QWidget *parent) :
     FileViewerInterface(parent),
-    ui(new Ui::TextHexDumpViewer)
+    ui(std::make_unique<Ui::TextHexDumpViewer>())
 {
     m_file = Q_NULLPTR;
     ui->setupUi(this);
@@ -30,7 +30,6 @@ TextHexDumpViewer::TextHexDumpViewer(QWidget *parent) :
 
 TextHexDumpViewer::~TextHexDumpViewer()
 {
-    delete ui;
 }
 
 void TextHexDumpViewer::toggleWordWrap(bool enabled)

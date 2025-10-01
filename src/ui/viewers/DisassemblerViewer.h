@@ -7,6 +7,7 @@
 
 #include <QWidget>
 #include <QByteArray>
+#include <memory>
 
 class BinaryFile;
 class RelocatableFile;
@@ -50,7 +51,7 @@ protected:
 protected slots:
     void showMetadataDialog();
 private:
-    Ui::DisassemblerViewer *ui;
+    std::unique_ptr<Ui::DisassemblerViewer> ui;
 
     DisassemblerMetadataDialog *m_dmd;
     GenericFile *m_file;

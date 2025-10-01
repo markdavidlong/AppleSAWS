@@ -6,6 +6,7 @@
 #include <QString>
 #include <QByteArray>
 #include <QWidget>
+#include <memory>
 
 
 namespace Ui {
@@ -40,7 +41,7 @@ protected:
     QString makeHexStr(QByteArray data);
 
 private:
-    Ui::TextHexDumpViewer *ui;
+    std::unique_ptr<Ui::TextHexDumpViewer> ui;
 
     quint16 m_offset;
 

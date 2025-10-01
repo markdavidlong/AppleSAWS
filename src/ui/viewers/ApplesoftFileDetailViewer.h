@@ -6,6 +6,7 @@
 
 #include <QWidget>
 #include <QDebug>
+#include <memory>
 
 namespace Ui {
 class ApplesoftFileDetailViewer;
@@ -30,7 +31,7 @@ protected:
 private:
     void  process();
 
-    Ui::ApplesoftFileDetailViewer *ui;
+    std::unique_ptr<Ui::ApplesoftFileDetailViewer> ui;
     QList<ApplesoftLine> m_lines;
 
     QMap<QString,QString> m_notes;

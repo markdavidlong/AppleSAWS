@@ -10,7 +10,7 @@
 
 ApplesoftFileDetailViewer::ApplesoftFileDetailViewer(ApplesoftFile *file, QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::ApplesoftFileDetailViewer)
+    ui(std::make_unique<Ui::ApplesoftFileDetailViewer>())
 {
 
     ui->setupUi(this);
@@ -24,7 +24,6 @@ ApplesoftFileDetailViewer::ApplesoftFileDetailViewer(ApplesoftFile *file, QWidge
 ApplesoftFileDetailViewer::~ApplesoftFileDetailViewer()
 {
     save();
-    delete ui;
 }
 
 void ApplesoftFileDetailViewer::setLineData(QList<ApplesoftLine> lineData)

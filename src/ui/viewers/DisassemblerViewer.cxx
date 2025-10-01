@@ -16,7 +16,7 @@
 
 DisassemblerViewer::DisassemblerViewer(QWidget *parent) :
     FileViewerInterface(parent),
-    ui(new Ui::DisassemblerViewer)
+    ui(std::make_unique<Ui::DisassemblerViewer>())
 {
     ui->setupUi(this);
     QFont textAreaFont;
@@ -41,7 +41,6 @@ DisassemblerViewer::DisassemblerViewer(QWidget *parent) :
 
 DisassemblerViewer::~DisassemblerViewer()
 {
-    delete ui;
 }
 
 void DisassemblerViewer::setTextFont(const QFont &font)

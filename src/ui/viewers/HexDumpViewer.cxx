@@ -13,9 +13,9 @@
 
 HexDumpViewer::HexDumpViewer(QWidget *parent, int defaultFontSize) :
     FileViewerInterface(parent),
-    ui(new Ui::HexDumpViewer)
+    ui(std::make_unique<Ui::HexDumpViewer>()),
+    m_defaultFontSize(defaultFontSize)
 {
-    m_defaultFontSize = defaultFontSize;
     QFont textAreaFont;
     textAreaFont.setStyleHint(QFont::Monospace);
 
@@ -39,7 +39,6 @@ HexDumpViewer::HexDumpViewer(QWidget *parent, int defaultFontSize) :
 
 HexDumpViewer::~HexDumpViewer()
 {
-    delete ui;
 }
 
 void HexDumpViewer::toggleWordWrap(bool enabled)

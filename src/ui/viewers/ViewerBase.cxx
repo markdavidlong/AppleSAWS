@@ -23,7 +23,7 @@
 
 ViewerBase::ViewerBase(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::ViewerBase)
+    ui(std::make_unique<Ui::ViewerBase>())
 {
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -49,7 +49,6 @@ ViewerBase::ViewerBase(QWidget *parent) :
 ViewerBase::~ViewerBase()
 {
     emit viewerClosing(this);
-    delete ui;
 }
 
 void ViewerBase::setFile(GenericFile *file)

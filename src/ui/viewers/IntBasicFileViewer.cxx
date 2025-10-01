@@ -3,14 +3,13 @@
 
 IntBasicFileViewer::IntBasicFileViewer(QWidget *parent) :
     FileViewerInterface(parent),
-    ui(new Ui::IntBasicFileViewer)
+    ui(std::make_unique<Ui::IntBasicFileViewer>())
 {
     ui->setupUi(this);
 }
 
 IntBasicFileViewer::~IntBasicFileViewer()
 {
-    delete ui;
 }
 
 void IntBasicFileViewer::setFile(GenericFile *file) {
