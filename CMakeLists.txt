@@ -35,173 +35,172 @@ add_definitions(-DWS_VIDEO)
 # Include directories (equivalent to INCLUDEPATH in .pro file)
 include_directories(
     src/
-    src/relocatablefile
+    src/applesoftfile
+    src/binaryfile
     src/diskfiles
     src/diskfiles/dos33
-    src/util
-    src/applesoftfile
-    src/intbasic
-    src/binaryfile
-    src/textfile
-    src/ui/viewers
     src/imported
+    src/intbasic
     src/internals
-    src/ui/diskexplorer
-    src/ui/widgets
-    src/ui
     src/memory
     src/memory/roles
+    src/relocatablefile
+    src/textfile
+    src/ui
+    src/ui/diskexplorer
+    src/ui/viewers
+    src/ui/widgets
+    src/util
 )
 
 # Source files
 set(SOURCES
-    src/intbasic/IntBasicFile.cxx
-    src/main.cxx
-    src/diskfiles/dos33/DiskFile.cxx
-    src/diskfiles/dos33/Sector.cxx
-    src/diskfiles/dos33/Vtoc.cxx
+    src/applesoftfile/ApplesoftFile.cxx
+    src/applesoftfile/ApplesoftFormatter.cxx
+    src/applesoftfile/ApplesoftRetokenizer.cxx
+    src/applesoftfile/ApplesoftToken.cxx
+    src/binaryfile/AssemblerSymbolModel.cxx
+    src/binaryfile/AssemblerSymbols.cxx
+    src/binaryfile/BinaryFile.cxx
+    src/binaryfile/BinaryFileMetadata.cxx
+    src/binaryfile/Disassembler.cxx
+    src/binaryfile/DisassembledItem.cxx
+    src/binaryfile/EntryPointModel.cxx
+    src/binaryfile/EntryPoints.cxx
+    src/binaryfile/JumpLine.cxx
+    src/binaryfile/JumpLineManager.cxx
+    src/binaryfile/JumpLines.cxx
+    src/binaryfile/MemoryUsageMap.cxx
     src/diskfiles/dos33/CatalogSector.cxx
-    src/diskfiles/dos33/TrackSectorList.cxx
+    src/diskfiles/dos33/DiskFile.cxx
     src/diskfiles/dos33/FileDescriptiveEntry.cxx
     src/diskfiles/dos33/GenericFile.cxx
+    src/diskfiles/dos33/Sector.cxx
+    src/diskfiles/dos33/TrackSectorList.cxx
+    src/diskfiles/dos33/Vtoc.cxx
+    src/intbasic/IntBasicFile.cxx
+    src/main.cxx
     src/memory/AttributedMemory.cxx
     src/memory/MemoryCell.cxx
     src/memory/MemRole.cxx
     src/memory/roles/RoleAsmOpcode.cxx
     src/memory/roles/RoleAsmOperand.cxx
-    src/ui/widgets/StartupDialog.cxx
-    src/ui/viewers/IntBasicFileViewer.cxx
-    src/ui/widgets/NotesDialog.cxx
-    src/util/AppleString.cxx
-    src/applesoftfile/ApplesoftFile.cxx
-    src/applesoftfile/ApplesoftToken.cxx
-    src/applesoftfile/ApplesoftFormatter.cxx
-    src/binaryfile/Disassembler.cxx
-    src/binaryfile/DisassembledItem.cxx
-    src/binaryfile/MemoryUsageMap.cxx
-    src/binaryfile/BinaryFile.cxx
-    src/textfile/TextFile.cxx
-    src/ui/widgets/CatalogWidget.cxx
-    src/ui/viewers/HiresViewer.cxx
-    src/ui/viewers/ApplesoftFileViewer.cxx
-    src/ui/viewers/DisassemblerViewer.cxx
-    src/ui/viewers/HexDumpViewer.cxx
-    src/ui/viewers/TextHexDumpViewer.cxx
-    src/ui/viewers/MazeViewer.cxx
-    src/ui/viewers/CharSetViewer.cxx
     src/relocatablefile/RelocatableFile.cxx
-    src/binaryfile/BinaryFileMetadata.cxx
-    src/util/CharSet.cxx
-    src/ui/widgets/CharacterWidget.cxx
-    src/ui/viewers/ApplesoftFileDetailViewer.cxx
-    src/ui/widgets/HexConverter.cxx
-    src/ui/viewers/ViewerBase.cxx
-    src/ui/widgets/CharacterSetExplorer.cxx
-    src/ui/widgets/HiresScreenWidget.cxx
-    src/ui/widgets/DisassemblerMetadataDialog.cxx
-    src/binaryfile/EntryPointModel.cxx
-    src/ui/widgets/LocationInfoDialog.cxx
-    src/binaryfile/EntryPoints.cxx
-    src/binaryfile/AssemblerSymbols.cxx
-    src/binaryfile/AssemblerSymbolModel.cxx
+    src/textfile/TextFile.cxx
+    src/ui/diskexplorer/DEButton.cxx
     src/ui/diskexplorer/DiskExplorer.cxx
     src/ui/diskexplorer/DiskExplorerMapWidget.cxx
-    src/ui/diskexplorer/DEButton.cxx
-    src/applesoftfile/ApplesoftRetokenizer.cxx
-    src/binaryfile/JumpLine.cxx
-    src/binaryfile/JumpLines.cxx
-    src/binaryfile/JumpLineManager.cxx
+    src/ui/viewers/ApplesoftFileDetailViewer.cxx
+    src/ui/viewers/ApplesoftFileViewer.cxx
+    src/ui/viewers/CharSetViewer.cxx
+    src/ui/viewers/DisassemblerViewer.cxx
+    src/ui/viewers/HexDumpViewer.cxx
+    src/ui/viewers/HiresViewer.cxx
+    src/ui/viewers/IntBasicFileViewer.cxx
+    src/ui/viewers/MazeViewer.cxx
+    src/ui/viewers/TextHexDumpViewer.cxx
+    src/ui/viewers/ViewerBase.cxx
+    src/ui/widgets/CatalogWidget.cxx
+    src/ui/widgets/CharacterSetExplorer.cxx
+    src/ui/widgets/CharacterWidget.cxx
+    src/ui/widgets/DisassemblerMetadataDialog.cxx
     src/ui/widgets/FlowLineTextBrowser.cxx
+    src/ui/widgets/HexConverter.cxx
+    src/ui/widgets/HiresScreenWidget.cxx
+    src/ui/widgets/LocationInfoDialog.cxx
+    src/ui/widgets/NotesDialog.cxx
+    src/ui/widgets/StartupDialog.cxx
+    src/util/AppleString.cxx
+    src/util/CharSet.cxx
     src/util/OpCodes.cxx
 )
 
 # Header files (for IDE organization, not strictly necessary for CMake)
 set(HEADERS
-    src/diskfiles/dos33/DiskFile.h
-    src/diskfiles/dos33/Sector.h
-    src/diskfiles/dos33/Vtoc.h
+    src/applesoftfile/ApplesoftFile.h
+    src/applesoftfile/ApplesoftFormatter.h
+    src/applesoftfile/ApplesoftLine.h
+    src/applesoftfile/ApplesoftRetokenizer.h
+    src/applesoftfile/ApplesoftToken.h
+    src/binaryfile/AssemblerSymbolModel.h
+    src/binaryfile/AssemblerSymbols.h
+    src/binaryfile/BinaryFile.h
+    src/binaryfile/BinaryFileMetadata.h
+    src/binaryfile/Disassembler.h
+    src/binaryfile/DisassembledItem.h
+    src/binaryfile/EntryPointModel.h
+    src/binaryfile/EntryPoints.h
+    src/binaryfile/JumpLine.h
+    src/binaryfile/JumpLineManager.h
+    src/binaryfile/JumpLines.h
+    src/binaryfile/MemoryUsageMap.h
     src/diskfiles/dos33/CatalogSector.h
-    src/diskfiles/dos33/TrackSectorList.h
+    src/diskfiles/dos33/DiskFile.h
     src/diskfiles/dos33/FileDescriptiveEntry.h
     src/diskfiles/dos33/GenericFile.h
+    src/diskfiles/dos33/Sector.h
+    src/diskfiles/dos33/TrackSectorList.h
+    src/diskfiles/dos33/Vtoc.h
     src/intbasic/IntBasicFile.h
     src/memory/AttributedMemory.h
     src/memory/MemoryCell.h
     src/memory/MemRole.h
     src/memory/roles/RoleAsmOpcode.h
     src/memory/roles/RoleAsmOperand.h
-    src/ui/widgets/StartupDialog.h
-    src/ui/viewers/IntBasicFileViewer.h
-    src/ui/widgets/NotesDialog.h
-    src/util/OpCodes.h
-    src/util/Util.h
-    src/util/AppleString.h
-    src/applesoftfile/ApplesoftFile.h
-    src/applesoftfile/ApplesoftToken.h
-    src/binaryfile/Disassembler.h
-    src/binaryfile/DisassembledItem.h
-    src/binaryfile/MemoryUsageMap.h
-    src/binaryfile/BinaryFile.h
-    src/textfile/TextFile.h
-    src/ui/widgets/CatalogWidget.h
-    src/ui/viewers/HiresViewer.h
-    src/ui/viewers/ApplesoftFileViewer.h
-    src/applesoftfile/ApplesoftFormatter.h
-    src/applesoftfile/ApplesoftLine.h
-    src/ui/viewers/DisassemblerViewer.h
-    src/ui/viewers/HexDumpViewer.h
-    src/ui/viewers/TextHexDumpViewer.h
     src/relocatablefile/RelocatableFile.h
-    src/ui/viewers/MazeViewer.h
-    src/binaryfile/BinaryFileMetadata.h
-    src/ui/widgets/CharacterWidget.h
-    src/util/CharSet.h
-    src/ui/viewers/CharSetViewer.h
-    src/ui/viewers/ApplesoftFileDetailViewer.h
-    src/ui/widgets/HexConverter.h
-    src/ui/widgets/HRCGControlsInfo.h
-    src/ui/viewers/ViewerBase.h
-    src/ui/viewers/FileViewerInterface.h
-    src/ui/widgets/CharacterSetExplorer.h
-    src/ui/widgets/HiresScreenWidget.h
-    src/ui/widgets/DisassemblerMetadataDialog.h
-    src/binaryfile/EntryPointModel.h
-    src/ui/widgets/LocationInfoDialog.h
-    src/binaryfile/EntryPoints.h
-    src/binaryfile/AssemblerSymbols.h
-    src/binaryfile/AssemblerSymbolModel.h
-    src/binaryfile/MemoryUsageMap.h
+    src/textfile/TextFile.h
+    src/ui/diskexplorer/DEButton.h
     src/ui/diskexplorer/DiskExplorer.h
     src/ui/diskexplorer/DiskExplorerMapWidget.h
-    src/ui/diskexplorer/DEButton.h
     src/ui/diskexplorer/DiskExplorerTypes.h
-    src/applesoftfile/ApplesoftRetokenizer.h
-    src/util/AppleColors.h
-    src/binaryfile/JumpLine.h
-    src/binaryfile/JumpLines.h
-    src/binaryfile/JumpLineManager.h
-    src/ui/widgets/FlowLineTextBrowser.h
+    src/ui/viewers/ApplesoftFileDetailViewer.h
+    src/ui/viewers/ApplesoftFileViewer.h
+    src/ui/viewers/CharSetViewer.h
+    src/ui/viewers/DisassemblerViewer.h
+    src/ui/viewers/FileViewerInterface.h
+    src/ui/viewers/HexDumpViewer.h
+    src/ui/viewers/HiresViewer.h
+    src/ui/viewers/IntBasicFileViewer.h
+    src/ui/viewers/MazeViewer.h
+    src/ui/viewers/TextHexDumpViewer.h
+    src/ui/viewers/ViewerBase.h
     src/ui/widgets/AsciiInfoDialog.h
+    src/ui/widgets/CatalogWidget.h
+    src/ui/widgets/CharacterSetExplorer.h
+    src/ui/widgets/CharacterWidget.h
+    src/ui/widgets/DisassemblerMetadataDialog.h
+    src/ui/widgets/FlowLineTextBrowser.h
+    src/ui/widgets/HexConverter.h
+    src/ui/widgets/HiresScreenWidget.h
+    src/ui/widgets/HRCGControlsInfo.h
+    src/ui/widgets/LocationInfoDialog.h
+    src/ui/widgets/NotesDialog.h
+    src/ui/widgets/StartupDialog.h
+    src/util/AppleColors.h
+    src/util/AppleString.h
+    src/util/CharSet.h
+    src/util/OpCodes.h
+    src/util/Util.h
 )
 
 # UI files (Qt Designer forms)
 set(UI_FILES
-    src/ui/widgets/CatalogWidget.ui
-    src/ui/widgets/StartupDialog.ui
+    src/ui/viewers/ApplesoftFileDetailViewer.ui
     src/ui/viewers/ApplesoftFileViewer.ui
     src/ui/viewers/DisassemblerViewer.ui
     src/ui/viewers/HexDumpViewer.ui
     src/ui/viewers/IntBasicFileViewer.ui
     src/ui/viewers/TextHexDumpViewer.ui
-    src/ui/viewers/ApplesoftFileDetailViewer.ui
-    src/ui/widgets/HexConverter.ui
-    src/ui/widgets/HRCGControlsInfo.ui
     src/ui/viewers/ViewerBase.ui
+    src/ui/widgets/AsciiInfoDialog.ui
+    src/ui/widgets/CatalogWidget.ui
     src/ui/widgets/CharacterSetExplorer.ui
     src/ui/widgets/DisassemblerMetadataDialog.ui
+    src/ui/widgets/HexConverter.ui
+    src/ui/widgets/HRCGControlsInfo.ui
     src/ui/widgets/LocationInfoDialog.ui
-    src/ui/widgets/AsciiInfoDialog.ui
     src/ui/widgets/NotesDialog.ui
+    src/ui/widgets/StartupDialog.ui
 )
 
 # Resource files
@@ -220,9 +219,9 @@ add_executable(AppleSAWS
 # Link Qt libraries
 target_link_libraries(AppleSAWS
     Qt6::Core
-    Qt6::Widgets
     Qt6::Gui
     Qt6::PrintSupport
+    Qt6::Widgets
 )
 
 # Set output directory to match your current setup
