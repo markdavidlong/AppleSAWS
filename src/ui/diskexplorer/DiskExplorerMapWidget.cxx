@@ -2,6 +2,7 @@
 #include "DEButton.h"
 
 #include "Util.h"
+#include "TSPair.h"
 
 #include <QPushButton>
 #include <QGridLayout>

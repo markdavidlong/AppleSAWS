@@ -2,6 +2,7 @@
 
 #include "FileDescriptiveEntry.h"
 #include "Util.h"
+#include "TSPair.h"
 
 #include <QtGlobal>
 #include <QByteArray>

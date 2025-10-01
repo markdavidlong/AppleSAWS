@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Util.h"
+#include "TSPair.h"
 #include "Sector.h"
 #include "Vtoc.h"
 

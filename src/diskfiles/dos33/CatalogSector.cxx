@@ -11,14 +11,14 @@ CatalogSector::CatalogSector(Sector* data) : m_data(data), m_next(0, 0)
 
     if (next.isValid() && next.track() == 17)
     {
-        next.dump();
+       // next.dump();
     //    qDebug("Next track sector is valid.");
         m_next = next;
     }
-    else
+    else  // Don't add if we've hit the last catalog sector (no next because next -> t0,s0)
     {
-        qWarning() << "Track sector " << next.track() << "," << next.sector() << "is invalid! Not adding to catalog.";
-        m_next.dump();
+     //   qWarning() << "Track sector " << next.track() << "," << next.sector() << "is invalid! Not adding to catalog.";
+     //   m_next.dump();
     }
     //m_next.setTrack(m_data->rawData()[0x01]);
     //m_next.setSector(m_data->rawData()[0x02]);

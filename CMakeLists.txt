@@ -77,6 +77,7 @@ set(SOURCES
     src/diskfiles/dos33/GenericFile.cxx
     src/diskfiles/dos33/Sector.cxx
     src/diskfiles/dos33/TrackSectorList.cxx
+    src/diskfiles/dos33/TSPair.cxx
     src/diskfiles/dos33/Vtoc.cxx
     src/intbasic/IntBasicFile.cxx
     src/main.cxx
@@ -140,6 +141,7 @@ set(HEADERS
     src/diskfiles/dos33/GenericFile.h
     src/diskfiles/dos33/Sector.h
     src/diskfiles/dos33/TrackSectorList.h
+    src/diskfiles/dos33/TSPair.h
     src/diskfiles/dos33/Vtoc.h
     src/intbasic/IntBasicFile.h
     src/memory/AttributedMemory.h

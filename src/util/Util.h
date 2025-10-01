@@ -40,67 +40,6 @@ typedef enum
     SetNormLC = 0xE0
 } TextSet;
 
-struct TSPair
-{
-    TSPair() { m_track = m_sector = 0; }
-    TSPair(quint8 trackval, quint8 secval)
-    {
-        m_track = trackval;
-        m_sector = secval;
-    }
-
-    void setTrack(quint8 tracknum)
-    {
-        // Q_ASSERT(tracknum < 35);
-        if (tracknum > 34 && tracknum != 0xff)
-        {
-            qWarning("Setting a track with value %d (> 34 and not 256).", tracknum);
-        }
-        m_track = tracknum;
-    }
-
-    void setSector(quint8 secnum)
-    {
-        // Q_ASSERT(secnum < 16);
-        if (secnum > 15 && m_track != 0xff)
-        {
-            qWarning("Setting a sector with value %d (> 15) on track %d.", secnum, m_track);
-        }
-        m_sector = secnum;
-    }
-
-    bool isValid()
-    {
-        auto retval = (m_track != 0xff && m_track < 35) && m_sector < 16;
-        //      qDebug() << "TSPair " << track() << "," << sector() << " is " << (retval?"":"not ") << "valid";
-        return retval;
-    }
-
-    quint8 track() const { return m_track; }
-    quint8 sector() const { return m_sector; }
-
-    bool operator==(const TSPair &other)
-    {
-        if (other.track() == track() && other.sector() == sector())
-            return true;
-        return false;
-    }
-
-    bool operator!=(const TSPair &other)
-    {
-        return !(operator==(other));
-    }
-
-    void dump() const
-    {
-        // qDebug() << "TSPair: track: " << track() << " sector: " << sector();
-    }
-
-private:
-    quint8 m_track;
-    quint8 m_sector;
-};
-
 inline QString uint8ToHex(quint8 val)
 {
     QString retval = QString("%1").arg(val, 2, 16, QChar('0')).toUpper();

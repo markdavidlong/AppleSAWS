@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Util.h"
+#include "TSPair.h"
 
 class Sector;
 
