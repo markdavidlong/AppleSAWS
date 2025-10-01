@@ -112,7 +112,8 @@ set(SOURCES
     src/ui/widgets/NotesDialog.cxx
     src/ui/widgets/StartupDialog.cxx
     src/util/AppleString.cxx
-    src/util/CharSet.cxx
+    src/util/CharacterSet.cxx
+    src/util/CharSetCharacter.cxx
     src/util/OpCodes.cxx
 )
 
@@ -180,7 +181,8 @@ set(HEADERS
     src/ui/widgets/StartupDialog.h
     src/util/AppleColors.h
     src/util/AppleString.h
-    src/util/CharSet.h
+    src/util/CharacterSet.h
+    src/util/CharSetCharacter.h
     src/util/OpCodes.h
     src/util/Util.h
 )

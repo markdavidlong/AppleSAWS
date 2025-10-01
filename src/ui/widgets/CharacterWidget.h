@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CharSet.h"
+#include "CharSetCharacter.h"
 
 #include <QWidget>
 #include <QColor>
