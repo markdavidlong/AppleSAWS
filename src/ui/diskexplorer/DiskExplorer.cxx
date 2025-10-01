@@ -15,20 +15,10 @@
 #include <QDebug>
 #include <QStatusBar>
 
-DiskExplorer::DiskExplorer(QWidget *parent) : QMainWindow(parent)
+DiskExplorer::DiskExplorer(QWidget* parent) 
+    : QMainWindow(parent)
 {
-    m_action_Unload_Disk_Image = nullptr;
-    m_hexConverter = nullptr;
-    m_disk = nullptr;
-    m_horizSizePref = -1;
-    m_toolsHidden = true;
- //   m_notesDialog = nullptr;
-    m_AsciiInfoDialog = nullptr;
-    m_hrcgDialog = nullptr;
-
-    m_action_Unload_Disk_Image = nullptr;
-
-    resize(300,800);
+    resize(300, 800);
     initUi();
 }
 
@@ -38,9 +28,9 @@ DiskExplorer::~DiskExplorer()
 
 void DiskExplorer::initUi()
 {
-    QMenuBar *menuBar = new QMenuBar(this);
+    auto* menuBar = new QMenuBar(this);
     setMenuBar(menuBar);
-    QMenu *menu = new QMenu(tr("&File"),this);
+    auto* menu = new QMenu(tr("&File"), this);
     menuBar->addMenu(menu);
 
 //    QAction *action_Load_Disk_Image = new QAction(tr("&Load Disk Image..."),this);
@@ -58,20 +48,20 @@ void DiskExplorer::initUi()
 
 //    menu->addSeparator();
 
-    QAction *action_Quit = new QAction(tr("&Quit"),this);
+    auto* action_Quit = new QAction(tr("&Quit"), this);
     menu->addAction(action_Quit);
 
     connect(action_Quit, &QAction::triggered, qApp, &QApplication::quit);
 
-    menu = new QMenu(tr("&Util"),this);
+    menu = new QMenu(tr("&Util"), this);
     menuBar->addMenu(menu);
 
-    QAction *action_Hex_Converter = new QAction(tr("&Hex Converter..."),this);
+    auto* action_Hex_Converter = new QAction(tr("&Hex Converter..."), this);
     menu->addAction(action_Hex_Converter);
 
     menu->addSeparator();
 
-    m_setDiskToolsVisibleAction = new QAction(tr("Show &Disk tools"),this);
+    m_setDiskToolsVisibleAction = new QAction(tr("Show &Disk tools"), this);
     m_setDiskToolsVisibleAction->setCheckable(true);
     m_setDiskToolsVisibleAction->setChecked(false);
 
@@ -79,11 +69,10 @@ void DiskExplorer::initUi()
 
     menu->addAction(m_setDiskToolsVisibleAction);
 
-
-    menu = new QMenu(tr("&Misc"),this);
+    menu = new QMenu(tr("&Misc"), this);
     menuBar->addMenu(menu);
 
-    QAction *action_HRCG_Commands = new QAction(tr("&HRCG Commands..."),this);
+    auto* action_HRCG_Commands = new QAction(tr("&HRCG Commands..."), this);
     menu->addAction(action_HRCG_Commands);
     if (!m_hrcgDialog) m_hrcgDialog = new HRCGControlsInfo(this);
     connect(action_HRCG_Commands, &QAction::triggered, m_hrcgDialog, &HRCGControlsInfo::show);
@@ -91,19 +80,12 @@ void DiskExplorer::initUi()
     if (!m_hexConverter) m_hexConverter = new HexConverter(this);
     connect(action_Hex_Converter, &QAction::triggered, m_hexConverter, &HexConverter::show);
 
-    QAction *action_Ascii_Info = new QAction(tr("&ASCII Table..."),this);
+    auto* action_Ascii_Info = new QAction(tr("&ASCII Table..."), this);
     menu->addAction(action_Ascii_Info);
     m_AsciiInfoDialog = new AsciiInfoDialog(this);
     connect(action_Ascii_Info, &QAction::triggered, m_AsciiInfoDialog, &AsciiInfoDialog::show);
 
-//    menu->addSeparator();
-
-//    QAction *action_Notes = new QAction(tr("&Notes..."), this);
-//    menu->addAction(action_Notes);
-//    if (!m_notesDialog) m_notesDialog = new NotesDialog(this);
-//    connect(action_Notes, &QAction::triggered, m_notesDialog, &NotesDialog::show);
-
-    QWidget *widget = new QWidget(0);
+    auto* widget = new QWidget(nullptr);
     m_gridLayout = new QGridLayout();
     m_gridLayout->setVerticalSpacing(4);
     m_gridLayout->setHorizontalSpacing(4);
@@ -155,7 +137,7 @@ void DiskExplorer::unloadDiskFile()
     }
 }
 
-void DiskExplorer::loadDiskFile(QString filename)
+void DiskExplorer::loadDiskFile(const QString& filename)
 {
     if (m_disk) {
         unloadDiskFile();
@@ -176,7 +158,7 @@ void DiskExplorer::loadDiskFile(QString filename)
     }
 }
 
-void DiskExplorer::handleShowSectorData(QByteArray data, int track, int sector, QVariant metadata)
+void DiskExplorer::handleShowSectorData(const QByteArray& data, int track, int sector, const QVariant& metadata)
 {
     Q_UNUSED(track)
     Q_UNUSED(sector)
@@ -198,7 +180,7 @@ void DiskExplorer::showLoadDialog(bool parentToThis)
     }
 }
 
-void DiskExplorer::handleDiskItemSelectedDefaultOpen(DiskFile *disk, FileDescriptiveEntry fde)
+void DiskExplorer::handleDiskItemSelectedDefaultOpen(DiskFile* disk, const FileDescriptiveEntry& fde)
 {
     if (fde.deleted) { return; }
 

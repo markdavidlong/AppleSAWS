@@ -15,30 +15,28 @@ class  CatalogWidget : public QWidget
 
 
 public:
-    explicit CatalogWidget(QWidget *parent = 0);
-    ~CatalogWidget();
+    explicit CatalogWidget(QWidget* parent = nullptr);
+    ~CatalogWidget() override;
 
 public slots:
-    void prepForNewDisk(QString filename, DiskFile *disk);
-    void processNewlyLoadedDisk(QString filename, DiskFile *disk);
-    void unloadDisk(DiskFile *disk);
+    void prepForNewDisk(const QString& filename, DiskFile* disk);
+    void processNewlyLoadedDisk(const QString& filename, DiskFile* disk);
+    void unloadDisk(DiskFile* disk);
 
 signals:
-    void newFileSelected(DiskFile *disk, FileDescriptiveEntry entry);
-    void openWithDefaultViewer(DiskFile *disk, FileDescriptiveEntry fde);
+    void newFileSelected(DiskFile* disk, const FileDescriptiveEntry& entry);
+    void openWithDefaultViewer(DiskFile* disk, const FileDescriptiveEntry& fde);
 
 protected:
-    QString createToolTip(FileDescriptiveEntry &fde);
+    [[nodiscard]] QString createToolTip(FileDescriptiveEntry& fde);
 
 private slots:
-    void itemClicked(QListWidgetItem *item);
-    void itemDoubleClicked(QListWidgetItem *item);
+    void itemClicked(QListWidgetItem* item);
+    void itemDoubleClicked(QListWidgetItem* item);
 
 private:
-
-    Ui::CatalogWidget *ui;
-
-    DiskFile *m_disk;
+    Ui::CatalogWidget* ui{nullptr};
+    DiskFile* m_disk{nullptr};
     QString m_diskname;
 };
 

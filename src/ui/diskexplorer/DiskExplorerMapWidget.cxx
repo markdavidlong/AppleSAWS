@@ -1,7 +1,5 @@
 #include "DiskExplorerMapWidget.h"
 
-//#include "vtoc.h"
-//#include "catalogsector.h"
 #include "Util.h"
 
 #include <QPushButton>
@@ -11,20 +9,12 @@
 #include <QHBoxLayout>
 #include <QGuiApplication>
 
-DiskExplorerMapWidget::DiskExplorerMapWidget(int numtracks, int numsectors, QWidget *parent) : QWidget(parent)
+DiskExplorerMapWidget::DiskExplorerMapWidget(int numtracks, int numsectors, QWidget* parent) 
+    : QWidget(parent), m_numtracks(numtracks), m_numsectors(numsectors)
 {
-    m_numtracks = numtracks;
-    m_numsectors = numsectors;
+    setWindowTitle(QStringLiteral("Disk Explorer"));
 
-    m_diskLabel = nullptr;
-    m_statusWidget = nullptr;
-    m_currentChecked = nullptr;
-
-    m_deferredSetup = false;
-
-    setWindowTitle("Disk Explorer");
-
-    QGridLayout *gridlayout = new QGridLayout(this);
+    auto* gridlayout = new QGridLayout(this);
     gridlayout->setSizeConstraint(QLayout::SetFixedSize);
     gridlayout->setHorizontalSpacing(2);
     gridlayout->setVerticalSpacing(1);
@@ -33,35 +23,32 @@ DiskExplorerMapWidget::DiskExplorerMapWidget(int numtracks, int numsectors, QWid
 
     m_bgroup = new QButtonGroup(this);
 
-    QLabel *tracklabel = new QLabel("Track",this);
-    gridlayout->addWidget(tracklabel,0,0,1,m_numtracks+1,Qt::AlignHCenter);
-    for (int track= 0; track < numtracks; track++)
-    {
-        QLabel *label = new QLabel(QString("%1").arg(track));
+    auto* tracklabel = new QLabel(QStringLiteral("Track"), this);
+    gridlayout->addWidget(tracklabel, 0, 0, 1, m_numtracks + 1, Qt::AlignHCenter);
+    
+    for (int track = 0; track < numtracks; ++track) {
+        auto* label = new QLabel(QString::number(track));
         label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-        gridlayout->addWidget(label,1,track+1);
+        gridlayout->addWidget(label, 1, track + 1);
     }
-    for (int sec = 0; sec < numsectors; sec++)
-    {
-        QLabel *label = new QLabel(QString("Sec %1").arg(sec));
+    
+    for (int sec = 0; sec < numsectors; ++sec) {
+        auto* label = new QLabel(QStringLiteral("Sec %1").arg(sec));
         label->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-        gridlayout->addWidget(label,sec+2,0);
+        gridlayout->addWidget(label, sec + 2, 0);
     }
-    for (int track = 0; track < 35; track++)
-    {
-        for (int sec = 0; sec < 16; sec++)
-        {
-            DEButton *tb = new DEButton(this,track,sec);
-            tb->setObjectName(QString("BtnT%1S%2").arg(track).arg(sec));
+    for (int track = 0; track < 35; ++track) {
+        for (int sec = 0; sec < 16; ++sec) {
+            auto* tb = new DEButton(this, track, sec);
+            tb->setObjectName(QStringLiteral("BtnT%1S%2").arg(track).arg(sec));
             tb->setBgColor(m_defaultColor);
             tb->setCheckable(true);
-            m_bgroup->addButton(tb,(track * numsectors) + sec);
+            m_bgroup->addButton(tb, (track * numsectors) + sec);
             connect(tb, &DEButton::checked, this, &DiskExplorerMapWidget::handleButtonCheck);
             m_buttons[track][sec] = tb;
 
             tb->setAutoFillBackground(true);
-
-            gridlayout->addWidget(tb,sec+2,track+1);
+            gridlayout->addWidget(tb, sec + 2, track + 1);
         }
     }
 
@@ -70,14 +57,14 @@ DiskExplorerMapWidget::DiskExplorerMapWidget(int numtracks, int numsectors, QWid
 
 void DiskExplorerMapWidget::makeStatusWidget()
 {
-    QWidget *statusWidget = new QWidget(this);
-    QHBoxLayout *hbl = new QHBoxLayout();
+    auto* statusWidget = new QWidget(this);
+    auto* hbl = new QHBoxLayout();
     statusWidget->setLayout(hbl);
 
     m_trackSectorLabel = new QLabel(this);
     m_trackSectorLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-    m_trackSectorLabel->setText("No Track/Sector selected");
-    hbl->insertWidget(0,m_trackSectorLabel,0,Qt::AlignLeft | Qt::AlignVCenter);
+    m_trackSectorLabel->setText(QStringLiteral("No Track/Sector selected"));
+    hbl->insertWidget(0, m_trackSectorLabel, 0, Qt::AlignLeft | Qt::AlignVCenter);
 
     m_diskLabel = new QLabel(this);
     m_diskLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
@@ -87,7 +74,7 @@ void DiskExplorerMapWidget::makeStatusWidget()
     m_statusWidget = statusWidget;
 }
 
-QString DiskExplorerMapWidget::getSectorDescription(int track, int sector)
+QString DiskExplorerMapWidget::getSectorDescription(int track, int sector) const
 {
     if (track == 0) {
         return "Boot Sector";
@@ -141,7 +128,7 @@ void DiskExplorerMapWidget::handleButtonCheck(int track, int sector, bool checke
     m_currentChecked = currbutton;
 }
 
-void DiskExplorerMapWidget::setButtonBgColor(int track, int sector, QColor color)
+void DiskExplorerMapWidget::setButtonBgColor(int track, int sector, const QColor& color)
 {
     buttonAt(track,sector)->setBgColor(color);
 }
@@ -202,7 +189,7 @@ void DiskExplorerMapWidget::setAllButtonsEnabled(bool enabled)
     }
 }
 
-QLabel *DiskExplorerMapWidget::makeKeyLabel(QWidget *parent, QString name, QColor color)
+QLabel* DiskExplorerMapWidget::makeKeyLabel(QWidget* parent, const QString& name, const QColor& color)
 {
     QLabel *label = new QLabel(name,parent);
     label->setStyleSheet(QString("background-color:%1; color: %2")

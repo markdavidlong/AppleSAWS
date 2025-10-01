@@ -10,14 +10,10 @@ RelocatableFile::RelocatableFile(const QByteArray &data) noexcept
     {
         setData(data);
     }
-    qDebug() << this->filename();
-    dump();
 }
 
 void RelocatableFile::setData(const QByteArray &data)
 {
-
-    //   qDebug() << "setData()";
     if (data.length() >= 6)
     {
         m_starting_ram_address = makeWord(m_data[0], m_data[1]);

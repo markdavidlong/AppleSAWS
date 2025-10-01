@@ -11,38 +11,51 @@
 #include <QLabel>
 
 
-class DEButton : public QPushButton
+class DEButton final : public QPushButton
 {
     Q_OBJECT
+
 public:
-    DEButton(QWidget *parent,int track = -1, int sec = -1) : QPushButton(parent)
+    explicit DEButton(QWidget* parent, int track = -1, int sec = -1) 
+        : QPushButton(parent), m_track(track), m_sector(sec)
     {
-        setTrack(track);
-        setSector(sec);
         connect(this, &DEButton::clicked, this, &DEButton::handleClick);
-        m_isHighlighted = false;
     }
-    void setTrack(int track) { m_track = track; }
-    void setSector(int sector) { m_sector = sector; }
+    void setTrack(int track) noexcept { m_track = track; }
+    void setSector(int sector) noexcept { m_sector = sector; }
 
-    int track() const { return m_track; }
-    int sector() const { return m_sector; }
+    [[nodiscard]] constexpr int track() const noexcept { return m_track; }
+    [[nodiscard]] constexpr int sector() const noexcept { return m_sector; }
 
-    void clearBgColor() { m_backgroundColor = ""; setText(""); setStyleSheet(makeStyleSheet());}
+    void clearBgColor() { 
+        m_backgroundColor.clear(); 
+        setText(QString{}); 
+        setStyleSheet(makeStyleSheet());
+    }
 
-    void setBgColor(QColor color) {
+    void setBgColor(const QColor& color) {
         m_fgColor = determineFgColor(color).name();
         m_backgroundColor = color.name();
         m_hlColor = color.lighter(155).name();
         setStyleSheet(makeStyleSheet());
     }
 
-    bool highlighted() const { return m_isHighlighted; }
-    void setHighlighted(bool highlighted) { m_isHighlighted = highlighted;setStyleSheet(makeStyleSheet()); }
+    [[nodiscard]] constexpr bool highlighted() const noexcept { return m_isHighlighted; }
+    void setHighlighted(bool highlighted) { 
+        m_isHighlighted = highlighted;
+        setStyleSheet(makeStyleSheet()); 
+    }
 
-    void reset() { setHighlighted(false); setChecked(false); makeStyleSheet(); qDebug() << "Reset";}
+    void reset() { 
+        setHighlighted(false); 
+        setChecked(false); 
+        setStyleSheet(makeStyleSheet()); 
+    }
 
-    void resetToDefault() { clearBgColor(); reset(); }
+    void resetToDefault() { 
+        clearBgColor(); 
+        reset(); 
+    }
 
     QColor determineFgColor(QColor bgColor)
     {
@@ -57,24 +70,23 @@ signals:
     void checked(int track, int sec,bool );
 
 private slots:
-    void handleClick(bool isChecked) { emit checked(m_track,m_sector,isChecked); }
+    void handleClick(bool isChecked) { emit checked(m_track, m_sector, isChecked); }
 
-    QSize minimumSizeHint() const Q_DECL_OVERRIDE { return QSize(24,24); }
-    QSize sizeHint() const Q_DECL_OVERRIDE { return QSize(24,24); }
-    bool hasHeightForWidth() const Q_DECL_OVERRIDE { return true; }
-    int heightForWidth(int width) const Q_DECL_OVERRIDE { return width; }
+    [[nodiscard]] QSize minimumSizeHint() const noexcept override { return QSize(24, 24); }
+    [[nodiscard]] QSize sizeHint() const noexcept override { return QSize(24, 24); }
+    [[nodiscard]] bool hasHeightForWidth() const noexcept override { return true; }
+    [[nodiscard]] int heightForWidth(int width) const noexcept override { return width; }
 
 private:
-    QString makeStyleSheet() const {
-        return QString(" QPushButton {  font: 10px; border-width: 1px; color: %1; background-color: %2} "
-                       " QPushButton:checked { font: bold italic 11px; } "
-               ) .arg(m_fgColor)
-                .arg(m_backgroundColor);
+    [[nodiscard]] QString makeStyleSheet() const {
+        return QStringLiteral(" QPushButton { font: 10px; border-width: 1px; color: %1; background-color: %2} "
+                              " QPushButton:checked { font: bold italic 11px; } ")
+                .arg(m_fgColor, m_backgroundColor);
     }
 
-    int m_track;
-    int m_sector;
-    bool m_isHighlighted;
+    int m_track{-1};
+    int m_sector{-1};
+    bool m_isHighlighted{false};
 
     QString m_fgColor;
     QString m_backgroundColor;
@@ -83,86 +95,81 @@ private:
 
 
 
-typedef QPair<int,int> DETSPair;
+using DETSPair = QPair<int, int>;
 
-class DiskExplorerMapWidget : public QWidget
+class DiskExplorerMapWidget final : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit DiskExplorerMapWidget(int numtracks, int numsectors, QWidget *parent = 0);
+    explicit DiskExplorerMapWidget(int numtracks, int numsectors, QWidget* parent = nullptr);
 
-    void setButtonBgColor(int track, int sector, QColor color);
-    void setButtonText(int track, int sector, QString text) {
-        buttonAt(track,sector)->setText(text);
+    void setButtonBgColor(int track, int sector, const QColor& color);
+    void setButtonText(int track, int sector, const QString& text) {
+        buttonAt(track, sector)->setText(text);
     }
 
-    void setDisk(DiskFile *disk);
+    void setDisk(DiskFile* disk);
     void unloadDisk();
 
     void setAllButtonsEnabled(bool enabled);
 
-    QGroupBox *makeKeyWidget();
-    QWidget *getStatusWidget() const { return m_statusWidget; }
+    [[nodiscard]] QGroupBox* makeKeyWidget();
+    [[nodiscard]] QWidget* getStatusWidget() const noexcept { return m_statusWidget; }
 
 signals:
-    void showSectorData(QByteArray data, int track, int sector, QVariant metadata);
+    void showSectorData(const QByteArray& data, int track, int sector, const QVariant& metadata);
 
 public slots:
     void handleButtonCheck(int track, int sector, bool checked);
 
 protected:
     void mapDiskToButtons();
-    DEButton *buttonAt(int track, int sector);
+    [[nodiscard]] DEButton* buttonAt(int track, int sector);
 
     void initColors();
 
-    QColor determineFgColor(QColor bgColor)
+    [[nodiscard]] static QColor determineFgColor(const QColor& bgColor) noexcept
     {
-        if (qGray(bgColor.rgb()) > 128)
-        {
-            return QColor(Qt::black);
-        }
-        return Qt::white;
+        return (qGray(bgColor.rgb()) > 128) ? QColor(Qt::black) : QColor(Qt::white);
     }
 
-    QLabel *makeKeyLabel(QWidget *parent, QString name, QColor color);
-    void showEvent(QShowEvent *);
+    [[nodiscard]] QLabel* makeKeyLabel(QWidget* parent, const QString& name, const QColor& color);
+    void showEvent(QShowEvent* event) override;
     void makeStatusWidget();
-    QString getSectorDescription(int track, int sector);
+    [[nodiscard]] QString getSectorDescription(int track, int sector) const;
 
 private:
+    QMap<int, QMap<int, DEButton*>> m_buttons;
+    DEButton* m_currentChecked{nullptr};
 
-    QMap<int, QMap<int,DEButton*> > m_buttons;
-    DEButton *m_currentChecked;
+    int m_numtracks{0};
+    int m_numsectors{0};
 
-    int m_numtracks;
-    int m_numsectors;
+    QColor m_defaultColor{Qt::lightGray};
+    QColor m_bootSectorColor{Qt::red};
+    QColor m_dosImageColor{Qt::blue};
+    QColor m_vtocColor{Qt::yellow};
+    QColor m_dirEntryColor{Qt::green};
+    QColor m_tsListColor{Qt::cyan};
+    QColor m_applesoftFileColor{Qt::magenta};
+    QColor m_intBasicFileColor{Qt::darkRed};
+    QColor m_binaryFileColor{Qt::darkBlue};
+    QColor m_textFileColor{Qt::darkGreen};
+    QColor m_reloFileColor{Qt::darkCyan};
+    QColor m_typeAFileColor{Qt::darkMagenta};
+    QColor m_typeBFileColor{Qt::darkYellow};
+    QColor m_typeSFileColor{Qt::gray};
 
-    QColor m_defaultColor;
-    QColor m_bootSectorColor;
-    QColor m_dosImageColor;
-    QColor m_vtocColor;
-    QColor m_dirEntryColor;
-    QColor m_tsListColor;
-    QColor m_applesoftFileColor;
-    QColor m_intBasicFileColor;
-    QColor m_binaryFileColor;
-    QColor m_textFileColor;
-    QColor m_reloFileColor;
-    QColor m_typeAFileColor;
-    QColor m_typeBFileColor;
-    QColor m_typeSFileColor;
+    QButtonGroup* m_bgroup{nullptr};
+    DiskFile* m_disk{nullptr};
 
-    QButtonGroup *m_bgroup;
-    DiskFile *m_disk;
+    bool m_deferredSetup{false};
 
-    bool m_deferredSetup;
+    QLabel* m_diskLabel{nullptr};
+    QLabel* m_trackSectorLabel{nullptr};
+    QWidget* m_statusWidget{nullptr};
 
-    QLabel *m_diskLabel;
-    QLabel *m_trackSectorLabel;
-    QWidget *m_statusWidget;
-
-    QMap< DETSPair, QString> m_sectorDescriptions;
+    QMap<DETSPair, QString> m_sectorDescriptions;
 };
 

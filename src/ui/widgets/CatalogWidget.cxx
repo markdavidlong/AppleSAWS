@@ -11,7 +11,7 @@
 #include <QAction>
 #include <QPalette>
 
-CatalogWidget::CatalogWidget(QWidget *parent) :
+CatalogWidget::CatalogWidget(QWidget* parent) :
     QWidget(parent),
     ui(new Ui::CatalogWidget)
 {
@@ -32,13 +32,13 @@ CatalogWidget::~CatalogWidget()
     delete ui;
 }
 
-void CatalogWidget::prepForNewDisk(QString filename, DiskFile *disk)
+void CatalogWidget::prepForNewDisk(const QString& filename, DiskFile* disk)
 {
     m_disk = disk;
     m_diskname = filename;
 }
 
-QString CatalogWidget::createToolTip(FileDescriptiveEntry &fde) {
+QString CatalogWidget::createToolTip(FileDescriptiveEntry& fde) {
     QString retval;
     retval += AppleString(fde.filename).printable().trimmed() +
             (fde.deleted?"(Deleted)":"") + "\n";
@@ -75,7 +75,7 @@ QString CatalogWidget::createToolTip(FileDescriptiveEntry &fde) {
     return retval;
 }
 
-void CatalogWidget::processNewlyLoadedDisk(QString diskfilename, DiskFile *disk)
+void CatalogWidget::processNewlyLoadedDisk(const QString& diskfilename, DiskFile* disk)
 {
    // qDebug() << "### Start processNewlyLoadedDisk";
     if (m_disk == disk) {
@@ -134,7 +134,7 @@ void CatalogWidget::processNewlyLoadedDisk(QString diskfilename, DiskFile *disk)
   //  qDebug() << "### End processNewlyLoadedDisk";
 }
 
-void CatalogWidget::unloadDisk(DiskFile *disk)
+void CatalogWidget::unloadDisk(DiskFile* disk)
 {
     if (m_disk == disk) {
         m_disk = 0;
@@ -143,7 +143,7 @@ void CatalogWidget::unloadDisk(DiskFile *disk)
     ui->volume_label->clear();
 }
 
-void CatalogWidget::itemDoubleClicked(QListWidgetItem *item)
+void CatalogWidget::itemDoubleClicked(QListWidgetItem* item)
 {
     int idx = item->data(0x0100).toInt();
     if (idx >= 0)
@@ -165,7 +165,7 @@ void CatalogWidget::itemDoubleClicked(QListWidgetItem *item)
     }
 }
 
-void CatalogWidget::itemClicked(QListWidgetItem *item)
+void CatalogWidget::itemClicked(QListWidgetItem* item)
 {
     int idx = item->data(0x0100).toInt();
     FileDescriptiveEntry fde = m_disk->getAllFDEs()[idx];
