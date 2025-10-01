@@ -14,7 +14,10 @@ void TextFile::setData(const QByteArray& data)
     m_data = data;
 }
 
-void TextFile::dump()
+void TextFile::dump() const
 {
-    // TODO: Implement text file dumping functionality
+    qDebug() << "Text File:" << filename();
+    qDebug() << "  Size:" << m_data.size() << "bytes";
+    qDebug() << "  Lines:" << asLines().size();
 }
+

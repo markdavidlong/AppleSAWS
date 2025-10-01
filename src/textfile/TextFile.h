@@ -1,6 +1,8 @@
 #pragma once
 
 #include "GenericFile.h"
+#include <QString>
+#include <QStringList>
 
 class TextFile final : public GenericFile
 {
@@ -15,7 +17,8 @@ public:
     TextFile& operator=(TextFile&&) = default;
 
     void setData(const QByteArray& data) override;
-    void dump();
+    void dump() const;
+
 };
 
 
