@@ -183,12 +183,12 @@ void ViewerBase::showViewer(int index)
     FileViewerInterface *fvi = m_viewers[descriptor];
     if (fvi)
     {
-        ui->actionExport->disconnect(SIGNAL(triggered(bool)));
+        disconnect(ui->actionExport, &QAction::triggered, nullptr, nullptr);
         ui->actionExport->setEnabled(fvi->canExport());
         connect(ui->actionExport, &QAction::triggered,
                 fvi, &FileViewerInterface::doExport);
 
-        ui->action_Print->disconnect(SIGNAL(triggered(bool)));
+        disconnect(ui->action_Print, &QAction::triggered, nullptr, nullptr);
         ui->action_Print->setEnabled(fvi->canPrint());
         connect(ui->action_Print, &QAction::triggered,
                 fvi, &FileViewerInterface::doPrint);

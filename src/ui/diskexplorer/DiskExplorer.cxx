@@ -223,7 +223,7 @@ void DiskExplorer::setDiskToolsVisible(bool visible)
 
     if (!visible)
     {
-        QTimer::singleShot(100, this, SLOT(doResize()));
+        QTimer::singleShot(100, this, &DiskExplorer::doResize);
     }
 }
 
